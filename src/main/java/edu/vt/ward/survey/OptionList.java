@@ -263,7 +263,7 @@ public abstract class OptionList extends Question {
 			    s.append ("		<div class='control-group'>\n");
 			    s.append ("			<label class='control-label'>"+this.getText()+"</label>\n");
 			    for ( int i = 0; i < options.size (); i++ ) {
-			    	s.append ("			<label>\n");
+			    	s.append ("			<label class='block-label'>\n");
 			    	s.append ("				<input type=\"" + this.getInputType () + "\" name=\"q_" + sectionNr + "_" + questionNr + "\" value=\"" + i + "\">" );
 			    	s.append ("				<span class='lbl'>"+((Option) options.get(i)).getLabel ()+"</span>                                        ");
 			    	s.append ("			</label>\n");

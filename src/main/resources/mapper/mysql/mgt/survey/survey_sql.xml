@@ -35,6 +35,28 @@
 		<result property="QUESTION_CNT" column="QUESTION_CNT"/>
 	</resultMap>
 
+	<resultMap id="TbQuestionMap" type="com.whomade.kycarrots.mgt.survey.vo.TbQuestion">
+		<result property="SURVEY_ID" column="SURVEY_ID"/>
+		<result property="SECTION_ID" column="SECTION_ID"/>
+		<result property="QUESTION_ID" column="QUESTION_ID"/>
+		<result property="QUESTION_TYPE" column="QUESTION_TYPE"/>
+		<result property="SHOWDIVIDER" column="SHOWDIVIDER"/>
+		<result property="EXPORTINCLUDE" column="EXPORTINCLUDE"/>
+		<result property="EXPORTEXPAND" column="EXPORTEXPAND"/>
+		<result property="QUESTIONTEXT" column="QUESTIONTEXT"/>
+		<result property="QUESTION_CD" column="QUESTION_CD"/>
+		<result property="QUESTION_ISHTML" column="QUESTION_ISHTML"/>
+		<result property="QUESTION_LAYOUT" column="QUESTION_LAYOUT"/>
+		<result property="QUESTION_LABEL" column="QUESTION_LABEL"/>
+		<result property="OTHERANSWER" column="OTHERANSWER"/>
+		<result property="TEXTCOLS" column="TEXTCOLS"/>
+		<result property="TEXTROWS" column="TEXTROWS"/>
+		<result property="TEXTSIZE" column="TEXTSIZE"/>
+		<result property="MAXLENGTH" column="MAXLENGTH"/>
+		<result property="SUMMARY_CD" column="SUMMARY_CD"/>
+	</resultMap>
+
+
 	<select id="selectTotCntSurvey" parameterType="dataMap" resultType="int">
 	/* mgt.survey.selectTotCntBoard */
 	SELECT COUNT(1) AS TOT_CNT
@@ -473,7 +495,7 @@
 	    ORDER BY A.SECTION_ID,A.QUESTION_ID
 	</select>
 	
-	<select id="selectQuestion" parameterType="dataMap" resultType="com.whomade.kycarrots.mgt.survey.vo.TbQuestion">
+	<select id="selectQuestion" parameterType="dataMap" resultMap="TbQuestionMap">
 		SELECT A.SURVEY_ID                     
 		      ,A.SECTION_ID                    
 		      ,A.QUESTION_ID                   

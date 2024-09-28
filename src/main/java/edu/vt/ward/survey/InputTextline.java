@@ -129,7 +129,7 @@ public InputTextline (String surveyId) {
 	    s.append ("<div class=\"control-group\">");
 	    s.append ("<label class=\"control-label\" for=\"form-field-1\">"+this.getText()+"</label>");
 	    s.append ("<div class='controls'>"+this.getLabel ());
-	    s.append ( "<input type=\"text\" name=\"q_" + sectionNr + "_" + questionNr + "\" value=\"\"" );
+	    s.append ( "<input type=\"text\" class=\"input-206px\" name=\"q_" + sectionNr + "_" + questionNr + "\" value=\"\"" );
 	    if ( this.getSize () > 0 )
 	      s.append ( " size=\"" + String.valueOf ( this.getSize () ) + "\"" );
 	    if ( this.getMaxLength () > 0 )

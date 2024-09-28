@@ -40,7 +40,8 @@
 		<!--basic styles-->
 		<link type="text/css" rel="stylesheet" href="/common/vue/bootstrapvue/bootstrap.css" />
 		<link type="text/css" rel="stylesheet" href="/common/vue/bootstrapvue/bootstrap-vue.min.css" />
-		
+		<link type="text/css" rel="stylesheet" href="/common/vue/customcss/survey.css" />
+
 		
 		<!--page specific plugin styles-->
 		<!--fonts-->
