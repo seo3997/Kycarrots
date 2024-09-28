@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+<script type="text/javascript" src="../js/jquery/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui/jquery-ui-1.10.3.custom.min.js"></script>
+<link href="../css/bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen">
+<script src="../js/bootstrap/bootstrap.js"></script>
+
+<link href="../css/bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="screen">
+<script type="text/javascript" src="../js/bootstrap/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap/bootstrap-datetimepicker.min.js"></script>
+
+<!-- AdminLTE Setup -->
+<link rel="stylesheet" href="../css/AdminLTE/font-awesome.min.css">
+<link rel="stylesheet" href="../css/AdminLTE/ionicons.min.css">
+<link rel="stylesheet" href="../css/AdminLTE/AdminLTE.css">
+<link rel="stylesheet" href="../css/AdminLTE/skin-green-light.css">
+<script type="text/javascript" src="../js/AdminLTE/app.js"></script>
+
+
+<!-- icheck -->
+<link rel="stylesheet" href="../js/icheck/skins/flat/blue.css">
+<script type="text/javascript" src="../js/icheck/icheck.min.js"></script>
+
+<script type="text/javascript" src="../js/common.js"></script>
+<link rel="stylesheet" href="../css/common.css">
+</head>
+<body class="hold-transition skin-green-light">
+<div class="wrapper">
+
+	<!-- 헤더  -->
+	<c:import url="/common/inc/header.do" charEncoding="utf-8" />
+	<!-- 좌측 메뉴 -->
+
+
+		<!-- Main content -->
+		<!-- @@ 메인 콘텐츠 -->
+		<div class="content-wrapper"  >
+			<section class="content">
+
+				<div class="row">
+					<div class="col-md-12">
+					<h4 class="subtitle"><i></i>사용자 관리</h4>
+					<div class="tb-box">
+						<div class="col-md-4">
+							<div class="box-header">
+								<h3 class="box-title">1차검수자</h3>
+							</div>
+			            	<div class="box-body table-responsive no-padding">
+				            	<table class="table table-hover">
+					                <tr>
+					                  <th>등록업체</th>
+					                  <th>과업관리자</th>
+					                  <th>1차검수자</th>
+					                </tr>
+					                <tr style="cursor:pointer;cursor:hand;">
+					                  <td><%=companyProjList.size()%>건</td>
+					                  <td><%=JobAdminIn01Cnt.getString("ROLE_PROJ_CNT")%>명</td>
+					                  <td><%=JobAdminIn01Cnt.getString("ROLE_CCONF_CNT")%>명</td>
+					                </tr>
+								</table>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="box-header">
+								<h3 class="box-title">최종검수자</h3>
+							</div>
+			            	<div class="box-body table-responsive no-padding">
+				            	<table class="table table-hover">
+					                <tr>
+					                  <th>최종 관리자</th>
+					                  <th>최종 검수자</th>
+					                </tr>
+					                <tr style="cursor:pointer;cursor:hand;">
+					                  <td><%=JobAdminIn01Cnt.getString("ROLE_INSP_CNT")%>명</td>
+					                  <td><%=JobAdminIn01Cnt.getString("ROLE_PUBD_CNT")%>명</td>
+					                </tr>
+								</table>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="box-header">
+								<h3 class="box-title">Worker(일반회원)</h3>
+							</div>
+			            	<div class="box-body table-responsive no-padding">
+				            	<table class="table table-hover">
+					                <tr>
+					                  <th>정상회원수</th>
+					                  <th>탈퇴회원수</th>
+					                </tr>
+					                <tr style="cursor:pointer;cursor:hand;">
+					                  <td><%=JobAdminIn01Cnt.getString("ROLE_PUBA_CNT")%>건</td>
+					                  <td><%=JobAdminIn01Cnt.getString("ROLE_PUBF_CNT")%>건</td>
+					                </tr>
+								</table>
+							</div>
+						</div>
+					</div><!-- col-md-12 -->
+
+					 <div class="col-12 col-sm-12">
+			            <div class="card card-primary card-tabs">
+			              <div class="card-header p-0 pt-1">
+			                <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                        <li class="nav-item active">
+			                    <a class="nav-link" id="company1" data-toggle="pill"  role="tab" aria-controls="custom-tabs-company1" aria-selected="true">업체1</a>
+			                  </li>
+			                  <li class="nav-item">
+			                    <a class="nav-link" id="company2" data-toggle="pill"  role="tab" aria-controls="custom-tabs-company2" aria-selected="false">업체2</a>
+			                  </li>
+			                  <li class="nav-item">
+			                    <a class="nav-link" id="company3" data-toggle="pill"  role="tab" aria-controls="custom-tabs-company3" aria-selected="false">업체3</a>
+			                  </li>
+			                </ul>
+			              </div>
+			              <div class="card-body" id="card-body">
+			              </div>
+			              <!-- /.card -->
+			            </div>
+			          </div><!--col-12 col-sm-12 -->
+
+                <div class="col-12 col-sm-12">
+                  <h4 class="subtitle"><i></i>전체</h4>
+                  <div class="col-sm-4">
+                    <div class="box-header">
+                      <h3 class="box-title">프로젝트</h3>
+                      <p class="pull-right">
+                        <a href="">더보기</a>
+                      </p>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                      <table class="table table-hover">
+                        <tr>
+                          <th>등록프로젝트</th>
+                          <th>진행완료</th>
+                          <th>진행중</th>
+                        </tr>
+                        <tr>
+                          <td>450건</td>
+                          <td>45건</td>
+                          <td>147건</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="box-header">
+                      <h3 class="box-title">1:1문의</h3>
+                      <p class="pull-right">
+                        <a href="">더보기</a>
+                      </p>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                      <table class="table table-hover">
+                        <tr>
+                          <th>총1:1문의</th>
+                          <th>미답변</th>
+                          <th>답변완료</th>
+                        </tr>
+                        <tr>
+                          <td>450건</td>
+                          <td>45건</td>
+                          <td>147건</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="box-header">
+                      <h3 class="box-title">정산</h3>
+                      <p class="pull-right">
+                        <a href="">더보기</a>
+                      </p>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                      <table class="table table-hover">
+                        <tr>
+                          <th>총 요청건</th>
+                          <th>정산준비중</th>
+                          <th>정산완료</th>
+                        </tr>
+                        <tr>
+                          <td>450건</td>
+                          <td>45건</td>
+                          <td>147건</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-sm-12">
+                  <h4 class="subtitle"><i></i>우수 사용자</h4>
+                  <div class="col-sm-4">
+                    <div class="box-header">
+                      <h3 class="box-title">Worker 일반회원</h3>
+                      <p class="pull-right">
+                        <a href="">더보기</a>
+                      </p>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                      그리드 넣는곳
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="box-header">
+                      <h3 class="box-title">검수자</h3>
+                      <p class="pull-right">
+                        <a href="">더보기</a>
+                      </p>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                      그리드 넣는곳
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="box-header">
+                      <h3 class="box-title">최종 검수자</h3>
+                      <p class="pull-right">
+                        <a href="">더보기</a>
+                      </p>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                      그리드 넣는곳
+                    </div>
+                  </div>
+                </div>
+
+
+				</div>
+
+			</section>
+		</div><!-- content-wrapper -->
+
+	</div>
+	<!-- footer -->
+	<%@ include file="/common/inc/footer.jspf" %>
+	<!-- //fooer -->
+</div>
+<script>
+    <%
+    	if (!"".equals(sCompanyId1)) {
+   	%>
+		fnCompanyBoard(<%=sCompanyId1%>);
+    <%
+    	}
+	%>
+
+</script>
+
+</body>
+</html>

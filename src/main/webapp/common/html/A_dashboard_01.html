@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+  <script type="text/javascript" src="../js/jquery/jquery-1.11.1.min.js"></script>
+  <script type="text/javascript" src="../js/jquery-ui/jquery-ui-1.10.3.custom.min.js"></script>
+  <link href="../css/bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen">
+  <script src="../js/bootstrap/bootstrap.js"></script>
+
+  <link href="../css/bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="screen">
+  <script type="text/javascript" src="../js/bootstrap/moment-with-locales.min.js"></script>
+  <script type="text/javascript" src="../js/bootstrap/bootstrap-datetimepicker.min.js"></script>
+
+  <!-- AdminLTE Setup -->
+  <link rel="stylesheet" href="../css/AdminLTE/font-awesome.min.css">
+  <link rel="stylesheet" href="../css/AdminLTE/ionicons.min.css">
+  <link rel="stylesheet" href="../css/AdminLTE/AdminLTE.css">
+  <link rel="stylesheet" href="../css/AdminLTE/skin-green-light.css">
+  <script type="text/javascript" src="../js/AdminLTE/app.js"></script>
+
+
+  <!-- icheck -->
+  <link rel="stylesheet" href="../js/icheck/skins/flat/blue.css">
+  <script type="text/javascript" src="../js/icheck/icheck.min.js"></script>
+
+  <script type="text/javascript" src="../js/common.js"></script>
+  <link rel="stylesheet" href="../css/common.css">
+</head>
+
+<body class="hold-transition skin-green-light skin-custom">
+  <div class="wrapper">
+
+    <!-- 헤더  -->
+    <c:import url="../inc/header.do" charEncoding="utf-8" />
+    <!-- 좌측 메뉴 -->
+
+
+    <!-- Main content -->
+    <!-- @@ 메인 콘텐츠 -->
+    <div class="content-wrapper">
+      <section class="content">
+
+        <div class="row">
+          <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="data-box data-box-primary">
+              <div class="tit">1차 검수자</div>
+              <div class="more"><a href=""><i class="fa-plus"></i></a></div>
+              <div class="data-box-content">
+                <div>
+                  <span class="num">+6</span>
+                  <strong class="big_num">04</strong>
+                  <p class="txt">과업관리자</p>
+                </div>
+                <div>
+                  <span class="num">+2</span>
+                  <strong class="big_num">12</strong>
+                  <p class="txt">1차검수자</p>
+                </div>
+                <div>
+                  <span class="num red">-204</span>
+                  <strong class="big_num">168</strong>
+                  <p class="txt">Worker&amp;검수자</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="data-box data-box-success">
+              <div class="tit">최종 검수자</div>
+              <div class="more"><a href=""><i class="fa-plus"></i></a></div>
+              <div class="data-box-content">
+                <div>
+                  <span class="num">+6</span>
+                  <strong class="big_num">208</strong>
+                  <p class="txt">최종검수 관리자</p>
+                </div>
+                <div>
+                  <span class="num red">-36</span>
+                  <strong class="big_num">327</strong>
+                  <p class="txt">최종 검수자</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="data-box data-box-warning">
+              <div class="tit">Worker(일반회원)</div>
+              <div class="more"><a href=""><i class="fa-plus"></i></a></div>
+              <div class="data-box-content">
+                <div>
+                  <span class="num">+637</span>
+                  <strong class="big_num">366,380</strong>
+                  <p class="txt">정상회원수</p>
+                </div>
+                <div>
+                  <span class="num">+7</span>
+                  <strong class="big_num">389</strong>
+                  <p class="txt">탈퇴회원수</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+<!-- 탭메뉴 정의 -->
+        <div class="row">
+
+          <div class="col-12 col-sm-12">
+             <div class="card card-primary card-tabs">
+               <div class="card-header p-0 pt-1">
+                 <ul class="nav  nav-tabs nav-primary" id="custom-tabs-one-tab" role="tablist">
+                   <li class="nav-item active">
+                     <a class="nav-link" id="company1" data-toggle="pill"  role="tab" aria-controls="custom-tabs-company1" aria-selected="true">탭1</a>
+                   </li>
+                   <li class="nav-item">
+                     <a class="nav-link" id="company2" data-toggle="pill"  role="tab" aria-controls="custom-tabs-company2" aria-selected="false">탭2</a>
+                   </li>
+                   <li class="nav-item">
+                     <a class="nav-link" id="company3" data-toggle="pill"  role="tab" aria-controls="custom-tabs-company3" aria-selected="false">탭3</a>
+                   </li>
+                 </ul>
+               </div>
+               <div class="card-body" id="card-body">
+
+               </div>
+             </div>
+           </div>
+        </div>
+<!-- 탭메뉴 정의 끝 -->
+
+
+        <div class="row">
+					<div class="col-xs-12">
+					<h4 class="subtitle">프로젝트 관리</h4>
+<!-- 추가된 영역 -->
+          <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <div class="data-box data-box-info">
+                <div class="tit">전체프로젝트(건)</div>
+                <div class="more"><a href="/mgt/project/selectPageListProject.do"><i class="fa-plus"></i></a></div>
+                <div class="data-box-content">
+                  <div>
+                    <strong class="big_num"><%=JobProjIn01Cnt.getString("PROJECT_TOT_CNT")%></strong>
+                    <p class="txt">등록프로젝트</p>
+                  </div>
+                  <div>
+                    <strong class="big_num"><%=JobProjIn01Cnt.getString("PROJECT_TOT_FCNT")%></strong>
+                    <p class="txt">진행완료</p>
+                  </div>
+                  <div>
+                    <strong class="big_num"><%=JobProjIn01Cnt.getString("PROJECT_TOT_PCNT")%></strong>
+                    <p class="txt">진행중</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <div class="data-box data-box-teal">
+                <div class="tit">1:1문의(검)</div>
+                <div class="more"><a href="/mgt/customboard/selectPageListBoard.do"><i class="fa-plus"></i></a></div>
+                <div class="data-box-content">
+                  <div>
+                    <strong class="big_num"><%=JobProjIn02Cnt.getString("BBS_TOT_CNT")%></strong>
+                    <p class="txt">총1:1문의</p>
+                  </div>
+                  <div>
+                    <strong class="big_num"><%=JobProjIn02Cnt.getString("BBS_TOT_PCNT")%></strong>
+                    <p class="txt">미답변</p>
+                  </div>
+                  <div>
+                    <strong class="big_num"><%=JobProjIn02Cnt.getString("BBS_TOT_FCNT")%></strong>
+                    <p class="txt">답변완료</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <div class="data-box data-box-primary">
+                <div class="tit">정산(건)</div>
+                <div class="more"><a href="/mgt/point/selectPageListPoint.do"><i class="fa-plus"></i></a></div>
+                <div class="data-box-content">
+                  <div>
+                    <strong class="big_num"><%=JobProjIn03Cnt.getString("POINT_TOT_CNT")%></strong>
+                    <p class="txt">총 요청</p>
+                  </div>
+                  <div>
+                    <strong class="big_num"><%=JobProjIn03Cnt.getString("POINT_TOT_PCNT")%></strong>
+                    <p class="txt">정산대기</p>
+                  </div>
+                  <div>
+                    <strong class="big_num"><%=JobProjIn03Cnt.getString("POINT_TOT_FCNT")%></strong>
+                    <p class="txt">정산완료</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h4 class="subtitle">주요 프로젝트</h4>
+          <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <div class="data-box data-box-default">
+                <div class="tit small">간판 라벨링 관련 사진업로드</div>
+                <div class="more"><a href=""><i class="fa-plus"></i></a></div>
+                <div class="data-box-content">
+                  <div>
+                    그래프삽입
+                  </div>
+                  <div>
+                    그래프삽입
+                  </div>
+                  <div>
+                    그래프삽입
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <div class="data-box data-box-default">
+                <div class="tit small">간판 라벨링 관련 사진업로드</div>
+                <div class="more"><a href=""><i class="fa-plus"></i></a></div>
+                <div class="data-box-content">
+                  <div>
+                    그래프삽입
+                  </div>
+                  <div>
+                    그래프삽입
+                  </div>
+                  <div>
+                    그래프삽입
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <div class="data-box data-box-default">
+                <div class="tit small">간판 라벨링 관련 사진업로드</div>
+                <div class="more"><a href=""><i class="fa-plus"></i></a></div>
+                <div class="data-box-content">
+                  <div>
+                    그래프삽입
+                  </div>
+                  <div>
+                    그래프삽입
+                  </div>
+                  <div>
+                    그래프삽입
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<!-- 추가된 영역 -->
+
+
+          <!-- 아래부터 과거버전 -->
+          <br><br><br><br><br><br><br>
+          <!-- 아래부터 과거버전 -->
+
+					<div class="tb-box">
+						<div class="col-md-4">
+							<div class="box-header">
+								<h3 class="box-title">전체 프로젝트</h3>
+								<div class="pull-right">
+									<a href="/mgt/project/selectPageListProject.do">상세이동</a>
+								</div>
+							</div>
+			            	<div class="box-body table-responsive no-padding">
+				            	<table class="table table-hover">
+					                <tr>
+					                  <th>등록 프로젝트</th>
+					                  <th>진행중</th>
+					                  <th>진행완료</th>
+					                </tr>
+					                <tr style="cursor:pointer;cursor:hand;">
+					                  <td><%=JobProjIn01Cnt.getString("PROJECT_TOT_CNT")%>건</td>
+                  <td><%=JobProjIn01Cnt.getString("PROJECT_TOT_PCNT")%>건</td>
+                  <td><%=JobProjIn01Cnt.getString("PROJECT_TOT_FCNT")%>건</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="box-header">
+                <h3 class="box-title">1:1 문의</h3>
+                <div class="pull-right">
+                  <a href="/mgt/customboard/selectPageListBoard.do">상세이동</a>
+                </div>
+              </div>
+              <div class="box-body table-responsive no-padding">
+                <table class="table table-hover">
+                  <tr>
+                    <th>총건수</th>
+                    <th>미답변</th>
+                    <th>답변완료</th>
+                  </tr>
+                  <tr style="cursor:pointer;cursor:hand;">
+                    <td><%=JobProjIn02Cnt.getString("BBS_TOT_CNT")%>건</td>
+                    <td><%=JobProjIn02Cnt.getString("BBS_TOT_PCNT")%>건</td>
+                    <td><%=JobProjIn02Cnt.getString("BBS_TOT_FCNT")%>건</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="box-header">
+                <h3 class="box-title">정산</h3>
+                <div class="pull-right">
+                  <a href="/mgt/point/selectPageListPoint.do">상세이동</a>
+                </div>
+              </div>
+              <div class="box-body table-responsive no-padding">
+                <table class="table table-hover">
+                  <tr>
+                    <th>총요청건</th>
+                    <th>정산대기</th>
+                    <th>정산완료</th>
+                  </tr>
+                  <tr style="cursor:pointer;cursor:hand;">
+                    <td><%=JobProjIn03Cnt.getString("POINT_TOT_CNT")%>건</td>
+                    <td><%=JobProjIn03Cnt.getString("POINT_TOT_PCNT")%>건</td>
+                    <td><%=JobProjIn03Cnt.getString("POINT_TOT_FCNT")%>건</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <!-- 주요프로젝트 추가 -->
+            <div class="col-md-12">
+              <div class="box-header">
+                <h3 class="box-title">주요 프로젝트</h3>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="box box-default">프로젝트 : 간판라벨링 사진 올리기</div>
+              <div>
+                그래프 들어가는 곳
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="box box-default">프로젝트 : 간판라벨링 사진 올리기</div>
+              <div>
+                그래프 들어가는 곳
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="box box-default">프로젝트 : 간판라벨링 사진 올리기</div>
+              <div>
+                그래프 들어가는 곳
+              </div>
+            </div>
+          </div>
+          <!-- 주요프로젝트 추가 -->
+
+        </div><!-- col-md-12 -->
+
+    </div><!-- row -->
+    </section>
+  </div><!-- content-wrapper -->
+
+  </div>
+  <!-- footer -->
+  <%@ include file="/common/inc/footer.jspf" %>
+  <!-- //fooer -->
+  </div>
+
+</body>
+</html>

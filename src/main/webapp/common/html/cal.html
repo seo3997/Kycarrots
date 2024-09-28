@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue FullCalendar Example</title>
+  <!-- Vue.js CDN -->
+  <script src="/common/vue/vue2.js"></script>
+  <!-- FullCalendar CDN -->
+    <link href='/common/vue/lib/fullcalendar/main.min.css' rel='stylesheet' />
+    <script src='/common/vue/lib/fullcalendar/main.min.js'></script>
+    <style>
+    .fc-event {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+
+<div id="app">
+    <div id='calendar'></div>
+</div>
+
+<script>
+  // Vue 인스턴스 생성
+  new Vue({
+    el: '#app',
+    mounted() {
+	    var calendarEl = document.getElementById('calendar');
+	    var calendar = new FullCalendar.Calendar(calendarEl, {
+	    	headerToolbar: {
+	    	        		left: 'prev,next today',
+	    	        		center: 'title',
+	    	        		right: 'dayGridMonth,timeGridWeek,timeGridDay'
+	      },
+	      initialView: 'dayGridMonth',
+          events: [
+              { title: '이벤트 1', start: '2024-03-01', color: 'red' }, // 이벤트 1의 색상을 빨간색으로 지정
+           	  { title: '이벤트 1', start: '2024-03-01', color: 'blue' },
+           	  { title: '이벤트 2', start: '2024-03-07', end: '2024-03-10', color: 'blue' } // 이벤트 2의 색상을 파란색으로 지정
+              ],
+              eventClick: function(info) {
+                alert('Event clicked: ' + info.event.title);
+              }
+            });
+	    calendar.render();
+	  }    
+    
+  });
+</script>
+
+</body>
+</html>

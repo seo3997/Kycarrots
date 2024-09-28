@@ -1,0 +1,54 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+		<header class="main-header">
+			<!-- Logo -->
+			<a href="/mgt/main/dashBoardAdmin.do" class="logo">
+				<!-- mini logo for sidebar mini 50x50 pixels -->
+				<span class="logo-mini"><b>planF</b></span>
+				<!-- logo for regular state and mobile devices -->
+				<span class="logo-lg"><b>planF</b></span>
+			</a>
+			<!-- Header Navbar -->
+			<nav class="navbar navbar-static-top" role="navigation">
+				<!-- Navbar Right Menu -->
+				<div class="navbar-custom-menu">
+					<ul class="nav navbar-nav">
+						
+						<%
+								if(ssUserNo.equals("")){ 
+						%>
+						<li class="user user-menu"><a href="/front/member/termAndConditions.do" >	<span><i class="fa fa-user"></i></span><span>회원가입</span>	</a>
+						<li><a href="/admin/login.do"><span><i class="fa fa-lock"></i></span><span>로그인</span></a></li>
+						<%
+								} else{
+						%>
+						<li><a href="/admin/logout.do"><span><i class="fa fa-lock"></i></span><span>로그아웃</span></a></li>
+						<%
+								} 
+						%>
+
+						<li><a href="#"><span><i class="fa fa-lock"></i></span><span>사이트맵</span></a></li>
+						
+						<li class="dropdown visible-xs-block">
+							<a href="#" onclick="fnClickMenuBtn(this); return false;" class="dropdown-toggle"
+								data-toggle="dropdown" role="button" aria-expanded="true"><span><i class="fa fa-th"></i></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+										<li class="user-header"><a href="#">CloudO</a></li>
+										<li class="user-header"><a href="#">플랫폼소개</a></li>
+										<li class="user-header"><a href="#">이용안내</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse">
+					<ul id="topMenuWrap" class="nav navbar-nav">
+							<li><a href="#">CloudO</a></li>
+							<li><a href="#">플랫폼소개</a></li>
+							<li><a href="#">이용안내</a></li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+				<!-- Single button -->
+			</nav>
+		</header>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="front.app">	
+
+	
+	<select id="selectNewsList" parameterType="dataMap" resultType="dataMap">
+		SELECT A.NEWS_SEQ
+			, A.AREA_SE_CODE_L
+			, A.AREA_SE_CODE_M
+			, A.AREA_SE_CODE_S
+			, A.AREA_SE_CODE_D
+			, CONCAT(C.CODE_NM,' ',D.SCLAS_NM,' ',E.SDCLAS_NM) AREA_NAME
+			, CONCAT(SUBSTRING(NEWS_YYYYMM,1,4),'.',SUBSTRING(NEWS_YYYYMM,5,2)) AS NEWS_YYYYMM
+			, A.NEWS_TITLE
+			, A.NEWS_CONT
+			, A.ATCH_DOC_ID
+			, A.REGISTER_NO
+			, B.USER_NM AS REGISTER_NM
+			,DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
+		FROM tb_news A
+		INNER JOIN op_user B
+		ON A.REGISTER_NO = B.USER_NO
+		LEFT  JOIN op_code C  	ON A.AREA_SE_CODE_L=C.GROUP_ID 	AND A.AREA_SE_CODE_M = C.CODE 
+		LEFT JOIN op_sclas_code D ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE
+		LEFT JOIN op_sdclas_code E ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE AND A.AREA_SE_CODE_D=E.SDCLAS_CODE
+		WHERE A.DELETE_YN = 'N'
+		AND A.AREA_SE_CODE_L='R010070'
+		<if test="area_se_code_m != null and area_se_code_m != ''">
+			AND A.AREA_SE_CODE_M = #{area_se_code_m}
+		</if>
+		<if test="area_se_code_s != null and area_se_code_s != ''">
+			AND A.AREA_SE_CODE_S = #{area_se_code_s}
+		</if>
+		<if test="area_se_code_d != null and area_se_code_d != ''">
+			AND A.AREA_SE_CODE_D = #{area_se_code_d}
+		</if>
+	    ORDER BY A.REGIST_DT DESC
+	</select>
+
+	<select id="selectNews" parameterType="dataMap" resultType="dataMap">
+		SELECT A.NEWS_SEQ
+			, A.AREA_SE_CODE_L
+			, A.AREA_SE_CODE_M
+			, A.AREA_SE_CODE_S
+			, A.AREA_SE_CODE_D
+			, C.CODE_NM AS AREA_SE_NM
+			, CONCAT(C.CODE_NM,' ',D.SCLAS_NM,' ',E.SDCLAS_NM) AREA_NAME
+			, A.NEWS_YYYYMM
+			, CONCAT(SUBSTRING(NEWS_YYYYMM,1,4),'.',SUBSTRING(NEWS_YYYYMM,5,2)) AS NEWS_YYYYMM_T
+			, A.NEWS_TITLE
+			, A.NEWS_CONT
+			, A.ATTRB_1
+			, A.NEWS_IMG
+			, A.ATCH_DOC_ID
+			, A.HIT_CNT
+			, A.DELETE_YN
+			, A.REGISTER_NO
+	        , DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
+			, B.USER_NM AS REGISTER_NM
+			, (SELECT FILE_ID FROM tb_file WHERE DOC_ID = A.ATCH_DOC_ID LIMIT 1) AS FILE_ID
+			, (SELECT CONCAT(FILE_PARTN_COURS,FILE_ID,'.',FILE_EXTSN_NM) FROM tb_file WHERE DOC_ID = A.ATCH_DOC_ID LIMIT 1) AS PDF_URL
+		FROM tb_news A 	INNER JOIN op_user B	ON A.REGISTER_NO = B.USER_NO
+		LEFT  JOIN op_code C  	ON A.AREA_SE_CODE_L=C.GROUP_ID 	AND A.AREA_SE_CODE_M = C.CODE 
+		LEFT JOIN op_sclas_code D ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE
+		LEFT JOIN op_sdclas_code E ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE AND A.AREA_SE_CODE_D=E.SDCLAS_CODE
+		WHERE A.NEWS_SEQ = #{news_seq}
+		AND   A.DELETE_YN = 'N'
+	</select>
+
+	<select id="selectCity" parameterType="dataMap"	resultType="dataMap">
+		SELECT 	  A.AREA_SE_CODE_L
+				, A.AREA_SE_CODE_M
+				, A.AREA_SE_CODE_S
+				, A.AREA_SE_CODE_D
+				, C.CODE_NM AS AREA_SE_NM
+				, CONCAT(C.CODE_NM,' ',D.SCLAS_NM,' ',E.SDCLAS_NM) AREA_NAME
+				, A.CITY_TITLE
+				, A.CITY_CONT
+				, A.CITY_IMG
+				, A.ATTRB_1
+				, A.REGISTER_NO
+				, DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT
+				, B.USER_NM AS REGISTER_NM
+		FROM tb_city A INNER JOIN op_user B ON A.REGISTER_NO = B.USER_NO
+		LEFT JOIN op_code C ON A.AREA_SE_CODE_L=C.GROUP_ID AND A.AREA_SE_CODE_M = C.CODE
+		LEFT JOIN op_sclas_code D ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE
+		LEFT JOIN op_sdclas_code E ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE AND A.AREA_SE_CODE_D=E.SDCLAS_CODE
+		WHERE 	A.AREA_SE_CODE_L = 'R010070'
+		AND 	A.AREA_SE_CODE_M = #{area_se_code_m}
+		AND 	A.AREA_SE_CODE_S = #{area_se_code_s}
+		AND 	A.AREA_SE_CODE_D = #{area_se_code_d}
+	</select>
+
+	
+
+	<select id="selectCityOrgList" parameterType="dataMap" resultType="dataMap">
+		SELECT A.AREA_SE_CODE_L
+			, A.AREA_SE_CODE_M
+			, A.AREA_SE_CODE_S
+			, A.AREA_SE_CODE_D
+			, A.ORG_SEQ
+			, A.ORG_NAME
+			, A.ORG_IMG
+			, A.SORT_ORDR
+			, A.USE_YN
+			, DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT
+		FROM tb_city_org A
+		WHERE 1=1
+		AND   A.AREA_SE_CODE_L = 'R010070'
+		AND   A.AREA_SE_CODE_M = #{area_se_code_m}
+		AND   A.AREA_SE_CODE_S = #{area_se_code_s}
+		AND   A.AREA_SE_CODE_D = #{area_se_code_d}
+		ORDER BY A.SORT_ORDR ASC
+
+	</select>
+
+	<select id="selectCityPeopleList" parameterType="dataMap" resultType="dataMap">
+		SELECT    A.AREA_SE_CODE_L
+				, A.AREA_SE_CODE_M
+				, A.AREA_SE_CODE_S
+				, A.AREA_SE_CODE_D
+				, A.PEOPLE_SEQ
+				, A.PEOPLE_NAME
+				, A.PEOPLE_IMG
+				, A.SORT_ORDR
+				, A.USE_YN
+				, DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT
+		FROM tb_city_people A
+		WHERE 1=1
+		AND 	A.AREA_SE_CODE_L = 'R010070'
+		AND 	A.AREA_SE_CODE_M = #{area_se_code_m}
+		AND 	A.AREA_SE_CODE_S = #{area_se_code_s}
+		AND 	A.AREA_SE_CODE_D = #{area_se_code_d}
+		ORDER BY A.SORT_ORDR ASC
+	</select>
+
+	<select id="selectCityBannerList" parameterType="dataMap" resultType="dataMap">
+		SELECT A.BANNER_SEQ 
+			   , A.AREA_SE_CODE_L
+			   , A.AREA_SE_CODE_M
+			   , A.AREA_SE_CODE_S
+			   , A.AREA_SE_CODE_D
+			   , A.BANNER_TITLE
+			   , A.BANNER_CONT
+			   , A.BANNER_URL
+			   , A.BANNER_PHONE
+			   , A.BANNER_START_DT 
+			   , A.BANNER_END_DT  
+			   , A.BANNER_ORG 	    
+			   , A.BANNER_SUBJECT  
+			   , A.BANNER_ORG_IMG 	
+			   , A.BANNER_IMG 		
+			   , A.USE_YN 			
+			   , CONCAT(C.CODE_NM,' ',D.SCLAS_NM,' ',E.SDCLAS_NM) AREA_NAME
+			   , B.USER_NM AS REGISTER_NM
+			   , DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
+		FROM tb_city_banner A
+		INNER JOIN op_user B
+		ON A.REGISTER_NO = B.USER_NO
+		LEFT  JOIN op_code C  	ON A.AREA_SE_CODE_L=C.GROUP_ID 	AND A.AREA_SE_CODE_M = C.CODE 
+		LEFT JOIN op_sclas_code D ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE
+		LEFT JOIN op_sdclas_code E ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE AND A.AREA_SE_CODE_D=E.SDCLAS_CODE
+		WHERE 1 = 1
+		AND A.AREA_SE_CODE_L='R010070'
+		<if test="area_se_code_m != null and area_se_code_m != ''">
+			AND A.AREA_SE_CODE_M = #{area_se_code_m}
+		</if>
+		<if test="area_se_code_s != null and area_se_code_s != ''">
+			AND A.AREA_SE_CODE_S = #{area_se_code_s}
+		</if>
+		<if test="area_se_code_d != null and area_se_code_d != ''">
+			AND A.AREA_SE_CODE_D = #{area_se_code_d}
+		</if>
+	    ORDER BY A.REGIST_DT DESC
+	</select>
+
+
+	<select id="selectStoreList" parameterType="dataMap" resultType="dataMap">
+		SELECT	  A.STORE_SEQ 		
+			  	, A.AREA_SE_CODE_L 	
+			  	, A.AREA_SE_CODE_M 	
+			  	, A.AREA_SE_CODE_S 	
+			  	, A.AREA_SE_CODE_D 	
+			  	, A.STORE_NAME 		
+			  	, A.STORE_CD_CODE_L 
+			  	, A.STORE_CD_CODE_M 
+			  	, A.STORE_CEO 		
+			  	, A.STORE_CONT 		
+			  	, A.STORE_URL 		
+			  	, A.STORE_PHONE 	
+			  	, A.STORE_ADDRESS 	
+			  	, A.STORE_LATITUDE 	
+			  	, A.STORE_LONGITUDE 
+			  	, A.USE_YN 
+				, A.REGISTER_NO
+				, C.CODE_NM AS AREA_SE_CODE_M_NM
+				, D.SCLAS_NM AS AREA_SE_CODE_S_NM
+				, E.SDCLAS_NM AS AREA_SE_CODE_D_NM
+				, CONCAT(C.CODE_NM,' ',D.SCLAS_NM,' ',E.SDCLAS_NM) AREA_NAME
+				, B.USER_NM AS REGISTER_NM
+				, DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT
+		FROM tb_city_store A INNER JOIN op_user B ON A.REGISTER_NO = B.USER_NO
+		LEFT JOIN op_code C ON A.AREA_SE_CODE_L=C.GROUP_ID AND A.AREA_SE_CODE_M = C.CODE
+		LEFT JOIN op_sclas_code D ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE
+		LEFT JOIN op_sdclas_code E ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE AND A.AREA_SE_CODE_D=E.SDCLAS_CODE
+		WHERE 1=1
+		AND A.AREA_SE_CODE_L='R010070'
+		<if test="area_se_code_m != null and area_se_code_m != ''">
+			AND A.AREA_SE_CODE_M = #{area_se_code_m}
+		</if>
+		<if test="area_se_code_s != null and area_se_code_s != ''">
+			AND A.AREA_SE_CODE_S = #{area_se_code_s}
+		</if>
+		<if test="area_se_code_d != null and area_se_code_d != ''">
+			AND A.AREA_SE_CODE_D = #{area_se_code_d}
+		</if>
+	    ORDER BY A.REGIST_DT DESC
+	</select>
+
+	<select id="selectStore" parameterType="dataMap" resultType="dataMap">
+		SELECT	  A.STORE_SEQ 		
+			  	, A.AREA_SE_CODE_L 	
+			  	, A.AREA_SE_CODE_M 	
+			  	, A.AREA_SE_CODE_S 	
+			  	, A.AREA_SE_CODE_D 	
+			  	, A.STORE_NAME 		
+			  	, A.STORE_CD_CODE_L 
+			  	, A.STORE_CD_CODE_M 
+			  	, A.STORE_CEO 		
+			  	, A.STORE_CONT 		
+			  	, A.STORE_URL 		
+			  	, A.STORE_PHONE 	
+			  	, A.STORE_ADDRESS 	
+			  	, A.STORE_LATITUDE 	
+			  	, A.STORE_LONGITUDE 
+			  	, A.STORE_IMG 		
+			  	, A.USE_YN 
+				, A.REGISTER_NO
+				, C.CODE_NM AS AREA_SE_NM
+				, F.CODE_NM AS STORE_CD_NM
+				, CONCAT(C.CODE_NM,' ',D.SCLAS_NM,' ',E.SDCLAS_NM) AREA_NAME
+				, DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT
+				, B.USER_NM AS REGISTER_NM
+		FROM tb_city_store A INNER JOIN op_user B ON A.REGISTER_NO = B.USER_NO
+		LEFT JOIN op_code C ON A.AREA_SE_CODE_L=C.GROUP_ID AND A.AREA_SE_CODE_M = C.CODE
+		LEFT JOIN op_sclas_code D ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE
+		LEFT JOIN op_sdclas_code E ON A.AREA_SE_CODE_L=D.GROUP_ID AND A.AREA_SE_CODE_M = D.CODE AND A.AREA_SE_CODE_S=D.SCLAS_CODE AND A.AREA_SE_CODE_D=E.SDCLAS_CODE
+		LEFT JOIN op_code F ON A.STORE_CD_CODE_L=F.GROUP_ID AND A.STORE_CD_CODE_M = F.CODE
+		WHERE A.STORE_SEQ 		= #{store_seq}
+	</select>
+
+
+
+</mapper>

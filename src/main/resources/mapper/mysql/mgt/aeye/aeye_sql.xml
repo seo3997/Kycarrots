@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mgt.aeye">	
+	
+	<select id="selectTotCntOcrMeta" parameterType="dataMap" resultType="int">
+		SELECT COUNT(1) AS TOT_CNT
+		FROM tb_ocr_meta A
+	<include refid="whereParam" />
+	</select>
+
+
+	<select id="selectPageListOcrMeta" parameterType="dataMap" resultType="dataMap">
+		<if test="limitStart != null">
+			<![CDATA[
+			   SELECT AA.*
+			   FROM(
+			]]>	
+		</if>			
+		<include refid="selectParam" />
+		<include refid="whereParam" />
+		<if test=" limitStart != null">
+			<![CDATA[
+	    			ORDER BY A.UPDT_DT DESC
+				) AA
+				LIMIT #{limitStart},#{limitEnd}
+			]]>
+		</if>
+	</select>
+
+	<sql id="selectParam">
+		SELECT	  A.META_ID 
+			     ,A.DOC_TITLE
+				 ,A.META_DATA
+				 ,A.DOC_MODEL_ID
+				 ,A.META_DOC_ID
+				 ,A.REGISTER_NO
+				 ,B.USER_NM AS REGISTER_NM
+				 ,DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
+		FROM tb_ocr_meta A
+		INNER JOIN op_user B
+		ON A.REGISTER_NO = B.USER_NO
+	</sql>
+
+	<sql id="whereParam">
+		<if test="sch_text != null and sch_text != ''">
+			AND A.DOC_TITLE LIKE CONCAT('%',#{sch_text},'%')
+		</if>
+	</sql>
+	
+	<select id="selectOcrMeta" parameterType="dataMap" resultType="dataMap">
+		SELECT 	  A.META_ID
+			     ,A.DOC_TITLE
+				 ,A.META_DATA
+				 ,A.NEW_META_DATA
+				 ,A.DOC_MODEL_ID
+				 ,A.META_DOC_ID
+				 ,A.REGISTER_NO
+				 ,B.USER_ID AS REGISTER_ID
+		         ,DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
+				 ,B.USER_NM AS REGISTER_NM
+		FROM tb_ocr_meta A 	INNER JOIN op_user B	ON A.REGISTER_NO = B.USER_NO
+		WHERE 	A.META_ID= #{META_ID}
+	</select>
+		
+	<insert id="insertOcrMeta" parameterType="dataMap">
+		INSERT INTO tb_ocr_meta (
+		      DOC_TITLE
+			, META_DATA
+			, DOC_MODEL_ID
+			, META_DOC_ID
+			, REGISTER_NO
+			, REGIST_DT
+			, UPDUSR_NO
+			, UPDT_DT
+		) values (
+			 #{DOC_TITLE}
+			,#{META_DATA}
+			,#{DOC_MODEL_ID}
+			,#{META_DOC_ID}
+			,#{REGISTER_NO}
+			,CURRENT_TIMESTAMP
+			,#{UPDUSR_NO}
+			,CURRENT_TIMESTAMP
+		)
+	</insert>
+
+	<update id="updateOcrMeta" parameterType="dataMap">
+		UPDATE tb_ocr_meta
+		SET  DOC_TITLE 		= #{DOC_TITLE}
+			,META_DATA 		= #{META_DATA}
+			,DOC_MODEL_ID 	= #{DOC_MODEL_ID}
+			,META_DOC_ID 	= #{META_DOC_ID}
+			,UPDUSR_NO 		= #{UPDUSR_NO}
+			,UPDT_DT 		= CURRENT_TIMESTAMP
+		WHERE META_ID 		= #{META_ID}
+	</update>
+
+	<update id="updateOcrMetaNew" parameterType="dataMap">
+		UPDATE tb_ocr_meta
+		SET  NEW_META_DATA 	= #{NEW_META_DATA}
+			,UPDUSR_NO 		= #{UPDUSR_NO}
+			,UPDT_DT 		= CURRENT_TIMESTAMP
+		WHERE META_ID 		= #{META_ID}
+	</update>
+	
+	<update id="deleteOcrMeta" parameterType="dataMap">
+		DELETE FROM tb_ocr_meta
+		WHERE  META_ID = #{META_ID}
+	</update>
+
+	
+</mapper>

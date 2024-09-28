@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../fullcalendar.min.css' rel='stylesheet' />
+<link href='../fullcalendar.print.min.css' rel='stylesheet' media='print' />
+<script src='../lib/moment.min.js'></script>
+<script src='../lib/jquery.min.js'></script>
+<script src='../fullcalendar.min.js'></script>
+<script src='../locale/ko.js'></script>
+<style type="text/css">
+	.fc-sun { background-color:#fffff4}
+	.fc-sun span { color:#FF0000;}    /* 일요일 */
+	.fc-sun .fc-day-number { color:#FF0000; }    /* 일요일 */
+
+	.fc-sat { background-color:#fffff4}
+	.fc-sat span { color:#0000FF; }    /* 토요일 */    
+  .fc-sat .fc-day-number { color:#0000FF; }    /* 토요일 */    
+</style>
+<script>
+
+	$(document).ready(function() {
+
+		$('#calendar').fullCalendar({
+			defaultDate: '2016-12-12',
+			editable: false,
+			//selectable: true,
+			eventLimit: true, // allow "more" link when too many events
+			viewRender: function (view, element) {
+				var b = $('#calendar').fullCalendar('getDate');
+				//alert(b.format('L'));
+				resetCal();
+			},
+			eventRender: function(event, element) {
+					//return "<div>"+event.id+"</div>";		
+					
+					var rtnStr= "<a href=\"#\" onclick=\"alert('');\" class=\"fc-day-grid-event fc-h-event fc-event fc-start fc-end\" style=\"background-color:"+event.color+";border-color:"+event.color+"\"><div class=\"fc-content\"> <span class=\"fc-title\">"+event.title+"</span></div></a>";				
+					return rtnStr;
+			}
+
+			/*,
+			events: [
+				{
+					title: 'All Day Event',
+					start: '2016-12-01',
+					color: '#ff0099'
+				},
+				{
+					title: 'Long Event',
+					start: '2016-12-07',
+					end: '2016-12-10'
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: '2016-12-09T16:30:00'
+				},
+				{
+					id: 999,
+					title: 'Test Event',
+					start: '2016-12-16T16:00:00',
+					end: '2016-12-17T'
+				},
+				{
+					title: 'Conference',
+					start: '2016-12-11',
+					end: '2016-12-13'
+				},
+				{
+					title: 'Meeting',
+					start: '2016-12-12T10:30:00',
+					end: '2016-12-12T12:30:00'
+				},
+				{
+					title: 'Lunch',
+					start: '2016-12-12T12:00:00'
+				},
+				{
+					title: 'Meeting',
+					start: '2016-12-12T14:30:00'
+				},
+				{
+					title: 'Happy Hour',
+					start: '2016-12-12T17:30:00'
+				},
+				{
+					title: 'Dinner',
+					start: '2016-12-12T20:00:00'
+				},
+				{
+					title: 'Birthday Party',
+					start: '2016-12-13T07:00:00'
+				},
+				{
+					title: 'Click for Google',
+					url: 'http://google.com/',
+					start: '2016-12-28'
+				}
+			]*/
+		});	
+	});
+
+	function resetCal(){		
+
+		$('#calendar').fullCalendar('removeEvents');
+    //$('#calendar').fullCalendar('refetchEvents');
+
+		var source = [
+				{
+					id : 'a111',
+					title: 'dddd',
+					start: '2017-01-01',
+					color: '#ff0099'
+				},
+				{
+					id : 'b222',
+					title: 'aaaa',
+					start: '2016-12-30',
+					color: '#ff0099'
+				},
+				{
+					id : 'c3333',
+					title: 'ccc',
+					start: '2016-12-30',
+					color: '#ff0099'
+				}
+
+			];
+		
+		//$('#calendar').fullCalendar( 'removeEventSource', source);
+		$('#calendar').fullCalendar('addEventSource', 
+			{
+				events : source
+			}
+		);         
+		
+		//$('#calendar').fullCalendar( 'refetchEvents' );
+	}
+
+	function fnColoseDetailInfo(){
+		$("#dtl_info").hide('slow');
+	}
+
+</script>
+<style>
+
+	body {
+		margin: 40px 10px;
+		padding: 0;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		font-size: 14px;
+	}
+
+	#calendar {
+		max-width: 900px;
+		margin: 0 auto;
+	}
+
+</style>
+</head>
+<body>
+
+<div style="position:relative; width:100%;">
+	<div id='calendar'></div>
+	<div id="dtl_info" style="position:absolute; top:50%; left:50%; z-index:999; width:300px; height:200px; margin-left:-150px; margin-top:-100px; border:1px solid #ddd; background-color:#fff; box-shadow: 0 2px 6px rgba(0,0,0,.20);">
+		<div style="height:36px;background:#eee;">
+			<span style="float:left;line-height:36px; padding-left:10px; font-size:15px; font-weight:bold;">※ 상세 일정</span>
+			<span onclick="fnColoseDetailInfo();return false;" style="float:right;margin-top:3px; margin-right:5px; cursor:pointer;"class="fc-icon-x"></span>
+		</div>
+		<div style="padding:10px; font-size:12px; line-height:25px;">
+			※ 일 시 : <span id="dtl_info_1">2016.01.30 14:00</span><br/>
+			※ 장 소 : <span id="dtl_info_2">빅스터</span><br/>
+			※ 내 용 : <span id="dtl_info_3">로봇기자관련 현장실태조사 로봇기자관련 현장실태조사</span><br/>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

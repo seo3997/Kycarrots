@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="common">
+	<select id="selectUserList" parameterType="dataMap" resultType="dataMap">
+	SELECT * 
+	FROM tb_user
+	</select>
+	
+	<select id="selectCodeList" parameterType="dataMap" resultType="dataMap">
+	/* common.selectCodeList */
+	SELECT 
+		CODE
+		,CODE_NM
+		,CODE_NM_ENG
+		,ATTRB_1
+		,ATTRB_2
+		,ATTRB_3
+	FROM op_code
+	WHERE GROUP_ID = #{group_id}
+	AND   USE_YN = 'Y'
+	<if test="attrb_1 != null and attrb_1 != ''">
+	AND   ATTRB_1 = #{attrb_1}
+	</if>
+	<if test="attrb_2 != null and attrb_2 != ''">
+	AND   ATTRB_2 = #{attrb_2}
+	</if>
+	<if test="attrb_3 != null and attrb_3 != ''">
+	AND   ATTRB_3 = #{attrb_3}
+	</if>
+	<choose>
+		<when test="orderby != null and orderby != ''">
+	ORDER BY ${orderby}
+		</when>
+		<otherwise>
+	ORDER BY SORT_ORDR, CODE_NM
+		</otherwise>
+	</choose>
+	</select>
+
+<select id="selectSCodeList" parameterType="dataMap" resultType="dataMap">
+	/* common.selectSCodeList */
+	SELECT 
+				GROUP_ID
+				,CODE
+				,SCLAS_CODE
+				,SCLAS_NM
+				,ATTRB_1
+				,ATTRB_2
+				,ATTRB_3
+	FROM op_sclas_code
+	WHERE GROUP_ID = #{lcode}
+	AND CODE = #{mcode}
+	<if test="attrb_1 != null and attrb_1 != ''">
+	AND   ATTRB_1 = #{attrb_1}
+	</if>
+	<if test="attrb_2 != null and attrb_2 != ''">
+	AND   ATTRB_2 = #{attrb_2}
+	</if>
+	<if test="attrb_3 != null and attrb_3 != ''">
+	AND   ATTRB_3 = #{attrb_3}
+	</if>
+	<choose>
+		<when test="orderby != null and orderby != ''">
+	ORDER BY ${orderby}
+		</when>
+		<otherwise>
+	ORDER BY SORT_ORDR, SCLAS_NM
+		</otherwise>
+	</choose>
+	</select>
+
+
+	<select id="selectSDCodeList" parameterType="dataMap" resultType="dataMap">
+	SELECT 
+				GROUP_ID
+				,CODE
+				,SCLAS_CODE
+				,SDCLAS_CODE
+				,SDCLAS_NM
+				,ATTRB_1
+				,ATTRB_2
+				,ATTRB_3
+	FROM op_sdclas_code
+	WHERE GROUP_ID 	= #{lcode}
+	AND CODE 		= #{mcode}
+	AND SCLAS_CODE 	= #{ccode}
+	<if test="attrb_1 != null and attrb_1 != ''">
+	AND   ATTRB_1 = #{attrb_1}
+	</if>
+	<if test="attrb_2 != null and attrb_2 != ''">
+	AND   ATTRB_2 = #{attrb_2}
+	</if>
+	<if test="attrb_3 != null and attrb_3 != ''">
+	AND   ATTRB_3 = #{attrb_3}
+	</if>
+	<choose>
+		<when test="orderby != null and orderby != ''">
+	ORDER BY ${orderby}
+		</when>
+		<otherwise>
+	ORDER BY SORT_ORDR, SDCLAS_NM
+		</otherwise>
+	</choose>
+	</select>
+
+
+
+	
+	<!-- 메뉴 리스트 -->
+	<select id="selectTopMenuList" parameterType="dataMap" resultType="dataMap">
+	/* common.selectTopMenuList */
+	SELECT A.MENU_ID
+		, A.MENU_LEVEL
+		, A.MENU_NM
+		, A.URL
+	FROM op_menu A
+	LEFT OUTER JOIN (
+		SELECT DISTINCT(MENU_ID) FROM op_author_menu
+		WHERE AUTHOR_ID IN (
+			SELECT AUTHOR_ID FROM op_user_author
+			WHERE USER_NO = #{ss_user_no}
+		)
+	) B
+	ON A.MENU_ID = B.MENU_ID
+	WHERE A.MENU_LEVEL = '3'
+		AND A.USE_YN = 'Y'
+		AND A.MENU_ID LIKE CONCAT(#{up_menu_id}, '%')
+		AND B.MENU_ID IS NOT NULL
+	ORDER BY A.SORT_ORDR, A.MENU_NM
+	</select>
+	
+	<select id="selectLeftMenuList" parameterType="dataMap" resultType="dataMap">
+	/* common.selectLeftMenuList */
+	SELECT A.MENU_ID
+		, A.MENU_LEVEL
+		, A.MENU_NM
+		, A.MENU_TY_CODE
+		, A.URL
+	FROM op_menu A
+	LEFT OUTER JOIN (
+		SELECT DISTINCT(MENU_ID) FROM op_author_menu
+		WHERE AUTHOR_ID IN (
+			SELECT AUTHOR_ID FROM op_user_author
+			WHERE USER_NO = #{ss_user_no}
+		)
+	) B
+	ON A.MENU_ID = B.MENU_ID
+	<![CDATA[
+	WHERE A.MENU_LEVEL > 3
+		AND A.USE_YN = 'Y'
+		AND A.MENU_TY_CODE <> '30'
+		AND A.MENU_ID LIKE CONCAT(#{up_menu_id}, '%')
+		AND B.MENU_ID IS NOT NULL
+	ORDER BY A.SORT_ORDR_1 , A.SORT_ORDR_2 , A.SORT_ORDR_3 , A.SORT_ORDR_4 , A.SORT_ORDR_5 , A.SORT_ORDR_6, A.MENU_NM
+	]]>
+	</select>
+	
+	<select id="selectMenuByUrl" parameterType="dataMap" resultType="dataMap">
+	/* common.selectMenuByUrl */
+	/* ROWNUM=1을 추가함 분석필요함 2017.11.23 soohyun.Seo */
+	SELECT 
+		A.MENU_ID,
+		A.MENU_NM
+	FROM op_menu A
+	WHERE A.URL = #{url}
+	<![CDATA[
+	AND A.MENU_LEVEL>=4
+	]]>
+	LIMIT 1
+	</select>
+	
+	<select id="menuSelect" parameterType="dataMap" resultType="dataMap">
+	/* common.menuSelect */
+	SELECT MENU_ID
+		, UP_MENU_ID
+		, MENU_LV
+		, MENU_NM
+		, URL
+	FROM tb_menu
+	WHERE MENU_ID = #{menu_id}
+	</select>
+	
+	<select id="menuUrlSelect" parameterType="dataMap" resultType="dataMap">
+	/* common.menuUrlSelect */
+	SELECT MENU_ID
+		, UP_MENU_ID
+		, MENU_LV
+		, MENU_NM
+		, URL
+	FROM tb_menu
+	WHERE URL = #{url}
+	<![CDATA[
+		AND MENU_LV > 2
+	]]>
+	</select>
+	
+	<select id="selectListUserAcessMenu" parameterType="dataMap" resultType="String">
+	/* common.selectListUserAcessMenu */
+	SELECT DISTINCT D.URL
+	FROM op_user A, op_user_author B, op_author_menu C, op_menu D
+	WHERE A.USER_NO = B.USER_NO
+		AND B.AUTHOR_ID = C.AUTHOR_ID
+		AND C.MENU_ID = D.MENU_ID
+		AND A.USER_NO = #{ss_user_no}
+		AND D.URL IS NOT NULL
+	</select>
+	
+	<insert id="insertPageView" parameterType="dataMap">
+	/* common.insertPageView */
+	INSERT INTO op_pv (
+		VISIT_ID
+		,VISIT_DT
+		, VISIT_DE
+		,VISIT_IP
+		, PAGE_URL
+		, PAGE_PARAMTR
+		, ACCES_SE
+		, REGISTER_NO
+	) VALUES (
+		SEQ_OP_PV.NEXTVAL
+		,SYSDATE
+		, #{visit_de}
+		, #{visit_ip}
+		, #{page_url}
+		, #{page_paramtr}
+		, #{acces_se}
+		, #{ss_user_no}
+	)
+	</insert>
+	
+</mapper>

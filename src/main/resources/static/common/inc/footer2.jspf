@@ -1,0 +1,81 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
+<!-- Main Footer -->
+<footer class="main-footer2">
+	<div class="row ft-inbox">
+		<div class="col-xs-12 col-sm-8 m-ft-menu">			
+			<a href="#">홈페이지 이용안내</a>
+			<a href="#" class="emp">개인정보처리방침</a>
+			<a href="#">저작권보호정책</a>
+			<a href="#">전자우편주소수집거부</a>
+			<a href="#">찾아오시는길</a>			
+		</div>
+		<div class="col-xs-12 col-sm-4">
+			<div class="pull-right">
+			
+				<div class="col-sm-6">
+					<div class="input-group input-group-sm">
+						<label for="link-familysite" class="blind">패밀리 사이트 바로가기</label>
+						<select id="link-familysite" class="form-control">
+							<option value="">패밀리 사이트</option>
+							<option value="">한국농수산식품유통공사</option>
+							<option value="">KAMIS(농산물유통정보)</option>
+							<option value="">수출지원시스템</option>
+							<option value="">FIS(식품산업통계정보)</option>
+							<option value="">한국외식산업정보포털(The외식)</option>
+							<option value="">농수산식품기업지원센터</option>
+							<option value="">AgroTrade</option>
+							<option value="">농수산물사이버거래소</option>
+							<option value="">싱싱장터</option>
+							<option value="">aT Center</option>
+							<option value="">aT 농식품유통교육원</option>
+							<option value="">aT 화훼공판장</option>
+							<option value="">비축농산물 전자입찰시스템</option>
+						</select>
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-dpgray btn-sm">이동</button>
+						</span>
+					</div>
+				</div>
+				
+				<div class="col-sm-6">
+					<div class="input-group input-group-sm">
+						<label for="link" class="blind"></label>
+						<select id="" class="form-control">
+							<option value="">유관기관</option>
+							<option value="">농림축산식품부</option>
+							<option value="">국립농산물품질관리원</option>
+							<option value="">농촌진흥청 국립농업과학원</option>
+							<option value="">농림축산검역본부</option>
+							<option value="">국립종자원</option>
+							<option value="">기상청</option>
+							<option value="">농림수산식품기술기획평가원</option>
+							<option value="">농림수산식품교육문화정보원</option>
+							<option value="">농식품공무원교육원</option>
+							<option value="">농촌진흥청</option>
+							<option value="">농협</option>
+							<option value="">산림청</option>
+							<option value="">수협</option>
+							<option value="">한국농어촌공사</option>
+							<option value="">국립한국농수산대학</option>
+							<option value="">한국농촌경제연구원</option>
+							<option value="">한국식품연구원</option>
+							<option value="">남북교류협력지원협회</option>
+							<option value="">TradeNAVI(통합무역정보서비스)</option>
+						</select>
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-dpgray btn-sm">이동</button>
+						</span>
+					</div>
+				</div>
+					
+			</div>
+		</div>
+	</div>
+	<!-- Default to the left -->
+	<strong>Copyright 2018. <a href="#">Microbiz</a>.</strong> All rights reserved.
+</footer>
+
+<script type="text/javascript">
+		$(".content-header #spnavi").html($('#top_menu_nm').val());
+</script>

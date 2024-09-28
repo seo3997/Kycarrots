@@ -1,0 +1,1071 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mgt.survey">
+
+	<resultMap id="TbSurveyMap" type="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+		<result property="SURVEY_ID" column="SURVEY_ID"/>
+		<result property="SURVEY_TITLE" column="SURVEY_TITLE"/>
+		<result property="OPENED" column="OPENED"/>
+		<result property="CLOSED" column="CLOSED"/>
+		<result property="ADMINEMAIL" column="ADMINEMAIL"/>
+		<result property="ADMINPID" column="ADMINPID"/>
+		<result property="ACCESSRESULTSRESTRICTION" column="ACCESSRESULTSRESTRICTION"/>
+		<result property="RESULTSPASSWORD" column="RESULTSPASSWORD"/>
+		<result property="ENTRYRESTRICTION" column="ENTRYRESTRICTION"/>
+		<result property="ENTRYPASSWORD" column="ENTRYPASSWORD"/>
+		<result property="MEMBERS" column="MEMBERS"/>
+		<result property="ONEENTRYONLY" column="ONEENTRYONLY"/>
+		<result property="SHOWBORDER" column="SHOWBORDER"/>
+		<result property="EXPORTDELIMITER" column="EXPORTDELIMITER"/>
+		<result property="EXPORTINCLUDEQUESTIONS" column="EXPORTINCLUDEQUESTIONS"/>
+		<result property="IP" column="IP"/>
+		<result property="BROWSERID" column="BROWSERID"/>
+		<result property="BGCOLOR" column="BGCOLOR"/>
+		<result property="TEXTCOLOR" column="TEXTCOLOR"/>
+		<result property="FONT_SIZE" column="FONT_SIZE"/>
+		<result property="HEADER" column="HEADER"/>
+		<result property="FOOTER" column="FOOTER"/>
+		<result property="BASEHREF" column="BASEHREF"/>
+		<result property="USERCSS" column="USERCSS"/>
+		<result property="DIVIDER" column="DIVIDER"/>
+		<result property="EXITPAGETEXT_ISHTML" column="EXITPAGETEXT_ISHTML"/>
+		<result property="EXITPAGETEXT" column="EXITPAGETEXT"/>
+		<result property="NUMBERRODUCTIONTEXT" column="NUMBERRODUCTIONTEXT"/>
+		<result property="NUMENTRIES" column="NUMENTRIES"/>
+		<result property="QUESTION_CNT" column="QUESTION_CNT"/>
+	</resultMap>
+
+	<select id="selectTotCntSurvey" parameterType="dataMap" resultType="int">
+	/* mgt.survey.selectTotCntBoard */
+	SELECT COUNT(1) AS TOT_CNT
+	FROM TB_SURVEY A
+	WHERE 1=1
+	<include refid="whereParam" />
+	</select>
+
+
+	<select id="selectPageListSurvey" parameterType="dataMap" resultType="dataMap">
+		<if test="limitStart != null">
+			<![CDATA[
+				SELECT  AA.*
+				FROM(
+			]]>
+		</if>
+		<include refid="selectParam" />
+		<include refid="whereParam" />
+		<if test=" limitStart != null">
+			<![CDATA[
+	    						ORDER BY A.SURVEY_ID DESC
+				) AA
+				LIMIT #{limitStart},#{limitEnd}
+			]]>
+		</if>
+	</select>
+
+	<sql id="selectParam">
+			SELECT	   SURVEY_ID                    
+						  ,SURVEY_TITLE                 
+						  ,OPENED                      	
+						  ,CLOSED                     	
+						  ,ADMINEMAIL					
+						  ,ADMINPID						
+						  ,ACCESSRESULTSRESTRICTION     
+						  ,RESULTSPASSWORD 				
+						  ,ENTRYRESTRICTION				
+						  ,ENTRYPASSWORD					
+						  ,MEMBERS						
+						  ,ONEENTRYONLY					
+						  ,SHOWBORDER					
+						  ,EXPORTDELIMITER				
+						  ,EXPORTINCLUDEQUESTIONS		
+						  ,IP							
+						  ,BROWSERID						
+						  ,BGCOLOR						
+						  ,TEXTCOLOR						
+						  ,FONT_SIZE						
+						  ,HEADER 						
+						  ,FOOTER 						
+						  ,BASEHREF 						
+						  ,USERCSS 						
+						  ,DIVIDER						
+						  ,EXITPAGETEXT_ISHTML			
+						  ,EXITPAGETEXT         			
+						  ,NUMBERRODUCTIONTEXT 			
+						  ,(SELECT COUNT(DISTINCT RESULTS_ID) NUMENTRIES
+                           FROM TB_RESULTS 
+                           WHERE SURVEY_ID=A.SURVEY_ID
+						  ) AS NUMENTRIES
+			FROM TB_SURVEY A
+			WHERE 1=1
+	</sql>
+
+	<sql id="whereParam">
+		<if test="sch_text != null and sch_text != ''">
+			AND A.SURVEY_TITLE LIKE '%'|| #{sch_text}|| '%'  
+		</if>
+	</sql>
+
+	<select id="selectSurvey" parameterType="dataMap" resultMap="TbSurveyMap">
+	/* mgt.survey.selectSurvey */
+	SELECT	   SURVEY_ID                    
+				  ,SURVEY_TITLE                 
+				  ,IFNULL(OPENED,'') AS OPENED
+				  ,IFNULL(CLOSED,'') AS CLOSED
+				  ,ADMINEMAIL					
+				  ,ADMINPID						
+				  ,ACCESSRESULTSRESTRICTION     
+				  ,RESULTSPASSWORD 				
+				  ,ENTRYRESTRICTION				
+				  ,ENTRYPASSWORD					
+				  ,MEMBERS						
+				  ,ONEENTRYONLY					
+				  ,SHOWBORDER					
+				  ,EXPORTDELIMITER				
+				  ,EXPORTINCLUDEQUESTIONS		
+				  ,IP							
+				  ,BROWSERID						
+				  ,BGCOLOR						
+				  ,TEXTCOLOR						
+				  ,FONT_SIZE						
+				  ,HEADER 						
+				  ,FOOTER 						
+				  ,BASEHREF 						
+				  ,USERCSS 						
+				  ,DIVIDER						
+				  ,EXITPAGETEXT_ISHTML			
+				  ,EXITPAGETEXT         			
+				  ,NUMBERRODUCTIONTEXT 			
+				  ,(SELECT COUNT(DISTINCT RESULTS_ID) NUMENTRIES
+                    FROM TB_RESULTS 
+                    WHERE SURVEY_ID=A.SURVEY_ID
+	               <if test="surveyGroupId != null and surveyGroupId != ''">
+	               	AND   RESULTS_ID IN(
+		                    SELECT  RESULTS_ID
+		                    FROM TB_SURVEY_USER_ENTRY A
+		                    WHERE USER_NO           =#{userNo}
+		                    AND   SURVEY_GROUP_ID   =#{surveyGroupId}
+		                    AND   SURVEY_YEAR       =#{surveyYear}
+		                    AND   SURVEY_DEGREE     =#{surveyDegree}
+		                    AND   SURVEY_ID         =#{surveyId}
+	                    ) 
+	               </if>
+				  ) AS NUMENTRIES
+				  ,(SELECT COUNT(A.QUESTION_ID)
+					FROM TB_QUESTION A
+					WHERE SURVEY_ID=A.SURVEY_ID
+				  )AS QUESTION_CNT
+	FROM TB_SURVEY A
+	WHERE 	A.SURVEY_ID = #{surveyId}
+	</select>
+			
+	<insert id="insertSurvey" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+	/*  mgt.survey.insertSurvey */
+	INSERT INTO TB_SURVEY (
+	     SURVEY_ID
+		,SURVEY_TITLE
+	) values (
+	     #{SURVEY_ID} 
+		,#{SURVEY_TITLE}
+	)
+	</insert>
+
+	<update id="updateSurvey" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+	/*  mgt.survey.updateSurvey */
+	UPDATE TB_SURVEY
+	SET SURVEY_TITLE = #{SURVEY_TITLE}
+	WHERE SURVEY_ID = #{SURVEY_ID}
+	</update>
+
+	<update id="updateExportSurvey" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+	/*  mgt.survey.updateSurvey */
+	UPDATE TB_SURVEY
+	SET EXPORTDELIMITER 	   = #{EXPORTDELIMITER}
+	   ,EXPORTINCLUDEQUESTIONS = #{EXPORTINCLUDEQUESTIONS}
+	WHERE SURVEY_ID = #{SURVEY_ID}
+	</update>
+
+	<update id="updateOpenedSurvey" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+	/*  mgt.survey.updateOpenedSurvey */
+	UPDATE TB_SURVEY
+	SET OPENED 	   = #{OPENED}
+	   ,CLOSED 	   = ''
+	WHERE SURVEY_ID = #{SURVEY_ID}
+	</update>
+
+	<update id="updateClosedSurvey" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+	/*  mgt.survey.updateClosedSurvey */
+	UPDATE TB_SURVEY
+	SET CLOSED 	   = #{CLOSED}
+	WHERE SURVEY_ID = #{SURVEY_ID}
+	</update>
+	
+	<update id="deleteSurvey" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+	/* mgt.survey.deleteSurvey */
+	DELETE FROM TB_SURVEY
+	WHERE SURVEY_ID = #{SURVEY_ID}
+	</update>
+
+	<select id="selectExistSurvey" parameterType="String" resultType="int">
+	/* mgt.survey.selectExistSurvey */
+	SELECT COUNT(1) AS TOT_CNT
+	FROM TB_SECTION
+	WHERE SURVEY_ID=#{SURVEY_ID}
+	</select>
+
+	<insert id="insertSection" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSection">
+	/*  mgt.survey.insertSection */
+	INSERT INTO TB_SECTION (
+		 SURVEY_ID 
+		,SECTION_ID
+		,SECTION_TITLE
+		,SECTION_HTMLTITLE        
+	) values (
+	     #{SURVEY_ID} 
+		,#{SECTION_ID}
+		,#{SECTION_TITLE}
+		,#{SECTION_HTMLTITLE}        
+	)
+	</insert>
+
+	<update id="updateSection" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSection">
+	/*  mgt.survey.updateSection */
+	UPDATE TB_SECTION 
+		 SET SECTION_TITLE		=#{SECTION_TITLE}
+		    ,SECTION_HTMLTITLE  =#{SECTION_HTMLTITLE}        
+	WHERE SURVEY_ID  = #{SURVEY_ID} 
+	AND   SECTION_ID = #{SECTION_ID}
+	</update>
+
+	<select id="selectSection" parameterType="dataMap" resultType="com.whomade.kycarrots.mgt.survey.vo.TbSection">
+		SELECT SURVEY_ID
+			  ,SECTION_ID   
+			  ,SECTION_TITLE
+			  ,SECTION_HTMLTITLE        
+	    FROM TB_SECTION
+		WHERE SURVEY_ID  = #{SURVEY_ID} 
+		AND   SECTION_ID = #{SECTION_ID}
+	</select>
+
+	<delete id="deleteSection" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSection">
+	/*  mgt.survey.deleteSection */
+	DELETE FROM TB_SECTION
+	WHERE SURVEY_ID		= #{SURVEY_ID}
+	AND   SECTION_ID	= #{SECTION_ID}
+	</delete>
+
+	<delete id="deleteSectionQuestion" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSection">
+	/*  mgt.survey.deleteSectionQuestion */
+	DELETE FROM TB_QUESTION
+	WHERE SURVEY_ID		= #{SURVEY_ID}
+	AND   SECTION_ID	= #{SECTION_ID}
+	</delete>
+
+	<delete id="deleteSectionQuestionLabel" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSection">
+	/*  mgt.survey.deleteSectionQuestionLabel */
+	DELETE FROM TB_QUESTION_LABEL
+	WHERE SURVEY_ID		= #{SURVEY_ID}
+	AND   SECTION_ID	= #{SECTION_ID}
+	</delete>
+
+
+	<select id="selectSectionId" parameterType="String" resultType="int">
+		SELECT IFNULL(MAX(SECTION_ID)+1,0) AS MAXID
+		FROM TB_SECTION 
+		WHERE SURVEY_ID=#{SURVEY_ID} 
+	</select>
+
+
+
+	<insert id="insertQuestion" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestion">
+	/*  mgt.survey.insertQuestion */
+	INSERT INTO TB_QUESTION (
+		   SURVEY_ID        
+		  ,SECTION_ID       
+		  ,QUESTION_ID      
+		  ,QUESTION_TYPE    
+		  ,SHOWDIVIDER 	
+		  ,EXPORTINCLUDE    
+		  ,EXPORTEXPAND	
+		  ,QUESTIONTEXT     
+		  ,QUESTION_CD      
+		  ,QUESTION_ISHTML
+		  ,QUESTION_LAYOUT  
+		  ,QUESTION_LABEL   
+		  ,OTHERANSWER	
+		  ,TEXTCOLS             
+		  ,TEXTROWS             
+		  ,TEXTSIZE             
+		  ,MAXLENGTH        
+	) values (
+		   #{SURVEY_ID}        
+		  ,#{SECTION_ID}       
+		  ,#{QUESTION_ID} 
+		  ,#{QUESTION_TYPE}    
+		  ,#{SHOWDIVIDER} 	
+		  ,#{EXPORTINCLUDE}    
+		  ,#{EXPORTEXPAND}	
+		  ,#{QUESTIONTEXT}     
+		  ,#{QUESTION_CD}      
+		  ,#{QUESTION_ISHTML}
+		  ,#{QUESTION_LAYOUT}  
+		  ,#{QUESTION_LABEL}   
+		  ,#{OTHERANSWER}	
+		  ,#{TEXTCOLS}             
+		  ,#{TEXTROWS}             
+		  ,#{TEXTSIZE}             
+		  ,#{MAXLENGTH}        
+	)
+	</insert>
+
+	<update id="updateQuestion" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestion">
+	/*  mgt.survey.updateQuestion */
+	UPDATE TB_QUESTION	
+	SET    SHOWDIVIDER 	    =#{SHOWDIVIDER} 	 
+		  ,EXPORTINCLUDE    =#{EXPORTINCLUDE}  
+		  ,EXPORTEXPAND	    =#{EXPORTEXPAND}	 
+		  ,QUESTIONTEXT     =#{QUESTIONTEXT}   
+		  ,QUESTION_CD      =#{QUESTION_CD}    
+		  ,QUESTION_ISHTML  =#{QUESTION_ISHTML}
+		  ,QUESTION_LAYOUT  =#{QUESTION_LAYOUT}
+		  ,QUESTION_LABEL   =#{QUESTION_LABEL} 
+		  ,OTHERANSWER	    =#{OTHERANSWER}	 
+		  ,TEXTCOLS         =#{TEXTCOLS}       
+		  ,TEXTROWS         =#{TEXTROWS}       
+		  ,TEXTSIZE         =#{TEXTSIZE}       
+		  ,MAXLENGTH        =#{MAXLENGTH}      
+    WHERE SURVEY_ID			=#{SURVEY_ID}
+    AND   SECTION_ID		=#{SECTION_ID}
+    AND   QUESTION_ID		=#{QUESTION_ID}
+	</update>
+
+	<update id="updatePositionQuestion" parameterType="dataMap">
+		/*  mgt.survey.updatePositionQuestion */
+		UPDATE TB_QUESTION	
+		SET   QUESTION_ID       =#{POSITION}       
+	    WHERE SURVEY_ID			=#{SURVEY_ID}
+	    AND   SECTION_ID		=#{SECTION_ID}
+	    AND   QUESTION_ID		=#{QUESTION_ID}
+	</update>
+
+	<update id="updatePositionQuestionLabel" parameterType="dataMap">
+		/*  mgt.survey.updatePositionQuestionLabel */
+		UPDATE TB_QUESTION_LABEL	
+		SET    QUESTION_ID      =#{POSITION}  
+	    WHERE SURVEY_ID			=#{SURVEY_ID}
+	    AND   SECTION_ID		=#{SECTION_ID}
+	    AND   QUESTION_ID		=#{QUESTION_ID}
+	</update>
+
+	<update id="updatePositionSection" parameterType="dataMap">
+		/*  mgt.survey.updatePositionQuestion */
+		UPDATE TB_SECTION	
+		SET   SECTION_ID      =#{POSITION}       
+	    WHERE SURVEY_ID		  =#{SURVEY_ID}
+	    AND   SECTION_ID	  =#{SECTION_ID}
+	</update>
+
+	<update id="updatePositionSectionQuestion" parameterType="dataMap">
+		/*  mgt.survey.updatePositionSectionQuestion */
+		UPDATE TB_QUESTION	
+		SET   SECTION_ID        =#{POSITION}       
+	    WHERE SURVEY_ID			=#{SURVEY_ID}
+	    AND   SECTION_ID		=#{SECTION_ID}
+	</update>
+
+	<update id="updatePositionSectionQuestionLabel" parameterType="dataMap">
+		/*  mgt.survey.updatePositionQuestionLabel */
+		UPDATE TB_QUESTION_LABEL	
+		SET    SECTION_ID      =#{POSITION}  
+	    WHERE SURVEY_ID		   =#{SURVEY_ID}
+	    AND   SECTION_ID	   =#{SECTION_ID}
+	</update>
+
+
+	<select id="selectQuestionId" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestion" resultType="int">
+		SELECT IFNULL(MAX(QUESTION_ID)+1,0) AS MAXID
+		FROM TB_QUESTION 
+		WHERE SURVEY_ID=#{SURVEY_ID} 
+		AND SECTION_ID=#{SECTION_ID}
+	</select>
+
+	<select id="selectSectionAboveCnt" parameterType="dataMap" resultType="int">
+		SELECT COUNT(SECTION_ID) 
+		FROM TB_SECTION 
+		WHERE SURVEY_ID   =#{SURVEY_ID} 
+		<![CDATA[
+		AND   SECTION_ID >=#{SECTION_ID} 
+    	]]>
+ 	</select>
+
+<update id="updateSectionQuestionLabelAbove" parameterType="dataMap">
+	UPDATE TB_QUESTION_LABEL	
+	SET    SECTION_ID      =SECTION_ID+1  
+    WHERE   SURVEY_ID	   =#{SURVEY_ID}
+ 	<![CDATA[
+    AND   SECTION_ID		>=#{SECTION_ID}
+    ]]>
+	</update>
+
+	<update id="updateSectionQuestionAbove" parameterType="dataMap">
+	UPDATE TB_QUESTION	
+	SET    SECTION_ID      =SECTION_ID+1  
+    WHERE SURVEY_ID			=#{SURVEY_ID}
+ 	<![CDATA[
+    AND   SECTION_ID		>=#{SECTION_ID}
+    ]]>
+	</update>
+
+	<update id="updateSectionAbove" parameterType="dataMap">
+	UPDATE TB_SECTION	
+	SET    SECTION_ID   =SECTION_ID+1  
+    WHERE SURVEY_ID		=#{SURVEY_ID}
+ 	<![CDATA[
+    AND   SECTION_ID		>=#{SECTION_ID}
+    ]]>
+	</update>
+
+
+	<select id="selectListSection" parameterType="dataMap" resultType="dataMap">
+		SELECT SURVEY_ID
+			  ,SECTION_ID   
+			  ,SECTION_TITLE
+			  ,SECTION_HTMLTITLE        
+	    FROM TB_SECTION
+	    WHERE SURVEY_ID = #{surveyId}
+	    ORDER BY SECTION_ID
+	</select>
+
+	<select id="selectListQuestion" parameterType="dataMap" resultType="dataMap">
+		SELECT A.SURVEY_ID                     
+		      ,A.SECTION_ID                    
+		      ,A.QUESTION_ID                   
+		      ,A.QUESTION_TYPE                 
+		      ,A.SHOWDIVIDER 					
+		      ,A.EXPORTINCLUDE                 
+		      ,A.EXPORTEXPAND					
+		      ,A.QUESTIONTEXT                	
+		      ,A.QUESTION_CD                   
+		      ,A.QUESTION_ISHTML				
+		      ,A.QUESTION_LAYOUT               
+		      ,A.QUESTION_LABEL                
+		      ,A.OTHERANSWER					
+		      ,A.TEXTCOLS               	 	    
+		      ,A.TEXTROWS               	 	    
+		      ,A.TEXTSIZE               	 	    
+		      ,A.MAXLENGTH    
+		      ,A.SUMMARY_CD
+              ,(SELECT COUNT(QUESTION_ID)
+                FROM TB_RESULTS
+                WHERE SURVEY_ID   =#{surveyId}
+                AND   SECTION_ID  =A.SECTION_ID
+                AND   QUESTION_ID =A.QUESTION_ID
+                AND   QUESTION_RESULT  IS NOT NULL
+                ) AS RESULT_CNT
+              ,(SELECT COUNT(QUESTION_ID)
+                FROM TB_RESULTS
+                WHERE SURVEY_ID   =#{surveyId}
+                AND   SECTION_ID  =A.SECTION_ID
+                AND   QUESTION_ID =A.QUESTION_ID
+                AND   OTHERANSWER_RESULT IS NOT NULL
+                ) AS OTHERANSWER_RESULT_CNT
+	    FROM TB_QUESTION A
+	    WHERE A.SURVEY_ID= #{surveyId}
+	    ORDER BY A.SECTION_ID,A.QUESTION_ID
+	</select>
+	
+	<select id="selectQuestion" parameterType="dataMap" resultType="com.whomade.kycarrots.mgt.survey.vo.TbQuestion">
+		SELECT A.SURVEY_ID                     
+		      ,A.SECTION_ID                    
+		      ,A.QUESTION_ID                   
+		      ,A.QUESTION_TYPE                 
+		      ,A.SHOWDIVIDER 					
+		      ,A.EXPORTINCLUDE                 
+		      ,A.EXPORTEXPAND					
+		      ,A.QUESTIONTEXT                	
+		      ,A.QUESTION_CD                   
+		      ,A.QUESTION_ISHTML				
+		      ,A.QUESTION_LAYOUT               
+		      ,A.QUESTION_LABEL                
+		      ,A.OTHERANSWER					
+		      ,A.TEXTCOLS               	 	    
+		      ,A.TEXTROWS               	 	    
+		      ,A.TEXTSIZE               	 	    
+		      ,A.MAXLENGTH  
+		      ,A.SUMMARY_CD             	 	
+	    FROM TB_QUESTION A
+	    WHERE A.SURVEY_ID	= #{surveyId}
+	    AND   A.SECTION_ID	= #{section}
+	    AND   A.QUESTION_ID	= #{question}
+	</select>
+
+	<select id="selectUpQuestionId" parameterType="dataMap" resultType="int">
+		SELECT  MAX(QUESTION_ID)
+		FROM TB_QUESTION A
+		WHERE A.SURVEY_ID	=#{surveyId} 
+		AND   A.SECTION_ID  =#{section}
+		<![CDATA[
+		AND   A.QUESTION_ID <#{question}
+		]]>
+	</select>
+
+	<select id="selectDownQuestionId" parameterType="dataMap" resultType="int">
+		SELECT  MIN(QUESTION_ID)
+		FROM TB_QUESTION A
+		WHERE A.SURVEY_ID	=#{surveyId} 
+		AND   A.SECTION_ID  =#{section}
+		<![CDATA[
+		AND   A.QUESTION_ID >#{question}
+		]]>
+	</select>
+
+	<select id="selectSectionQuestionCnt" parameterType="dataMap" resultType="int">
+		SELECT  COUNT(QUESTION_ID)
+		FROM TB_QUESTION A
+		WHERE A.SURVEY_ID	=#{surveyId} 
+		AND   A.SECTION_ID  =#{section}
+	</select>
+
+	<select id="selectSectionQuestionMax" parameterType="dataMap" resultType="int">
+		SELECT  MAX(QUESTION_ID)
+		FROM TB_QUESTION A
+		WHERE A.SURVEY_ID	=#{surveyId} 
+		AND   A.SECTION_ID  =#{section}
+	</select>
+
+	<select id="selectSectionCnt" parameterType="dataMap" resultType="int">
+		SELECT  COUNT(SECTION_ID)
+		FROM TB_SECTION A
+		WHERE A.SURVEY_ID	=#{surveyId} 
+	</select>
+
+	<select id="selectQuestionLabel" parameterType="dataMap" resultType="dataMap">
+		SELECT A.SURVEY_ID                     
+			  ,A.SECTION_ID       
+			  ,A.QUESTION_ID      
+			  ,A.QUESTION_LABEL_ID
+			  ,A.QUESTION_LABEL
+			  ,A.EXPORTCODE
+			  ,A.SELECTED				
+	    FROM TB_QUESTION_LABEL A
+	    WHERE A.SURVEY_ID	= #{surveyId}
+	    AND   A.SECTION_ID	= #{section}
+	    AND   A.QUESTION_ID	= #{question}
+	    ORDER BY A.QUESTION_LABEL_ID
+	</select>
+
+	<select id="selectListQuestionLabel" parameterType="dataMap" resultType="dataMap">
+		SELECT A.SURVEY_ID                     
+			  ,A.SECTION_ID       
+			  ,A.QUESTION_ID      
+			  ,A.QUESTION_LABEL_ID
+			  ,A.QUESTION_LABEL
+			  ,A.EXPORTCODE
+			  ,A.SELECTED 		
+              ,(SELECT COUNT(QUESTION_LABEL_ID)
+                FROM TB_RESULTS_LABEL
+                WHERE SURVEY_ID   =#{surveyId}
+                AND   SECTION_ID  =A.SECTION_ID
+                AND   QUESTION_ID =A.QUESTION_ID
+                AND   QUESTION_LABEL_ID =A.QUESTION_LABEL_ID
+                AND   QUESTION_LABEL_RESULT='1'
+               <if test="surveyGroupId != null and surveyGroupId != ''">
+               	AND   RESULTS_ID IN(
+	                    SELECT  RESULTS_ID
+	                    FROM TB_SURVEY_USER_ENTRY A
+	                    WHERE USER_NO           =#{userNo}
+	                    AND   SURVEY_GROUP_ID   =#{surveyGroupId}
+	                    AND   SURVEY_YEAR       =#{surveyYear}
+	                    AND   SURVEY_DEGREE     =#{surveyDegree}
+	                    AND   SURVEY_ID         =#{surveyId}
+                    ) 
+               </if>
+                ) AS RESULT_CNT
+	    FROM TB_QUESTION_LABEL A
+	    WHERE A.SURVEY_ID	= #{surveyId}
+	    ORDER BY A.SECTION_ID,A.QUESTION_ID,A.QUESTION_LABEL_ID
+	</select>
+
+	<insert id="insertQuestionLabel" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestionLabel">
+	/*  mgt.survey.insertQuestionLabel */
+	INSERT INTO TB_QUESTION_LABEL (
+		   SURVEY_ID        
+		  ,SECTION_ID       
+		  ,QUESTION_ID      
+		  ,QUESTION_LABEL_ID
+		  ,QUESTION_LABEL
+		  ,EXPORTCODE
+		  ,SELECTED				
+	) values (
+		   #{SURVEY_ID}        
+		  ,#{SECTION_ID}       
+		  ,#{QUESTION_ID} 
+		  ,(SELECT IFNULL(MAX(QUESTION_LABEL_ID)+1,0)
+		    FROM TB_QUESTION_LABEL 
+		    WHERE SURVEY_ID	=#{SURVEY_ID} 
+		    AND SECTION_ID	=#{SECTION_ID}
+		    AND QUESTION_ID	=#{QUESTION_ID}
+		    )    
+		  ,#{QUESTION_LABEL} 	
+		  ,#{EXPORTCODE}    
+		  ,#{SELECTED}	
+	)
+	</insert>
+	
+	<delete id="deleteQuestion" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestion">
+	/*  mgt.survey.deleteQuestion */
+	DELETE FROM TB_QUESTION
+	WHERE SURVEY_ID	= #{SURVEY_ID}
+	AND   SECTION_ID	= #{SECTION_ID}
+	AND   QUESTION_ID	= #{QUESTION_ID}
+	</delete>
+	
+	<update id="updateQuestionExport" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestion">
+	/*  mgt.survey.updateQuestionExport */
+	UPDATE TB_QUESTION	
+	SET   EXPORTINCLUDE 	=#{EXPORTINCLUDE} 	 
+	     ,SUMMARY_CD        =#{SUMMARY_CD}
+    WHERE SURVEY_ID			=#{SURVEY_ID}
+    AND   SECTION_ID		=#{SECTION_ID}
+    AND   QUESTION_ID		=#{QUESTION_ID}
+	</update>
+
+	<delete id="deleteQuestionLabel" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestionLabel">
+	/*  mgt.survey.deleteQuestionLabel */
+	DELETE FROM TB_QUESTION_LABEL
+	WHERE SURVEY_ID	= #{SURVEY_ID}
+	AND   SECTION_ID	= #{SECTION_ID}
+	AND   QUESTION_ID	= #{QUESTION_ID}
+	</delete>
+
+	<update id="updateQuestionUpDown" parameterType="dataMap">
+	/*  mgt.survey.updateQuestionUpDown */
+	UPDATE TB_QUESTION	
+	SET    SECTION_ID 	    =#{SECTION_ID} 	 
+		  ,QUESTION_ID      =#{QUESTION_ID}  
+    WHERE SURVEY_ID			=#{SURVEY_ID}
+    AND   SECTION_ID		=#{newSectionNr}
+    AND   QUESTION_ID		=#{newQuestionNr}
+	</update>
+
+	<update id="updateQuestionLabelUpDown" parameterType="dataMap">
+	/*  mgt.survey.updateQuestionLabelUpDown */
+	UPDATE TB_QUESTION_LABEL	
+	SET    SECTION_ID 	    =#{SECTION_ID} 	 
+		  ,QUESTION_ID      =#{QUESTION_ID}  
+    WHERE SURVEY_ID			=#{SURVEY_ID}
+    AND   SECTION_ID		=#{newSectionNr}
+    AND   QUESTION_ID		=#{newQuestionNr}
+	</update>
+
+	<update id="updateQuestionLabelCopy" parameterType="dataMap">
+	/*  mgt.survey.updateQuestionLabelCopy */
+	UPDATE TB_QUESTION_LABEL	
+	SET    QUESTION_ID      =QUESTION_ID+1  
+    WHERE SURVEY_ID			=#{SURVEY_ID}
+    AND   SECTION_ID		=#{SECTION_ID}
+    <![CDATA[
+    AND   QUESTION_ID		>#{QUESTION_ID}
+    ]]>
+	</update>
+
+	<update id="updateQuestionCopy" parameterType="dataMap">
+	/*  mgt.survey.updateQuestionCopy */
+	UPDATE TB_QUESTION	
+	SET    QUESTION_ID      =QUESTION_ID+1  
+    WHERE SURVEY_ID			=#{SURVEY_ID}
+    AND   SECTION_ID		=#{SECTION_ID}
+    <![CDATA[
+    AND   QUESTION_ID		>#{QUESTION_ID}
+    ]]>
+	</update>
+
+	<update id="updateQuestionLabelAbove" parameterType="dataMap">
+	/*  mgt.survey.updateQuestionLabelAbove */
+	UPDATE TB_QUESTION_LABEL	
+	SET    QUESTION_ID      =QUESTION_ID+1  
+    WHERE SURVEY_ID			=#{SURVEY_ID}
+    AND   SECTION_ID		=#{SECTION_ID}
+    <![CDATA[
+    AND   QUESTION_ID		>=#{QUESTION_ID}
+    ]]>
+	</update>
+
+	<update id="updateQuestionAbove" parameterType="dataMap">
+	/*  mgt.survey.updateQuestionAbove */
+	UPDATE TB_QUESTION	
+	SET    QUESTION_ID      =QUESTION_ID+1  
+    WHERE SURVEY_ID			=#{SURVEY_ID}
+    AND   SECTION_ID		=#{SECTION_ID}
+    <![CDATA[
+    AND   QUESTION_ID		>=#{QUESTION_ID}
+    ]]>
+	</update>
+
+
+	<select id="selectQuestionResultId" resultType="int">
+		SELECT IFNULL(MAX(RESULTS_ID)+1,0) AS MAXID
+		FROM TB_RESULTS 
+	    WHERE SURVEY_ID			=#{surveyId}
+	</select>
+
+
+	<insert id="insertResults" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbResults">
+	/*  mgt.survey.insertResults */
+	INSERT INTO TB_RESULTS (
+		   RESULTS_ID                    
+		  ,SURVEY_ID                     
+		  ,SECTION_ID                    
+		  ,QUESTION_ID                   
+		  ,QUESTION_RESULT  				
+		  ,OTHERANSWER_RESULT       
+		  ,INSERT_DATE     
+	) values (
+		   #{RESULTS_ID}        
+		  ,#{SURVEY_ID}       
+		  ,#{SECTION_ID} 
+		  ,#{QUESTION_ID} 	
+		  ,#{QUESTION_RESULT}    
+		  ,#{OTHERANSWER_RESULT}
+		  ,SYSDATE
+	)
+	</insert>
+
+	<update id="updateResults" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbResults">
+	/*  mgt.survey.updateResults */
+	UPDATE TB_RESULTS
+	SET 	QUESTION_RESULT    = #{QUESTION_RESULT} 			
+		   ,OTHERANSWER_RESULT = #{OTHERANSWER_RESULT}      
+    WHERE RESULTS_ID =#{RESULTS_ID}
+    AND   SURVEY_ID  =#{SURVEY_ID}
+    AND   SECTION_ID =#{SECTION_ID}
+    AND   QUESTION_ID=#{QUESTION_ID}
+ 	</update>
+
+
+	<insert id="insertResultsLabel" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbResultsLabel">
+	/*  mgt.survey.insertQuestionResultsLabel */
+	INSERT INTO TB_RESULTS_LABEL (
+			   RESULTS_ID                    
+			  ,RESULTS_LABEL_ID              
+			  ,SURVEY_ID                     
+			  ,SECTION_ID                    
+			  ,QUESTION_ID                   
+			  ,QUESTION_LABEL_ID				
+			  ,QUESTION_LABEL_RESULT  	
+			  ,INSERT_DATE  	
+	) values (
+		   #{RESULTS_ID}        
+		  ,(SELECT IFNULL(MAX(RESULTS_LABEL_ID)+1,0)
+		    FROM TB_RESULTS_LABEL 
+		    WHERE RESULTS_ID	=#{RESULTS_ID} 
+			AND SURVEY_ID   	=#{SURVEY_ID}
+		    AND SECTION_ID		=#{SECTION_ID}
+		    AND QUESTION_ID		=#{QUESTION_ID}
+		    )    
+		  ,#{SURVEY_ID} 
+		  ,#{SECTION_ID} 	
+		  ,#{QUESTION_ID}    
+		  ,#{QUESTION_LABEL_ID}	
+		  ,#{QUESTION_LABEL_RESULT}	
+		  ,SYSDATE
+	)
+	</insert>
+
+	<delete id="deleteResults" parameterType="dataMap">
+	/*  mgt.survey.deleteResults */
+	DELETE FROM TB_RESULTS
+	WHERE RESULTS_ID = #{RESULTS_ID}
+	AND   SURVEY_ID	 = #{SURVEY_ID}
+	</delete>
+
+	<delete id="deleteResultsBySurveyId" parameterType="dataMap">
+	/*  mgt.survey.deleteResults */
+	DELETE FROM TB_RESULTS
+	WHERE   SURVEY_ID	 = #{SURVEY_ID}
+    <if test="SURVEY_GROUP_ID != null and SURVEY_GROUP_ID != ''">
+    	AND   RESULTS_ID IN(
+          SELECT  RESULTS_ID
+          FROM TB_SURVEY_USER_ENTRY A
+          WHERE USER_NO           =#{USER_NO}
+          AND   SURVEY_GROUP_ID   =#{SURVEY_GROUP_ID}
+          AND   SURVEY_YEAR       =#{SURVEY_YEAR}
+          AND   SURVEY_DEGREE     =#{SURVEY_DEGREE}
+          AND   SURVEY_ID         =#{SURVEY_ID}
+         ) 
+    </if>
+	</delete>
+
+
+	<delete id="deleteResultLabel" parameterType="dataMap">
+	/*  mgt.survey.deleteResultLabel */
+	DELETE FROM TB_RESULTS_LABEL
+	WHERE RESULTS_ID = #{RESULTS_ID}
+	AND   SURVEY_ID	 = #{SURVEY_ID}
+	</delete>
+
+
+	<delete id="deleteResultLabelBySurveyId" parameterType="dataMap">
+	/*  mgt.survey.deleteResultLabel */
+	DELETE FROM TB_RESULTS_LABEL
+	WHERE   SURVEY_ID	 = #{SURVEY_ID}
+    <if test="SURVEY_GROUP_ID != null and SURVEY_GROUP_ID != ''">
+    	AND   RESULTS_ID IN(
+          SELECT  RESULTS_ID
+          FROM TB_SURVEY_USER_ENTRY A
+          WHERE USER_NO           =#{USER_NO}
+          AND   SURVEY_GROUP_ID   =#{SURVEY_GROUP_ID}
+          AND   SURVEY_YEAR       =#{SURVEY_YEAR}
+          AND   SURVEY_DEGREE     =#{SURVEY_DEGREE}
+          AND   SURVEY_ID         =#{SURVEY_ID}
+         ) 
+    </if>
+	</delete>
+
+	<delete id="deleteResultUserEntryBySurveyId" parameterType="dataMap">
+	/*  mgt.survey.deleteResultUserEntry */
+	DELETE FROM TB_SURVEY_USER_ENTRY
+	WHERE USER_NO           =#{USER_NO}
+	AND   SURVEY_GROUP_ID   =#{SURVEY_GROUP_ID}
+	AND   SURVEY_YEAR       =#{SURVEY_YEAR}
+	AND   SURVEY_DEGREE     =#{SURVEY_DEGREE}
+    AND   SURVEY_ID         =#{SURVEY_ID}
+	</delete>
+
+
+	<select id="selectListResultsResultIds" parameterType="dataMap" resultType="dataMap">
+        SELECT   A.RESULTS_ID                    
+                ,A.SURVEY_ID                     
+                ,A.SECTION_ID                    
+                ,A.QUESTION_ID                   
+                ,A.QUESTION_RESULT  				
+                ,A.OTHERANSWER_RESULT            	
+                ,TO_CHAR(A.INSERT_DATE,'YYYY-MM-DD HH24:MI:SS') AS INSERT_DATE_CHAR                   
+        FROM TB_RESULTS A
+        WHERE A.SURVEY_ID  =#{SURVEY_ID}
+        AND   A.SECTION_ID =#{SECTION_ID}
+        AND   A.QUESTION_ID=#{QUESTION_ID}
+        AND   A.QUESTION_RESULT  IS NOT NULL
+        ORDER BY A.RESULTS_ID
+	</select>
+
+	<select id="selectListResultsMaxDate" parameterType="dataMap" resultType="dataMap">
+        SELECT   A.RESULTS_ID , TO_CHAR(MAX(A.INSERT_DATE),'YYYY-MM-DD HH24:MI:SS') AS INSERT_DATE_CHAR                        
+        FROM TB_RESULTS A
+        WHERE A.SURVEY_ID= #{SURVEY_ID}
+        <if test="surveyGroupId != null and surveyGroupId != ''">
+          	AND   A.RESULTS_ID IN(
+                SELECT  RESULTS_ID
+                FROM TB_SURVEY_USER_ENTRY A
+                WHERE USER_NO           =#{USER_NO}
+                AND   SURVEY_GROUP_ID   =#{SURVEY_GROUP_ID}
+                AND   SURVEY_YEAR       =#{SURVEY_YEAR}
+                AND   SURVEY_DEGREE     =#{SURVEY_DEGREE}
+                AND   SURVEY_ID         =#{SURVEY_ID}
+               ) 
+        </if>        
+        GROUP BY A.RESULTS_ID
+	</select>
+
+	<select id="selectListResultsEntryDate" parameterType="dataMap" resultType="String">
+        SELECT   TO_CHAR(MAX(A.INSERT_DATE),'YYYY-MM-DD HH24:MI:SS') AS INSERT_DATE_CHAR                        
+        FROM TB_RESULTS A
+        WHERE A.SURVEY_ID= #{surveyId}
+        AND   A.RESULTS_ID= #{entryId}
+	</select>
+
+	<select id="selectListResults" parameterType="dataMap" resultType="dataMap">
+        SELECT   A.RESULTS_ID                    
+                ,A.SURVEY_ID                     
+                ,A.SECTION_ID                    
+                ,A.QUESTION_ID                   
+                ,A.QUESTION_RESULT  				
+                ,A.OTHERANSWER_RESULT            	
+                ,TO_CHAR(A.INSERT_DATE,'YYYY-MM-DD HH24:MI:SS') AS INSERT_DATE                   
+        FROM TB_RESULTS A
+	    WHERE A.SURVEY_ID = #{surveyId}
+        AND   A.RESULTS_ID= #{entryId}
+        ORDER BY A.SECTION_ID,A.QUESTION_ID
+	</select>
+
+	<select id="selectListResultsLabel" parameterType="dataMap" resultType="dataMap">
+        SELECT   A.RESULTS_ID      
+                ,A.RESULTS_LABEL_ID      
+                ,A.SURVEY_ID                     
+                ,A.SECTION_ID                    
+                ,A.QUESTION_ID                   
+                ,A.QUESTION_LABEL_ID	
+                ,A.QUESTION_LABEL_RESULT 
+        FROM TB_RESULTS_LABEL A
+	    WHERE A.SURVEY_ID = #{surveyId}
+        AND   A.RESULTS_ID= #{entryId}
+	    ORDER BY A.SECTION_ID,A.QUESTION_ID,A.QUESTION_LABEL_ID
+	</select>
+
+	<select id="selectAllListResults" parameterType="dataMap" resultType="dataMap">
+        SELECT   A.RESULTS_ID                    
+                ,A.SURVEY_ID                     
+                ,A.SECTION_ID                    
+                ,A.QUESTION_ID                   
+                ,A.QUESTION_RESULT  				
+                ,A.OTHERANSWER_RESULT            	
+                ,TO_CHAR(A.INSERT_DATE,'YYYY-MM-DD HH24:MI:SS') AS INSERT_DATE
+                ,(SELECT QUESTION_TYPE FROM TB_QUESTION WHERE SURVEY_ID||SECTION_ID||QUESTION_ID=A.SURVEY_ID||A.SECTION_ID||A.QUESTION_ID) AS QUESTION_TYPE
+				,(SELECT OTHERANSWER FROM TB_QUESTION WHERE SURVEY_ID||SECTION_ID||QUESTION_ID=A.SURVEY_ID||A.SECTION_ID||A.QUESTION_ID) AS OTHERANSWER                
+        FROM TB_RESULTS A
+	    WHERE A.SURVEY_ID= #{surveyId}
+        <if test="surveyGroupId != null and surveyGroupId != ''">
+              	AND   A.RESULTS_ID IN(
+                    SELECT  RESULTS_ID
+                    FROM TB_SURVEY_USER_ENTRY A
+                    WHERE USER_NO           =#{userNo}
+                    AND   SURVEY_GROUP_ID   =#{surveyGroupId}
+                    AND   SURVEY_YEAR       =#{surveyYear}
+                    AND   SURVEY_DEGREE     =#{surveyDegree}
+                    AND   SURVEY_ID         =#{surveyId}
+                   ) 
+        </if>
+	    ORDER BY A.RESULTS_ID,A.SECTION_ID,A.QUESTION_ID
+	</select>
+
+	<select id="selectAllListResultsLabel" parameterType="dataMap" resultType="dataMap">
+        SELECT   A.RESULTS_ID     
+                ,A.RESULTS_LABEL_ID      
+                ,A.SURVEY_ID                     
+                ,A.SECTION_ID                    
+                ,A.QUESTION_ID                   
+                ,A.QUESTION_LABEL_ID	
+                ,A.QUESTION_LABEL_RESULT 
+                ,(SELECT QUESTION_LABEL FROM TB_QUESTION_LABEL WHERE SURVEY_ID||SECTION_ID||QUESTION_ID||QUESTION_LABEL_ID=A.SURVEY_ID||A.SECTION_ID||A.QUESTION_ID||A.QUESTION_LABEL_ID) AS QUESTION_LABEL
+        FROM TB_RESULTS_LABEL A
+	    WHERE A.SURVEY_ID= #{surveyId}
+        <if test="surveyGroupId != null and surveyGroupId != ''">
+              	AND   A.RESULTS_ID IN(
+                    SELECT  RESULTS_ID
+                    FROM TB_SURVEY_USER_ENTRY A
+                    WHERE USER_NO           =#{userNo}
+                    AND   SURVEY_GROUP_ID   =#{surveyGroupId}
+                    AND   SURVEY_YEAR       =#{surveyYear}
+                    AND   SURVEY_DEGREE     =#{surveyDegree}
+                    AND   SURVEY_ID         =#{surveyId}
+                   ) 
+        </if>
+	    ORDER BY A.RESULTS_ID,A.SECTION_ID,A.QUESTION_ID,A.QUESTION_LABEL_ID
+	</select>
+
+
+	<delete id="deleteSurveySection" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+		DELETE FROM  TB_SECTION
+		WHERE SURVEY_ID = #{SURVEY_ID}
+	</delete>
+
+	<delete id="deleteSurveyQuestion" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+		DELETE FROM  TB_QUESTION
+		WHERE SURVEY_ID = #{SURVEY_ID}
+	</delete>
+
+	<delete id="deleteSurveyQuestionLabel" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+		DELETE FROM  TB_QUESTION_LABEL
+		WHERE SURVEY_ID = #{SURVEY_ID}
+	</delete>
+
+	<delete id="deleteSurveyResult" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+		DELETE FROM  TB_RESULTS
+		WHERE SURVEY_ID = #{SURVEY_ID}
+	</delete>
+
+	<delete id="deleteSurveyResultLabel" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurvey">
+		DELETE FROM  TB_RESULTS_LABEL
+		WHERE SURVEY_ID = #{SURVEY_ID}
+	</delete>
+
+	<insert id="copySurvey" parameterType="dataMap">
+		INSERT INTO TB_SURVEY(
+			   SURVEY_ID
+			  ,SURVEY_TITLE
+		 ) 
+		SELECT #{SURVEY_ID} 
+			  ,#{SURVEY_TITLE}
+		FROM TB_SURVEY
+		WHERE SURVEY_ID =#{templateSurveyId}
+	</insert>
+	
+	<insert id="copySection" parameterType="dataMap">
+		INSERT INTO TB_SECTION (
+			 SURVEY_ID 
+			,SECTION_ID
+			,SECTION_TITLE
+			,SECTION_HTMLTITLE        
+		)
+		SELECT 
+		     #{SURVEY_ID} 
+			,SECTION_ID
+			,SECTION_TITLE
+			,SECTION_HTMLTITLE        
+		FROM TB_SECTION
+		WHERE SURVEY_ID =#{templateSurveyId}
+	</insert>
+	
+	<insert id="copyQuestion" parameterType="dataMap">
+		INSERT INTO TB_QUESTION (
+			   SURVEY_ID        
+			  ,SECTION_ID       
+			  ,QUESTION_ID      
+			  ,QUESTION_TYPE    
+			  ,SHOWDIVIDER 	
+			  ,EXPORTINCLUDE    
+			  ,EXPORTEXPAND	
+			  ,QUESTIONTEXT     
+			  ,QUESTION_CD      
+			  ,QUESTION_ISHTML
+			  ,QUESTION_LAYOUT  
+			  ,QUESTION_LABEL   
+			  ,OTHERANSWER	
+			  ,TEXTCOLS             
+			  ,TEXTROWS             
+			  ,TEXTSIZE             
+			  ,MAXLENGTH        
+		) 
+		SELECT #{SURVEY_ID}        
+			  ,SECTION_ID       
+			  ,QUESTION_ID 
+			  ,QUESTION_TYPE    
+			  ,SHOWDIVIDER 	
+			  ,EXPORTINCLUDE    
+			  ,EXPORTEXPAND	
+			  ,QUESTIONTEXT     
+			  ,QUESTION_CD      
+			  ,QUESTION_ISHTML
+			  ,QUESTION_LAYOUT  
+			  ,QUESTION_LABEL   
+			  ,OTHERANSWER	
+			  ,TEXTCOLS             
+			  ,TEXTROWS             
+			  ,TEXTSIZE             
+			  ,MAXLENGTH
+		FROM TB_QUESTION
+		WHERE SURVEY_ID =#{templateSurveyId}
+	</insert>
+	
+	<insert id="copyQuestionLabel" parameterType="dataMap">
+		INSERT INTO TB_QUESTION_LABEL (
+			   SURVEY_ID        
+			  ,SECTION_ID       
+			  ,QUESTION_ID      
+			  ,QUESTION_LABEL_ID
+			  ,QUESTION_LABEL
+			  ,EXPORTCODE
+			  ,SELECTED				
+		) SELECT 
+			   #{SURVEY_ID}        
+			  ,SECTION_ID       
+			  ,QUESTION_ID 
+			  ,QUESTION_LABEL_ID
+			  ,QUESTION_LABEL 	
+			  ,EXPORTCODE    
+			  ,SELECTED	
+		FROM TB_QUESTION_LABEL
+		WHERE SURVEY_ID =#{templateSurveyId}
+	</insert>
+	
+	
+</mapper>

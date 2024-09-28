@@ -1,0 +1,12 @@
+{
+  "greeting": "Hello! SeoSooHyun",
+  "menu": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "messages": {
+    "welcome": "Welcome to our website!",
+    "thank_you": "Thank you for visiting."
+  }
+}

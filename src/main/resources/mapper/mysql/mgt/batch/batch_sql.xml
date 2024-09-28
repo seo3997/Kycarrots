@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mgt.batch">	
+	
+	<!-- batch Master 개수 -->
+	<select id="selectTotCntBatchMaster" parameterType="dataMap" resultType="int">
+	<!-- 	SELECT COUNT(1) AS TOT_CNT
+		FROM tb_batch_master A
+		WHERE 1 = 1 -->
+		SELECT COUNT(1) AS TOT_CNT
+		from tb_batch_master A INNER JOIN op_code B
+		ON A.batch_stat = code
+		INNER JOIN tb_batch C
+		ON A.BATCH_ID = C.BATCH_ID
+		WHERE B.GROUP_ID = 'R010351'
+		<if test="search_list_st != null and search_list_st !='' ">
+			AND c.BATCH_TITLE = #{search_list_st}
+		</if>
+	
+		<if test="start_dt != null  and start_dt !='' ">
+			AND DATE(A.REGIST_DT) = #{start_dt}
+		</if>
+		<if test=" limitStart != null">
+			ORDER BY BATCH_MASTER_ID DESC
+			LIMIT #{limitStart},#{limitEnd}
+		</if>
+			
+		
+	</select>
+	
+	
+	
+	
+	
+	<select id="selectBatchResultDtCnt" parameterType="dataMap" resultType="int">
+		SELECT COUNT(1) AS TOT_CNT
+		FROM tb_batch_result A INNER JOIN tb_batch_master B
+		ON A.BATCH_MASTER_ID = B.BATCH_MASTER_ID
+		WHERE A.BATCH_MASTER_ID= #{BATCH_MASTER_ID}
+	
+	</select>
+	
+	
+	<select id="selectTotCntBatch" parameterType="dataMap" resultType="int">
+		SELECT COUNT(1) AS TOT_CNT
+		FROM tb_batch A
+		WHERE 1 = 1
+	<include refid="whereParam" />
+	</select>
+	
+
+
+	<select id="selectPageListBatch" parameterType="dataMap" resultType="dataMap">
+		<if test="limitStart != null">
+			<![CDATA[
+			   SELECT AA.*
+			   FROM(
+			]]>	
+		</if>			
+		<include refid="selectParam" />
+		<include refid="whereParam" />
+		<if test=" limitStart != null">
+			<![CDATA[
+	    			ORDER BY A.UPDT_DT DESC
+				) AA
+				LIMIT #{limitStart},#{limitEnd}
+			]]>
+		</if>
+	</select>
+	
+	
+
+	<sql id="selectParam">
+		SELECT	  A.BATCH_ID 			
+				 ,A.BATCH_TITLE
+				 ,A.BATCH_SORCE 		
+				 ,A.BATCH_TARGET 		
+				 ,A.BATCH_CYCLE_CODE 	
+				 ,A.BATCH_HOUR 		
+				 ,A.BATCH_TIME 		
+				 ,A.BATCH_DAY_CODE
+				 ,A.BATCH_FILE_FORMAT 	
+				 ,A.BATCH_TARGET_CD 
+				 ,C.CODE_NM AS BATCH_TARGET_CD_NM
+				 ,DB_JDBC_DRIVER   
+				 ,DB_URL           
+				 ,DB_ID            
+				 ,DB_PASSWORD	
+				 ,B.USER_NM AS REGISTER_NM
+				 ,DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
+				 ,(SELECT CODE_NM FROM op_code  WHERE GROUP_ID='R010320' AND CODE = A.BATCH_DAY_CODE) AS BATCH_DAY_CODE_NM 
+		FROM tb_batch A
+		INNER JOIN op_user B
+		ON A.REGISTER_NO = B.USER_NO
+		LEFT JOIN	op_code C ON C.GROUP_ID = 'R010340' AND  C.CODE = A.BATCH_TARGET_CD  
+	</sql>
+
+	<sql id="whereParam">
+		<if test="sch_text != null and sch_text != ''">
+			AND A.BATCH_SORCE LIKE CONCAT('%',#{sch_text},'%')
+		</if>
+	</sql>
+	
+	<!-- selectPageListBatchResult -->
+	<select id = "selectBatchResult" parameterType= "dataMap" resultType = "dataMap">
+		SELECT A.BATCH_MASTER_ID
+			   ,A.BATCH_ID
+			   ,A.BATCH_START_TIME
+			   ,A.BATCH_END_TIME
+			   ,A.BATCH_STAT
+			   ,A.REGISTER_NO
+			   ,DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
+			   ,A.UPDUSR_NO
+			   ,A.UPDT_DT
+			   ,B.BATCH_TITLE
+		FROM tb_batch_master A INNER JOIN tb_batch B 
+		ON A.BATCH_ID = B.BATCH_ID
+		
+	</select>
+
+	<!-- selectBatchMaster -->
+	<select id = "selectBatchMaster" parameterType= "dataMap" resultType = "dataMap">
+		SELECT A.BATCH_MASTER_ID
+			   ,A.BATCH_ID
+			   ,DATE_FORMAT(A.BATCH_START_TIME,'%Y.%m.%d.%T')AS BATCH_START_TIME
+			   ,DATE_FORMAT(A.BATCH_END_TIME,'%Y.%m.%d.%T') AS BATCH_END_TIME
+			   ,A.BATCH_STAT
+			   ,A.REGISTER_NO
+			   ,DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
+			   ,A.UPDUSR_NO
+			   ,A.UPDT_DT
+			   ,B.BATCH_TITLE
+			   ,C.CODE_NM
+			   ,(SELECT COUNT(BATCH_MASTER_ID) 
+		   		 FROM tb_batch_result 
+				 WHERE BATCH_MASTER_ID = #{BATCH_MASTER_ID}) AS TOT_CNT
+ 		FROM tb_batch_master A INNER JOIN tb_batch B 
+		ON A.BATCH_ID = B.BATCH_ID 
+		INNER JOIN op_code C 
+		ON A.batch_stat = C.code
+		WHERE A.BATCH_MASTER_ID= #{BATCH_MASTER_ID} AND C.GROUP_ID = 'R010351'
+	</select>
+	
+	<select id="selectBatchCategory" parameterType="dataMap" resultType="string">
+
+		SELECT
+		REPLACE(GROUP_CONCAT(C.CATEGORY),',','') AS CATEGORY
+		FROM
+		(
+		SELECT 
+			<![CDATA[
+			CONCAT('<option value="BATCH_ID'">',(SELECT DATE_FORMAT(B.REGIST_DT, '%Y.%m.%d')AS REGIST_DT
+				FROM tb_batch A INNER JOIN tb_batch_master B 
+				ON A.BATCH_ID = B.BATCH_ID 
+			WHERE BATCH_TITLE =#{search_list_st}
+			 GROUP BY REGIST_DT
+			  ORDER BY batch_master_id DESC),'</option>') AS CATEGORY
+			]]>
+			FROM tb_batch 
+		WHERE BATCH_TITLE = #{search_list_st}
+		GROUP BY BATCH_TITLE
+		HAVING
+		IFNULL(BATCH_TITLE,'') != ''
+		) C
+			
+
+	</select>
+	
+	<!-- selectPageListBatchRelust.do -->
+	<select id = "selectBatchMasterCode" parameterType= "DataMap" resultType = "dataMap">
+	
+ 				SELECT AA.*
+				FROM (
+			SELECT B.CODE_NM
+				,B.CODE
+				,A.BATCH_MASTER_ID
+			    ,A.BATCH_ID
+			    ,DATE_FORMAT(A.BATCH_START_TIME,'%Y.%m.%d.%T')AS BATCH_START_TIME
+			    ,DATE_FORMAT(A.BATCH_END_TIME,'%Y.%m.%d.%T') AS BATCH_END_TIME
+			    ,A.BATCH_STAT
+			    ,A.REGISTER_NO
+			    ,DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
+			    ,A.UPDUSR_NO
+			    ,A.UPDT_DT
+			    ,c.BATCH_TITLE
+			    ,(SELECT COUNT(BATCH_MASTER_ID) 
+		   		 FROM tb_batch_result 
+				 WHERE BATCH_MASTER_ID = #{BATCH_MASTER_ID}) AS TOT_CNT
+			from tb_batch_master A INNER JOIN op_code B 
+				ON B.GROUP_ID='R010351' AND code =A.batch_stat
+			INNER JOIN tb_batch C
+				ON A.BATCH_ID = C.BATCH_ID
+			WHERE B.GROUP_ID = 'R010351' 
+				<if test="search_list_st != null and search_list_st !='' ">
+					AND c.BATCH_TITLE = #{search_list_st}
+				</if>
+		
+				<if test="start_dt != null  and start_dt !='' ">
+					AND DATE(A.REGIST_DT) = #{start_dt}
+				</if>
+				<if test=" limitStart != null">
+				) AA ORDER BY BATCH_MASTER_ID DESC
+				LIMIT #{limitStart},#{limitEnd}
+		</if>
+			
+	</select>
+				<!-- CODE -->
+				<!-- , batch_master_id -->
+	
+	<!-- selectPageBatchResultD -->
+	<select id = "selectBatchResultD" parameterType= "dataMap" resultType = "dataMap">
+		SELECT AA.*
+				FROM (
+		SELECT A.BATCH_RESULT_ID
+			  ,A.BATCH_MASTER_ID
+			  ,A.IMAGE_FILE_NM
+			  ,DATE_FORMAT(A.BATCH_TIME,'%Y.%m.%d.%T') AS BATCH_TIME
+			  ,A.FILE_SIZE
+			  ,A.BATCH_STAT
+			  ,A.BATCH_RESULT_DTL
+			  ,A.REGISTER_NO
+			  ,DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
+			  ,B.BATCH_START_TIME
+			  ,B.BATCH_END_TIME
+			  ,(SELECT COUNT(BATCH_STAT)
+			  FROM tb_batch_result A 
+			  WHERE A.BATCH_MASTER_ID= #{BATCH_MASTER_ID} AND A.BATCH_STAT ='Fail') AS FAIL_CNT
+		FROM tb_batch_result A INNER JOIN tb_batch_master B
+		ON A.BATCH_MASTER_ID = B.BATCH_MASTER_ID
+		WHERE A.BATCH_MASTER_ID= #{BATCH_MASTER_ID}
+			<if test=" limitStart != null">
+				) AA ORDER BY REGIST_DT DESC
+				LIMIT #{limitStart},#{limitEnd}
+		</if>
+
+	</select>
+	
+	<select id="selectBatch" parameterType="dataMap" resultType="dataMap">
+		SELECT	  A.BATCH_ID 			
+				 ,A.BATCH_TITLE
+				 ,A.BATCH_SORCE 		
+				 ,A.BATCH_TARGET 		
+				 ,A.BATCH_CYCLE_CODE 	
+				 ,A.BATCH_HOUR 		
+				 ,A.BATCH_TIME 		
+				 ,A.BATCH_DAY_CODE
+				 ,A.BATCH_FILE_FORMAT 	
+				 ,A.BATCH_TARGET_CD
+				 ,C.CODE_NM AS BATCH_TARGET_CD_NM 	
+				 ,DB_JDBC_DRIVER   
+				 ,DB_URL           
+				 ,DB_ID            
+				 ,DB_PASSWORD
+				 ,B.USER_ID AS REGISTER_ID
+		         ,DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
+				 ,B.USER_NM AS REGISTER_NM
+				 ,(SELECT CODE_NM FROM op_code  WHERE GROUP_ID='R010320' AND CODE = A.BATCH_DAY_CODE) AS BATCH_DAY_CODE_NM
+		FROM tb_batch A 	INNER JOIN op_user B	ON A.REGISTER_NO = B.USER_NO
+		LEFT JOIN	op_code C ON C.GROUP_ID = 'R010340' AND  C.CODE = A.BATCH_TARGET_CD
+		WHERE 	A.BATCH_ID = #{BATCH_ID}
+	</select>
+		
+	<insert id="insertBatch" parameterType="dataMap">
+		INSERT INTO tb_batch (
+		      BATCH_SORCE
+		    , BATCH_TITLE
+			, BATCH_TARGET
+			, BATCH_CYCLE_CODE
+			, BATCH_HOUR 		
+			, BATCH_TIME 		
+			, BATCH_DAY_CODE
+			, BATCH_FILE_FORMAT 	
+			, BATCH_TARGET_CD
+			, DB_JDBC_DRIVER
+			, DB_URL
+			, DB_ID
+			, DB_PASSWORD
+			, REGISTER_NO
+			, REGIST_DT
+			, UPDUSR_NO
+			, UPDT_DT
+		) values (
+		     #{BATCH_SORCE}
+			,#{BATCH_TITLE}
+			,#{BATCH_TARGET}
+			,#{BATCH_CYCLE_CODE}
+			,#{BATCH_HOUR} 		
+			,#{BATCH_TIME} 		
+			,#{BATCH_DAY_CODE} 	
+			,#{BATCH_FILE_FORMAT}
+			,#{BATCH_TARGET_CD}
+			,#{DB_JDBC_DRIVER}
+			,#{DB_URL}
+			,#{DB_ID}
+			,#{DB_PASSWORD}
+			,#{REGISTER_NO}
+			,CURRENT_TIMESTAMP
+			,#{UPDUSR_NO}
+			,CURRENT_TIMESTAMP
+		)
+	</insert>
+
+	<update id="updateBatch" parameterType="dataMap">
+		UPDATE tb_batch
+		SET  BATCH_SORCE 		= #{BATCH_SORCE}
+			,BATCH_TITLE 		= #{BATCH_TITLE}
+			,BATCH_TARGET 		= #{BATCH_TARGET}
+			,BATCH_CYCLE_CODE 	= #{BATCH_CYCLE_CODE}
+			,BATCH_HOUR 		= #{BATCH_HOUR}
+			,BATCH_TIME 		= #{BATCH_TIME}
+			,BATCH_DAY_CODE 	= #{BATCH_DAY_CODE}
+			,DB_JDBC_DRIVER     = #{DB_JDBC_DRIVER}
+			,DB_URL             = #{DB_URL}
+			,DB_ID              = #{DB_ID}  
+			,DB_PASSWORD        = #{DB_PASSWORD}  
+			,BATCH_FILE_FORMAT 	= #{BATCH_FILE_FORMAT}
+			,BATCH_TARGET_CD 	= #{BATCH_TARGET_CD}
+			,UPDUSR_NO 			= #{UPDUSR_NO}
+			,UPDT_DT 			= CURRENT_TIMESTAMP
+		WHERE BATCH_ID 			= #{BATCH_ID}
+	</update>
+	
+	<update id="deleteBatch" parameterType="dataMap">
+		DELETE FROM tb_batch
+		WHERE  BATCH_ID = #{BATCH_ID}
+	</update>
+
+	
+</mapper>

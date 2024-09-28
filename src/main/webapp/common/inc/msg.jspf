@@ -1,0 +1,13 @@
+<%
+	String message = (String)request.getSession().getAttribute("message");
+	if(message != null && !message.equals("")){
+%>
+<script type="text/javascript">
+	window.onload = function(){
+		alert("<%=message%>");
+	};
+</script>
+<%
+		request.getSession().removeAttribute("message");
+	}
+%>

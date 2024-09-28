@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="common.file">
+	
+	<select id="selectAttchFile" parameterType="atFileVO" resultType="atFileVO">
+	/* common.file.selectAttchFile */
+	<![CDATA[
+		SELECT
+			  FILE_SEQ
+			 ,FILE_ID
+			, DOC_ID
+			, FILE_NM
+			, FILE_SIZE
+			, FILE_EXTSN_NM AS FILE_EXT_NM
+			, FILE_PARTN_COURS AS FILE_RLTV_PATH
+			, FILE_ABSLT_COURS AS FILE_ASLT_PATH
+			, CNTNTS_TY AS CONTENT_TYPE
+			, SORT_ORDR AS SRT_ORD
+			, REGISTER_NO AS RGSTP_ID
+			, REGIST_DT AS RGST_DTTM
+		FROM tb_file
+		WHERE FILE_ID = #{file_id}
+		ORDER BY SORT_ORDR
+	]]>
+	</select> 
+	
+	<select id="selectAttchFiles" parameterType="atFileVO" resultType="atFileVO">
+	/* common.file.selectAttchFiles */
+	<![CDATA[
+		SELECT
+			  FILE_SEQ
+			 ,FILE_ID
+			, DOC_ID
+			, FILE_NM
+			, FILE_SIZE
+			, FILE_EXTSN_NM AS FILE_EXT_NM
+			, FILE_PARTN_COURS AS FILE_RLTV_PATH
+			, FILE_ABSLT_COURS AS FILE_ASLT_PATH
+			, CNTNTS_TY AS CONTENT_TYPE
+			, SORT_ORDR AS SRT_ORD
+			, REGISTER_NO AS RGSTP_ID
+			, REGIST_DT AS RGST_DTTM
+		FROM tb_file
+		WHERE DOC_ID = #{doc_id}
+		ORDER BY SORT_ORDR
+	]]>
+	</select>
+	
+	<insert id="insertAttchFile" parameterType="atFileVO">
+		INSERT INTO tb_file(
+				 FILE_SEQ
+				 ,FILE_ID
+		        , DOC_ID
+		        , FILE_NM
+		        , FILE_EXTSN_NM
+		        , FILE_SIZE 
+		        , FILE_PARTN_COURS
+		        , FILE_ABSLT_COURS
+		        , CNTNTS_TY 
+		        , SORT_ORDR 
+		        , REGISTER_NO
+		        , REGIST_DT 
+		)
+	SELECT		(SELECT * FROM (SELECT  IFNULL(MAX(FILE_SEQ),0)+1 FROM tb_file) NEXT)
+				, #{file_id}
+				, #{doc_id}
+				, #{file_nm}
+				, #{file_ext_nm}
+				, #{file_size}
+				, #{file_rltv_path}
+				, #{file_aslt_path}
+				, #{content_type}
+				, (SELECT IFNULL(MAX(SORT_ORDR),0)+1 FROM tb_file WHERE DOC_ID = #{doc_id})
+				, #{ss_user_id}
+				, CURRENT_TIMESTAMP
+	</insert>
+	
+	<delete id="deleteAttchFile" parameterType="dataMap" >
+		<![CDATA[
+			DELETE FROM tb_file
+			WHERE	FILE_ID = #{file_id}
+		]]>	
+	</delete>
+	
+	<delete id="deleteAttchFiles" parameterType="dataMap" >
+		<![CDATA[
+			DELETE FROM tb_file
+			WHERE	DOC_ID = #{doc_id}
+		]]>	
+	</delete>
+	
+	<update id="updateAttchFile" parameterType="dataMap" >
+	/* common.file.updateAttchFile */
+		<![CDATA[
+		UPDATE tb_file
+		SET SORT_ORDR = #{sort_ordr}
+		WHERE FILE_ID = #{file_id}
+		]]>	
+	</update>
+
+</mapper>

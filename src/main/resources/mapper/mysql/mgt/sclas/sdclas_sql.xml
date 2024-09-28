@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mgt.sdclas">
+	
+	<select id="selectItemName" parameterType="dataMap" resultType="dataMap">
+	/* mgt.sdclas.selectItemName */
+	SELECT	 A1.GROUP_ID 
+				,A1.CODE
+				,A1.SCLAS_CODE
+				,A1.SCLAS_NM
+			    ,A2.CODE_NM
+	FROM op_sclas_code A1 JOIN op_code A2 ON A1.GROUP_ID=A2.GROUP_ID  AND A1.CODE=A2.CODE
+	WHERE A1.GROUP_ID 		=#{group_id}
+	AND 		A1.CODE 				=#{op_code}
+	AND 		A1.SCLAS_CODE   =#{sclas_code}
+	ORDER BY A1.SORT_ORDR
+	</select>
+	
+	<select id="selectListSdclas" parameterType="dataMap" resultType="dataMap">
+	/* mgt.sdclas.selectListSdclas */
+	SELECT A1.GROUP_ID
+		, A1.CODE
+		, A1.SCLAS_CODE
+		, A1.SDCLAS_CODE
+		, A1.SDCLAS_NM
+		, A1.ATTRB_1
+		, A1.ATTRB_2
+		, A1.ATTRB_3
+		, A1.SORT_ORDR
+	FROM op_sdclas_code A1
+	WHERE 	A1.GROUP_ID 		= #{group_id}
+	AND 		A1.CODE 		  		= #{op_code}
+	AND 		A1.SCLAS_CODE   = #{sclas_code}
+	AND 		A1.USE_YN 			 ='Y'
+	ORDER BY A1.SORT_ORDR
+	</select>
+
+	<select id="selectSdclas" parameterType="dataMap" resultType="dataMap">
+	/* mgt.sdclas.selectSdclas */
+	SELECT A1.GROUP_ID
+		, A1.CODE
+		, A1.SCLAS_CODE
+		, A1.SDCLAS_CODE
+		, A1.SDCLAS_NM
+		, A1.ATTRB_1
+		, A1.ATTRB_2
+		, A1.ATTRB_3
+		, A1.SORT_ORDR
+		, A1.USE_YN
+	FROM op_sdclas_code A1
+	WHERE 	A1.GROUP_ID 		= #{group_id}
+	AND 		A1.CODE 		  		= #{op_code}
+	AND 		A1.SCLAS_CODE   = #{sclas_code}
+	AND 		SDCLAS_CODE		= #{sdclas_code}
+	</select>
+
+	
+	<delete id="deleteSdclas" parameterType="dataMap">
+	/*  mgt.sdclas.deleteSdclas */
+	DELETE FROM op_sdclas_code
+	WHERE 	GROUP_ID 		= #{group_id}
+	AND     CODE 				= #{op_code}
+	AND 		SCLAS_CODE   = #{sclas_code}
+	</delete>
+	
+	<insert id="insertSdclas" parameterType="dataMap">
+	/*  mgt.sdclas.insertSdclas */
+	INSERT INTO op_sdclas_code (
+	    GROUP_ID
+	    ,CODE
+	    ,SCLAS_CODE
+		,SDCLAS_CODE
+		,SDCLAS_NM
+		, ATTRB_1
+		, ATTRB_2
+		, ATTRB_3
+		, SORT_ORDR
+		, USE_YN
+		, REGISTER_NO
+		, REGIST_DT
+		, UPDUSR_NO
+		, UPDT_DT
+	) VALUES (
+		  #{group_id}
+		 ,#{op_code}
+		 ,#{sclas_code}
+		 ,#{sdclas_code}
+		, #{sdclas_nm}
+		, #{attrb_1}
+		, #{attrb_2}
+		, #{attrb_3}
+		, #{sort_ordr}
+		,'Y'
+		, #{ss_user_no}
+		, CURRENT_TIMESTAMP
+		, #{ss_user_no}
+		, CURRENT_TIMESTAMP
+	)
+	</insert>
+	
+	<update id="updateSdclas" parameterType="dataMap">
+	/*  mgt.sdclas.updateSdclas */
+	UPDATE op_sdclas_code 
+		SET 	 SDCLAS_NM		=#{sdclas_nm}
+				, ATTRB_1			=#{attrb_1}
+				, ATTRB_2			=#{attrb_2}
+				, ATTRB_3			=#{attrb_3}
+				, SORT_ORDR	=#{sort_ordr}
+				, UPDUSR_NO	=#{ss_user_no}
+				, UPDT_DT	 	=CURRENT_TIMESTAMP
+	WHERE 	GROUP_ID		= #{group_id}
+	AND     CODE 				= #{op_code}
+	AND 		SCLAS_CODE	= #{sclas_code}
+	AND 		SDCLAS_CODE	= #{sdclas_code}
+	</update>
+	
+	
+	<update id="updateSdclasUseYn" parameterType="dataMap">
+	/*  mgt.sdclas.updateSclasUseYn */
+	UPDATE op_sdclas_code 
+		SET 	 USE_YN			='N'
+				, UPDUSR_NO	=#{ss_user_no}
+				, UPDT_DT	 	=CURRENT_TIMESTAMP
+	WHERE 	GROUP_ID		= #{group_id}
+	AND     CODE 				= #{op_code}
+	AND 		SCLAS_CODE	= #{sclas_code}
+	AND 		SDCLAS_CODE	= #{sdclas_code}
+	</update>
+	
+</mapper>

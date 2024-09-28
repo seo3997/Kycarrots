@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+  <script type="text/javascript" src="../js/jquery/jquery-1.11.1.min.js"></script>
+  <script type="text/javascript" src="../js/jquery-ui/jquery-ui-1.10.3.custom.min.js"></script>
+  <link href="../css/bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen">
+  <script src="../js/bootstrap/bootstrap.js"></script>
+
+  <link href="../css/bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="screen">
+  <script type="text/javascript" src="../js/bootstrap/moment-with-locales.min.js"></script>
+  <script type="text/javascript" src="../js/bootstrap/bootstrap-datetimepicker.min.js"></script>
+
+  <!-- AdminLTE Setup -->
+  <link rel="stylesheet" href="../css/AdminLTE/font-awesome.min.css">
+  <link rel="stylesheet" href="../css/AdminLTE/ionicons.min.css">
+  <link rel="stylesheet" href="../css/AdminLTE/AdminLTE.css">
+  <link rel="stylesheet" href="../css/AdminLTE/skin-green-light.css">
+  <script type="text/javascript" src="../js/AdminLTE/app.js"></script>
+
+
+  <!-- icheck -->
+  <link rel="stylesheet" href="../js/icheck/skins/flat/blue.css">
+  <script type="text/javascript" src="../js/icheck/icheck.min.js"></script>
+
+  <script type="text/javascript" src="../js/common.js"></script>
+  <link rel="stylesheet" href="../css/common.css">
+</head>
+
+<body class="">
+<h2 class="h3">안내</h2>
+<ul>
+  <li>section요소에 반드시 클래스 search_block이 존재해야 합니다.</li>
+  <li>id변경해야 할 때 for값은 반드시 동일한 값으로 맞춰주세요.</li>
+  <li> 클래스 form-group 가 한개의 행(row)입니다.</li>
+  <li>한 행에 col-??-숫자 의 숫자 값이 12가 되도록 해주셔야 정리되게 보입니다.</li>
+  <li>한 행에 제목부분은 col-sm-1로 고정하셔야 합니다.</li>
+  <li>원하는 요소에 가로값 100%를 사용하지 않을때에는 클래스 width-auto 를 넣으세요</li>
+</ul>
+
+  <section class="content search_block">
+    <div class="box box-primary">
+      <div class="box-body">
+          <div class="form-group">
+            <label for="" class="input-sm col-sm-1">업체명</label>
+            <div class="col-sm-11">
+              <select id="" name="company_id" class="form-control input-sm width-auto">
+                <option>선택</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-sm-1 input-sm">업체명</label>
+            <div class="col-sm-5">
+              <select id="" name="company_id" class="form-control input-sm">
+                <option>선택</option>
+              </select>
+            </div>
+            <label for="" class="col-sm-1 input-sm">상태</label>
+            <div class="col-sm-5">
+              <select id="" name="company_id" class="form-control input-sm width-auto">
+                <option>선택</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-sm-1 input-sm">기간검색</label>
+            <div class="col-sm-5 input-sm">
+              <div class="form-group form-inline">
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
+                      전체
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                      오늘
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
+                      7일
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
+                      30일
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
+                      6개월
+                    </label>
+                  </div>
+                </div>
+            </div>
+            <label for="" class="col-sm-1 input-sm">권한</label>
+            <div class=" col-sm-1">
+              <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right" id="datepicker">
+              </div>
+            </div>
+            <div class="col-sm-1">
+              <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right" id="datepicker">
+              </div>
+            </div>
+            <div class="col-sm-3 btn-group">
+              <button type="button" class="btn btn-sm btn-warning"><i class="fa fa-history"></i> 초기화</button>
+              <button type="button" class="btn btn-sm btn-info"><i class="fa fa-search"></i> 검색</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="" class="col-sm-1 input-sm">업체명</label>
+            <div class="col-sm-3  input-sm">
+              (주)앙코르
+            </div>
+            <label for="" class="col-sm-1 input-sm">권한</label>
+            <div class="col-sm-3 ">
+              <select id="" class="form-control input-sm">
+                <option value="">선택</option>
+              </select>
+            </div>
+            <label for="" class="col-sm-1 input-sm">상태</label>
+            <div class="col-sm-3  ">
+              <select id="" class="form-control input-sm">
+                <option value="">선택</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-sm-1 input-sm">업체명</label>
+            <div class="col-sm-3 ">
+              <select id="" name="company_id" class="form-control input-sm">
+                <option>선택</option>
+              </select>
+            </div>
+            <label for="category_id" class="col-sm-1 input-sm">검수상태</label>
+            <div class="col-sm-3 ">
+              <select id="category_id" name="category_id" class="form-control input-sm">
+                <option value="">선택</option>
+              </select>
+            </div>
+            <label for="project_id" class="col-sm-1 input-sm">프로젝트</label>
+            <div class="col-sm-3  ">
+              <select id="project_id" name="project_id" class="form-control input-sm">
+                <option value="">선택</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-1 input-sm">
+              <label for="sch_text">상세검색</label>
+            </div>
+            <div class="col-sm-1">
+              <select id="sch_type" name="sch_type" class="form-control input-sm">
+                <option value="">선택</option>
+              </select>
+            </div>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm" name="sch_text" title="검색어를 입력하세요.">
+            </div>
+            <div class="col-sm-2 btn-group">
+              <button type="button" class="btn btn-sm btn-warning"><i class="fa fa-history"></i> 초기화</button>
+              <button type="button" class="btn btn-sm btn-info"><i class="fa fa-search"></i> 검색</button>
+            </div>
+          </div>
+        </div>
+    </div>
+  </section>
+
+</body>
+
+</html>

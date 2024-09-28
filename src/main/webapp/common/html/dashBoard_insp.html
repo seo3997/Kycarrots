@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+<script type="text/javascript" src="../js/jquery/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui/jquery-ui-1.10.3.custom.min.js"></script>
+<link href="../css/bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen">
+<script src="../js/bootstrap/bootstrap.js"></script>
+
+<link href="../css/bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="screen">
+<script type="text/javascript" src="../js/bootstrap/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap/bootstrap-datetimepicker.min.js"></script>
+
+<!-- AdminLTE Setup -->
+<link rel="stylesheet" href="../css/AdminLTE/font-awesome.min.css">
+<link rel="stylesheet" href="../css/AdminLTE/ionicons.min.css">
+<link rel="stylesheet" href="../css/AdminLTE/AdminLTE.css">
+<link rel="stylesheet" href="../css/AdminLTE/skin-green-light.css">
+<script type="text/javascript" src="../js/AdminLTE/app.js"></script>
+
+
+<!-- icheck -->
+<link rel="stylesheet" href="../js/icheck/skins/flat/blue.css">
+<script type="text/javascript" src="../js/icheck/icheck.min.js"></script>
+
+<script type="text/javascript" src="../js/common.js"></script>
+<link rel="stylesheet" href="../css/common.css">
+</head>
+<body class="hold-transition skin-green-light">
+<div class="wrapper">
+
+	<!-- 헤더  -->
+	<c:import url="/common/inc/header.do" charEncoding="utf-8" />
+	<!-- 좌측 메뉴 -->
+
+
+		<!-- Main content -->
+		<!-- @@ 메인 콘텐츠 -->
+		<div class="content-wrapper"  >
+			<section class="content">
+
+				<div class="row">
+					<!-- 메인에 있는 좌측 Accordion : 게시판 -->
+          <div class="col-sm-4">
+          <h3 class="h4">사용자 관리</h3>
+            <div class="col-sm-6 col-xs-12">
+              <div class="callout callout-info">
+                <h4>검수대상</h4>
+                <p><%=param.getString("ROLE_INSP_CNT")%>명</p>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+              <div class="callout callout-info">
+                <h4>최종검수자</h4>
+                <p><%=param.getString("ROLE_PUBD_CNT")%>명</p>
+              </div>
+            </div>
+            </div>
+
+					<!-- 메인에 있는 우측 Accordion : 자료실 -->
+						<div class="col-sm-8 col-xs-12">
+              <div class="clearfix">
+              <h3 class="h4 pull-left">우수 사용자</h3>
+              <div class="pull-right mt10">Today 2020년 11월 04일</div>
+              </div>
+						<div class="box box-primary">
+							<div class="box-header">
+								<h3 class="box-title">최종 검수자 관리</h3>
+								<div class="pull-right">
+									<a href="/mgt/job/selectCheckJob.do">작업관리 전체보기</a>
+								</div>
+
+							</div>
+			            	<div class="box-body table-responsive no-padding">
+				            	<table class="table table-hover">
+					                <tr>
+					                  <th>No</th>
+					                  <th>최종검수자</th>
+					                  <th>목표건수</th>
+					                  <th>카테고리</th>
+					                  <th>검수대기</th>
+					                  <th>검수완료</th>
+					                  <th>검수진척율</th>
+					                </tr>
+									<%
+									for(int i = 0; i < resultJobList.size(); i++){
+										DataMap dataMap = (DataMap) resultJobList.get(i);
+									%>
+					                <tr style="cursor:pointer;cursor:hand;">
+					                  <td><%=(i+1)%></td>
+					                  <td><%=dataMap.getString("USER_NM")%></td>
+					                  <td><%=dataMap.getString("APPLY_CNT")%></td>
+					                  <td><%=dataMap.getString("PROJECT_CODE_M_NM")+" / "+ dataMap.getString("PROJECT_CODE_S_NM") %></td>
+					                  <td><%=dataMap.getString("PUBD_APPLY_D_CNT") %></td>
+					                  <td><%=dataMap.getString("PUBD_APPLY_CNT") %></td>
+					                  <td><%=dataMap.getString("PUBD_APPLY_RATE")%>%</td>
+					                </tr>
+									<%}%>
+									<%	if(resultJobList.size() == 0){	%>
+										<tr>
+											<td class="text-center" colspan="5" ><spring:message code="msg.data.empty" /></td>
+										</tr>
+									<%}%>
+
+								</table>
+							</div>
+						</div>
+					</div>
+
+				</div><!-- row -->
+			</section>
+		</div><!-- content-wrapper -->
+
+	</div>
+	<!-- footer -->
+	<%@ include file="/common/inc/footer.jspf" %>
+	<!-- //fooer -->
+</div>
+
+
+</body>
+</html>

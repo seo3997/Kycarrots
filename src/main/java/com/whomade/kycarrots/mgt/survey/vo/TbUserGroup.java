@@ -1,0 +1,70 @@
+package com.whomade.kycarrots.mgt.survey.vo;
+
+
+
+public class TbUserGroup {
+
+	private	int USER_NO ;
+	private	String USER_ID ;
+	private	String USER_NM ;
+    private	int SURVEY_GROUP_ID ;
+	private	String SURVEY_GROUP_NM ;
+    private int SORT_ORDR;
+	private	int INSERT_USER_NO ;
+	private	int UPDATE_USER_NO ;
+	
+	public String getUSER_ID() {
+		return USER_ID;
+	}
+	public void setUSER_ID(String uSER_ID) {
+		USER_ID = uSER_ID;
+	}
+	public String getUSER_NM() {
+		return USER_NM;
+	}
+	public void setUSER_NM(String uSER_NM) {
+		USER_NM = uSER_NM;
+	}
+	public int getSORT_ORDR() {
+		return SORT_ORDR;
+	}
+	public void setSORT_ORDR(int sORT_ORDR) {
+		SORT_ORDR = sORT_ORDR;
+	}
+	public int getUSER_NO() {
+		return USER_NO;
+	}
+	public void setUSER_NO(int uSER_NO) {
+		USER_NO = uSER_NO;
+	}
+	public int getSURVEY_GROUP_ID() {
+		return SURVEY_GROUP_ID;
+	}
+	public void setSURVEY_GROUP_ID(int sURVEY_GROUP_ID) {
+		SURVEY_GROUP_ID = sURVEY_GROUP_ID;
+	}
+	public String getSURVEY_GROUP_NM() {
+		return SURVEY_GROUP_NM;
+	}
+	public void setSURVEY_GROUP_NM(String sURVEY_GROUP_NM) {
+		SURVEY_GROUP_NM = sURVEY_GROUP_NM;
+	}
+	public int getINSERT_USER_NO() {
+		return INSERT_USER_NO;
+	}
+	public void setINSERT_USER_NO(int iNSERT_USER_NO) {
+		INSERT_USER_NO = iNSERT_USER_NO;
+	}
+	public int getUPDATE_USER_NO() {
+		return UPDATE_USER_NO;
+	}
+	public void setUPDATE_USER_NO(int uPDATE_USER_NO) {
+		UPDATE_USER_NO = uPDATE_USER_NO;
+	}
+	
+	
+	
+  
+	
+	
+}

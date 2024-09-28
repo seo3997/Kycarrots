@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mgt.batchOcr">	
+		
+	<insert id="insertBatchMaster" parameterType="dataMap">
+		INSERT INTO tb_batch_master (
+		      BATCH_MASTER_ID
+		    , BATCH_ID
+			, BATCH_START_TIME
+			, BATCH_END_TIME
+			, BATCH_STAT 		
+			, REGISTER_NO
+			, REGIST_DT
+			, UPDUSR_NO
+			, UPDT_DT
+		) values (
+		     #{BATCH_MASTER_ID}
+			,#{BATCH_ID}
+			,CURRENT_TIMESTAMP
+			,CURRENT_TIMESTAMP
+			,#{BATCH_STAT}
+			,#{REGISTER_NO}
+			,CURRENT_TIMESTAMP
+			,#{UPDUSR_NO}
+			,CURRENT_TIMESTAMP
+		)
+	</insert>
+
+	<update id="updateBatchMaster" parameterType="dataMap">
+		UPDATE tb_batch_master
+		SET  BATCH_END_TIME 	= CURRENT_TIMESTAMP
+			,BATCH_STAT 		= #{BATCH_STAT}
+			,UPDUSR_NO 			= #{UPDUSR_NO}
+			,UPDT_DT 			= CURRENT_TIMESTAMP
+		WHERE BATCH_MASTER_ID 	= #{BATCH_MASTER_ID}
+	</update>
+	
+
+	<select id="getBatchMasterId" resultType = "string">
+		SELECT CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),LPAD(IFNULL(MAX(CAST(SUBSTR(A.BATCH_MASTER_ID,9) as UNSIGNED)),0)+1,5,'0')) AS COM_BATCH_MASTER_ID
+ 		FROM tb_batch_master A 
+	    WHERE A.BATCH_MASTER_ID LIKE CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'%')
+	</select>
+	
+	<select id = "selectBatchList" parameterType= "dataMap" resultType = "dataMap">
+		SELECT A.BATCH_ID 
+               ,A.BATCH_SORCE 
+               ,A.BATCH_TARGET
+               ,A.BATCH_CYCLE_CODE
+               ,A.BATCH_HOUR
+               ,A.BATCH_TIME
+               ,A.BATCH_DAY_CODE
+		FROM tb_batch A
+	</select>
+	
+	
+</mapper>

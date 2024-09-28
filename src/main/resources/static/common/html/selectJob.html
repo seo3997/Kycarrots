@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+<script type="text/javascript" src="../js/jquery/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui/jquery-ui-1.10.3.custom.min.js"></script>
+<link href="../css/bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen">
+<script src="../js/bootstrap/bootstrap.js"></script>
+
+<link href="../css/bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="screen">
+<script type="text/javascript" src="../js/bootstrap/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap/bootstrap-datetimepicker.min.js"></script>
+
+<!-- AdminLTE Setup -->
+<link rel="stylesheet" href="../css/AdminLTE/font-awesome.min.css">
+<link rel="stylesheet" href="../css/AdminLTE/ionicons.min.css">
+<link rel="stylesheet" href="../css/AdminLTE/AdminLTE.css">
+<link rel="stylesheet" href="../css/AdminLTE/skin-green-light.css">
+<script type="text/javascript" src="../js/AdminLTE/app.js"></script>
+
+
+<!-- icheck -->
+<link rel="stylesheet" href="../js/icheck/skins/flat/blue.css">
+<script type="text/javascript" src="../js/icheck/icheck.min.js"></script>
+
+<script type="text/javascript" src="../js/common.js"></script>
+<link rel="stylesheet" href="../css/common.css">
+</head>
+<body class="hold-transition skin-green-light sidebar-mini">
+
+<div class="wrapper">
+
+	<!-- 헤더  -->
+	<c:import url="/common/inc/header.do" charEncoding="utf-8" />
+
+	<!-- 좌측 메뉴 -->
+	<c:import url="/common/inc/menu.do" charEncoding="utf-8" />
+
+	<!-- content -->
+	<div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<section class="content-header">
+		<div id="navi"><i class="fa fa-home f12 color-lgray"></i><span class="blind">home</span>><span class="text" id="spnavi"></span></div>
+    	<div id="pagetitle">
+    	</div>
+		</section>
+
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="box box-primary">
+			        		<form role="form" id="aform" method="post" action="/mgt/job/selectPageListJob.do" class="form-horizontal">
+							<input type="hidden" name="work_id" 	   value="<%=resultMap.getString("WORK_ID") %>" />
+							<input type="hidden" name="atch_doc_id"    value="<%=resultMap.getString("ATCH_DOC_ID") %>" />
+							<%-- <input type="hidden" name="project_id"     value="<%=resultMap.getString("PROJECT_ID") %>" /> --%>
+							<input type="hidden" name="result_code_l"  value="R010320"/>
+							<!-- 검색관련 -->
+							<input type="hidden" name="sch_type" 	   value="<%=param.getString("sch_type")%>" />
+							<input type="hidden" name="sch_text" 	   value="<%=param.getString("sch_text")%>" />
+							<input type="hidden" name="sch_bbs_se_code"value="<%=param.getString("sch_bbs_se_code")%>" />
+							<input type="hidden" name="currentPage"    value="<%=param.getString("currentPage")%>"/>
+
+
+							<input type="hidden" name="project_id"     value="<%=param.getString("project_id") %>" />
+							<input type="hidden" name="company_id"     value="<%=param.getString("company_id") %>" />
+							<input type="hidden" name="category_id"    value="<%=param.getString("category_id") %>" />
+							<input type="hidden" name="category_s_id"  value="<%=param.getString("category_s_id") %>" />
+
+							<input type="hidden" name="file_id" />
+
+							<div class="box-body no-padding">
+								<table class="table table-bordered">
+									<colgroup>
+										<col style="width:15%;">
+										<col style="width:15%;">
+										<col style="width:15%;">
+										<col style="*">
+									</colgroup>
+									<tbody>
+										<tr>
+											<th>코드</th>
+											<td>
+												<%=resultMap.getString("WORK_ID") %>
+											</td>
+											<th>등록일</th>
+											<td colspan="2">
+												<%=resultMap.getString("REGISTER_DATE") %>
+											</td>
+										</tr>
+										<%
+				                		if("ROLE_PUBD".equals(ssAuthorId) || "ROLE_INSP".equals(ssAuthorId)){
+				            			%>
+										<tr>
+											<th>업체명</th>
+											<td colspan="4">
+												<%=resultMap.getString("COMPANY_NM") %>
+											</td>
+										</tr>
+										<%
+				                		}
+										%>
+										<tr>
+											<th>프로젝트명</th>
+											<td colspan="4">
+												<%=resultMap.getString("PROJECT_NAME") %>
+												<button type="button" class="btn btn-sm" data-toggle="modal" data-target="#selectModal">가이드</button>
+											</td>
+										</tr>
+										<tr>
+											<th>라벨</th>
+											<td colspan="4">
+												<%=resultMap.getString("LABEL") %>
+											</td>
+										</tr>
+
+										<%-- <tr>
+											<th>작업자 이름</th>
+											<td colspan="2">
+												<%=resultMap.getString("WORKER_NAME") %>
+											</td>
+										</tr>
+										<tr>
+											<th>등록일</th>
+											<td colspan="2">
+												<%=resultMap.getString("REGISTER_DATE") %>
+											</td>
+										</tr>
+										<tr>
+											<th>프로젝트 명</th>
+											<td colspan="2">
+												<%=resultMap.getString("PROJECT_NAME") %>
+											</td>
+										</tr>
+										<tr>
+											<th>라벨</th>
+											<td colspan="2">
+												<%=resultMap.getString("LABEL") %>
+											</td>
+										</tr> --%>
+										<tr>
+											<th>첨부파일</th>
+											<td colspan="4">
+								<%
+									//파일이 존재하지 않으면 첨부파일 목록태그 그리지 않음
+									if(fileList.size() > 0){
+								%>
+								<%
+												for(int i = 0; i < fileList.size(); i++) {
+													AtFileVO fvo = (AtFileVO)fileList.get(i);
+								%>
+												<div class="col-sm-4 divnopadding divnopaddingmagin">
+													<img class="img-responsive" src="<%=fvo.getFile_rltv_path()+fvo.getFile_id()+"."+fvo.getFile_ext_nm()%>" alt="Photo">
+													<a href="#"  onclick="fnDownload('<%=fvo.getFile_id()%>'); return false;">
+														<img src = "/common/images/file_ext_ico/attach_<%=fvo.getFile_ext_nm().toLowerCase()%>.gif" width="16" height="16" class="attach_file" />
+														<%=fvo.getFile_nm()%> (<%=fvo.getFile_size()/1000.0%>) KB
+													</a>
+
+												</div>
+												<!-- AnnotationTool
+												<div class="col-sm-2">
+												<button type="button" class="btn btn-sm btn-warning" onclick="fnSearch(); return false;"><i class="fa fa-search"></i> AnnotationTool</button>
+												</div>
+												 -->
+								<%
+												}
+									}
+								%>
+												<!-- AnnotationTool
+												<div class="col-sm-10" style="color:#c7254e;">
+												※ 첨부파일을 다운로드하여 AnnotationTool을 실행하여 검수해주시기 바랍니다.
+												</div>
+												 -->
+											</td>
+										</tr>
+										<tr>
+											<th rowspan="2">검수</th>
+											<th>검수상태</th>
+											<td colspan="3">
+												<%=resultMap.getString("WORK_STATE_NM").equals("검수완료") ? "승인" : resultMap.getString("WORK_STATE_NM") %>
+											</td>
+										</tr>
+								<%
+			                		if("ROLE_PUBD".equals(ssAuthorId) || "ROLE_INSP".equals(ssAuthorId)){
+			            		%>
+										<tr>
+											<th>검수작업</th>
+                      <td>김아무개</td>
+                      <th>검수결과</th>
+											<td class="text_area">
+                        <div>
+													<label for="author0">
+														<input type="radio" name="last_apply_cd" id="last_apply_cd" value="Y" />
+														 승인
+														<input type="radio" name="last_apply_cd" id="last_apply_cd" value="N" />
+														반려
+													</label>
+                          <div class="pull-right">2020.11.11 23:11:23</div>
+                        </div>
+                        <div>
+                          <div class="col-sm-2">
+                          반려사유
+                          </div>
+                          <div class="col-sm-10">
+                            <select style="width:100%;">
+                            <option>기타</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <input type="text" style="width:100%;" value="~~사유로 반려합니다.">
+                        </div>
+                        <div class="col-sm-12">
+                          ※ 반려사유는 사용자 화면과 반려 시스템 메일에 노출 됩니다.  신중하게 진행해주세요.
+                        </div>
+											</td>
+										</tr>
+									<%-- 과업관리자 : 조회만 가능
+			                		} else if("ROLE_PROJ".equals(ssAuthorId)){
+			            				<tr>
+											<th>검수작업</th>
+											<td colspan="4" class="text_area">
+							    				<div class="row">
+													<div style="margin-left: 13px;">
+														<label for="author0">
+															<input type="radio" name="apply_cd" id="apply_cd" disabled="disabled" value="Y"/>
+															 승인
+															<input type="radio" name="apply_cd" id="apply_cd" disabled="disabled" value="N"/>
+															반려
+														</label>
+													</div>
+												</div>
+											</td>
+										</tr>
+			            			--%>
+			            			<%
+			                		} else {
+			            				// 검수자, 일반회원+검수자
+			            			%>
+			            				<tr>
+											<th>검수작업</th>
+											<td colspan="4" class="text_area">
+							    				<div class="row">
+													<div class="col-md-10">
+														<label for="author0">
+															<input type="radio" name="apply_cd" id="apply_cd" value="Y" />
+															 승인
+															<input type="radio" name="apply_cd" id="apply_cd" value="N" />
+															반려
+														</label>
+													</div>
+													<div class="col-md-2">
+													<%= resultMap.getInt("apply_chk") > 0 ? resultMap.getString("INSPECTOR_DT") : "" %>
+									  				</div>
+									  			</div>
+											</td>
+										</tr>
+									<%
+			                		}
+			            			%>
+									</tbody>
+								</table>
+								<%-- <h4 class="subtitle denyList" style="display:none"><i></i>반려</h4>
+								<div class="tb-box denyList" style="display:none">
+									<label class="control-label col-sm-1" for="email">반려 사유</label>
+							    	<div class="col-sm-2">
+						    			<select class="form-control" name="result_code_m" id="result_code_m">
+											<%=CommboUtil.getComboStr(cboDenyList, "CODE", "CODE_NM", "", "C")%>
+										</select>
+									</div>
+									<div class="col-sm-7">
+									<input type="text" class="form-control" name="result_rm" id="result_rm" placeholder="반려 사유" maxlength="200" style="display:none"/>
+									</div>
+								</div>
+								 --%>
+								<!-- 반려사유 -->
+								<h4 class="subtitle denyList" style="display:none"><i></i>반려</h4>
+								<div class="tb-box denyList" style="display:none">
+									<div class="col-sm-1">
+										<label class="control-label" for="email">사유</label>
+							    	</div>
+							    	<div class="col-sm-9">
+						    			<select class="form-control" name="result_code_m" id="result_code_m">
+							    			<%-- <%=CommboUtil.getComboStr(cboDenyList, "CODE", "CODE_NM", resultMap.getString("RESULT_CODE_M"), "C")%> --%>
+							    		<%
+					                		if(resultMap.getString("RESULT_CODE_M") != null && !"".equals(resultMap.getString("RESULT_CODE_M"))) {
+					                	%>
+							    					<%=CommboUtil.getComboStr(cboDenyList, "CODE", "CODE_NM", resultMap.getString("RESULT_CODE_M"), "C")%>
+					                	<%
+					                		}else {
+					                	%>
+								    				<%=CommboUtil.getComboStr(cboDenyList, "CODE", "CODE_NM", resultMap.getString("LAST_RESULT_CODE_M") , "C")%>
+						                <%
+					                		}
+					            		%>
+										</select>
+									</div>
+									<div class="col-sm-10">
+									<input type="text" class="form-control" name="result_rm" id="result_rm" placeholder="반려 사유" value='<%=resultMap.getString("RESULT_RM") != null && resultMap.getString("RESULT_RM") != "" ? resultMap.getString("RESULT_RM") : resultMap.getString("last_RESULT_RM") %>' maxlength="200" style="display:none"/>
+									</div>
+									<div class="col-sm-10" style="color:#c7254e;">
+									※ 반려사유는 사용자 화면과 반려시스템 메일에 노출됩니다. 신중하게 진행해주세요.
+									</div>
+								</div>
+							</div><!-- /.box-body -->
+
+							<div class="box-footer">
+								<div class="pull-right">
+								<%
+			                		if("ROLE_PUBD".equals(ssAuthorId)){
+			            		 %>
+									<button type="button" class="btn btn-default" onclick="fnGoLastList(); return false;"><i class="fa fa-reply"></i> 목록</button>
+
+									<button type="button" id="last_work_status" class="btn btn-info" onclick="fnGoLastUpdate(); return false;"><i class="fa fa-pencil"></i> 작업상태변경</button>
+								<%
+			                		} else if("ROLE_ADMIN".equals(ssAuthorId) || "ROLE_PROJ".equals(ssAuthorId) || "ROLE_INSP".equals(ssAuthorId)) {
+			            		%>
+			            			<button type="button" class="btn btn-default" onclick="fnGoList(); return false;"><i class="fa fa-reply"></i> 목록</button>
+
+								   <!-- <button type="button" id="work_status" class="btn btn-info" onclick="fnGoUpdate(); return false;" disabled="disabled"><i class="fa fa-pencil"></i> 작업상태변경</button>  -->
+			            		<%
+			                		} else {
+			            		%>
+			            			<button type="button" class="btn btn-default" onclick="fnGoList(); return false;"><i class="fa fa-reply"></i> 목록</button>
+
+									<button type="button" id="work_status" class="btn btn-info" onclick="fnGoUpdate(); return false;"><i class="fa fa-pencil"></i> 작업상태변경</button>
+								<%
+			                		}
+			            		%>
+								</div>
+							</div>
+
+
+						</form>
+					</div><!-- /.box -->
+				</div><!--  /.col-xs-12 -->
+			</div><!-- ./row -->
+		</section><!-- /.content -->
+	</div>
+	<!-- footer -->
+	<%@ include file="/common/inc/footer.jspf" %>
+	<!-- //fooer -->
+</div>
+<!-- Modal -->
+<div id="selectModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">팝업제목</h4>
+      </div>
+       <div id="modal-body">
+       <%
+       		String obj = resultMap.getString("GUIDE");
+       		if(!obj.equals("")){
+       			obj = StringUtil.toHtmlFormat_hwp(obj);
+       		}
+       %>
+ 			<%-- <c:out value="${resultMap.GUIDE}" escapeXml="false" /> --%>
+ 			<%=obj %>
+ 		</div>
+      <div class="modal-footer">
+        <button type="button" id="btn-close" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+	$('input[name=apply_cd]').on('change', function(e) {
+		if("N" == $('input[name=apply_cd]:checked').val()){
+			$(".denyList").show();
+		} else {
+			$(".denyList").hide();
+		}
+	});
+
+	$('input[name=last_apply_cd]').on('change', function(e) {
+		if("N" == $('input[name=last_apply_cd]:checked').val()){
+			$(".denyList").show();
+		} else {
+			$(".denyList").hide();
+		}
+	});
+
+	$("#result_code_m").change(function(){
+		var deny_id = $("#result_code_m option:selected").val();
+
+		if(deny_id == "999") {
+			$('#result_rm').show();
+		} else {
+			$('#result_rm').hide();
+		}
+	});
+
+	// 가이드팝업
+	$("#selectModal").on("show.bs.modal", function(event){
+		var button = $(event.relatedTarget) // Button that triggered the modal
+
+		// title
+		$(".modal-title").html("가이드");
+	});
+
+	$("#selectModal").on('hidden.bs.modal', function (e) {
+    });
+</script>
+
+</body>
+</html>

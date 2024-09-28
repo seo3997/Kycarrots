@@ -1,0 +1,35 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<script type="text/javascript" src="<%=jsRoot%>jquery/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="<%=jsRoot%>jquery-ui/jquery-ui-1.10.3.custom.min.js"></script>
+<%--  
+<link href="<%=cssRoot%>bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen" />
+<script src="<%=jsRoot%>bootstrap/bootstrap.js"></script>
+ --%>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+        
+<link href="<%=cssRoot%>bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="<%=jsRoot%>bootstrap/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="<%=jsRoot%>bootstrap/bootstrap-datetimepicker.min.js"></script>
+
+<!-- AdminLTE Setup -->
+<%-- <link rel="stylesheet" href="<%=cssRoot%>AdminLTE/font-awesome.min.css" /> --%>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"  />
+<link rel="stylesheet" href="<%=cssRoot%>AdminLTE/ionicons.min.css" />
+<link rel="stylesheet" href="<%=cssRoot%>AdminLTE/AdminLTE.css" />
+<link rel="stylesheet" href="<%=cssRoot%>AdminLTE/skin-green-light.css" />
+<script type="text/javascript" src="<%=jsRoot%>AdminLTE/app.js"></script>
+
+
+<!-- icheck -->
+<link rel="stylesheet" href="<%=jsRoot%>icheck/skins/flat/blue.css" />
+<script type="text/javascript" src="<%=jsRoot%>icheck/icheck.min.js"></script>
+
+<script type="text/javascript" src="<%=jsRoot%>common.js?version=6.5"></script>
+<link rel="stylesheet" href="<%=cssRoot%>common.css?version=6.4" />
+
+<link rel="stylesheet" href="<%=cssRoot%>dashboard.css" />
+
+
+
+

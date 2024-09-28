@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+<script type="text/javascript" src="../js/jquery/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui/jquery-ui-1.10.3.custom.min.js"></script>
+<link href="../css/bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen">
+<script src="../js/bootstrap/bootstrap.js"></script>
+
+<link href="../css/bootstrap/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="screen">
+<script type="text/javascript" src="../js/bootstrap/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap/bootstrap-datetimepicker.min.js"></script>
+
+<!-- AdminLTE Setup -->
+<link rel="stylesheet" href="../css/AdminLTE/font-awesome.min.css">
+<link rel="stylesheet" href="../css/AdminLTE/ionicons.min.css">
+<link rel="stylesheet" href="../css/AdminLTE/AdminLTE.css">
+<link rel="stylesheet" href="../css/AdminLTE/skin-green-light.css">
+<script type="text/javascript" src="../js/AdminLTE/app.js"></script>
+
+
+<!-- icheck -->
+<link rel="stylesheet" href="../js/icheck/skins/flat/blue.css">
+<script type="text/javascript" src="../js/icheck/icheck.min.js"></script>
+
+<script type="text/javascript" src="../js/common.js"></script>
+<link rel="stylesheet" href="../css/common.css">
+</head>
+<div class="wrapper">
+	<!-- 헤더  -->
+	<c:import url="/common/inc/header.do" charEncoding="utf-8" />
+	<!-- 좌측 메뉴 -->
+	<c:import url="/common/inc/menu.do" charEncoding="utf-8" />
+
+	<!-- Content Wrapper. Contains page content -->
+	<div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<section class="content-header">
+		<div id="navi"><i class="fa fa-home f12 color-lgray"></i><span class="blind">home</span>><span class="text" id="spnavi"></span></div>
+    	<div id="pagetitle">
+    	</div>
+		</section>
+
+		<!-- Main content -->
+		<section class="content container-fluid">
+			<div class="row">
+		   		<div class="col-12">
+	          		<div class="box box-primary">
+	          			<!-- 조회조건 -->
+						<form role="form" id="aform" method="post" action="/mgt/job/selectCheckJob.do">
+						<input type="hidden" 	name="work_id" />
+
+			            <div class="box-header">
+			              <div class="form-group row">
+							<div class="form-group">
+								<!-- 업체 -->
+								<c:if test="${not empty companyCodeComboStr}">
+								<label for="company_id" class="control-label col-1">업체명</label>
+			                	<div class="col-2">
+									<select id="company_id" name="company_id" class="form-control" >
+										<%=CommboUtil.getComboStr(companyCodeComboStr, "CODE", "CODE_NM", param.getString("company_id"), "A")%>
+									</select>
+								</div>
+								</c:if>
+
+								<!-- 검수상태 -->
+								<c:if test="${not empty categoryCodeComboStr}">
+								<label for="category_id" class="control-label col-1">검수상태</label>
+			                	<div class="col-2">
+									<select id="category_id" name="category_id" class="form-control" >
+										<%-- <%=CommboUtil.getComboStr(categoryCodeComboStr, "CODE", "CODE_NM", param.getString("category_id") , "A")%> --%>
+										<%=CommboUtil.getComboStr(categoryCodeComboStr, "CODE", "CODE_NM", param.getString("category_id"), "A")%>
+									</select>
+								</div>
+								</c:if>
+
+								<!-- 카테고리
+								<c:if test="${not empty categoryCodeComboStr}">
+								<label for="category_id" class="control-label col-sm-1">카테고리</label>
+			                	<div class="col-sm-2 divnopadding divnopaddingmagin">
+									<select id="category_id" name="category_id" class="form-control input-sm" >
+										<%-- <%=CommboUtil.getComboStr(categoryCodeComboStr, "CODE", "CODE_NM", param.getString("category_id") , "A")%> --%>
+										<%=CommboUtil.getComboStr(categoryCodeComboStr, "CODE", "CODE_NM", param.getString("category_id"), "A")%>
+									</select>
+								</div>
+								</c:if>
+                 -->
+
+								<!-- 프로젝트 -->
+								<label for="project_id" class="control-label col-1">프로젝트</label>
+								<div class="col-3">
+									<select id="project_id" name="project_id" class="form-control">
+										<option value="">선택</option>
+									</select>
+								</div>
+							</div>
+
+						  </div>
+
+			              <div class="row">
+							<div class="form-group">
+
+								<!-- 상태 SB에서 삭제됨 hsp
+								<label for="work_state" class="control-label col-sm-1">상태</label>
+								<div class="col-sm-2 divnopadding divnopaddingmagin">
+									<select id="work_state" name="work_state" class="form-control input-sm">
+										<%=CommboUtil.getComboStr(lastJobCdComboStr, "CODE", "CODE_NM", param.getString("work_state") , "A")%>
+									</select>
+								</div>
+                -->
+								<!-- 상세검색 -->
+								<label for="sch_text" class="control-label col-1">상세검색</label>
+								<div class="col-1" >
+									<select id="sch_type" name="sch_type" class="form-control">
+										<option value="">선택</option>
+										<option value="workId" <c:if test="${'workId'eq param.sch_type}">selected</c:if>>작업코드</option>
+										<option value="workerNm" <c:if test="${'workerNm'eq param.sch_type }">selected</c:if>>Worker</option>
+										<option value="inspNm" <c:if test="${'inspNm'eq param.sch_type}">selected</c:if>>검수자</option>
+										<option value="lastInspNm" <c:if test="${'lastInspNm'eq param.sch_type}">selected</c:if>>최종검수자</option>
+									</select>
+								</div>
+								<div class="col-2" >
+									<input type="text" class="form-control" name="sch_text" title="검색어를 입력하세요." value="<c:out value='${param.sch_text}'/>" />
+								</div>
+								<button type="button" class="btn btn-warning MAL10" onclick="fnReset(); return false;"><i class="fa fa-history"></i> 초기화</button>
+								<button type="button" class="btn btn-info" onclick="fnSearch(); return false;"><i class="fa fa-search"></i> 검색</button>
+
+							</div>
+
+						  </div>
+
+			            </div> <!-- /.box-header -->
+
+
+			            <%-- <label for="labTotCnt">Search Result </label> <c:out value="${fn:length(resultList)}" /> --%>
+			            <div class="box-body table-responsive no-padding">
+			              <table class="table table-hover">
+			              	<c:choose>
+							<c:when test="${('ROLE_PROJ' eq authorId) or ('ROLE_ADMIN' eq authorId)}">
+							<tr>
+				                <th rowspan="2">No</th>
+				                <th rowspan="2">코드</th>
+				                <th rowspan="2">프로젝트명</th>
+				                <th rowspan="2">Worker</th>
+				                <th colspan="3" calss="text-center">1차검수</th>
+				                <th colspan="3">최종검수</th>
+				                <th rowspan="2">등록일</th>
+				            </tr>
+				            <tr>
+				                <th>검수자1</th>
+				                <th>검수자2</th>
+				                <th>검수자상태</th>
+				                <th>최종검수대상</th>
+				                <th>검수자</th>
+				                <th>검수상태</th>
+				            </tr>
+							</c:when>
+							<c:otherwise>
+							<tr>
+				                <th>No</th>
+				                <th>코드</th>
+				                <th>카테고리</th>
+				                <th>프로젝트명</th>
+				                <c:if test="${'ROLE_INSP' ne authorId}">
+				                <th>Worker</th>
+				                </c:if>
+				                <th>검수자</th>
+				                <th>검수상태</th>
+				                <th>등록일</th>
+				            </tr>
+							</c:otherwise>
+							</c:choose>
+							<c:choose>
+								<c:when test="${empty resultList}">
+				              		<tr>
+										<td class="text-center" colspan="7" ><spring:message code="msg.data.empty" /></td>
+									</tr>
+								</c:when>
+								<c:otherwise>
+							        <c:forEach var="lst" items="${resultList}" varStatus="i" >
+							        <c:set var="dataNo" value="${pageNavigationVo.getCurrDataNo()}" />
+								 	<!-- 작업상태코드 - 1: 등록 / 3:업체검수완료 / 4:업체검수반려  / 5:2차검수완료 / 6:2차검수반려 / 9:삭제 -->
+								 	<!-- <tr style="cursor:pointer;cursor:hand;" <c:if test="${('1' eq lst.WORK_STATE_M) or ('4' eq lst.WORK_STATE_M)}">class="bg-gray-light"</c:if>>  검수대기, 반려 -->
+								 	<tr style="cursor:pointer;cursor:hand;"> <c:if test="${empty lst.LAST_COMPANY_ID}">class="bg-gray-light"</c:if>  onclick="fnSelect('${lst.WORK_ID}'); return false;"> <!-- 검수대기, 반려 -->
+									    <td><c:out value="${dataNo-i.count+1}"/></td>
+									    <td style="cursor:pointer;cursor:hand;" onclick="fnSelect('${lst.WORK_ID}'); return false;">
+									    	<c:out value="${lst.WORK_ID}"/>
+									    </td>
+									    <c:if test="${('ROLE_PUBD' eq authorId) or ('ROLE_INSP' eq authorId)}">
+									    <td>
+									    	<c:out value="${lst.PROJECT_CODE_M_NM}"/><c:out value="${not empty lst.PROJECT_CODE_S_NM ? ' > ' : ''}"/><c:out value="${lst.PROJECT_CODE_S_NM}"/>
+									    </td>
+									    </c:if>
+						                <td><c:out value="${lst.PROJECT_NAME}"/>
+						                	<!-- <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#selectModal" data-discd="modaluser">가이드
+						                	</button> -->
+						                </td>
+						                <c:if test="${'ROLE_INSP' ne authorId}">
+						                <td><c:out value="${lst.WORKER_NAME}"/></td>
+						                </c:if>
+						                <c:if test="${('ROLE_PROJ' eq authorId) or ('ROLE_ADMIN' eq authorId)}">
+						                <td>${fn:replace(lst.INSPECTOR1_NAME, '|', '</br>(')}${fn:indexOf(lst.INSPECTOR1_NAME, '|')>0 ? ')' : ''}</td>
+						                <td>${fn:replace(lst.INSPECTOR2_NAME, '|', '</br>(')}${fn:indexOf(lst.INSPECTOR2_NAME, '|')>0 ? ')' : ''}</td>
+						                <td><c:out value="${lst.WORK_STATE_NM}"/></td>
+						                </c:if>
+						                <td>
+						                	<c:out value="${not empty lst.LAST_COMPANY_ID ? '√' : '-' }"/>
+						                </td>
+						                <td><c:out value="${not empty lst.LAST_INSPECTOR_NAME ? lst.LAST_INSPECTOR_NAME : '-'}"/></td>
+						                <td>${fn:replace(lst.FINAL_WORK_STATE_NM, '완료', '승인')}</td>
+						                <td><c:out value="${lst.REGIST_DT}"/></td>
+									</c:forEach>
+								</c:otherwise>
+								</c:choose>
+			              </table>
+			            </div>
+
+
+			            <!-- 엑셀버튼 -->
+			            <div class="box-footer clearfix">
+			              <%=navigationBar %>
+			              <%
+			                if("ROLE_ADMIN".equals(ssAuthorId)){
+
+			              %>
+						  <div class="pull-right">
+							<a href="javascript:#" class="btn btn-block btn-primary">엑셀다운로드</a>
+						  </div>
+			              <%
+			                }
+			              %>
+
+			            </div>
+			          </form>
+
+
+	          		</div><!--  /.box -->
+       			</div><!--  /.col-xs-12 -->
+
+			</div><!-- ./row -->
+		</section><!-- /.content -->
+	</div><!-- /.content-wrapper -->
+
+
+	<!-- 나의정보 수정창 -->
+<div class="modal fade" id="guideModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document" style="width:70%">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">가이드</h4>
+			</div>
+			<div class="modal-body">
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" id="btnuser-close"><i class="fa fa-reply"></i> 취소</button>
+				<button type="button" class="btn btn-info" onclick="fnGoUpdateModal(); return false;"><i class="fa fa-pencil"></i> 확인</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+	<!-- footer -->
+	<%@ include file="/common/inc/footer.jspf" %>
+	<!-- //fooer -->
+
+</div><!-- ./wrapper -->
+
+<script type="text/javascript">
+	$('#work_state').on('change', function(e) {
+		fnSearch();
+	});
+
+	// 업체별 프로젝트조회
+	$('#company_id').on('change', function(e) {
+		fnGetProjectList($("#company_id").val(), $("#project_id"), '<%=param.getString("project_id")%>', 'A');
+	});
+
+	init();
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+.form-actions-right {
+    padding: 19px 20px 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #e5e5e5;
+    *zoom: 1;
+    text-align: right;
+}
+
+.graph-faddind-left {
+	padding: 0px 0px 0px 0px;
+}
+
+.graph-text-center {
+    text-align: center;
+    padding: 8px 35px 8px 14px;
+}
+
+.graph-text-center-color1 {
+    background-color: #3c8dbc;
+}
+.graph-text-center-color2 {
+    background-color: #00c0ef;
+}
+.graph-text-center-color3 {
+    background-color: #dd4b39;
+}
+
+
+
+

@@ -1,0 +1,1197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mgt.surveyuser">	
+
+	<select id="selectUser" parameterType="dataMap" resultType="dataMap">
+		/* mgt.surveyuser.selectUser */
+		SELECT A.USER_NO
+			, A.USER_ID
+			, A.PASSWORD
+			, A.AREA_CODE
+			, D.CODE_NM AS AREA_NM
+			, A.USER_NM
+			, A.CTTPC_SE_CODE
+			, C.CODE_NM AS CTTPC_SE_NM
+			, A.CTTPC
+			, A.EMAIL
+			, A.USER_STTUS_CODE
+			, B.CODE_NM AS USER_STTUS_NM
+			, A.TMPR_PASSWORD_ISSU_YN
+			, A.REGISTER_NO
+			, TO_CHAR(A.REGIST_DT, 'YYYY.MM.DD') AS REGIST_YMD
+			, A.FRMHS_SEQ
+			, A.HSMP_SEQ
+			, A.APC_SEQ
+			, A.XPTCP_SEQ
+		FROM OP_USER A
+		LEFT OUTER JOIN OP_CODE B ON A.USER_STTUS_CODE 	= B.CODE AND B.GROUP_ID = 'R010050'
+		LEFT OUTER JOIN OP_CODE C ON A.CTTPC_SE_CODE	= C.CODE AND C.GROUP_ID = 'R010040'
+		LEFT OUTER JOIN OP_CODE D ON A.AREA_CODE = D.CODE AND D.GROUP_ID = 'R010230'
+		WHERE A.USER_NO = #{USER_NO}
+	</select>
+
+		
+	<select id="selectListServeyGroup" parameterType="dataMap" resultType="dataMap">
+		SELECT A.USER_NO                     
+			      ,A.SURVEY_GROUP_ID                    
+			      ,A.SURVEY_GROUP_NM 
+			      ,A.SORT_ORDR
+	              ,B.USER_NM
+	              ,B.USER_ID
+	              ,(SELECT COUNT(USER_NO) FROM TB_SURVEY_USERGROUP WHERE USER_NO = A.USER_NO) AS ROWCNT
+	    FROM TB_SURVEY_USERGROUP A
+	 	LEFT OUTER JOIN OP_USER B ON A.USER_NO 	= B.USER_NO 
+	  	WHERE 1= 1
+		<if test="sch_text != null and sch_text != ''">
+			<choose>
+				<when test="sch_type == 'user_id'">
+			AND A.USER_ID LIKE '%'|| #{sch_text}|| '%'
+				</when>
+				<when test="sch_type == 'user_nm'">
+			AND B.USER_NM LIKE '%'|| #{sch_text}|| '%'
+				</when>
+				<when test="sch_type == 'email'">
+			AND A.EMAIL LIKE '%'|| #{sch_text}|| '%'
+				</when>
+				<when test="sch_type == 'cttpc'">
+			AND B.CTTPC LIKE '%'|| #{sch_text}|| '%'
+				</when>
+			</choose>
+		</if>
+		ORDER BY A.USER_NO,A.SURVEY_GROUP_ID
+	</select>
+
+	<select id="selectListUserGroup" parameterType="dataMap" resultType="dataMap">
+		SELECT A.USER_NO                     
+		      ,A.SURVEY_GROUP_ID                    
+		      ,A.SURVEY_GROUP_NM 
+		      ,A.SORT_ORDR   
+	    FROM TB_SURVEY_USERGROUP A
+	    WHERE A.USER_NO				= #{USER_NO}
+	    ORDER BY A.SURVEY_GROUP_ID
+	</select>
+
+	<select id="selectUserGroup" parameterType="dataMap" resultType="com.whomade.kycarrots.mgt.survey.vo.TbUserGroup">
+		SELECT  A.USER_NO        
+			   ,A.SURVEY_GROUP_ID   
+			   ,A.SURVEY_GROUP_NM   
+			   ,A.SORT_ORDR 
+			   ,A.INSERT_DATE      
+			   ,A.INSERT_USER_NO    
+			   ,A.UPDATE_DATE 	
+			   ,A.UPDATE_USER_NO    
+		      ,(SELECT USER_NM FROM OP_USER WHERE USER_NO=A.USER_NO ) AS USER_NM              
+	    FROM TB_SURVEY_USERGROUP A
+		WHERE A.USER_NO 			= #{USER_NO}        
+		AND	  A.SURVEY_GROUP_ID 	= #{SURVEY_GROUP_ID}       
+	</select>
+
+	<insert id="insertUserGroup" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbUserGroup">
+	/*  mgt.survey.insertServeyUserGroup */
+	INSERT INTO TB_SURVEY_USERGROUP (
+		   USER_NO        
+		  ,SURVEY_GROUP_ID   
+		  ,SURVEY_GROUP_NM  
+		  ,SORT_ORDR  
+		  ,INSERT_DATE      
+		  ,INSERT_USER_NO    
+		  ,UPDATE_DATE 	
+		  ,UPDATE_USER_NO    
+	) values (
+		   #{USER_NO}        
+		  ,(SELECT IFNULL(MAX(SURVEY_GROUP_ID)+1,0) AS MAXID 
+			FROM TB_SURVEY_USERGROUP 
+			WHERE USER_NO=#{USER_NO} 
+		    )       
+		  ,#{SURVEY_GROUP_NM} 
+		  ,#{SORT_ORDR}
+		  ,SYSDATE   
+		  ,#{INSERT_USER_NO} 	
+		  ,SYSDATE 
+		  ,#{UPDATE_USER_NO}	
+	)
+	</insert>
+
+	<update id="updateUserGroup" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbUserGroup">
+	/*  mgt.survey.updateServeyUserGroup */
+	UPDATE TB_SURVEY_USERGROUP 
+	SET 	SURVEY_GROUP_NM = #{SURVEY_GROUP_NM}  
+		   ,SORT_ORDR       = #{SORT_ORDR}  
+		   ,UPDATE_DATE 	= SYSDATE
+		   ,UPDATE_USER_NO  = #{UPDATE_USER_NO}    
+	WHERE USER_NO 			= #{USER_NO}        
+	AND	  SURVEY_GROUP_ID 	= #{SURVEY_GROUP_ID}       
+	</update>
+
+	<delete id="deleteUserGroup" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbUserGroup">
+	/*  mgt.survey.updateServeyUserGroup */
+	DELETE TB_SURVEY_USERGROUP 
+	WHERE USER_NO 			= #{USER_NO}        
+	AND	  SURVEY_GROUP_ID 	= #{SURVEY_GROUP_ID}       
+	</delete>
+
+	<select id="selectListUserGroupDegreeSurvey" parameterType="dataMap" resultType="dataMap">
+		SELECT A.USER_NO                     
+			   ,A.SURVEY_GROUP_ID 
+			   ,A.SURVEY_YEAR
+	  		   ,A.SURVEY_DEGREE
+	    FROM TB_SURVEY_USER_DEGREE A
+	    WHERE A.USER_NO				= #{USER_NO}
+		AND	  A.SURVEY_GROUP_ID 	= #{SURVEY_GROUP_ID}       
+	    ORDER BY A.SURVEY_YEAR,A.SURVEY_DEGREE
+	</select>
+
+	<select id="selectListUserGroupMaxDegreeSurvey" parameterType="dataMap" resultType="com.whomade.kycarrots.mgt.survey.vo.TbSurveyUserDegree">
+		SELECT A.USER_NO                     
+			   ,A.SURVEY_GROUP_ID 
+			   ,A.SURVEY_YEAR
+	  		   ,A.SURVEY_DEGREE
+	    FROM TB_SURVEY_USER_DEGREE A
+	    WHERE A.USER_NO				= #{USER_NO}
+		AND	  A.SURVEY_GROUP_ID 	= #{SURVEY_GROUP_ID}
+		AND	  A.SURVEY_YEAR||A.SURVEY_DEGREE =  (SELECT MAX(SURVEY_YEAR||SURVEY_DEGREE)
+		                          	             FROM TB_SURVEY_USER_DEGREE
+											 	 WHERE USER_NO			= #{USER_NO}
+												 AND   SURVEY_GROUP_ID 	= #{SURVEY_GROUP_ID}
+ 		                          	             )
+	</select>
+
+
+
+
+	<select id="selectListUserGroupSurvey" parameterType="dataMap" resultType="dataMap">
+		SELECT A.USER_NO                     
+			   ,A.SURVEY_GROUP_ID 
+			   ,A.SURVEY_ID
+			   ,A.SORT_ORDR
+			   ,A.SURVEY_YEAR
+	  		   ,A.SURVEY_DEGREE
+			   ,(SELECT SURVEY_TITLE FROM TB_SURVEY WHERE SURVEY_ID= A.SURVEY_ID) AS SURVEY_NM
+			   ,B.CODE_NM AS SORT_ORDR_NM
+	    FROM TB_SURVEY_USER A
+	    LEFT OUTER JOIN OP_CODE B ON A.SORT_ORDR 	= B.CODE AND B.GROUP_ID = 'R010302'
+	    WHERE A.USER_NO				= #{USER_NO}
+		AND	  A.SURVEY_GROUP_ID 	= #{SURVEY_GROUP_ID}       
+		AND	  A.SURVEY_YEAR 		= #{SURVEY_YEAR}       
+		AND	  A.SURVEY_DEGREE 		= #{SURVEY_DEGREE}       
+	    ORDER BY A.SORT_ORDR
+	</select>
+
+	<select id="selectUserGroupSurvey" parameterType="dataMap" resultType="com.whomade.kycarrots.mgt.survey.vo.TbSurveyUser">
+		SELECT  A.USER_NO        
+			   ,A.SURVEY_GROUP_ID 
+			   ,A.SURVEY_ID
+			   ,A.SORT_ORDR
+			   ,A.SURVEY_YEAR
+	  		   ,A.SURVEY_DEGREE
+			   ,A.INSERT_DATE      
+			   ,A.INSERT_USER_NO    
+			   ,A.UPDATE_DATE 	
+			   ,A.UPDATE_USER_NO    
+			   ,(SELECT SURVEY_GROUP_NM FROM TB_SURVEY_USERGROUP WHERE SURVEY_ID=#{SURVEY_ID} AND USER_NO=#{USER_NO}  AND SURVEY_GROUP_ID=#{SURVEY_GROUP_ID} ) AS SURVEY_GROUP_NM
+   			   ,B.CODE_NM AS SORT_ORDR_NM
+	    FROM TB_SURVEY_USER A   LEFT OUTER JOIN OP_CODE B ON A.SORT_ORDR 	= B.CODE AND B.GROUP_ID = 'R010302'
+		WHERE A.USER_NO 			= #{USER_NO}        
+		AND	  A.SURVEY_GROUP_ID 	= #{SURVEY_GROUP_ID}       
+		AND	  A.SURVEY_YEAR 		= #{SURVEY_YEAR}       
+		AND	  A.SURVEY_DEGREE 		= #{SURVEY_DEGREE}       
+		AND	  A.SURVEY_ID 			= #{SURVEY_ID}       
+	</select>
+
+	<insert id="insertUserGroupDegreeSurvey" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurveyUserDegree">
+	INSERT INTO TB_SURVEY_USER_DEGREE (
+		   USER_NO        
+		  ,SURVEY_GROUP_ID  
+		  ,SURVEY_YEAR
+  		  ,SURVEY_DEGREE
+		  ,INSERT_DATE      
+		  ,INSERT_USER_NO    
+		  ,UPDATE_DATE 	
+		  ,UPDATE_USER_NO    
+	) values (
+		   #{USER_NO}        
+		  ,#{SURVEY_GROUP_ID}      
+		  ,#{SURVEY_YEAR}
+		  ,#{SURVEY_DEGREE}
+		  ,SYSDATE   
+		  ,#{INSERT_USER_NO} 	
+		  ,SYSDATE 
+		  ,#{UPDATE_USER_NO}	
+	)
+	</insert>
+
+
+	<insert id="insertUserGroupSurvey" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurveyUser">
+	/*  mgt.survey.insertServeyUser */
+	INSERT INTO TB_SURVEY_USER (
+		   USER_NO        
+		  ,SURVEY_GROUP_ID  
+		  ,SURVEY_ID    
+		  ,SORT_ORDR 
+		  ,SURVEY_YEAR
+  		  ,SURVEY_DEGREE
+		  ,INSERT_DATE      
+		  ,INSERT_USER_NO    
+		  ,UPDATE_DATE 	
+		  ,UPDATE_USER_NO    
+	) values (
+		   #{USER_NO}        
+		  ,#{SURVEY_GROUP_ID}      
+		  ,#{SURVEY_ID} 
+		  ,#{SORT_ORDR}
+		  ,#{SURVEY_YEAR}
+		  ,#{SURVEY_DEGREE}
+		  ,SYSDATE   
+		  ,#{INSERT_USER_NO} 	
+		  ,SYSDATE 
+		  ,#{UPDATE_USER_NO}	
+	)
+	</insert>
+
+	<update id="updateUserGroupSurvey" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurveyUser">
+	/*  mgt.survey.updateServeyUser */
+	UPDATE TB_SURVEY_USER 
+	SET 	SORT_ORDR       = #{SORT_ORDR}  
+		   ,SURVEY_YEAR		= #{SURVEY_YEAR} 
+	  	   ,SURVEY_DEGREE	= #{SURVEY_DEGREE} 	
+		   ,UPDATE_DATE 	= SYSDATE
+		   ,UPDATE_USER_NO  = #{UPDATE_USER_NO}    
+	WHERE USER_NO 			= #{USER_NO}        
+	AND	  SURVEY_GROUP_ID 	= #{SURVEY_GROUP_ID}    
+	AND   SURVEY_ID 		= #{SURVEY_ID}     
+	</update>
+
+	<delete id="deleteUserGroupSurvey" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurveyUser">
+	/*  mgt.survey.deleteServeyUser */
+	DELETE TB_SURVEY_USER 
+	WHERE USER_NO 			= #{USER_NO}        
+	AND	  SURVEY_GROUP_ID 	= #{SURVEY_GROUP_ID}       
+	AND	  SURVEY_ID 		= #{SURVEY_ID}       
+	</delete>
+
+	<delete id="deleteUserGroupDegreeSurvey" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurveyUserDegree">
+	DELETE TB_SURVEY_USER_DEGREE 
+	WHERE USER_NO 			= #{USER_NO}        
+	AND	  SURVEY_GROUP_ID 	= #{SURVEY_GROUP_ID}       
+	AND	  SURVEY_DEGREE 	= #{SURVEY_DEGREE}       
+	AND	  SURVEY_YEAR 		= #{SURVEY_YEAR}       
+	</delete>
+
+	<insert id="insertUserGroupSurveyEntry" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurveyUserEntry">
+	INSERT INTO TB_SURVEY_USER_ENTRY (
+		   USER_NO        
+		  ,SURVEY_GROUP_ID  
+		  ,SURVEY_ID    
+		  ,SURVEY_YEAR
+  		  ,SURVEY_DEGREE
+		  ,RESULTS_ID 
+		  ,INSERT_DATE      
+		  ,INSERT_USER_NO    
+		  ,UPDATE_DATE 	
+		  ,UPDATE_USER_NO    
+	) values (
+		   #{USER_NO}        
+		  ,#{SURVEY_GROUP_ID}      
+		  ,#{SURVEY_ID} 
+		  ,#{SURVEY_YEAR}
+		  ,#{SURVEY_DEGREE}
+		  ,#{RESULTS_ID}
+		  ,SYSDATE   
+		  ,#{INSERT_USER_NO} 	
+		  ,SYSDATE 
+		  ,#{UPDATE_USER_NO}	
+	)
+	</insert>
+
+	<select id="selectListQuestionSummaryCd" parameterType="dataMap" resultType="dataMap">
+		SELECT A.SURVEY_ID
+		      ,A.SECTION_ID
+		      ,A.QUESTION_ID
+		      ,A.SUMMARY_CD
+		      ,DECODE(A.SUMMARY_CD,'1','성별','2','연령','3','최종학력','4','건강상태','5','입원경로','6','진료과목','7','응급실유형','8','응답자유형') AS SUMMARY_NM
+			FROM TB_QUESTION A
+		WHERE A.SURVEY_ID =#{SURVEY_ID}
+		<![CDATA[
+		AND   A.SUMMARY_CD<>'0'
+		]]>
+		ORDER BY TO_NUMBER(A.SUMMARY_CD)
+	</select>
+
+	<select id="selectListSurveyCd" parameterType="dataMap" resultType="dataMap">
+		SELECT A.SURVEY_ID
+		      ,A.SORT_ORDR
+		      ,DECODE(A.SORT_ORDR,10,'외래서비스',20,'입원서비스',30,'응급실') AS SORT_ORDR_NM
+			  ,(SELECT COUNT(DISTINCT RESULTS_ID) NUMENTRIES
+                FROM TB_RESULTS 
+                WHERE SURVEY_ID=A.SURVEY_ID
+				) AS NUMENTRIES
+			  ,A.SURVEY_YEAR
+			  ,A.SURVEY_DEGREE	
+		FROM TB_SURVEY_USER A
+		WHERE A.SURVEY_GROUP_ID	=#{SURVEY_GROUP_ID}
+		AND   A.SORT_ORDR IN(10,20,30)     
+		AND   A.SURVEY_YEAR||A.SURVEY_DEGREE IN(
+		                                        SELECT SURVEY_YEAR||SURVEY_DEGREE
+		                                        FROM TB_SURVEY_USER 
+		                                        WHERE SURVEY_ID 	 =#{SURVEY_ID}
+		                                        AND   SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		                                        )
+		ORDER BY A.SORT_ORDR                                        
+	</select>
+
+	<select id="selectMaleCnt" parameterType="dataMap" resultType="dataMap">
+		SELECT A.GRADE_01_CNT  AS  MALE_CNT
+		      ,A.GRADE_02_CNT  AS  FEMALE_CNT
+		      ,A.GRADE_TOT_CNT AS  TOTAL_CNT
+		      ,A.GRADE_01_VAL  AS  MALE_P
+		      ,A.GRADE_02_VAL  AS  FMALE_P
+		FROM  TB_SURVEY_USER_ENTRY_RESULT A
+		WHERE A.USER_NO        =#{USER_NO}
+		AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		AND   A.SURVEY_YEAR    =#{SURVEY_YEAR}
+		AND   A.SURVEY_DEGREE  =#{SURVEY_DEGREE}
+		AND   A.SORT_ORDR      =#{SORT_ORDR}
+		AND   A.SUMMARY_CD     =#{SUMMARY_CD}
+		AND   ROWNUM=1
+	</select>
+
+	<select id="selectAgeCnt" parameterType="dataMap" resultType="dataMap">
+		SELECT A.GRADE_01_CNT  AS  AGE1_CNT
+		      ,A.GRADE_02_CNT  AS  AGE2_CNT
+		      ,A.GRADE_03_CNT  AS  AGE3_CNT
+		      ,A.GRADE_04_CNT  AS  AGE4_CNT
+		      ,A.GRADE_05_CNT  AS  AGE5_CNT
+		      ,A.GRADE_06_CNT  AS  AGE6_CNT
+		      ,A.GRADE_TOT_CNT AS  TOTAL_CNT
+		      ,A.GRADE_01_VAL  AS  AGE1_P
+		      ,A.GRADE_02_VAL  AS  AGE2_P
+		      ,A.GRADE_03_VAL  AS  AGE3_P
+		      ,A.GRADE_04_VAL  AS  AGE4_P
+		      ,A.GRADE_05_VAL  AS  AGE5_P
+		      ,A.GRADE_06_VAL  AS  AGE6_P
+		FROM  TB_SURVEY_USER_ENTRY_RESULT A
+		WHERE A.USER_NO        =#{USER_NO}
+		AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		AND   A.SURVEY_YEAR    =#{SURVEY_YEAR}
+		AND   A.SURVEY_DEGREE  =#{SURVEY_DEGREE}
+		AND   A.SORT_ORDR      =#{SORT_ORDR}
+		AND   A.SUMMARY_CD     =#{SUMMARY_CD}
+		AND   ROWNUM=1
+	</select>
+	
+	<select id="selectSchoolCnt" parameterType="dataMap" resultType="dataMap">
+		SELECT AA.SCHOOL1_CNT
+		       ,AA.SCHOOL2_CNT
+		       ,AA.TOTAL_CNT
+		       ,(100- 
+		        DECODE(AA.TOTAL_CNT,0,0,ROUND((AA.SCHOOL2_CNT/AA.TOTAL_CNT)*100,1)))     AS SCHOOL1_P
+		       ,DECODE(AA.TOTAL_CNT,0,0,ROUND((AA.SCHOOL2_CNT/AA.TOTAL_CNT)*100,1)) 	 AS SCHOOL2_P
+		 FROM (
+		        SELECT     A.GRADE_01_CNT  
+		                  +A.GRADE_02_CNT  AS  SCHOOL1_CNT
+		                  ,A.GRADE_03_CNT  
+		                  +A.GRADE_04_CNT  
+		                  +A.GRADE_05_CNT  AS  SCHOOL2_CNT
+		                  ,A.GRADE_TOT_CNT AS  TOTAL_CNT
+		        FROM  TB_SURVEY_USER_ENTRY_RESULT A
+				WHERE A.USER_NO        =#{USER_NO}
+				AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+				AND   A.SURVEY_YEAR    =#{SURVEY_YEAR}
+				AND   A.SURVEY_DEGREE  =#{SURVEY_DEGREE}
+				AND   A.SORT_ORDR      =#{SORT_ORDR}
+				AND   A.SUMMARY_CD     =#{SUMMARY_CD}
+		        AND   ROWNUM=1
+		) AA
+	</select>
+
+	
+	<select id="selectHealthCnt" parameterType="dataMap" resultType="dataMap">
+		SELECT A.GRADE_01_CNT  AS  HEALTH1_CNT
+		      ,A.GRADE_02_CNT  AS  HEALTH2_CNT
+		      ,A.GRADE_03_CNT  AS  HEALTH3_CNT
+		      ,A.GRADE_04_CNT  AS  HEALTH4_CNT
+		      ,A.GRADE_05_CNT  AS  HEALTH5_CNT
+		      ,A.GRADE_TOT_CNT AS  TOTAL_CNT
+		      ,A.GRADE_01_VAL  AS  HEALTH1_P
+		      ,A.GRADE_02_VAL  AS  HEALTH2_P
+		      ,A.GRADE_03_VAL  AS  HEALTH3_P
+		      ,A.GRADE_04_VAL  AS  HEALTH4_P
+		      ,A.GRADE_05_VAL  AS  HEALTH5_P
+		FROM  TB_SURVEY_USER_ENTRY_RESULT A
+		WHERE A.USER_NO        =#{USER_NO}
+		AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		AND   A.SURVEY_YEAR    =#{SURVEY_YEAR}
+		AND   A.SURVEY_DEGREE  =#{SURVEY_DEGREE}
+		AND   A.SORT_ORDR      =#{SORT_ORDR}
+		AND   A.SUMMARY_CD     =#{SUMMARY_CD}
+		AND   ROWNUM=1
+	</select>
+	
+	<select id="selectSubjectCnt" parameterType="dataMap" resultType="dataMap">
+		SELECT A.QUESTION_LABEL_ID
+		      ,A.QUESTION_LABEL
+		      ,IFNULL(B.GRADE_CNT,0) AS GRADE_CNT
+		FROM (
+		        SELECT B.QUESTION_LABEL_ID,B.QUESTION_LABEL
+		        FROM TB_QUESTION A LEFT JOIN TB_QUESTION_LABEL B ON A.SURVEY_ID=B.SURVEY_ID AND A.SECTION_ID=B.SECTION_ID AND A.QUESTION_ID=B.QUESTION_ID 
+		        WHERE A.SURVEY_ID=#{SURVEY_ID} 
+		        AND   A.SUMMARY_CD=#{SUMMARY_CD} 
+		    ) A LEFT  JOIN (SELECT QUESTION_LABEL_ID,GRADE_CNT
+		                           FROM TB_SURVEY_USER_ENTRY_RESULT_E  
+								   WHERE USER_NO        =#{USER_NO}
+								   AND   SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+								   AND   SURVEY_YEAR    =#{SURVEY_YEAR}
+								   AND   SURVEY_DEGREE  =#{SURVEY_DEGREE}
+								   AND   SORT_ORDR      =#{SORT_ORDR}
+								   AND   SUMMARY_CD     =#{SUMMARY_CD}
+		                          ) B ON A.QUESTION_LABEL_ID=B.QUESTION_LABEL_ID
+		ORDER BY A.QUESTION_LABEL_ID DESC
+	</select>
+	
+	
+	<select id="selectWayCnt" parameterType="dataMap" resultType="dataMap">
+		SELECT A.GRADE_01_CNT  AS  WAY1_CNT
+		      ,A.GRADE_02_CNT  AS  WAY2_CNT
+		      ,A.GRADE_TOT_CNT AS  TOTAL_CNT
+		      ,A.GRADE_01_VAL  AS  WAY1_P
+		      ,A.GRADE_02_VAL  AS  WAY2_P
+      	FROM  TB_SURVEY_USER_ENTRY_RESULT A
+		WHERE A.USER_NO        =#{USER_NO}
+		AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		AND   A.SURVEY_YEAR    =#{SURVEY_YEAR}
+		AND   A.SURVEY_DEGREE  =#{SURVEY_DEGREE}
+		AND   A.SORT_ORDR      =#{SORT_ORDR}
+		AND   A.SUMMARY_CD     =#{SUMMARY_CD}
+		AND   ROWNUM=1
+	</select>
+
+	<select id="selectDimensionAvg" parameterType="dataMap" resultType="dataMap">
+		SELECT 	 AA.SURVEY_ID
+			    ,AA.SUM_QUESTION_SCORE
+			    ,AA.CNT_QUESTION_SCORE
+			    ,DECODE(CNT_QUESTION_SCORE,0,0,ROUND(SUM_QUESTION_SCORE/CNT_QUESTION_SCORE,1)) AS  AVG_QUESTION_SCORE
+			    ,ROUND(DECODE(CNT_QUESTION_SCORE,0,0,ROUND(SUM_QUESTION_SCORE/CNT_QUESTION_SCORE,1))*0.7,1) AS AVG_QUESTION_SCORE_70
+			    ,DECODE(CNT_QUESTION_SCORE,0,0,ROUND(SUM_QUESTION_SCORE/CNT_QUESTION_SCORE,1))
+			     - ROUND(DECODE(CNT_QUESTION_SCORE,0,0,ROUND(SUM_QUESTION_SCORE/CNT_QUESTION_SCORE,1))*0.7,1) AS AVG_QUESTION_SCORE_30
+		FROM (
+		        SELECT A.SURVEY_ID 
+		              ,SUM(A.GRADE_AVG_VAL)                                             AS SUM_QUESTION_SCORE
+		              ,COUNT(A.SURVEY_ID)                                               AS CNT_QUESTION_SCORE
+		        FROM TB_SURVEY_USER_ENTRY_RESULT A
+				WHERE A.USER_NO=#{USER_NO}
+				AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+				AND   A.SURVEY_YEAR=#{SURVEY_YEAR}
+				AND   A.SURVEY_DEGREE=#{SURVEY_DEGREE}
+			    AND A.SURVEY_ID IN
+			    <foreach collection="SURVEY_IDS" item="SURVEY_ID" index="index" separator="," open="(" close=")">
+	            		#{SURVEY_ID}
+	     		</foreach>
+			    AND   A.SUMMARY_CD IN
+			    <foreach collection="SUMMARY_CDS" item="SUMMARY_CD" index="index" separator="," open="(" close=")">
+	            		#{SUMMARY_CD}
+	     		</foreach>
+		        GROUP BY SURVEY_ID
+		) AA
+		UNION ALL
+		SELECT 	 '합계' AS SURVEY_ID
+			    ,AA.SUM_QUESTION_SCORE
+			    ,AA.CNT_QUESTION_SCORE
+			    ,DECODE(CNT_QUESTION_SCORE,0,0,ROUND(SUM_QUESTION_SCORE/CNT_QUESTION_SCORE,1)) AS  AVG_QUESTION_SCORE
+			    ,ROUND(DECODE(CNT_QUESTION_SCORE,0,0,ROUND(SUM_QUESTION_SCORE/CNT_QUESTION_SCORE,1))*0.7,1) AS AVG_QUESTION_SCORE_70
+			    ,DECODE(CNT_QUESTION_SCORE,0,0,ROUND(SUM_QUESTION_SCORE/CNT_QUESTION_SCORE,1))
+			     - ROUND(DECODE(CNT_QUESTION_SCORE,0,0,ROUND(SUM_QUESTION_SCORE/CNT_QUESTION_SCORE,1))*0.7,1) AS AVG_QUESTION_SCORE_30
+		FROM (
+		        SELECT SUM(A.GRADE_AVG_VAL)                                             AS SUM_QUESTION_SCORE
+		              ,COUNT(A.SURVEY_ID)                                               AS CNT_QUESTION_SCORE
+		        FROM TB_SURVEY_USER_ENTRY_RESULT A
+				WHERE A.USER_NO=#{USER_NO}
+				AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+				AND   A.SURVEY_YEAR=#{SURVEY_YEAR}
+				AND   A.SURVEY_DEGREE=#{SURVEY_DEGREE}
+			    AND A.SURVEY_ID IN
+			    <foreach collection="SURVEY_IDS" item="SURVEY_ID" index="index" separator="," open="(" close=")">
+	            		#{SURVEY_ID}
+	     		</foreach>
+			    AND   A.SUMMARY_CD IN
+			    <foreach collection="SUMMARY_CDS" item="SUMMARY_CD" index="index" separator="," open="(" close=")">
+	            		#{SUMMARY_CD}
+	     		</foreach>
+		) AA
+		
+	</select>
+	
+	<select id="selectDimensionNps" parameterType="dataMap" resultType="dataMap">
+		SELECT AA.SURVEY_ID
+		      ,SUM(AA.QUESTION_VALH) AS QUESTION_VALH
+		      ,SUM(AA.QUESTION_VALL) AS QUESTION_VALL
+		      ,SUM(AA.GRADE_TOT_CNT) AS CNT_SURVEY_ID
+		      ,ROUND((SUM(AA.QUESTION_VALH)/SUM(AA.GRADE_TOT_CNT))*100,1) AS AVG_QUESTION_VALH
+		      ,ROUND((SUM(AA.QUESTION_VALL)/SUM(AA.GRADE_TOT_CNT))*100,1) AS AVG_QUESTION_VALL
+		      ,ROUND((SUM(AA.QUESTION_VALH)/SUM(AA.GRADE_TOT_CNT))*100,1) 
+		      -ROUND((SUM(AA.QUESTION_VALL)/SUM(AA.GRADE_TOT_CNT))*100,1) AS AVG_QUESTION_SCORE
+		FROM (
+				SELECT A.SURVEY_ID
+				      ,IFNULL(A.GRADE_10_CNT,0)+IFNULL(A.GRADE_11_CNT,0)  AS QUESTION_VALH
+				      ,IFNULL(A.GRADE_01_CNT,0)+IFNULL(A.GRADE_02_CNT,0)  
+				      +IFNULL(A.GRADE_03_CNT,0)+IFNULL(A.GRADE_04_CNT,0)  
+				      +IFNULL(A.GRADE_05_CNT,0)+IFNULL(A.GRADE_06_CNT,0)  
+				      +IFNULL(A.GRADE_07_CNT,0)+IFNULL(A.GRADE_08_CNT,0)  
+				      +IFNULL(A.GRADE_09_CNT,0)                        AS QUESTION_VALL
+		              ,A.GRADE_TOT_CNT
+		        FROM  TB_SURVEY_USER_ENTRY_RESULT A
+		        WHERE A.USER_NO        =#{USER_NO}
+		        AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		        AND   A.SURVEY_YEAR    =#{SURVEY_YEAR}
+		        AND   A.SURVEY_DEGREE  =#{SURVEY_DEGREE}
+		        AND   A.SUMMARY_CD  IN('10','11')
+		) AA     
+		GROUP BY AA.SURVEY_ID
+		UNION ALL
+		SELECT '합계' SURVEY_ID
+		      ,SUM(AA.QUESTION_VALH) AS QUESTION_VALH
+		      ,SUM(AA.QUESTION_VALL) AS QUESTION_VALL
+		      ,SUM(AA.GRADE_TOT_CNT) AS CNT_SURVEY_ID
+		      ,ROUND((SUM(AA.QUESTION_VALH)/SUM(AA.GRADE_TOT_CNT))*100,1) AS AVG_QUESTION_VALH
+		      ,ROUND((SUM(AA.QUESTION_VALL)/SUM(AA.GRADE_TOT_CNT))*100,1) AS AVG_QUESTION_VALL
+		      ,ROUND((SUM(AA.QUESTION_VALH)/SUM(AA.GRADE_TOT_CNT))*100,1) 
+		      -ROUND((SUM(AA.QUESTION_VALL)/SUM(AA.GRADE_TOT_CNT))*100,1) AS AVG_QUESTION_SCORE
+		FROM (
+				SELECT A.SURVEY_ID
+				      ,IFNULL(A.GRADE_10_CNT,0)+IFNULL(A.GRADE_11_CNT,0)  AS QUESTION_VALH
+				      ,IFNULL(A.GRADE_01_CNT,0)+IFNULL(A.GRADE_02_CNT,0)  
+				      +IFNULL(A.GRADE_03_CNT,0)+IFNULL(A.GRADE_04_CNT,0)  
+				      +IFNULL(A.GRADE_05_CNT,0)+IFNULL(A.GRADE_06_CNT,0)  
+				      +IFNULL(A.GRADE_07_CNT,0)+IFNULL(A.GRADE_08_CNT,0)  
+				      +IFNULL(A.GRADE_09_CNT,0)                        AS QUESTION_VALL
+		              ,A.GRADE_TOT_CNT
+		        FROM  TB_SURVEY_USER_ENTRY_RESULT A
+		        WHERE A.USER_NO        =#{USER_NO}
+		        AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		        AND   A.SURVEY_YEAR    =#{SURVEY_YEAR}
+		        AND   A.SURVEY_DEGREE  =#{SURVEY_DEGREE}
+		        AND   A.SUMMARY_CD  IN('10','11')
+		) AA     
+	</select>
+	
+	<insert id="insertUserSection" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSectionUser">
+	INSERT INTO TB_SECTION_USER (
+		   USER_NO      		           
+		  ,SURVEY_GROUP_ID              
+		  ,SURVEY_ID               		
+		  ,SURVEY_YEAR               	
+		  ,SURVEY_DEGREE               	
+		  ,SECTION_ID                   
+		  ,EXPORTINCLUDER               
+		  ,SECTION_RTITLE               
+		  ,SECTION_CONT                 
+		  ,SECTION_END                  
+		  ,SECTION_RHTMLTITLE           
+	) values (
+		   #{USER_NO}      		           
+		  ,#{SURVEY_GROUP_ID}              
+		  ,#{SURVEY_ID}               		
+		  ,#{SURVEY_YEAR}               	
+		  ,#{SURVEY_DEGREE}               	
+		  ,#{SECTION_ID}                   
+		  ,#{EXPORTINCLUDER}               
+		  ,#{SECTION_RTITLE}               
+		  ,#{SECTION_CONT}                 
+		  ,#{SECTION_END}                  
+		  ,#{SECTION_RHTMLTITLE}           
+	)
+	</insert>
+	
+	<update id="updateUserSection" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSectionUser">
+	UPDATE  TB_SECTION_USER 
+	SET EXPORTINCLUDER 		=#{EXPORTINCLUDER}               
+	   ,SECTION_RTITLE    	=#{SECTION_RTITLE}          
+	   ,SECTION_CONT      	=#{SECTION_CONT}          
+	   ,SECTION_END       	=#{SECTION_END}          
+	   ,SECTION_RHTMLTITLE	=#{SECTION_RHTMLTITLE}           
+	WHERE USER_NO  			=#{USER_NO}      		           
+	AND	  SURVEY_GROUP_ID   =#{SURVEY_GROUP_ID}            
+	AND	  SURVEY_ID         =#{SURVEY_ID}        		
+	AND	  SURVEY_YEAR       =#{SURVEY_YEAR}         	
+	AND	  SURVEY_DEGREE     =#{SURVEY_DEGREE}            	
+	AND	  SECTION_ID        =#{SECTION_ID}            
+	</update>
+	
+	<select id="selectCntUserSection" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSectionUser" resultType="int">
+	SELECT COUNT(1) AS TOT_CNT
+	FROM TB_SECTION_USER 
+	WHERE USER_NO  			=#{USER_NO}      		           
+	AND	  SURVEY_GROUP_ID   =#{SURVEY_GROUP_ID}            
+	AND	  SURVEY_ID         =#{SURVEY_ID}        		
+	AND	  SURVEY_YEAR       =#{SURVEY_YEAR}         	
+	AND	  SURVEY_DEGREE     =#{SURVEY_DEGREE}            	
+	AND	  SECTION_ID        =#{SECTION_ID}            
+	</select>
+	
+	<select id="selectListUserSection" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSectionUser" resultType="dataMap">
+		SELECT A.USER_NO                     
+			  ,A.SURVEY_GROUP_ID              
+			  ,A.SURVEY_ID               		
+			  ,A.SURVEY_YEAR               	
+			  ,A.SURVEY_DEGREE               	
+			  ,A.SECTION_ID                   
+			  ,A.EXPORTINCLUDER               
+			  ,A.SECTION_RTITLE               
+			  ,A.SECTION_CONT                 
+			  ,A.SECTION_END                  
+			  ,A.SECTION_RHTMLTITLE           
+	    FROM TB_SECTION_USER A
+		WHERE A.USER_NO  		  =#{USER_NO}      		           
+		AND	  A.SURVEY_GROUP_ID   =#{SURVEY_GROUP_ID}            
+		AND	  A.SURVEY_ID         =#{SURVEY_ID}        		
+		AND	  A.SURVEY_YEAR       =#{SURVEY_YEAR}         	
+		AND	  A.SURVEY_DEGREE     =#{SURVEY_DEGREE}     
+		<if test="EXPORTINCLUDER != null and EXPORTINCLUDER != ''">
+			AND A.EXPORTINCLUDER  =#{EXPORTINCLUDER} 
+		</if>
+		AND A.SECTION_ID IN (
+								SELECT DISTINCT SECTION_ID
+								FROM TB_QUESTION
+								WHERE SURVEY_ID=#{SURVEY_ID}
+								AND   SUMMARY_CD='9'
+		)
+		ORDER BY A.SECTION_ID
+	</select>
+	
+	
+	<insert id="insertUserQuestion" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestionUser">
+	INSERT INTO TB_QUESTION_USER (
+		   USER_NO      		            
+		  ,SURVEY_GROUP_ID              	
+		  ,SURVEY_ID               		
+		  ,SURVEY_YEAR               	
+		  ,SURVEY_DEGREE               	
+		  ,SECTION_ID                    
+		  ,QUESTION_ID                   
+		  ,EXPORTINCLUDER                
+		  ,QUESTION_RTITLE               
+		  ,QUESTION_RHTMLTITLE           
+	) values (
+		   #{USER_NO}      		            
+		  ,#{SURVEY_GROUP_ID}              	
+		  ,#{SURVEY_ID}               		
+		  ,#{SURVEY_YEAR}               	
+		  ,#{SURVEY_DEGREE}               	
+		  ,#{SECTION_ID}                    
+		  ,#{QUESTION_ID}                   
+		  ,#{EXPORTINCLUDER}                
+		  ,#{QUESTION_RTITLE}               
+		  ,#{QUESTION_RHTMLTITLE}           
+	)
+	</insert>
+
+	<update id="updateUserQuestion" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestionUser">
+	UPDATE  TB_QUESTION_USER 
+	SET EXPORTINCLUDER 		=#{EXPORTINCLUDER}               
+	   ,QUESTION_RTITLE    	=#{QUESTION_RTITLE}          
+	   ,QUESTION_RHTMLTITLE =#{QUESTION_RHTMLTITLE}          
+	WHERE USER_NO  			=#{USER_NO}      		           
+	AND	  SURVEY_GROUP_ID   =#{SURVEY_GROUP_ID}            
+	AND	  SURVEY_ID         =#{SURVEY_ID}        		
+	AND	  SURVEY_YEAR       =#{SURVEY_YEAR}         	
+	AND	  SURVEY_DEGREE     =#{SURVEY_DEGREE}            	
+	AND	  SECTION_ID        =#{SECTION_ID}            
+	AND	  QUESTION_ID       =#{QUESTION_ID}            
+	</update>
+
+	<select id="selectCntUserQuestion" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestionUser" resultType="int">
+	SELECT COUNT(1) AS TOT_CNT
+	FROM TB_QUESTION_USER 
+	WHERE USER_NO  			=#{USER_NO}      		           
+	AND	  SURVEY_GROUP_ID   =#{SURVEY_GROUP_ID}            
+	AND	  SURVEY_ID         =#{SURVEY_ID}        		
+	AND	  SURVEY_YEAR       =#{SURVEY_YEAR}         	
+	AND	  SURVEY_DEGREE     =#{SURVEY_DEGREE}            	
+	AND	  SECTION_ID        =#{SECTION_ID}            
+	AND	  QUESTION_ID       =#{QUESTION_ID}            
+	</select>
+
+	<select id="selectListUserQuestion" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestionUser" resultType="dataMap">
+		SELECT A.USER_NO                     
+			  ,A.SURVEY_GROUP_ID              	
+			  ,A.SURVEY_ID               		
+			  ,A.SURVEY_YEAR               	
+			  ,A.SURVEY_DEGREE               	
+			  ,A.SECTION_ID                    
+			  ,A.QUESTION_ID                   
+			  ,A.EXPORTINCLUDER                
+			  ,A.QUESTION_RTITLE               
+			  ,A.QUESTION_RHTMLTITLE           
+	    FROM TB_QUESTION_USER A
+		WHERE A.USER_NO  		  =#{USER_NO}      		           
+		AND	  A.SURVEY_GROUP_ID   =#{SURVEY_GROUP_ID}            
+		AND	  A.SURVEY_ID         =#{SURVEY_ID}        		
+		AND	  A.SURVEY_YEAR       =#{SURVEY_YEAR}         	
+		AND	  A.SURVEY_DEGREE     =#{SURVEY_DEGREE}  
+		<if test="EXPORTINCLUDER != null and EXPORTINCLUDER != ''">
+			AND A.EXPORTINCLUDER  =#{EXPORTINCLUDER} 
+		</if>
+		ORDER BY A.SECTION_ID,A.QUESTION_ID
+	</select>
+
+	<select id="selectListUserEntryResult" parameterType="dataMap" resultType="dataMap">
+		 SELECT A.USER_NO      		            
+		      ,A.SURVEY_GROUP_ID              	
+		      ,A.SURVEY_ID               		
+		      ,A.SURVEY_YEAR               	
+		      ,A.SURVEY_DEGREE               	
+		      ,A.SECTION_ID                    
+		      ,A.QUESTION_ID     
+		      ,A.SUMMARY_CD              
+		      ,A.GRADE_01_VAL   				
+		      ,A.GRADE_02_VAL   				
+		      ,A.GRADE_03_VAL   				
+		      ,A.GRADE_04_VAL   				
+		      ,A.GRADE_05_VAL   				
+		      ,A.GRADE_AVG_VAL   				
+		      ,A.GRADE_01_CNT   				
+		      ,A.GRADE_02_CNT   				
+		      ,A.GRADE_03_CNT   				
+		      ,A.GRADE_04_CNT   				
+		      ,A.GRADE_05_CNT   				
+		      ,A.GRADE_TOT_CNT   				
+		FROM TB_SURVEY_USER_ENTRY_RESULT A
+		WHERE A.USER_NO			=#{USER_NO}
+		AND   A.SURVEY_GROUP_ID	=#{SURVEY_GROUP_ID}
+		AND   A.SURVEY_ID		=#{SURVEY_ID}
+		AND   A.SURVEY_YEAR||SURVEY_DEGREE IN
+		<foreach collection="YEARDEGREES" item="YEARDEGREE" index="index" separator="," open="(" close=")">
+           		#{YEARDEGREE}
+    	</foreach>
+		ORDER BY A.SECTION_ID,A.QUESTION_ID,A.SURVEY_YEAR DESC,A.SURVEY_DEGREE DESC                 
+	</select>
+
+
+	<insert id="insertUserEntryResult" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSurveyUserEntryResult" >
+		INSERT INTO TB_SURVEY_USER_ENTRY_RESULT(USER_NO      	
+												,SURVEY_GROUP_ID 
+												,SURVEY_ID       
+												,SURVEY_YEAR     
+												,SURVEY_DEGREE  
+												,SORT_ORDR 
+												,SECTION_ID      
+												,QUESTION_ID  
+												,SUMMARY_CD   
+												,GRADE_01_VAL   
+												,GRADE_02_VAL   
+												,GRADE_03_VAL   
+												,GRADE_04_VAL   
+												,GRADE_05_VAL   
+												,GRADE_06_VAL   
+												,GRADE_07_VAL   
+												,GRADE_08_VAL   
+												,GRADE_09_VAL   
+												,GRADE_10_VAL   
+												,GRADE_11_VAL   
+												,GRADE_AVG_VAL   
+												,GRADE_01_CNT   
+												,GRADE_02_CNT   
+												,GRADE_03_CNT   
+												,GRADE_04_CNT   
+												,GRADE_05_CNT   
+												,GRADE_06_CNT   
+												,GRADE_07_CNT   
+												,GRADE_08_CNT   
+												,GRADE_09_CNT   
+												,GRADE_10_CNT   
+												,GRADE_11_CNT   
+												,GRADE_TOT_CNT   
+												,INSERT_DATE
+												,INSERT_USER_NO
+												,UPDATE_DATE
+												,UPDATE_USER_NO
+												)
+		
+		VALUES(
+		 #{USER_NO}      	
+		,#{SURVEY_GROUP_ID} 
+		,#{SURVEY_ID}       
+		,#{SURVEY_YEAR}     
+		,#{SURVEY_DEGREE}   
+		,(SELECT SORT_ORDR FROM TB_SURVEY_USER 
+		  WHERE USER_NO		   =#{USER_NO} 
+		  AND   SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		  AND   SURVEY_YEAR    =#{SURVEY_YEAR}
+		  AND   SURVEY_DEGREE  =#{SURVEY_DEGREE}
+		  AND   SURVEY_ID      =#{SURVEY_ID}
+		  )
+		,#{SECTION_ID}      
+		,#{QUESTION_ID}
+		,(SELECT SUMMARY_CD FROM TB_QUESTION WHERE SURVEY_ID=#{SURVEY_ID} AND SECTION_ID=#{SECTION_ID}  AND QUESTION_ID=#{QUESTION_ID} AND ROWNUM=1)   
+		,#{GRADE_01_VAL}   
+		,#{GRADE_02_VAL}   
+		,#{GRADE_03_VAL}   
+		,#{GRADE_04_VAL}   
+		,#{GRADE_05_VAL}   
+		,#{GRADE_06_VAL}   
+		,#{GRADE_07_VAL}   
+		,#{GRADE_08_VAL}   
+		,#{GRADE_09_VAL}   
+		,#{GRADE_10_VAL}   
+		,#{GRADE_11_VAL}   
+		,#{GRADE_AVG_VAL}   
+		,#{GRADE_01_CNT}   
+		,#{GRADE_02_CNT}   
+		,#{GRADE_03_CNT}   
+		,#{GRADE_04_CNT}   
+		,#{GRADE_05_CNT}   
+		,#{GRADE_06_CNT}   
+		,#{GRADE_07_CNT}   
+		,#{GRADE_08_CNT}   
+		,#{GRADE_09_CNT}   
+		,#{GRADE_10_CNT}   
+		,#{GRADE_11_CNT}   
+		,#{GRADE_TOT_CNT}
+		,SYSDATE
+		,#{INSERT_USER_NO}
+		,SYSDATE  
+		,#{UPDATE_USER_NO} 
+		)
+	</insert>
+
+	<insert id="insertUserEntryResultE" parameterType="dataMap" >
+		INSERT INTO TB_SURVEY_USER_ENTRY_RESULT_E(USER_NO      	
+												,SURVEY_GROUP_ID 
+												,SURVEY_ID       
+												,SURVEY_YEAR     
+												,SURVEY_DEGREE  
+												,SORT_ORDR 
+												,SECTION_ID      
+												,QUESTION_ID  
+												,SUMMARY_CD  
+												,QUESTION_LABEL_ID
+												,GRADE_VAL   
+												,GRADE_CNT   
+												,INSERT_DATE
+												,INSERT_USER_NO
+												,UPDATE_DATE
+												,UPDATE_USER_NO
+												)
+		
+		SELECT A.USER_NO           
+		      ,A.SURVEY_GROUP_ID   
+		      ,A.SURVEY_ID         
+		      ,A.SURVEY_YEAR       
+		      ,A.SURVEY_DEGREE     
+		      ,A.SORT_ORDR         
+		      ,A.SECTION_ID       
+		      ,A.QUESTION_ID       
+		      ,A.SUMMARY_CD       
+		      ,A.QUESTION_VAL       AS QUESTION_LABEL_ID
+		      ,0                    AS GRADE_VAL
+		      ,COUNT(A.QUESTION_ID) AS GRADE_CNT
+			  ,SYSDATE
+			  ,#{INSERT_USER_NO}
+			  ,SYSDATE  
+			  ,#{UPDATE_USER_NO} 
+		FROM VI_SURVEY_USER_ENTRY A
+		WHERE A.USER_NO        =#{USER_NO}
+		AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		AND   A.SURVEY_YEAR    =#{SURVEY_YEAR}
+		AND   A.SURVEY_DEGREE  =#{SURVEY_DEGREE}
+		AND   A.SUMMARY_CD     ='6'
+		GROUP BY A.USER_NO,A.SURVEY_GROUP_ID,A.SURVEY_ID,A.SURVEY_YEAR,A.SURVEY_DEGREE,A.SORT_ORDR,A.SECTION_ID,A.QUESTION_ID,A.SUMMARY_CD,A.QUESTION_VAL
+		ORDER BY A.SORT_ORDR,A.SECTION_ID,A.QUESTION_ID,A.SUMMARY_CD,A.QUESTION_VAL
+	</insert>
+
+	<delete id="deleteUserEntryResult" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestionUser">
+		DELETE 
+		FROM  TB_SURVEY_USER_ENTRY_RESULT      		            
+		WHERE USER_NO			=#{USER_NO}
+		AND   SURVEY_GROUP_ID	=#{SURVEY_GROUP_ID}
+		AND   SURVEY_ID			=#{SURVEY_ID}
+		AND   SURVEY_YEAR		=#{SURVEY_YEAR}
+		AND   SURVEY_DEGREE     =#{SURVEY_DEGREE}           
+	</delete>
+
+	<delete id="deleteUserEntryResultE" parameterType="dataMap">
+		DELETE 
+		FROM  TB_SURVEY_USER_ENTRY_RESULT_E      		            
+		WHERE USER_NO			=#{USER_NO}
+		AND   SURVEY_GROUP_ID	=#{SURVEY_GROUP_ID}
+		AND   SURVEY_YEAR		=#{SURVEY_YEAR}
+		AND   SURVEY_DEGREE     =#{SURVEY_DEGREE}           
+	</delete>
+	
+	<select id="selectListResultsLabelCnt" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestionUser" resultType="dataMap">
+		SELECT A.USER_NO
+		      ,A.SURVEY_GROUP_ID
+		      ,A.SURVEY_ID
+		      ,A.SURVEY_YEAR
+		      ,A.SURVEY_DEGREE
+		      ,A.SECTION_ID
+		      ,B.QUESTION_ID
+		      ,C.QUESTION_LABEL_ID
+		      ,C.QUESTION_CNT
+		      ,(SELECT COUNT(QUESTION_LABEL_ID) FROM TB_QUESTION_LABEL WHERE SURVEY_ID=#{SURVEY_ID}  AND SECTION_ID=A.SECTION_ID AND QUESTION_ID=B.QUESTION_ID) AS QUESTION_LABEL_ID_CNT
+		      ,(SELECT SUMMARY_CD FROM TB_QUESTION WHERE SURVEY_ID=#{SURVEY_ID} AND SECTION_ID=A.SECTION_ID  AND QUESTION_ID=B.QUESTION_ID AND ROWNUM=1)  AS SUMMARY_CD 
+		FROM TB_SECTION_USER A LEFT JOIN TB_QUESTION_USER B ON A.USER_NO=B.USER_NO AND A.SURVEY_GROUP_ID=B.SURVEY_GROUP_ID AND A.SURVEY_ID=B.SURVEY_ID AND A.SECTION_ID=B.SECTION_ID 
+		    LEFT JOIN (
+		                SELECT A.SECTION_ID,A.QUESTION_ID,A.QUESTION_LABEL_ID,SUM(DECODE(QUESTION_LABEL_RESULT,1,1,0)) AS QUESTION_CNT 
+		                FROM  TB_RESULTS_LABEL A LEFT JOIN TB_SURVEY_USER_ENTRY B ON A.RESULTS_ID=B.RESULTS_ID AND A.SURVEY_ID=B.SURVEY_ID
+		                WHERE  B.USER_NO		=#{USER_NO}
+		                AND  B.SURVEY_GROUP_ID	=#{SURVEY_GROUP_ID}
+		                AND  B.SURVEY_YEAR		=#{SURVEY_YEAR}
+		                AND  B.SURVEY_DEGREE	=#{SURVEY_DEGREE}
+		                AND A.SURVEY_ID			=#{SURVEY_ID}
+		                GROUP BY A.SECTION_ID,A.QUESTION_ID,A.QUESTION_LABEL_ID
+		                ORDER BY A.SECTION_ID,A.QUESTION_ID,A.QUESTION_LABEL_ID
+		               ) C ON C.SECTION_ID=B.SECTION_ID AND C.QUESTION_ID=B.QUESTION_ID
+		WHERE  A.USER_NO		=#{USER_NO}
+		AND    A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		AND    A.SURVEY_YEAR	=#{SURVEY_YEAR}
+		AND    A.SURVEY_DEGREE	=#{SURVEY_DEGREE}
+		AND    A.SURVEY_ID		=#{SURVEY_ID}  
+		AND    A.EXPORTINCLUDER='1'
+		AND    B.EXPORTINCLUDER='1'
+		ORDER BY B.SECTION_ID,B.QUESTION_ID,C.QUESTION_LABEL_ID
+	</select>
+
+	<select id="selectListResultsAgeCnt" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbQuestionUser" resultType="dataMap">
+	 SELECT    AAA.SECTION_ID
+               ,AAA.QUESTION_ID
+               ,AAA.AGE1_CNT
+		       ,AAA.AGE2_CNT
+		       ,AAA.AGE3_CNT
+		       ,AAA.AGE4_CNT
+		       ,AAA.AGE5_CNT
+		       ,AAA.AGE6_CNT
+		       ,AAA.TOTAL_CNT
+		       ,(100- 
+		        	  (DECODE(AAA.TOTAL_CNT,0,0,ROUND((AAA.AGE2_CNT/AAA.TOTAL_CNT)*100,1))
+		 	          +DECODE(AAA.TOTAL_CNT,0,0,ROUND((AAA.AGE3_CNT/AAA.TOTAL_CNT)*100,1)) 
+		 	          +DECODE(AAA.TOTAL_CNT,0,0,ROUND((AAA.AGE4_CNT/AAA.TOTAL_CNT)*100,1)) 
+		 	          +DECODE(AAA.TOTAL_CNT,0,0,ROUND((AAA.AGE5_CNT/AAA.TOTAL_CNT)*100,1)) 
+		 	          +DECODE(AAA.TOTAL_CNT,0,0,ROUND((AAA.AGE5_CNT/AAA.TOTAL_CNT)*100,1))) ) AS AGE1_P
+		 	   ,DECODE(AAA.TOTAL_CNT,0,0,ROUND((AAA.AGE2_CNT/AAA.TOTAL_CNT)*100,1)) AS AGE2_P
+		 	   ,DECODE(AAA.TOTAL_CNT,0,0,ROUND((AAA.AGE3_CNT/AAA.TOTAL_CNT)*100,1)) AS AGE3_P
+		 	   ,DECODE(AAA.TOTAL_CNT,0,0,ROUND((AAA.AGE4_CNT/AAA.TOTAL_CNT)*100,1)) AS AGE4_P
+		 	   ,DECODE(AAA.TOTAL_CNT,0,0,ROUND((AAA.AGE5_CNT/AAA.TOTAL_CNT)*100,1)) AS AGE5_P
+		 	   ,DECODE(AAA.TOTAL_CNT,0,0,ROUND((AAA.AGE5_CNT/AAA.TOTAL_CNT)*100,1)) AS AGE6_P
+		 FROM (
+		  		SELECT MAX(SECTION_ID)                AS  SECTION_ID
+                      ,MAX(QUESTION_ID)               AS  QUESTION_ID
+                      ,COUNT(DECODE(AA.STAT_AGE,1,1)) AS  AGE1_CNT
+				      ,COUNT(DECODE(AA.STAT_AGE,2,1)) AS  AGE2_CNT
+				      ,COUNT(DECODE(AA.STAT_AGE,3,1)) AS  AGE3_CNT
+				      ,COUNT(DECODE(AA.STAT_AGE,4,1)) AS  AGE4_CNT
+				      ,COUNT(DECODE(AA.STAT_AGE,5,1)) AS  AGE5_CNT
+				      ,COUNT(DECODE(AA.STAT_AGE,6,1)) AS  AGE6_CNT
+			          ,COUNT(AA.STAT_AGE) AS TOTAL_CNT
+				FROM (
+					SELECT SECTION_ID,QUESTION_ID,FUN_GET_AGE_SCORE(IFNULL(A.QUESTION_RESULT,0)) AS STAT_AGE
+					FROM VI_SURVEY_USER_ENTRY A
+				    WHERE A.USER_NO        =#{USER_NO}
+                    AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+                    AND   A.SURVEY_YEAR    =#{SURVEY_YEAR}
+                    AND   A.SURVEY_DEGREE  =#{SURVEY_DEGREE}
+                    AND   A.SURVEY_ID      =#{SURVEY_ID}
+                    AND   A.SUMMARY_CD     ='2'
+				) AA
+		) AAA
+	</select>
+
+	<select id="selectListstatisticsCd12" parameterType="com.whomade.kycarrots.mgt.survey.vo.TbSectionUser" resultType="dataMap">
+		SELECT A.*
+		      ,B.SUM_SCORE
+		      ,B.CNT_SCORE
+		      ,DECODE(B.CNT_SCORE,0,0,ROUND(B.SUM_SCORE/B.CNT_SCORE,1)) AS AVG_SCORE
+		FROM TB_SECTION_USER A RIGHT JOIN(
+		                                SELECT A.SECTION_ID 
+		                                      ,SUM(GRADE_AVG_VAL)  AS SUM_SCORE
+		                                      ,COUNT(A.SECTION_ID) AS CNT_SCORE
+		                                FROM  TB_SURVEY_USER_ENTRY_RESULT A
+										WHERE A.USER_NO        =#{USER_NO}
+										AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+										AND   A.SURVEY_YEAR    =#{SURVEY_YEAR}
+										AND   A.SURVEY_DEGREE  =#{SURVEY_DEGREE}
+										AND   A.SURVEY_ID	   =#{SURVEY_ID}
+										AND   A.SUMMARY_CD ='9'
+		                                GROUP BY A.SECTION_ID
+		                                ) B ON B.SECTION_ID =A.SECTION_ID
+		WHERE A.USER_NO        =#{USER_NO}
+		AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		AND   A.SURVEY_YEAR    =#{SURVEY_YEAR}
+		AND   A.SURVEY_DEGREE  =#{SURVEY_DEGREE}
+		AND   A.SURVEY_ID	   =#{SURVEY_ID}
+		ORDER BY A.SECTION_ID
+	</select>
+
+	<select id="selectListstatisticsCd13" parameterType="dataMap" resultType="dataMap">
+		SELECT AA.SURVEY_YEAR
+				      ,SUBSTR(AA.SURVEY_YEAR,3,2)||'년도'||AA.SURVEY_DEGREE||'차'  AS SURVEY_YEAR_TITLE
+				      ,AA.SURVEY_DEGREE 
+		              ,SUM(AVG_GRADE_AVG_VAL) AS AVG_GRADE_AVG_VAL
+		FROM 
+		(
+		SELECT A.SURVEY_YEAR
+				      ,SUBSTR(A.SURVEY_YEAR,3,2)||'년도'||A.SURVEY_DEGREE||'차'  AS SURVEY_YEAR_TITLE
+				      ,A.SURVEY_DEGREE 
+				      ,SUM(GRADE_AVG_VAL) AS SUM_GRADE_AVG_VAL
+				      ,COUNT(A.SURVEY_YEAR) AS SUM_GRADE_TOT_CNT
+				     , DECODE(COUNT(A.SURVEY_YEAR),0,0,ROUND((SUM(GRADE_AVG_VAL)/COUNT(A.SURVEY_YEAR)),1))*0.3 AS AVG_GRADE_AVG_VAL
+		FROM  TB_SURVEY_USER_ENTRY_RESULT A
+		WHERE A.USER_NO        =#{USER_NO}
+		AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		AND   A.SUMMARY_CD IN('10','11')
+		<if test="SORT_ORDR != null and SORT_ORDR != ''">
+			AND A.SORT_ORDR  =#{SORT_ORDR} 
+		</if>
+		AND   SURVEY_YEAR||SURVEY_DEGREE  IN
+	    <foreach collection="YEARDEGREES" item="YEARDEGREE" index="index" separator="," open="(" close=")">
+           		#{YEARDEGREE}
+    	</foreach>
+		GROUP BY A.SURVEY_YEAR,A.SURVEY_DEGREE 
+		UNION ALL        
+		 SELECT A.SURVEY_YEAR
+				      ,SUBSTR(A.SURVEY_YEAR,3,2)||'년도'||A.SURVEY_DEGREE||'차'  AS SURVEY_YEAR_TITLE
+				      ,A.SURVEY_DEGREE 
+				      ,SUM(GRADE_AVG_VAL) AS SUM_GRADE_AVG_VAL
+				      ,COUNT(A.SURVEY_YEAR) AS SUM_GRADE_TOT_CNT
+				     , DECODE(COUNT(A.SURVEY_YEAR),0,0,ROUND((SUM(GRADE_AVG_VAL)/COUNT(A.SURVEY_YEAR)),1))*0.7 AS AVG_GRADE_AVG_VAL
+		FROM  TB_SURVEY_USER_ENTRY_RESULT A
+		WHERE A.USER_NO        =#{USER_NO}
+		AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		AND   A.SUMMARY_CD IN('9')
+		<if test="SORT_ORDR != null and SORT_ORDR != ''">
+		AND A.SORT_ORDR  =#{SORT_ORDR} 
+		</if>
+		AND   SURVEY_YEAR||SURVEY_DEGREE  IN
+	    <foreach collection="YEARDEGREES" item="YEARDEGREE" index="index" separator="," open="(" close=")">
+         	#{YEARDEGREE}
+    	</foreach>
+		GROUP BY A.SURVEY_YEAR,A.SURVEY_DEGREE         
+		) AA
+		GROUP BY AA.SURVEY_YEAR,AA.SURVEY_DEGREE       
+	</select>
+
+	<select id="selectListstatisticsCd14" parameterType="dataMap" resultType="dataMap">
+		SELECT        AA.SURVEY_YEAR
+				      ,SUBSTR(AA.SURVEY_YEAR,3,2)||'년도'||AA.SURVEY_DEGREE||'차'  AS SURVEY_YEAR_TITLE
+				      ,AA.SURVEY_DEGREE 
+				      ,ROUND((AA.QUESTION_VALH/AA.SUM_GRADE_TOT_CNT)*100,1) AS AVG_QUESTION_VALH
+				      ,ROUND((AA.QUESTION_VALL/AA.SUM_GRADE_TOT_CNT)*100,1) AS AVG_QUESTION_VALL
+				      ,ROUND((AA.QUESTION_VALH/AA.SUM_GRADE_TOT_CNT)*100,1) 
+				      -ROUND((AA.QUESTION_VALL/AA.SUM_GRADE_TOT_CNT)*100,1) AS AVG_QUESTION_SCORE
+		FROM (
+		SELECT A.SURVEY_YEAR
+				      ,SUBSTR(A.SURVEY_YEAR,3,2)||'년도'||A.SURVEY_DEGREE||'차'  AS SURVEY_YEAR_TITLE
+				      ,A.SURVEY_DEGREE 
+		    	      ,SUM(IFNULL(A.GRADE_10_CNT,0)+IFNULL(A.GRADE_11_CNT,0))         AS QUESTION_VALH
+		              ,SUM(IFNULL(A.GRADE_01_CNT,0)+IFNULL(A.GRADE_02_CNT,0)  
+		              +IFNULL(A.GRADE_03_CNT,0)+IFNULL(A.GRADE_04_CNT,0)  
+		              +IFNULL(A.GRADE_05_CNT,0)+IFNULL(A.GRADE_06_CNT,0)  
+		              +IFNULL(A.GRADE_07_CNT,0)+IFNULL(A.GRADE_08_CNT,0)  
+		              +IFNULL(A.GRADE_09_CNT,0))                                   AS QUESTION_VALL
+		             ,SUM(A.GRADE_TOT_CNT)                                      AS SUM_GRADE_TOT_CNT
+		FROM  TB_SURVEY_USER_ENTRY_RESULT A
+		WHERE A.USER_NO        =#{USER_NO}
+		AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		AND   A.SUMMARY_CD IN('10','11')
+		<if test="SORT_ORDR != null and SORT_ORDR != ''">
+			AND A.SORT_ORDR  =#{SORT_ORDR} 
+		</if>
+		AND   SURVEY_YEAR||SURVEY_DEGREE  IN
+	    <foreach collection="YEARDEGREES" item="YEARDEGREE" index="index" separator="," open="(" close=")">
+         	#{YEARDEGREE}
+    	</foreach>
+		GROUP BY A.SURVEY_YEAR,A.SURVEY_DEGREE 
+		) AA
+	</select>
+
+
+	<select id="selectListstatisticsCd15" parameterType="dataMap" resultType="dataMap">
+		SELECT A.SURVEY_YEAR
+		      ,SUBSTR(A.SURVEY_YEAR,3,2)||'년도'||A.SURVEY_DEGREE||'차'  AS SURVEY_YEAR_TITLE
+		      ,A.SURVEY_DEGREE 
+		      ,SUM(GRADE_AVG_VAL) AS SUM_GRADE_AVG_VAL
+		      ,COUNT(A.SURVEY_YEAR) AS SUM_GRADE_TOT_CNT
+		     , DECODE(COUNT(A.SURVEY_YEAR),0,0,ROUND((SUM(GRADE_AVG_VAL)/COUNT(A.SURVEY_YEAR)),1)) AS AVG_GRADE_AVG_VAL
+		FROM  TB_SURVEY_USER_ENTRY_RESULT A
+		WHERE A.USER_NO        =#{USER_NO}
+		AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+		AND   A.SUMMARY_CD IN
+	    <foreach collection="SUMMARY_CDS" item="SUMMARY_CD" index="index" separator="," open="(" close=")">
+           		#{SUMMARY_CD}
+    	</foreach>
+		<if test="SORT_ORDR != null and SORT_ORDR != ''">
+			AND A.SORT_ORDR  =#{SORT_ORDR} 
+		</if>
+		AND   SURVEY_YEAR||SURVEY_DEGREE  IN	    
+		<foreach collection="YEARDEGREES" item="YEARDEGREE" index="index" separator="," open="(" close=")">
+         	#{YEARDEGREE}
+    	</foreach>
+		GROUP BY A.SURVEY_YEAR,A.SURVEY_DEGREE
+	</select>
+
+	<select id="selectListstatisticsCd16" parameterType="dataMap" resultType="dataMap">
+			SELECT A.SECTION_ID
+			      ,A.SURVEY_YEAR
+			      ,SUBSTR(A.SURVEY_YEAR,3,2)||'년도'||A.SURVEY_DEGREE||'차'  AS SURVEY_YEAR_TITLE
+			      ,A.SURVEY_DEGREE 
+			      ,SUM(GRADE_AVG_VAL) AS SUM_GRADE_AVG_VAL
+			      ,COUNT(A.SECTION_ID) AS SUM_GRADE_TOT_CNT
+			      ,DECODE(COUNT(A.SECTION_ID),0,0,ROUND((SUM(GRADE_AVG_VAL)/COUNT(A.SECTION_ID)),1)) AS AVG_GRADE_AVG_VAL
+			     ,( SELECT SECTION_RTITLE 
+			        FROM TB_SECTION_USER
+			        WHERE USER_NO=#{USER_NO}
+			        AND   SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+			        AND   SURVEY_YEAR=#{SURVEY_YEAR}
+			        AND   SURVEY_DEGREE=#{SURVEY_DEGREE}
+			        AND   SURVEY_ID=#{SURVEY_ID}
+			        AND   SECTION_ID=A.SECTION_ID
+			      ) AS SECTION_RTITLE
+		          ,(
+				       SELECT COUNT(AA.SURVEY_YEAR) CNT_SECTION
+				        FROM (
+				        SELECT A.SURVEY_YEAR,A.SURVEY_DEGREE
+				        FROM  TB_SURVEY_USER_ENTRY_RESULT A
+				        WHERE A.USER_NO        =1
+				        AND   A.SURVEY_GROUP_ID=0
+				        AND   A.SUMMARY_CD  IN('9')
+				        AND   A.SORT_ORDR ='10'
+				        AND   SURVEY_YEAR||SURVEY_DEGREE  IN
+						<foreach collection="YEARDEGREES" item="YEARDEGREE" index="index" separator="," open="(" close=")">
+				         	#{YEARDEGREE}
+				    	</foreach>
+				        GROUP BY A.SURVEY_YEAR,A.SURVEY_DEGREE 
+				        ) AA
+				     ) AS CNT_SECTION
+			FROM  TB_SURVEY_USER_ENTRY_RESULT A
+			WHERE A.USER_NO        =#{USER_NO}
+			AND   A.SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+			AND   A.SUMMARY_CD IN
+		    <foreach collection="SUMMARY_CDS" item="SUMMARY_CD" index="index" separator="," open="(" close=")">
+	           		#{SUMMARY_CD}
+	    	</foreach>
+			<if test="SORT_ORDR != null and SORT_ORDR != ''">
+				AND A.SORT_ORDR  =#{SORT_ORDR} 
+			</if>
+			AND   SURVEY_YEAR||SURVEY_DEGREE  IN
+			<foreach collection="YEARDEGREES" item="YEARDEGREE" index="index" separator="," open="(" close=")">
+	         	#{YEARDEGREE}
+	    	</foreach>
+			GROUP BY A.SURVEY_YEAR,A.SURVEY_DEGREE,A.SECTION_ID 
+			ORDER BY A.SECTION_ID,A.SURVEY_YEAR,A.SURVEY_DEGREE
+	</select>
+
+	<select id="selectListYearDegrees" parameterType="dataMap" resultType="String">
+	   	<![CDATA[
+	       SELECT YEARDEGREE
+	       FROM(
+	               SELECT SURVEY_YEAR||SURVEY_DEGREE AS YEARDEGREE
+	               FROM TB_SURVEY_USER_DEGREE
+	               WHERE USER_NO=#{USER_NO}
+	               AND   SURVEY_GROUP_ID=#{SURVEY_GROUP_ID}
+	               AND   SURVEY_YEAR||SURVEY_DEGREE <=#{YEARDEGREE}
+	               ORDER BY SURVEY_YEAR DESC,SURVEY_DEGREE DESC
+	            )
+	       WHERE   LIMIT 4
+		]]>
+	</select>
+
+</mapper>

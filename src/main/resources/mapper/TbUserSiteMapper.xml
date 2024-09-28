@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whomade.kycarrots.repository.mybatis.TbUserSiteMapper">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="userSn">
+        insert into tb_user_site (USER_ID, SITE_NM, SITE_FILE,SITE_HTML,INSERT_DATE,UPDATE_DATE)
+        values (#{userId}, #{siteNm}, #{siteFile}, #{siteHtml}, #{insertDate}, #{updateDate})
+    </insert>
+
+    <select id="findById" resultType="com.whomade.kycarrots.entity.TbUserSite">
+        select USER_SN, USER_ID, SITE_NM, SITE_FILE,SITE_HTML,INSERT_DATE,UPDATE_DATE
+        from tb_user_site
+        where USER_SN = #{id}
+    </select>
+
+</mapper>

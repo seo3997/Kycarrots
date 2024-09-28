@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vue Sample</title>
+<!-- Vue.js CDN -->
+<script src="/common/vue/vue2debug.js"></script>
+<script src="/common/vue/vue-i18n.js"></script>
+<!-- Vue Router CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@5.10.0/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@5.10.0/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@5.10.0/main.js"></script>
+<script src="https://unpkg.com/vue-router@3.0.1/dist/vue-router.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+	<p>{{message}}</p>
+	 <div>{{ $t('greeting') }}</div>
+	<a v-if="flag">두잇 Vue.js</a>
+	<ul>
+		<li v-for="system in Systems">{{system}}</li>
+	</ul>	
+	<a v-show="flag">두잇 Vue.js</a>
+	<h5 v-bind:id="uid">뷰 입문서</h5>
+	<button v-on:click="popupAlert">경고 창 버튼</button>	
+	<button v-on:click="clickBtn(this.event,10)">클릭</button>
+	<input v-model="message">
+	<div id="calendar"></div>
+</div>
+
+<script>
+	fetch('/common/vue/translations/en.json')
+	.then(response => response.json())
+	.then(translation => {
+	  const i18n = new VueI18n({
+	    locale: 'en', // 기본 언어 설정
+	    messages: {
+	      en: translation // 영어 번역 데이터
+	    }
+	  });
+	
+	  new Vue({
+	    el: '#app',
+	    i18n,
+	    data:{
+	      message: 'Hello Vue.js',
+	      flag: true,
+	      Systems: ['android','ios','window'],
+	      uid: 10
+	    },
+	    methods:{
+	      popupAlert: function() {
+	        return alert('경고창 표시');
+	      },
+	      clickBtn: function(event,num) {
+	        console.log(event);
+	        alert('clicked' + num + 'times');
+	      }
+	    },
+	    watch : {
+	      message: function(data) {
+	        console.log("message의 값이 바뀌니다.",data);
+	      }
+	    },
+	    mounted: function() {
+	        // Vue.js의 라이프사이클 훅 중 하나인 mounted에서 jQuery를 사용
+	        // jQuery를 사용하여 DOM 조작 등을 수행할 수 있습니다.
+	        $('#app').css('color', 'blue');
+	
+	        // FullCalendar 초기화
+	        const calendarEl = document.getElementById('calendar');
+	        const calendar = new FullCalendar.Calendar(calendarEl, {
+	          plugins: [ 'dayGrid', 'interaction' ],
+	          initialView: 'dayGridMonth',
+	          events: [
+	            // 이벤트 객체들을 배열에 추가하여 캘린더에 표시할 수 있습니다.
+	            { title: '이벤트 1', start: '2024-03-01' },
+	            { title: '이벤트 2', start: '2024-03-07', end: '2024-03-10' },
+	            // 추가적인 이벤트들을 여기에 추가할 수 있습니다.
+	          ]
+	        });
+	        calendar.render();
+	    
+	    
+	    }	 
+	    
+	    
+	    
+	  });
+	});
+
+</script>
+
+
+</body>
+</html>
