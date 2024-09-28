@@ -68,9 +68,6 @@ export default {
   methods: {
     handleClick(type) {
         this.$emit('question-selected', type);
-    },
-    generateLink(type) {
-      return `/mgt/survey/editQuestion.do?surveyId=${this.surveyId}&section=${this.sectionNr}&question=${this.questionNr}&type=${type}&above=${this.above}`;
     }
   }
 }
