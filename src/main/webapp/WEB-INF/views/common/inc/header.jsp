@@ -136,9 +136,9 @@ function fnClickMenuBtn(that) {
 	<!-- Logo -->
 	<a href="/mgt/main/dashBoard.do" class="logo">
 		<!-- mini logo for sidebar mini 50x50 pixels -->
-		<span class="logo-mini"><b>planF</b></span>
+		<span class="logo-mini"><b>kyCarrots</b></span>
 		<!-- logo for regular state and mobile devices -->
-		<span class="logo-lg"><b>planF</b></span>
+		<span class="logo-lg"><b>kyCarrots</b></span>
 	</a>
 
 	<!-- Header Navbar -->
