@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whomade.kycarrots.repository.mybatis.member.OpUserMapper">
+
+    <select id="findByUserIdAndPassword" resultType="com.whomade.kycarrots.entity.member.OpUserVO" parameterType="map">
+        SELECT
+            USER_NO,
+            USER_ID,
+            PASSWORD,
+            USER_NM,
+            CTTPC_SE_CODE,
+            CTTPC,
+            EMAIL,
+            AREA_CODE,
+            AREA_SE_CODE_S,
+            AREA_SE_CODE_D,
+            USER_STTUS_CODE,
+            LOGIN_DT,
+            USER_AGE,
+            BIRTH_DATE,
+            UNIQUE_IDENTIFIER,
+            DEVICE_ID,
+            DUPLICATE_IDENTIFIER,
+            GENDER,
+            MEMBER_CODE,
+            CITIZENSHIP_TYPE,
+            PASSWORD_HASH,
+            REFERRER_ID,
+            REGISTER_NO,
+            REGIST_DT,
+            UPDUSR_NO,
+            UPDT_DT
+        FROM op_user
+        WHERE USER_ID = #{userId}
+        AND PASSWORD = #{password}
+    </select>
+
+</mapper>
