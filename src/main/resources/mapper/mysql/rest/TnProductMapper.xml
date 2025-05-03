@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whomade.kycarrots.repository.mybatis.product.TnProductMapper">
+
+    <select id="selectTbproduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
+        SELECT
+            A.PRODUCT_ID,
+            A.USER_NO,
+            A.TITLE,
+            A.DESCRIPTION,
+            A.PRICE,
+            A.CATEGORY_GROUP,
+            A.CATEGORY_MID,
+            A.CATEGORY_SCLS,
+            A.SALE_STATUS,
+            A.REGISTER_NO,
+            A.REGIST_DT,
+            A.UPDUSR_NO,
+            A.UPDT_DT,
+            (SELECT  IMAGE_URL FROM tb_product_image WHERE PRODUCT_ID= A.PRODUCT_ID AND REPRESENT=1) AS IMAGE_URL
+        FROM tb_product A
+        WHERE A.SALE_STATUS = #{saleStatus}
+    </select>
+
+</mapper>

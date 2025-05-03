@@ -7,7 +7,11 @@ spring:
       basename: messages
       encoding: UTF-8
   datasource:
-    url: jdbc:mysql://localhost:3306/kycarrots
+  #url: jdbc:mysql://localhost:3306/kycarrots
+  #username: kycarrots
+  #password: kycarrots
+  #driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://52.231.229.156:3306/kycarrotsdb
     username: kycarrots
     password: kycarrots
     driver-class-name: com.mysql.cj.jdbc.Driver
