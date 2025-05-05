@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whomade.kycarrots.repository.mybatis.common.OpCodeMapper">
+
+    <select id="selectListCode" parameterType="dataMap" resultType="com.whomade.kycarrots.entity.common.OpCodeVo">
+        SELECT
+            GROUP_ID
+             ,CODE
+             ,CODE_NM
+             ,CODE_NM_ENG
+             ,ATTRB_1
+             ,ATTRB_2
+             ,ATTRB_3
+             ,USE_YN
+             ,SORT_ORDR
+        FROM op_code
+        WHERE GROUP_ID = #{groupId}
+        ORDER BY SORT_ORDR
+    </select>
+
+</mapper>

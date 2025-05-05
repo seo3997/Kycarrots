@@ -1,5 +1,6 @@
 package com.whomade.kycarrots.repository.mybatis.product;
 
+import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import jakarta.transaction.Transactional;
@@ -25,4 +26,34 @@ public class TnProductRepository {
         return tbproducts;
     }
 
+    // INSERT
+    public int insertTbproduct(TnProductVo vo) {
+        return tnProductMapper.insertTbproduct(vo);
+    }
+
+    // UPDATE
+    public int updateTbproduct(TnProductVo vo) {
+        return tnProductMapper.updateTbproduct(vo);
+    }
+
+    // DELETE
+    public int deleteTbproduct(String productId) {
+        return tnProductMapper.deleteTbproduct(productId);
+    }
+
+    public List<TnProductImageVo> selectProductImages(Long productId) {
+        return tnProductMapper.selectProductImages(productId);
+    }
+
+    public int insertProductImage(TnProductImageVo vo) {
+        return tnProductMapper.insertProductImage(vo);
+    }
+
+    public int updateProductImage(TnProductImageVo vo) {
+        return tnProductMapper.updateProductImage(vo);
+    }
+
+    public int deleteProductImage(Long imageId) {
+        return tnProductMapper.deleteProductImage(imageId);
+    }
 }

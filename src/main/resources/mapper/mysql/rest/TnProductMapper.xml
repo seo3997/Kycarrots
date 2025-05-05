@@ -23,4 +23,93 @@
         WHERE A.SALE_STATUS = #{saleStatus}
     </select>
 
+    <insert id="insertTbproduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">
+        INSERT INTO tb_product (
+            USER_NO,
+            TITLE,
+            DESCRIPTION,
+            PRICE,
+            CATEGORY_GROUP,
+            CATEGORY_MID,
+            CATEGORY_SCLS,
+            SALE_STATUS,
+            REGISTER_NO,
+            REGIST_DT,
+            UPDUSR_NO,
+            UPDT_DT
+        ) VALUES (
+                     #{userNo},           -- 사용자 번호 (VO: userNo)
+                     #{title},            -- 제목 (VO: title)
+                     #{description},      -- 설명 (VO: description)
+                     #{price},            -- 가격 (VO: price)
+                     #{categoryGroup},    -- 대분류 (VO: categoryGroup)
+                     #{categoryMid},      -- 중분류 (VO: categoryMid)
+                     #{categoryScls},     -- 소분류 (VO: categoryScls)
+                     'N',                 -- 판매 상태 (VO: saleStatus)
+                     #{registerNo},       -- 등록자 번호 (VO: registerNo)
+                     CURRENT_TIMESTAMP,   -- 등록일자 (VO: registDt)
+                     #{updusrNo},         -- 수정자 번호 (VO: updusrNo)
+                     CURRENT_TIMESTAMP    -- 수정일자 (VO: updtDt)
+                 )
+    </insert>
+
+    <update id="updateProduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">
+        UPDATE tb_product
+        SET
+            TITLE = #{title},
+            DESCRIPTION = #{description},
+            PRICE = #{price},
+            CATEGORY_GROUP = #{categoryGroup},
+            CATEGORY_MID = #{categoryMid},
+            CATEGORY_SCLS = #{categoryScls},
+            SALE_STATUS = #{saleStatus},
+            UPDUSR_NO = #{updusrNo},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE PRODUCT_ID = #{productId}
+    </update>
+
+    <delete id="deleteProduct" parameterType="string">
+        DELETE FROM tb_product
+        WHERE PRODUCT_ID = #{productId}
+    </delete>
+
+    <select id="selectProductImages" resultType="com.whomade.kycarrots.entity.product.TnProductImageVo">
+        SELECT *
+        FROM tb_product_image
+        WHERE PRODUCT_ID = #{productId}
+    </select>
+
+    <insert id="insertProductImage" parameterType="com.whomade.kycarrots.entity.product.TnProductImageVo">
+        INSERT INTO tb_product_image (
+            PRODUCT_ID, IMAGE_CD, IMAGE_URL, IMAGE_NAME,
+            REPRESENT, IMAGE_SIZE, IMAGE_TEXT, IMAGE_TYPE,
+            REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
+        ) VALUES (
+                     #{productId}, #{imageCd}, #{imageUrl}, #{imageName},
+                     #{represent}, #{imageSize}, #{imageText}, #{imageType},
+                     #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP
+                 )
+    </insert>
+
+    <update id="updateProductImage" parameterType="com.whomade.kycarrots.entity.product.TnProductImageVo">
+        UPDATE tb_product_image
+        SET
+            IMAGE_CD = #{imageCd},
+            IMAGE_URL = #{imageUrl},
+            IMAGE_NAME = #{imageName},
+            REPRESENT = #{represent},
+            IMAGE_SIZE = #{imageSize},
+            IMAGE_TEXT = #{imageText},
+            IMAGE_TYPE = #{imageType},
+            UPDUSR_NO = #{updusrNo},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE IMAGE_ID = #{imageId}
+    </update>
+
+    <delete id="deleteProductImage" parameterType="long">
+        DELETE FROM tb_product_image
+        WHERE IMAGE_ID = #{imageId}
+    </delete>
+
+
 </mapper>

@@ -2,16 +2,17 @@ package com.whomade.kycarrots.rest.advertise;
 
 import com.whomade.kycarrots.dto.advertise.AdvertiseItem;
 import com.whomade.kycarrots.dto.advertise.AdvertiseResponse;
+import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.service.product.TnProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -80,5 +81,20 @@ public class AdvertiseController {
         AdvertiseResponse response = new AdvertiseResponse();
         response.setItems(tnProductVos);
         return response;
+    }
+
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> registerProductWithImages(
+            @RequestPart("product") TnProductVo productVo,
+            @RequestPart("imageMetas") List<TnProductImageVo> imageMetas,
+            @RequestPart("images") List<MultipartFile> images) {
+
+        try {
+            tnProductService.insertProductWithImages(productVo, imageMetas, images);
+            return ResponseEntity.ok("등록 성공");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("등록 실패: " + e.getMessage());
+        }
     }
 }
