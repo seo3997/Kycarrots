@@ -56,3 +56,8 @@ logging:
     com.whomade.kycarrots: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+
+file:
+  upload-dir: /var/www/uploads/product
+  public-url: http://52.231.229.156:9000/common/img/product
+  resource-path: file:/var/www/uploads/product/

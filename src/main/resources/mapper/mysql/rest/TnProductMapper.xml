@@ -23,7 +23,7 @@
         WHERE A.SALE_STATUS = #{saleStatus}
     </select>
 
-    <insert id="insertTbproduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">
+    <insert id="insertTbproduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo" useGeneratedKeys="true" keyProperty="productId">
         INSERT INTO tb_product (
             USER_NO,
             TITLE,
@@ -45,7 +45,7 @@
                      #{categoryGroup},    -- 대분류 (VO: categoryGroup)
                      #{categoryMid},      -- 중분류 (VO: categoryMid)
                      #{categoryScls},     -- 소분류 (VO: categoryScls)
-                     'N',                 -- 판매 상태 (VO: saleStatus)
+                     #{saleStatus},       -- 판매 상태 (VO: saleStatus)
                      #{registerNo},       -- 등록자 번호 (VO: registerNo)
                      CURRENT_TIMESTAMP,   -- 등록일자 (VO: registDt)
                      #{updusrNo},         -- 수정자 번호 (VO: updusrNo)
