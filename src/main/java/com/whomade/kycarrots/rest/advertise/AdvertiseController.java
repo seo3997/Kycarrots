@@ -2,6 +2,7 @@ package com.whomade.kycarrots.rest.advertise;
 
 import com.whomade.kycarrots.dto.advertise.AdvertiseItem;
 import com.whomade.kycarrots.dto.advertise.AdvertiseResponse;
+import com.whomade.kycarrots.dto.advertise.TnProductDetailResponse;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/advertises")
+@RequestMapping(value = "/product")
 @Slf4j
 public class AdvertiseController {
     private final TnProductService tnProductService;
@@ -97,4 +98,11 @@ public class AdvertiseController {
                     .body("등록 실패: " + e.getMessage());
         }
     }
+
+    @GetMapping("/detail/{productId}")
+    public ResponseEntity<TnProductDetailResponse> getProductDetail(@PathVariable Long productId) {
+        TnProductDetailResponse detail = tnProductService.getProductDetail(productId);
+        return ResponseEntity.ok(detail);
+    }
+
 }

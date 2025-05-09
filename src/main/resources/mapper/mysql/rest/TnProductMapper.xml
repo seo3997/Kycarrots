@@ -73,12 +73,6 @@
         WHERE PRODUCT_ID = #{productId}
     </delete>
 
-    <select id="selectProductImages" resultType="com.whomade.kycarrots.entity.product.TnProductImageVo">
-        SELECT *
-        FROM tb_product_image
-        WHERE PRODUCT_ID = #{productId}
-    </select>
-
     <insert id="insertProductImage" parameterType="com.whomade.kycarrots.entity.product.TnProductImageVo">
         INSERT INTO tb_product_image (
             PRODUCT_ID, IMAGE_CD, IMAGE_URL, IMAGE_NAME,
@@ -110,6 +104,43 @@
         DELETE FROM tb_product_image
         WHERE IMAGE_ID = #{imageId}
     </delete>
+    <select id="selectProductById" parameterType="long" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
+        SELECT
+            PRODUCT_ID,
+            USER_NO,
+            TITLE,
+            DESCRIPTION,
+            PRICE,
+            CATEGORY_GROUP,
+            CATEGORY_MID,
+            CATEGORY_SCLS,
+            SALE_STATUS,
+            REGISTER_NO,
+            REGIST_DT,
+            UPDUSR_NO,
+            UPDT_DT
+        FROM tb_product
+        WHERE PRODUCT_ID = #{productId}
+    </select>
 
+    <select id="selectProductImagesByProductId" parameterType="long" resultType="com.whomade.kycarrots.entity.product.TnProductImageVo">
+        SELECT
+            IMAGE_ID,
+            PRODUCT_ID,
+            IMAGE_CD,
+            IMAGE_URL,
+            IMAGE_NAME,
+            REPRESENT,
+            IMAGE_SIZE,
+            IMAGE_TEXT,
+            IMAGE_TYPE,
+            REGISTER_NO,
+            REGIST_DT,
+            UPDUSR_NO,
+            UPDT_DT
+        FROM tb_product_image
+        WHERE PRODUCT_ID = #{productId}
+        ORDER BY REPRESENT DESC
+    </select>
 
 </mapper>

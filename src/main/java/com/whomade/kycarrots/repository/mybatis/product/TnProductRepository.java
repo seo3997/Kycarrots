@@ -26,6 +26,9 @@ public class TnProductRepository {
         return tbproducts;
     }
 
+    public TnProductVo selectProductById(Long productId) {
+        return tnProductMapper.selectProductById(productId);
+    }
     // INSERT
     public int insertTbproduct(TnProductVo vo) {
         return tnProductMapper.insertTbproduct(vo);
@@ -41,8 +44,8 @@ public class TnProductRepository {
         return tnProductMapper.deleteTbproduct(productId);
     }
 
-    public List<TnProductImageVo> selectProductImages(Long productId) {
-        return tnProductMapper.selectProductImages(productId);
+    public List<TnProductImageVo> selectProductImagesByProductId(Long productId) {
+        return tnProductMapper.selectProductImagesByProductId(productId);
     }
 
     public int insertProductImage(TnProductImageVo vo) {

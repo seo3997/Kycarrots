@@ -1,6 +1,7 @@
 package com.whomade.kycarrots.service.product;
 
 import com.whomade.kycarrots.config.FileStorageProperties;
+import com.whomade.kycarrots.dto.advertise.TnProductDetailResponse;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
@@ -56,7 +57,7 @@ public class TnProductService {
     }
 
     public List<TnProductImageVo> selectProductImages(Long productId) {
-        return tnProductRepository.selectProductImages(productId);
+        return tnProductRepository.selectProductImagesByProductId(productId);
     }
 
     public int insertProductImage(TnProductImageVo vo) {
@@ -110,5 +111,15 @@ public class TnProductService {
                 tnProductRepository.insertProductImage(meta);
             }
         }
+
     }
+    public TnProductDetailResponse getProductDetail(Long productId) {
+        TnProductVo product = tnProductRepository.selectProductById(productId);
+        if (product == null) {
+            throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId);
+        }
+        List<TnProductImageVo> images = tnProductRepository.selectProductImagesByProductId(productId);
+        return new TnProductDetailResponse(product, images);
+    }
+
 }
