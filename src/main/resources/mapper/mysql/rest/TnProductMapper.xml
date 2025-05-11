@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.whomade.kycarrots.repository.mybatis.product.TnProductMapper">
 
-    <select id="selectTbproduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
+    <select id="selectTbProduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
         SELECT
             A.PRODUCT_ID,
             A.USER_NO,
@@ -23,7 +23,7 @@
         WHERE A.SALE_STATUS = #{saleStatus}
     </select>
 
-    <insert id="insertTbproduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo" useGeneratedKeys="true" keyProperty="productId">
+    <insert id="insertTbProduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo" useGeneratedKeys="true" keyProperty="productId">
         INSERT INTO tb_product (
             USER_NO,
             TITLE,
@@ -53,7 +53,7 @@
                  )
     </insert>
 
-    <update id="updateProduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">
+    <update id="updateTbProduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">
         UPDATE tb_product
         SET
             TITLE = #{title},
@@ -68,10 +68,29 @@
         WHERE PRODUCT_ID = #{productId}
     </update>
 
-    <delete id="deleteProduct" parameterType="string">
+    <delete id="deleteTbProduct" parameterType="string">
         DELETE FROM tb_product
         WHERE PRODUCT_ID = #{productId}
     </delete>
+
+    <select id="selectProductImageById" parameterType="string" resultType="com.whomade.kycarrots.entity.product.TnProductImageVo">
+        SELECT
+            IMAGE_ID,
+            PRODUCT_ID,
+            IMAGE_CD,
+            IMAGE_URL,
+            IMAGE_NAME,
+            REPRESENT,
+            IMAGE_SIZE,
+            IMAGE_TEXT,
+            IMAGE_TYPE,
+            REGISTER_NO,
+            REGIST_DT,
+            UPDUSR_NO,
+            UPDT_DT
+        FROM tb_product_image
+        WHERE IMAGE_ID = #{imageId}
+    </select>
 
     <insert id="insertProductImage" parameterType="com.whomade.kycarrots.entity.product.TnProductImageVo">
         INSERT INTO tb_product_image (
@@ -140,7 +159,7 @@
             UPDT_DT
         FROM tb_product_image
         WHERE PRODUCT_ID = #{productId}
-        ORDER BY REPRESENT DESC
+        ORDER BY REPRESENT DESC,IMAGE_ID ASC
     </select>
 
 </mapper>

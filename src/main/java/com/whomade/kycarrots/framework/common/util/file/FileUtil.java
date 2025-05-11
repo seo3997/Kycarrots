@@ -33,4 +33,19 @@ public class FileUtil {
 
         return dest;
     }
+
+    public static boolean deleteFile(String baseDir, String productId, String fileName) {
+        if (baseDir == null || productId == null || fileName == null) {
+            return false;
+        }
+
+        String targetPath = baseDir + File.separator + productId + File.separator + fileName;
+        File file = new File(targetPath);
+
+        if (file.exists()) {
+            return file.delete();
+        }
+
+        return true; // 파일이 이미 없는 경우는 성공으로 간주
+    }
 }

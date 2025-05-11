@@ -15,18 +15,20 @@ import java.util.List;
 @Mapper
 public interface TnProductMapper {
     // SELECT
-    List<TnProductVo> selectTbproduct(DataMap param);
+    List<TnProductVo> selectTbProduct(DataMap param);
 
     TnProductVo selectProductById(Long productId); // 🔹 상품 상세 조회 추가
 
     // INSERT
-    int insertTbproduct(TnProductVo vo);
+    int insertTbProduct(TnProductVo vo);
 
     // UPDATE
-    int updateTbproduct(TnProductVo vo);
+    int updateTbProduct(TnProductVo vo);
 
     // DELETE
-    int deleteTbproduct(String productId);
+    int deleteTbProduct(String productId);
+
+    TnProductImageVo selectProductImageById(Long imageId);
 
     List<TnProductImageVo> selectProductImagesByProductId(Long productId);
 

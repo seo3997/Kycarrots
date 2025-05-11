@@ -38,22 +38,22 @@ public class TnProductService {
 
     // SELECT
     public List<TnProductVo> selectTbproduct(DataMap param) {
-        return tnProductRepository.selectTbproduct(param);
+        return tnProductRepository.selectTbProduct(param);
     }
 
     // INSERT
     public int insertTbproduct(TnProductVo vo) {
-        return tnProductRepository.insertTbproduct(vo);
+        return tnProductRepository.insertTbProduct(vo);
     }
 
     // UPDATE
-    public int updateTbproduct(TnProductVo vo) {
-        return tnProductRepository.updateTbproduct(vo);
+    public int updateTbProduct(TnProductVo vo) {
+        return tnProductRepository.updateTbProduct(vo);
     }
 
     // DELETE
-    public int deleteTbproduct(String productId) {
-        return tnProductRepository.deleteTbproduct(productId);
+    public int deleteTbProduct(String productId) {
+        return tnProductRepository.deleteTbProduct(productId);
     }
 
     public List<TnProductImageVo> selectProductImages(Long productId) {
@@ -74,7 +74,7 @@ public class TnProductService {
 
     @Transactional
     public void insertProductWithImages(TnProductVo productVo, List<TnProductImageVo> imageMetas, List<MultipartFile> files) throws IOException {
-        tnProductRepository.insertTbproduct(productVo);
+        tnProductRepository.insertTbProduct(productVo);
 
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
@@ -113,6 +113,56 @@ public class TnProductService {
         }
 
     }
+
+    @Transactional
+    public void updateProductWithImages(TnProductVo productVo,
+                                        List<TnProductImageVo> imageMetas,
+                                        List<MultipartFile> images) throws IOException {
+
+        // 1. 상품 정보 수정
+        tnProductRepository.updateTbProduct(productVo);
+
+        // 2. 이미지 메타 정보와 파일 동기화
+        for (int i = 0; i < imageMetas.size(); i++) {
+            TnProductImageVo meta = imageMetas.get(i);
+            MultipartFile file = (images != null && images.size() > i) ? images.get(i) : null;
+
+            boolean isNew = (meta.getImageId() == null); // imageId 없으면 새 이미지
+
+            // 새 이미지 추가
+            if (isNew && file != null && !file.isEmpty()) {
+                File destFile = FileUtil.saveFile(file, fileStorageProperties.getUploadDir(), productVo.getProductId());
+                String imageUrl = publicUrl + "/" + productVo.getProductId() + "/" + destFile.getName();
+
+                meta.setImageUrl(imageUrl);
+                meta.setProductId(Long.valueOf(productVo.getProductId()));
+                meta.setImageName(file.getOriginalFilename());
+                meta.setImageSize(file.getSize());
+                meta.setImageType(file.getContentType());
+                meta.setImageCd("1");
+                meta.setRegisterNo(Integer.parseInt(productVo.getRegisterNo()));
+                meta.setUpdusrNo(Integer.parseInt(productVo.getUpdusrNo()));
+
+                tnProductRepository.insertProductImage(meta);
+            }
+
+            // 기존 이미지 수정
+            else if (meta.getImageId() != null) {
+                if (file != null && !file.isEmpty()) {
+                    File destFile = FileUtil.saveFile(file, fileStorageProperties.getUploadDir(), productVo.getProductId());
+                    String imageUrl = publicUrl + "/" + productVo.getProductId() + "/" + destFile.getName();
+                    meta.setImageUrl(imageUrl);
+                    meta.setImageName(file.getOriginalFilename());
+                    meta.setImageSize(file.getSize());
+                    meta.setImageType(file.getContentType());
+                }
+
+                meta.setUpdusrNo(Integer.parseInt(productVo.getUpdusrNo()));
+                tnProductRepository.updateProductImage(meta);
+            }
+        }
+    }
+
     public TnProductDetailResponse getProductDetail(Long productId) {
         TnProductVo product = tnProductRepository.selectProductById(productId);
         if (product == null) {
@@ -122,4 +172,24 @@ public class TnProductService {
         return new TnProductDetailResponse(product, images);
     }
 
+    public void deleteImageById(Long imageId) {
+        // 1. DB에서 이미지 정보 조회
+        /*
+        TnProductImageVo image = tnProductRepository.selectProductImageById(imageId);
+
+        // 2. 파일 경로 추출
+        String productIdStr = image.getProductId().toString();
+
+        // 3. 파일 삭제
+        boolean deleted = FileUtil.deleteFile(fileStorageProperties.getUploadDir(),productIdStr,image.getImageName());
+        if (!deleted) {
+            String targetPath = fileStorageProperties.getUploadDir() + File.separator + productIdStr + File.separator + image.getImageName();
+            throw new RuntimeException("파일 삭제 실패: " + targetPath);
+        }
+        */
+        System.out.println("****imageId["+imageId+"]");
+
+        // 4. DB에서 이미지 레코드 삭제
+        tnProductRepository.deleteProductImage(imageId);
+    }
 }

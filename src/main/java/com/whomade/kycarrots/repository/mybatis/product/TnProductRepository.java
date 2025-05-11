@@ -21,8 +21,8 @@ public class TnProductRepository {
 
     private final TnProductMapper tnProductMapper;
 
-    public List<TnProductVo> selectTbproduct(DataMap param) {
-        List<TnProductVo> tbproducts= tnProductMapper.selectTbproduct(param);
+    public List<TnProductVo> selectTbProduct(DataMap param) {
+        List<TnProductVo> tbproducts= tnProductMapper.selectTbProduct(param);
         return tbproducts;
     }
 
@@ -30,22 +30,26 @@ public class TnProductRepository {
         return tnProductMapper.selectProductById(productId);
     }
     // INSERT
-    public int insertTbproduct(TnProductVo vo) {
-        return tnProductMapper.insertTbproduct(vo);
+    public int insertTbProduct(TnProductVo vo) {
+        return tnProductMapper.insertTbProduct(vo);
     }
 
     // UPDATE
-    public int updateTbproduct(TnProductVo vo) {
-        return tnProductMapper.updateTbproduct(vo);
+    public int updateTbProduct(TnProductVo vo) {
+        return tnProductMapper.updateTbProduct(vo);
     }
 
     // DELETE
-    public int deleteTbproduct(String productId) {
-        return tnProductMapper.deleteTbproduct(productId);
+    public int deleteTbProduct(String productId) {
+        return tnProductMapper.deleteTbProduct(productId);
     }
 
     public List<TnProductImageVo> selectProductImagesByProductId(Long productId) {
         return tnProductMapper.selectProductImagesByProductId(productId);
+    }
+
+    public TnProductImageVo selectProductImageById(Long imageId) {
+        return tnProductMapper.selectProductImageById(imageId);
     }
 
     public int insertProductImage(TnProductImageVo vo) {

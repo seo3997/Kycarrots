@@ -99,10 +99,36 @@ public class AdvertiseController {
         }
     }
 
+    @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateProductWithImages(
+            @RequestPart("product") TnProductVo productVo,
+            @RequestPart(name = "imageMetas", required = false) List<TnProductImageVo> imageMetas,
+            @RequestPart(name = "images", required = false) List<MultipartFile> images) {
+        try {
+            tnProductService.updateProductWithImages(productVo, imageMetas, images);
+            return ResponseEntity.ok("수정 성공");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("수정 실패: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/detail/{productId}")
     public ResponseEntity<TnProductDetailResponse> getProductDetail(@PathVariable Long productId) {
         TnProductDetailResponse detail = tnProductService.getProductDetail(productId);
         return ResponseEntity.ok(detail);
+    }
+
+    @PostMapping("/image/delete")
+    public ResponseEntity<String> deleteProductImage(@RequestParam("imageId") String imageId) {
+        try {
+            long id = Long.parseLong(imageId); // 문자열 → long 변환
+            tnProductService.deleteImageById(id);
+            return ResponseEntity.ok("이미지 삭제 성공");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("이미지 삭제 실패: " + e.getMessage());
+        }
     }
 
 }
