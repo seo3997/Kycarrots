@@ -33,7 +33,6 @@
             UPDT_DT
         FROM op_user
         WHERE USER_ID = #{userId}
-        AND PASSWORD = #{password}
     </select>
 
 </mapper>
