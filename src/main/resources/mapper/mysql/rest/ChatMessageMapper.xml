@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whomade.kycarrots.repository.mybatis.chat.ChatMessageMapper">
+
+    <insert id="insertChatMessage" parameterType="com.whomade.kycarrots.entity.chat.ChatMessageVo">
+        INSERT INTO tb_chat_message (
+            room_id,
+            sender_id,
+            message,
+            created_at,
+            is_read
+        ) VALUES (
+                     #{roomId},
+                     #{senderId},
+                     #{message},
+                     NOW(),
+                     0
+                 )
+    </insert>
+
+    <select id="findMessagesByRoomId" resultType="com.whomade.kycarrots.entity.chat.ChatMessageVo">
+        SELECT id, room_id, sender_id, message, created_at, is_read
+        FROM tb_chat_message
+        WHERE room_id = #{roomId}
+        ORDER BY created_at ASC
+    </select>
+</mapper>

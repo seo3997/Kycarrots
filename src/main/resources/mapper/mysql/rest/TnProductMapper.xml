@@ -18,7 +18,8 @@
             A.REGIST_DT,
             A.UPDUSR_NO,
             A.UPDT_DT,
-            (SELECT  IMAGE_URL FROM tb_product_image WHERE PRODUCT_ID= A.PRODUCT_ID AND REPRESENT=1) AS IMAGE_URL
+            (SELECT  IMAGE_URL FROM tb_product_image WHERE PRODUCT_ID= A.PRODUCT_ID AND REPRESENT=1) AS IMAGE_URL,
+            (SELECT  USER_ID FROM op_user WHERE USER_NO= A.USER_NO ) AS USER_ID
         FROM tb_product A
         WHERE A.SALE_STATUS = #{saleStatus}
     </select>

@@ -22,4 +22,5 @@ public class TnProductVo {
     private String updusrNo;
     private String updtDt;
     private String imageUrl;
+    private String userId;
 }

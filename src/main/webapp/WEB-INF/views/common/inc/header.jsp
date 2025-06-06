@@ -237,10 +237,9 @@ function fnClickMenuBtn(that) {
 
 					<div class="my-info row">
 
-
-							<label for="user_id" class="col-2 col-form-label">사용자ID</label>
+							<label for="modal_user_id" class="col-2 col-form-label">사용자ID</label>
 							<div class="col-10">
-								<input type="text" id="user_id" class="form-control user_id" disabled="disabled" />
+								<input type="text" id="modal_user_id" class="form-control user_id" disabled="disabled" />
 							</div>
 
 							<label for="modal_password" class="col-2 col-form-label">비밀번호</label>
