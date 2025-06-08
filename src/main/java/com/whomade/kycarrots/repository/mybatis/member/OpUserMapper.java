@@ -1,11 +1,10 @@
 package com.whomade.kycarrots.repository.mybatis.member;
 
-import com.whomade.kycarrots.entity.TbUserSite;
+import com.whomade.kycarrots.entity.member.OpUserAuthorVO;
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.Optional;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @author: ADMIN
@@ -15,4 +14,7 @@ import java.util.Optional;
 @Mapper
 public interface OpUserMapper {
     OpUserVO findByUserIdAndPassword(DataMap param);
+    int insertUser(OpUserVO user);
+    int insertAuthUser(OpUserAuthorVO opUserAuthorVO);
+    boolean existsByEmail(@Param("email") String email);
 }

@@ -1,6 +1,7 @@
 package com.whomade.kycarrots.service.common;
 
 import com.whomade.kycarrots.entity.common.OpCodeVo;
+import com.whomade.kycarrots.entity.common.OpSclasCodeVO;
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.repository.mybatis.common.OpCodeRepository;
@@ -23,6 +24,9 @@ public class OpCodeService {
 
     public List<OpCodeVo> selectListCode(DataMap param) {
         return opCodeRepository.selectListCode(param);
+    }
+    public List<OpSclasCodeVO> selectSCodeList(DataMap param) {
+        return opCodeRepository.selectSCodeList(param);
     }
 
 

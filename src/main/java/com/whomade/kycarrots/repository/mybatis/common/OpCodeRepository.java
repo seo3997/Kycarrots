@@ -1,6 +1,7 @@
 package com.whomade.kycarrots.repository.mybatis.common;
 
 import com.whomade.kycarrots.entity.common.OpCodeVo;
+import com.whomade.kycarrots.entity.common.OpSclasCodeVO;
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
@@ -27,6 +28,10 @@ public class OpCodeRepository {
         return opCodeVo;
     }
 
+    public List<OpSclasCodeVO> selectSCodeList(DataMap param) {
+        List<OpSclasCodeVO> opCodeVo = opCodeMapper.selectSCodeList(param);
+        return opCodeVo;
+    }
 
 
 }

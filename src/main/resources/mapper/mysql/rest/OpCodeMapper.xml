@@ -19,4 +19,21 @@
         ORDER BY SORT_ORDR
     </select>
 
+    <select id="selectSCodeList" parameterType="dataMap" resultType="com.whomade.kycarrots.entity.common.OpSclasCodeVO">
+        /* common.selectSCodeList */
+        SELECT
+        GROUP_ID
+        ,CODE
+        ,SCLAS_CODE
+        ,SCLAS_NM
+        ,ATTRB_1
+        ,ATTRB_2
+        ,ATTRB_3
+        FROM op_sclas_code
+        WHERE GROUP_ID = #{groupId}
+        AND CODE = #{mcode}
+        ORDER BY SORT_ORDR, SCLAS_NM
+    </select>
+
+
 </mapper>

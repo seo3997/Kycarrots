@@ -1,5 +1,6 @@
 package com.whomade.kycarrots.service.member;
 
+import com.whomade.kycarrots.entity.member.OpUserAuthorVO;
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.repository.mybatis.member.OpUserRepository;
@@ -19,6 +20,18 @@ public class OpUserService {
 
     public OpUserVO findByUserIdAndPassword(DataMap param) {
         return opUserRepository.findByUserIdAndPassword(param);
+    }
+
+    public int insertUser(OpUserVO user) {
+        return opUserRepository.insertUser(user);
+    }
+
+    public int insertAuthUser(OpUserAuthorVO opUserAuthorVO) {
+        return opUserRepository.insertAuthUser(opUserAuthorVO);
+    }
+
+    public boolean existsByEmail(String email) {
+        return opUserRepository.existsByEmail(email);
     }
 
 

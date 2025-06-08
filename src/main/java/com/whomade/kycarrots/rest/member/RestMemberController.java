@@ -2,6 +2,7 @@ package com.whomade.kycarrots.rest.member;
 
 import com.whomade.kycarrots.dto.login.LoginResponse;
 import com.whomade.kycarrots.entity.TbUserSite;
+import com.whomade.kycarrots.entity.member.OpUserAuthorVO;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.EgovFileScrty;
 import com.whomade.kycarrots.framework.common.util.encrypt.EncodedTokenizer;
@@ -14,12 +15,11 @@ import org.apache.commons.codec.DecoderException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -114,4 +114,53 @@ public class RestMemberController {
         );
     }
 
+
+    @PostMapping(value = "/email-check", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> checkEmailDuplicate(@RequestParam("email") String email) {
+        Map<String, Object> response = new HashMap<>();
+        boolean exists = opUserService.existsByEmail(email);
+
+        if (exists) {
+            response.put("result", false);
+            response.put("message", "이미 사용 중인 이메일입니다.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        } else {
+            response.put("result", true);
+            response.put("message", "사용 가능한 이메일입니다.");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> registerUser(@RequestBody OpUserVO user) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // 비밀번호 암호화
+            String encryptedPassword = EgovFileScrty.encryptSHA512(user.getPassword());
+            user.setPassword(encryptedPassword);
+
+            int result = opUserService.insertUser(user);
+            OpUserAuthorVO opUserAuthorVO = new OpUserAuthorVO();
+            opUserAuthorVO.setUserNo(Long.parseLong(user.getUserNo()));
+            opUserAuthorVO.setAuthorId(user.getMemberCode());
+            opUserAuthorVO.setRegisterNo(1);
+            opUserService.insertAuthUser(opUserAuthorVO);
+
+            if (result > 0) {
+                response.put("result", true);
+                response.put("message", "회원가입이 완료되었습니다.");
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+            } else {
+                response.put("result", true);
+                response.put("message", "회원가입 실패.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        } catch (Exception e) {
+            log.error("회원가입 중 오류 발생", e);
+            response.put("result", true);
+            response.put("message", "서버 오류.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }

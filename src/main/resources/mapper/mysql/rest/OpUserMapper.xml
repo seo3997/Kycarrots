@@ -35,4 +35,57 @@
         WHERE USER_ID = #{userId}
     </select>
 
+    <insert id="insertUser" parameterType="com.whomade.kycarrots.entity.member.OpUserVO" useGeneratedKeys="true" keyProperty="userNo">
+        INSERT INTO op_user (
+            USER_ID,
+            PASSWORD,
+            USER_NM,
+            EMAIL,
+            CTTPC_SE_CODE,
+            CTTPC,
+            AREA_CODE,
+            AREA_SE_CODE_S,
+            AREA_SE_CODE_D,
+            GENDER,
+            BIRTH_DATE,
+            MEMBER_CODE,
+            REFERRER_ID,
+            REGIST_DT
+        ) VALUES (
+                     #{userId},
+                     #{password},
+                     #{userNm},
+                     #{email},
+                     '10',
+                     #{cttpc},
+                     '10',
+                     #{areaSeCodeS},
+                     #{areaSeCodeD},
+                     #{gender},
+                     #{birthDate},
+                     #{memberCode},
+                     #{referrerId},
+                     NOW()
+                 )
+    </insert>
+
+    <insert id="insertAuthUser" parameterType="com.whomade.kycarrots.entity.member.OpUserAuthorVO">
+        /* admin.user.insertAuthUser */
+        INSERT INTO op_user_author (
+                                     USER_NO
+                                   , AUTHOR_ID
+                                   , REGISTER_NO
+                                   , REGIST_DT
+        ) VALUES (
+                   #{userNo}
+                 , #{authorId}
+                 , #{registerNo}
+                 , CURRENT_TIMESTAMP
+                 )
+    </insert>
+    <select id="existsByEmail" resultType="boolean" parameterType="string">
+        SELECT COUNT(1) > 0
+        FROM op_user
+        WHERE USER_ID = #{email}
+    </select>
 </mapper>

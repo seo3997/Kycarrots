@@ -2,6 +2,7 @@ package com.whomade.kycarrots.rest.common;
 
 import com.whomade.kycarrots.dto.login.LoginResponse;
 import com.whomade.kycarrots.entity.common.OpCodeVo;
+import com.whomade.kycarrots.entity.common.OpSclasCodeVO;
 import com.whomade.kycarrots.entity.common.TxtListDataInfo;
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.entity.product.TnProductVo;
@@ -37,6 +38,26 @@ public class RestCommonController {
                     TxtListDataInfo info = new TxtListDataInfo();
                     info.setStrIdx(vo.getCode()); // 고유 값
                     info.setStrMsg(vo.getCodeNm()); // 출력 메시지
+                    return info;
+                })
+                .collect(Collectors.toList());
+
+        return result;
+    }
+
+    @GetMapping(value = "/sCodeList", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TxtListDataInfo> sCodeList(@RequestParam("groupId") String groupId,@RequestParam("mcode") String mcode) {
+        DataMap param = new DataMap();
+        param.put("groupId", groupId);
+        param.put("mcode", mcode);
+        List<OpSclasCodeVO> opCodeList = opCodeService.selectSCodeList(param);
+
+        // OpCodeVo → TxtListDataInfo 변환
+        List<TxtListDataInfo> result = opCodeList.stream()
+                .map(vo -> {
+                    TxtListDataInfo info = new TxtListDataInfo();
+                    info.setStrIdx(vo.getCode()); // 고유 값
+                    info.setStrMsg(vo.getSclasNm()); // 출력 메시지
                     return info;
                 })
                 .collect(Collectors.toList());
