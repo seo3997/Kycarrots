@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
  */
 @Mapper
 public interface OpUserMapper {
-    OpUserVO findByUserIdAndPassword(DataMap param);
+    OpUserVO seelectUser(DataMap param);
     int insertUser(OpUserVO user);
     int insertAuthUser(OpUserAuthorVO opUserAuthorVO);
     boolean existsByEmail(@Param("email") String email);

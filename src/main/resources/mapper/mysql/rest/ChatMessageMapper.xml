@@ -14,13 +14,13 @@
                      #{roomId},
                      #{senderId},
                      #{message},
-                     NOW(),
+                     #{time},
                      0
                  )
     </insert>
 
     <select id="findMessagesByRoomId" resultType="com.whomade.kycarrots.entity.chat.ChatMessageVo">
-        SELECT id, room_id, sender_id, message, created_at, is_read
+        SELECT id, room_id, sender_id, message, created_at, is_read, DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') AS time
         FROM tb_chat_message
         WHERE room_id = #{roomId}
         ORDER BY created_at ASC

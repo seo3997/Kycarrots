@@ -10,4 +10,5 @@ public class ChatMessageVo {
     private String roomId;
     private String senderId;
     private String message;
+    private String time;
 }

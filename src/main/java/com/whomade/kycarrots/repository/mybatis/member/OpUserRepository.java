@@ -19,8 +19,8 @@ public class OpUserRepository {
 
     private final OpUserMapper opUserMapper;
 
-    public OpUserVO findByUserIdAndPassword(DataMap param) {
-        OpUserVO opUserVO = opUserMapper.findByUserIdAndPassword(param);
+    public OpUserVO seelectUser(DataMap param) {
+        OpUserVO opUserVO = opUserMapper.seelectUser(param);
         return opUserVO;
     }
     public int insertUser(OpUserVO user) {

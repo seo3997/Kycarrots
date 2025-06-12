@@ -10,17 +10,20 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import com.whomade.kycarrots.entity.member.OpUserVO;
+import com.whomade.kycarrots.framework.common.object.DataMap;
+import com.whomade.kycarrots.service.member.OpUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
 //import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
 @Component
 @Slf4j
 public class EncodedTokenizer {
-
+	@Autowired private  OpUserService opUserService;
 
 	// 추후에 키값은 고정값이 아닌 기준 유동적으로 변경. 
 	private AES256Cipher aes256;
@@ -36,14 +39,13 @@ public class EncodedTokenizer {
 			aes256 = new AES256Cipher(key);
 			URLCodec codec = new URLCodec();
 			
-			String encodedemail = codec.encode(aes256.aesEncode(member.getEmail()));
-			String role = "<ROLE_NONE>";
-			//Long roleid = member.getRoleid();
-			Long roleid = 3L;
-			if( roleid == 1L ) role = "<ROLE_ADMN>";
-			else if( roleid == 2L ) role = "<ROLE_BIZ>"; 
-			else if( roleid == 3L ) role = "<ROLE_USER>"; 
-			else if( roleid == 4L ) role = "<ROLE_NONE>"; 
+			String encodedemail = codec.encode(aes256.aesEncode(member.getUserId()));
+			String role = "<ROLE_PUB>";
+			String  memberCode = member.getMemberCode();
+			if( memberCode.equals("ROLE_ADMIN")) role = "<ROLE_ADMIN>";
+			else if( memberCode.equals("ROLE_PUB") ) role = "<ROLE_PUB>";
+			else if(  memberCode.equals("ROLE_PROJ") ) role = "<ROLE_PROJ>";
+			else if(  memberCode.equals("ROLE_SELL") ) role = "<ROLE_SELL>";
 
 			String tokensource = codec.encode(aes256.aesEncode(member.getPassword()));
 		    token = codec.encode(aes256.aesEncode(encodedemail+role+tokensource));
@@ -96,7 +98,42 @@ public class EncodedTokenizer {
 		return decodedStr;
 	}
 
-    public boolean matches(String raw, String encodedStr){
+	public OpUserVO getMember(String token){
+		String role = "ROLE_SELL";
+		if( token.isEmpty()) return null;
+//    	if( url==null ) return null;
+		try {
+
+			AES256Cipher aes256 = new AES256Cipher(key);
+			URLCodec codec = new URLCodec();
+			String token1st = aes256.aesDecode(codec.decode(token));
+			if ( token1st.contains("<ROLE_ADMIN>") ){
+				email = aes256.aesDecode(codec.decode(token1st.split("<ROLE_ADMIN>")[0]));
+				role = "ROLE_ADMIN";
+			}else if ( token1st.contains("<ROLE_PUB>") ){
+				email = aes256.aesDecode(codec.decode(token1st.split("<ROLE_PUB>")[0]));
+				role = "ROLE_PUB";
+			}else if ( token1st.contains("<ROLE_PROJ>") ){
+				email = aes256.aesDecode(codec.decode(token1st.split("<ROLE_PROJ>")[0]));
+				role = "ROLE_PROJ";
+			}else
+				email = aes256.aesDecode(codec.decode(token1st.split("<ROLE_SELL>")[0]));
+
+		}catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException
+				| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException
+				| DecoderException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		DataMap param = new DataMap();
+		param.put("userId", email);
+		OpUserVO mem = opUserService.seelectUser(param);
+		return mem;
+	}
+
+
+	public boolean matches(String raw, String encodedStr){
     	return false;
    	}
     

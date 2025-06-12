@@ -12,6 +12,7 @@ import com.whomade.kycarrots.service.member.OpUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.DecoderException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import java.util.Optional;
 @Slf4j
 public class RestMemberController {
     private final OpUserService opUserService;
+    @Autowired
     private EncodedTokenizer tokenizer = new EncodedTokenizer();
 
     /*
@@ -68,6 +70,7 @@ public class RestMemberController {
     public LoginResponse login(
             @RequestParam("id") String id,
             @RequestParam("pass") String pass,
+            @RequestParam("member_code") String memberCode,
             @RequestParam("reg_id") String regId,  // 클라이언트에서 보내는 이름에 맞춤
             @RequestParam("appver") String appver) {
 
@@ -81,7 +84,7 @@ public class RestMemberController {
         DataMap param = new DataMap();
         param.put("userId", id);
 
-        OpUserVO member = opUserService.findByUserIdAndPassword(param);
+        OpUserVO member = opUserService.seelectUser(param);
 
         if (member == null) {
             // 아이디 없음
@@ -91,6 +94,11 @@ public class RestMemberController {
         if (!encodedPassword.equals(member.getPassword())) {
             // 비밀번호 불일치
             return new LoginResponse(602, null, null, null, null, null, null); // RESULT_PWD_ERR
+        }
+
+        if (!memberCode.equals(member.getMemberCode())) {
+            //  회원타입 불일치
+            return new LoginResponse(603, null, null, null, null, null, null); // RESULT_PWD_ERR
         }
 
         String token = "";
@@ -162,5 +170,22 @@ public class RestMemberController {
             response.put("message", "서버 오류.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    @PostMapping(value = "/userinfo", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getMemberByToken(@RequestParam("token") String token) {
+        OpUserVO opUserVO = null;
+        try {
+            opUserVO = tokenizer.getMember(token);
+        } catch (Exception e) {
+            log.error("토큰 디코딩 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("토큰 처리 오류");
+        }
+
+        if (opUserVO == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰");
+        }
+
+        return ResponseEntity.ok(opUserVO);
     }
 }

@@ -3,12 +3,17 @@ package com.whomade.kycarrots.rest.advertise;
 import com.whomade.kycarrots.dto.advertise.AdvertiseItem;
 import com.whomade.kycarrots.dto.advertise.AdvertiseResponse;
 import com.whomade.kycarrots.dto.advertise.TnProductDetailResponse;
+import com.whomade.kycarrots.dto.login.LoginResponse;
+import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
+import com.whomade.kycarrots.framework.common.util.encrypt.EncodedTokenizer;
 import com.whomade.kycarrots.service.product.TnProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.DecoderException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +28,8 @@ import java.util.List;
 @RequestMapping(value = "/product")
 @Slf4j
 public class AdvertiseController {
+    @Autowired
+    private EncodedTokenizer tokenizer = new EncodedTokenizer();
     private final TnProductService tnProductService;
     @PostMapping(
             value = "",
@@ -34,6 +41,13 @@ public class AdvertiseController {
 
         // 실제 구현에서는 token, ad_code, pageno를 활용하여 광고 목록을 조회합니다.
         // 아래는 예제용으로 고정된 데이터를 리턴하는 예시입니다.
+        OpUserVO opUserVO = null;
+        try {
+            opUserVO = tokenizer.getMember(token);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         DataMap param = new DataMap();
         param.put("saleStatus", "1");
         List<TnProductVo> tnProductVos = tnProductService.selectTbproduct(param);

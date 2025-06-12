@@ -18,8 +18,8 @@ public class OpUserService {
     private final OpUserRepository opUserRepository;
 
 
-    public OpUserVO findByUserIdAndPassword(DataMap param) {
-        return opUserRepository.findByUserIdAndPassword(param);
+    public OpUserVO seelectUser(DataMap param) {
+        return opUserRepository.seelectUser(param);
     }
 
     public int insertUser(OpUserVO user) {

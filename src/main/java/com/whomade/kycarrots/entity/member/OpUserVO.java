@@ -16,7 +16,9 @@ public class OpUserVO {
     private String cttpc;               // CTTPC: 통신사 정보
     private String email;               // EMAIL: 이메일
     private String areaCode;            // AREA_CODE: 지역 코드
+    private String areaCodeNm;            // AREA_CODE: 지역 코드
     private String areaSeCodeS;         // AREA_SE_CODE_S: 1차 지역 구분 코드
+    private String areaSeCodeSNm;         // AREA_SE_CODE_S: 1차 지역 구분 코드
     private String areaSeCodeD;         // AREA_SE_CODE_D: 2차 지역 구분 코드
     private String userSttusCode;       // USER_STTUS_CODE: 사용자 상태 코드
     private String loginDt;             // LOGIN_DT: 마지막 로그인 일시

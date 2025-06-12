@@ -9,7 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/chatmessage")
@@ -32,12 +35,15 @@ public class ChatMessageController {
             return null; // 또는 기본 에러 메시지 반환
         }
         try {
+            String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
             ChatMessageVo chatMessageVo = ChatMessageVo.builder()
                     .roomId(roomId)
                     .senderId(message.getSenderId())
                     .message(message.getMessage())
+                    .time(currentTime)
                     .build();
             chatMessageService.insertChatMessage(chatMessageVo); // MyBatis 방식 저장
+            message.setTime(currentTime);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

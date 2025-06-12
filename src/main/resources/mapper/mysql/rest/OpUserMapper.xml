@@ -3,35 +3,39 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.whomade.kycarrots.repository.mybatis.member.OpUserMapper">
 
-    <select id="findByUserIdAndPassword" resultType="com.whomade.kycarrots.entity.member.OpUserVO" parameterType="map">
+    <select id="seelectUser" resultType="com.whomade.kycarrots.entity.member.OpUserVO" parameterType="map">
         SELECT
-            USER_NO,
-            USER_ID,
-            PASSWORD,
-            USER_NM,
-            CTTPC_SE_CODE,
-            CTTPC,
-            EMAIL,
-            AREA_CODE,
-            AREA_SE_CODE_S,
-            AREA_SE_CODE_D,
-            USER_STTUS_CODE,
-            LOGIN_DT,
-            USER_AGE,
-            BIRTH_DATE,
-            UNIQUE_IDENTIFIER,
-            DEVICE_ID,
-            DUPLICATE_IDENTIFIER,
-            GENDER,
-            MEMBER_CODE,
-            CITIZENSHIP_TYPE,
-            PASSWORD_HASH,
-            REFERRER_ID,
-            REGISTER_NO,
-            REGIST_DT,
-            UPDUSR_NO,
-            UPDT_DT
-        FROM op_user
+            A.USER_NO,
+            A.USER_ID,
+            A.PASSWORD,
+            A.USER_NM,
+            A.CTTPC_SE_CODE,
+            A.CTTPC,
+            A.EMAIL,
+            A.AREA_CODE,
+            C.CODE_NM AS AREA_CODE_NM,
+            A.AREA_SE_CODE_S,
+            D.SCLAS_NM AS AREA_SE_CODE_S_NM,
+            A.AREA_SE_CODE_D ,
+            A.USER_STTUS_CODE,
+            A.LOGIN_DT,
+            A.USER_AGE,
+            A.BIRTH_DATE,
+            A.UNIQUE_IDENTIFIER,
+            A.DEVICE_ID,
+            A.DUPLICATE_IDENTIFIER,
+            A.GENDER,
+            A.MEMBER_CODE,
+            A.CITIZENSHIP_TYPE,
+            A.PASSWORD_HASH,
+            A.REFERRER_ID,
+            A.REGISTER_NO,
+            A.REGIST_DT,
+            A.UPDUSR_NO,
+            A.UPDT_DT
+        FROM op_user A
+        LEFT JOIN op_code C ON C.GROUP_ID='R010070'    AND C.CODE=A.AREA_CODE
+        LEFT JOIN op_sclas_code D ON D.GROUP_ID='R010070' AND D.CODE=A.AREA_CODE AND D.SCLAS_CODE= A.AREA_SE_CODE_S
         WHERE USER_ID = #{userId}
     </select>
 
