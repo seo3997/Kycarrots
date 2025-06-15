@@ -56,7 +56,7 @@ public class RestCommonController {
         List<TxtListDataInfo> result = opCodeList.stream()
                 .map(vo -> {
                     TxtListDataInfo info = new TxtListDataInfo();
-                    info.setStrIdx(vo.getCode()); // 고유 값
+                    info.setStrIdx(vo.getSclasCode()); // 고유 값
                     info.setStrMsg(vo.getSclasNm()); // 출력 메시지
                     return info;
                 })
