@@ -35,4 +35,13 @@ public class TnProductVo {
     private String unitCode;         // 단위 코드
 
     private String desiredShippingDate; // 희망 출하일 (yyyy-MM-dd)
+    // --- 이름(NM) 필드 추가 ---
+    private String categoryMidNm;    // 중분류 명
+    private String categorySclsNm;   // 소분류 명
+
+    private String areaMidNm;        // 도시 중분류 명
+    private String areaSclsNm;       // 도시 소분류 명
+
+    private String unitCodeNm;
+
 }
