@@ -63,4 +63,14 @@ public class TnProductRepository {
     public int deleteProductImage(Long imageId) {
         return tnProductMapper.deleteProductImage(imageId);
     }
+
+    public DataMap selectProductStatusCounts(Long userNo) {
+        return tnProductMapper.selectProductStatusCounts(userNo);
+    }
+
+    public List<TnProductVo> selectRecentProductsByUser(Long userNo){
+        return tnProductMapper.selectRecentProductsByUser(userNo);
+    }
+
+
 }

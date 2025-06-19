@@ -202,4 +202,44 @@
         ORDER BY REPRESENT DESC,IMAGE_ID ASC
     </select>
 
+    <select id="selectProductStatusCounts" parameterType="long" resultType="com.whomade.kycarrots.framework.common.object.DataMap">
+        SELECT
+            COUNT(*) AS totalCount,
+            SUM(CASE WHEN SALE_STATUS IN ('1', '10') THEN 1 ELSE 0 END) AS processingCount,
+            SUM(CASE WHEN SALE_STATUS = '99' THEN 1 ELSE 0 END) AS completedCount
+        FROM tb_product
+        WHERE USER_NO = #{userNo}
+    </select>
+
+    <select id="selectRecentProductsByUser" parameterType="long" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
+        SELECT
+            A.PRODUCT_ID,
+            A.TITLE,
+            IFNULL(A.QUANTITY, 0) AS QUANTITY,
+            A.UNIT_CODE,
+            (SELECT CODE_NM
+             FROM op_code
+             WHERE GROUP_ID = 'R010620' AND CODE = A.UNIT_CODE) AS UNIT_CODE_NM,
+            A.AREA_GROUP,
+            A.AREA_MID,
+            A.AREA_SCLS,
+            (SELECT CODE_NM
+             FROM op_code
+             WHERE GROUP_ID = A.AREA_GROUP AND CODE = A.AREA_MID) AS AREA_MID_NM,
+            (SELECT SCLAS_NM
+             FROM op_sclas_code
+             WHERE GROUP_ID = A.AREA_GROUP AND CODE = A.AREA_MID AND SCLAS_CODE = A.AREA_SCLS) AS AREA_SCLS_NM,
+            A.SALE_STATUS,
+            (SELECT CODE_NM
+             FROM op_code
+             WHERE GROUP_ID = 'R010630' AND CODE = A.SALE_STATUS) AS SALE_STATUS_NM,
+            A.REGIST_DT,
+            A.DESIRED_SHIPPING_DATE,
+            (SELECT USER_ID FROM op_user WHERE USER_NO = A.USER_NO) AS USER_ID
+        FROM tb_product A
+        WHERE A.USER_NO = #{userNo}
+        ORDER BY A.REGIST_DT DESC
+        LIMIT 3
+    </select>
+
 </mapper>

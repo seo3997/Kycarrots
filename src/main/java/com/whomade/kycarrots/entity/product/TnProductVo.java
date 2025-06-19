@@ -44,4 +44,6 @@ public class TnProductVo {
 
     private String unitCodeNm;
 
+    private String saleStatusNm;
+
 }

@@ -37,4 +37,8 @@ public interface TnProductMapper {
     int updateProductImage(TnProductImageVo vo);
 
     int deleteProductImage(Long imageId);
+
+    DataMap selectProductStatusCounts(Long userNo);
+
+    List<TnProductVo> selectRecentProductsByUser(Long userNo);
 }

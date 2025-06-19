@@ -192,4 +192,12 @@ public class TnProductService {
         // 4. DB에서 이미지 레코드 삭제
         tnProductRepository.deleteProductImage(imageId);
     }
+
+    public DataMap getProductStatusCounts(Long userNo) {
+        return tnProductRepository.selectProductStatusCounts(userNo);
+    }
+
+    public List<TnProductVo> getRecentProductsByUser(Long userNo){
+        return tnProductRepository.selectRecentProductsByUser(userNo);
+    }
 }

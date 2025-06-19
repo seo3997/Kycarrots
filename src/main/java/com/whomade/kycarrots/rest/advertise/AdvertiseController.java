@@ -144,5 +144,31 @@ public class AdvertiseController {
                     .body("이미지 삭제 실패: " + e.getMessage());
         }
     }
+    @GetMapping("/dashboard")
+    public ResponseEntity<DataMap> getProductDashboard(@RequestParam("token") String token) {
+        try {
+            OpUserVO user = tokenizer.getMember(token);
+            Long userNo = Long.parseLong(user.getUserNo());
 
+            DataMap result = tnProductService.getProductStatusCounts(userNo);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("상품 대시보드 정보 조회 실패", e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<TnProductVo>> getRecentProducts(@RequestParam("token") String token) {
+        try {
+            OpUserVO user = tokenizer.getMember(token);
+            Long userNo = Long.parseLong(user.getUserNo());
+
+            List<TnProductVo> recentProducts = tnProductService.getRecentProductsByUser(userNo);
+            return ResponseEntity.ok(recentProducts);
+        } catch (Exception e) {
+            log.error("최근 상품 조회 실패", e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
 }
