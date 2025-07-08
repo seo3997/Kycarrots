@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,7 +38,16 @@ public class AdvertiseController {
     public AdvertiseResponse getListAdvertise(
             @RequestParam("token") String token,
             @RequestParam("ad_code") String adCode,
-            @RequestParam("pageno") int pageNo) {
+            @RequestParam("pageno") int pageNo,
+            @RequestParam(value = "categoryGroup", required = false) String categoryGroup,
+            @RequestParam(value = "categoryMid",    required = false) String categoryMid,
+            @RequestParam(value = "categoryScls",   required = false) String categoryScls,
+            @RequestParam(value = "areaGroup", required = false) String areaGroup,
+            @RequestParam(value = "areaMid",   required = false) String areaMid,
+            @RequestParam(value = "areaScls",  required = false) String areaScls,
+            @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
+            @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice
+            ) {
 
         // 실제 구현에서는 token, ad_code, pageno를 활용하여 광고 목록을 조회합니다.
         // 아래는 예제용으로 고정된 데이터를 리턴하는 예시입니다.
@@ -50,6 +60,43 @@ public class AdvertiseController {
 
         DataMap param = new DataMap();
         param.put("saleStatus", "1");
+
+        // 페이지당 항목 수
+        int pageSize = 7;
+        int offset   = (pageNo - 1) * pageSize;
+        param.put("offset", offset);
+        param.put("limit",  pageSize);
+        // 카테고리 필터
+        if (categoryGroup != null && !"ALL".equals(categoryGroup)) {
+            param.put("categoryGroup", categoryGroup);
+        }
+        if (categoryMid != null && !"ALL".equals(categoryMid)) {
+            param.put("categoryMid", categoryMid);
+        }
+        if (categoryScls != null && !"ALL".equals(categoryScls)) {
+            param.put("categoryScls", categoryScls);
+        }
+
+        // 지역 필터
+        if (areaGroup != null && !"ALL".equals(areaGroup)) {
+            param.put("areaGroup", areaGroup);
+        }
+        if (areaMid != null && !"ALL".equals(areaMid)) {
+            param.put("areaMid", areaMid);
+        }
+        if (areaScls != null && !"ALL".equals(areaScls)) {
+            param.put("areaScls", areaScls);
+        }
+
+        // 가격 범위 필터
+        if (minPrice != null) {
+            param.put("minPrice", minPrice);
+        }
+        if (maxPrice != null) {
+            param.put("maxPrice", maxPrice);
+        }
+
+
         List<TnProductVo> tnProductVos = tnProductService.selectTbproduct(param);
 
         /*

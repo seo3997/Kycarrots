@@ -5,30 +5,77 @@
 
     <select id="selectTbProduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
         SELECT
-            A.PRODUCT_ID,
-            A.USER_NO,
-            A.TITLE,
-            A.DESCRIPTION,
-            A.PRICE,
-            A.CATEGORY_GROUP,
-            A.CATEGORY_MID,
-            A.CATEGORY_SCLS,
-            A.AREA_GROUP,
-            A.AREA_MID,
-            A.AREA_SCLS,
-            A.QUANTITY,
-            A.UNIT_GROUP,
-            A.UNIT_CODE,
-            A.DESIRED_SHIPPING_DATE,
-            A.SALE_STATUS,
-            A.REGISTER_NO,
-            A.REGIST_DT,
-            A.UPDUSR_NO,
-            A.UPDT_DT,
-            (SELECT IMAGE_URL FROM tb_product_image WHERE PRODUCT_ID = A.PRODUCT_ID AND REPRESENT = 1) AS IMAGE_URL,
-            (SELECT USER_ID FROM op_user WHERE USER_NO = A.USER_NO) AS USER_ID
+        A.PRODUCT_ID,
+        A.USER_NO,
+        A.TITLE,
+        A.DESCRIPTION,
+        A.PRICE,
+        A.CATEGORY_GROUP,
+        A.CATEGORY_MID,
+        A.CATEGORY_SCLS,
+        A.AREA_GROUP,
+        A.AREA_MID,
+        A.AREA_SCLS,
+        A.QUANTITY,
+        A.UNIT_GROUP,
+        A.UNIT_CODE,
+        A.DESIRED_SHIPPING_DATE,
+        A.SALE_STATUS,
+        A.REGISTER_NO,
+        A.REGIST_DT,
+        A.UPDUSR_NO,
+        A.UPDT_DT,
+        (SELECT IMAGE_URL
+        FROM tb_product_image
+        WHERE PRODUCT_ID = A.PRODUCT_ID
+        AND REPRESENT   = 1) AS IMAGE_URL,
+        (SELECT USER_ID
+        FROM op_user
+        WHERE USER_NO = A.USER_NO) AS USER_ID
         FROM tb_product A
-        WHERE A.SALE_STATUS = #{saleStatus}
+        <where>
+            <!-- 항상 필터링: 판매 상태 -->
+            <if test="saleStatus != null and saleStatus != ''">
+                AND A.SALE_STATUS = #{saleStatus}
+            </if>
+
+            <!-- 카테고리 대분류 -->
+            <if test="categoryGroup != null and categoryGroup != 'ALL'">
+                AND A.CATEGORY_GROUP = #{categoryGroup}
+            </if>
+            <!-- 카테고리 중분류 -->
+            <if test="categoryMid != null and categoryMid != 'ALL'">
+                AND A.CATEGORY_MID = #{categoryMid}
+            </if>
+            <!-- 카테고리 소분류 -->
+            <if test="categoryScls != null and categoryScls != 'ALL'">
+                AND A.CATEGORY_SCLS = #{categoryScls}
+            </if>
+
+            <!-- 도시(대분류) -->
+            <if test="areaGroup != null and areaGroup != 'ALL'">
+                AND A.AREA_GROUP = #{areaGroup}
+            </if>
+            <!-- 시·구(중분류) -->
+            <if test="areaMid != null and areaMid != 'ALL'">
+                AND A.AREA_MID = #{areaMid}
+            </if>
+            <!-- 동·읍·면(소분류) -->
+            <if test="areaScls != null and areaScls != 'ALL'">
+                AND A.AREA_SCLS = #{areaScls}
+            </if>
+
+            <!-- 가격 최소값 -->
+            <if test="minPrice != null">
+                AND A.PRICE &gt;= #{minPrice}
+            </if>
+            <!-- 가격 최대값 -->
+            <if test="maxPrice != null">
+                AND A.PRICE &lt;= #{maxPrice}
+            </if>
+        </where>
+        ORDER BY A.REGIST_DT ASC
+        LIMIT #{offset}, #{limit}
     </select>
 
     <insert id="insertTbProduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo" useGeneratedKeys="true" keyProperty="productId">
