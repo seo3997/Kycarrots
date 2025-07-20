@@ -9,6 +9,7 @@ import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.encrypt.EncodedTokenizer;
+import com.whomade.kycarrots.push.FcmService;
 import com.whomade.kycarrots.service.product.TnProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +30,9 @@ import java.util.List;
 @RequestMapping(value = "/product")
 @Slf4j
 public class AdvertiseController {
-    @Autowired
-    private EncodedTokenizer tokenizer = new EncodedTokenizer();
+    private final EncodedTokenizer tokenizer;
     private final TnProductService tnProductService;
+    private final FcmService fcmService;
     @PostMapping(
             value = "",
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -218,4 +219,15 @@ public class AdvertiseController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
+    @PostMapping("/send")
+    public ResponseEntity<String> sendPush(
+            @RequestParam String token,
+            @RequestParam String title,
+            @RequestParam String body
+    ) {
+        fcmService.sendPush(token, title, body);
+        return ResponseEntity.ok("푸시 전송 완료");
+    }
+
 }
