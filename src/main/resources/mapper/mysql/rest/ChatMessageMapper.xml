@@ -14,7 +14,7 @@
                      #{roomId},
                      #{senderId},
                      #{message},
-                     #{time},
+                     NOW(),
                      0
                  )
     </insert>

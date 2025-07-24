@@ -13,11 +13,15 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class ChatWsController {
-
+    private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
     @Autowired
     private WebSocketUserTracker userTracker;
@@ -57,10 +61,31 @@ public class ChatWsController {
             if (!userTracker.isUserOnline(receiverId)) {
                 //log.info("receiver {} 는 접속 중이 아님. 푸시 전송 시도", receiverId);
 
+                // 1. ChatRoom 정보 조회 (roomId로 또는 productId, buyerId, sellerId로)
+                Optional<ChatRoomEntity> chatRoomOpt = chatRoomService.findByRoomId(roomId);
+                if (!chatRoomOpt.isPresent()) {
+                    log.warn("채팅방 정보가 없습니다. roomId: {}", roomId);
+                    return null;
+                }
+                ChatRoomEntity chatRoom = chatRoomOpt.get();
+                String buyerId = chatRoom.getBuyerId();
+                String sellerId = chatRoom.getSellerId();
+                Long productId = chatRoom.getProductId();
+
+                // 2. FCM 데이터 payload 구성
+                Map<String, String> data = new HashMap<>();
+                data.put("roomId", roomId);
+                data.put("buyerId", buyerId);
+                data.put("sellerId", sellerId);
+                data.put("productId", productId != null ? productId.toString() : "");
+                data.put("type", "chat");
+                data.put("msg", message.getMessage());
+
+
                 //String fcmToken = fetchFcmToken(receiverId); // 직접 구현 필요
                 String fcmToken = "cZFtxLX6QWSjMT8GpMyXEh:APA91bH8VmxPN1UTOxiU3aNAWh8i6-2V15_862EfxkrV5KpcZ-j29cxr28MEclGU17s-HnS0-mrToHbRZxVpQDWdzjOKafm0GSvrHhefzR5VugFFW6-e8nE"; // 직접 구현 필요
                 if (fcmToken != null) {
-                    fcmService.sendPush(fcmToken, "새 메시지", message.getMessage());
+                    fcmService.sendPush(fcmToken, "새 메시지", message.getMessage(), data);
                 } else {
                     log.warn("푸시 전송 실패: FCM 토큰 없음");
                 }

@@ -45,4 +45,9 @@ public class ChatRoomService {
     private String generateRoomId(Long productId, String buyerId, String sellerId) {
         return productId + "_" + buyerId + "_" + sellerId;
     }
+
+    // Optional로 리턴!
+    public Optional<ChatRoomEntity> findByRoomId(String roomId) {
+        return chatRoomRepository.findByRoomId(roomId);
+    }
 }

@@ -6,6 +6,8 @@ import com.google.firebase.messaging.Notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 @Slf4j
 public class FcmService {
@@ -29,4 +31,33 @@ public class FcmService {
             log.error("FCM 전송 실패", e);
         }
     }
+
+    public void sendPush(
+            String targetToken,
+            String title,
+            String body,
+            Map<String, String> data // ← 추가!
+    ) {
+        try {
+            Message.Builder messageBuilder = Message.builder()
+                    .setToken(targetToken)
+                    .setNotification(Notification.builder()
+                            .setTitle(title)
+                            .setBody(body)
+                            .build());
+
+            // 데이터 payload 모두 추가
+            if (data != null && !data.isEmpty()) {
+                messageBuilder.putAllData(data);
+            }
+
+            Message message = messageBuilder.build();
+
+            String response = FirebaseMessaging.getInstance().send(message);
+            log.info("FCM 전송 성공: {}", response);
+        } catch (Exception e) {
+            log.error("FCM 전송 실패", e);
+        }
+    }
+
 }
