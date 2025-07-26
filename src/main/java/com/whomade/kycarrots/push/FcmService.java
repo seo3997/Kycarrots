@@ -32,7 +32,7 @@ public class FcmService {
         }
     }
 
-    public void sendPush(
+    public void sendPushToAndroid(
             String targetToken,
             String title,
             String body,
@@ -55,6 +55,19 @@ public class FcmService {
 
             String response = FirebaseMessaging.getInstance().send(message);
             log.info("FCM 전송 성공: {}", response);
+        } catch (Exception e) {
+            log.error("FCM 전송 실패", e);
+        }
+    }
+
+    public void sendPushToIos(
+            String targetToken,
+            String title,
+            String body,
+            Map<String, String> data // ← 추가!
+    ) {
+        try {
+            log.info("FCM 전송 성공: {}", "To Do");
         } catch (Exception e) {
             log.error("FCM 전송 실패", e);
         }

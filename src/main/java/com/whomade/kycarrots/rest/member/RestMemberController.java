@@ -1,6 +1,7 @@
 package com.whomade.kycarrots.rest.member;
 
 import com.whomade.kycarrots.dto.login.LoginResponse;
+import com.whomade.kycarrots.dto.user.PushTokenVo;
 import com.whomade.kycarrots.entity.TbUserSite;
 import com.whomade.kycarrots.entity.member.OpUserAuthorVO;
 import com.whomade.kycarrots.framework.common.object.DataMap;
@@ -187,5 +188,28 @@ public class RestMemberController {
         }
 
         return ResponseEntity.ok(opUserVO);
+    }
+
+    @PostMapping(value = "/push/savetoken", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> registerPushToken(@RequestBody PushTokenVo request) {
+        if (request.getUserId() == null || request.getPushToken() == null) {
+            return ResponseEntity.badRequest().body("userId와 pushToken은 필수입니다.");
+        }
+
+        OpUserVO user = new OpUserVO();
+        user.setUserId(request.getUserId());
+        user.setPushToken(request.getPushToken());
+        user.setDeviceType(request.getDeviceType());
+        try {
+            int updated = opUserService.updatePushToken(user);
+            if (updated > 0) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+            }
+        } catch (Exception e) {
+            log.error("푸시 토큰 저장 오류", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류");
+        }
     }
 }

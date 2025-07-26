@@ -92,4 +92,18 @@
         FROM op_user
         WHERE USER_ID = #{email}
     </select>
+
+    <update id="updatePushToken" parameterType="com.whomade.kycarrots.entity.member.OpUserVO">
+        UPDATE op_user
+        SET PUSH_TOKEN = #{pushToken}
+           ,DEVICE_TYPE = #{deviceType}
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <select id="fetchFcmToken" resultType="com.whomade.kycarrots.entity.member.OpUserVO" parameterType="string">
+        SELECT PUSH_TOKEN, DEVICE_TYPE
+        FROM op_user
+        WHERE USER_ID = #{userId}
+    </select>
+
 </mapper>

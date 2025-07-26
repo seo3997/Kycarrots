@@ -33,4 +33,11 @@ public class OpUserRepository {
     public boolean existsByEmail(String email) {
         return opUserMapper.existsByEmail(email);
     }
+
+    public int updatePushToken(OpUserVO user) {
+        return opUserMapper.updatePushToken(user);
+    }
+    public OpUserVO fetchFcmToken(String userId) {
+        return opUserMapper.fetchFcmToken(userId);
+    }
 }

@@ -34,5 +34,12 @@ public class OpUserService {
         return opUserRepository.existsByEmail(email);
     }
 
+    public int updatePushToken(OpUserVO user) {
+        return opUserRepository.updatePushToken(user);
+    }
+
+    public OpUserVO fetchFcmToken(String userId) {
+        return opUserRepository.fetchFcmToken(userId);
+    }
 
 }

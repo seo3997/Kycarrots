@@ -36,4 +36,6 @@ public class OpUserVO {
     private String registDt;            // REGIST_DT: 등록 일시
     private String updusrNo;            // UPDUSR_NO: 수정자 번호
     private String updtDt;              // UPDT_DT: 수정 일시
+    private String pushToken;
+    private String deviceType;
 }
