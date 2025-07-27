@@ -25,12 +25,13 @@ public class ChatRoomController {
         return ResponseEntity.ok(room);
     }
 
-    /**
-     * 사용자가 참여한 모든 채팅방 목록 조회
-     */
-    @GetMapping("/rooms/{userId}")
-    public ResponseEntity<List<ChatRoomEntity>> getUserChatRooms(@PathVariable String userId) {
-        List<ChatRoomEntity> rooms = chatRoomService.getUserChatRooms(userId);
+    @GetMapping("/rooms/{productId}/{userId}")
+    public ResponseEntity<List<ChatRoomEntity>> getUserChatRooms(
+            @PathVariable String productId,
+            @PathVariable String userId) {
+
+        List<ChatRoomEntity> rooms = chatRoomService.getUserChatRooms(productId, userId);
         return ResponseEntity.ok(rooms);
     }
+
 }

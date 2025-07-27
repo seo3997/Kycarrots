@@ -35,8 +35,8 @@ public class ChatRoomService {
     /**
      * 현재 로그인 유저가 참여한 모든 채팅방 조회
      */
-    public List<ChatRoomEntity> getUserChatRooms(String userId) {
-        return chatRoomRepository.findAllByBuyerIdOrSellerId(userId, userId);
+    public List<ChatRoomEntity> getUserChatRooms(String productId,String userId) {
+        return chatRoomRepository.findByProductIdAndUserInvolved(productId,userId);
     }
 
     /**
