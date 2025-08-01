@@ -291,4 +291,14 @@
         LIMIT 3
     </select>
 
+    <!-- 도매상/센터 푸시 대상자 정보 조회 -->
+    <select id="selectPushTargetsByProductId" parameterType="long" resultType="com.whomade.kycarrots.push.PushTargetDto">
+        SELECT
+            U.USER_NO,
+            U.DEVICE_TYPE,
+            U.PUSH_TOKEN
+        FROM tb_product P
+                 JOIN op_user U ON P.WHOLESALER_NO = U.USER_NO
+        WHERE P.PRODUCT_ID = #{productId}
+    </select>
 </mapper>

@@ -3,6 +3,7 @@ package com.whomade.kycarrots.repository.mybatis.product;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
+import com.whomade.kycarrots.push.PushTargetDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -72,5 +73,8 @@ public class TnProductRepository {
         return tnProductMapper.selectRecentProductsByUser(userNo);
     }
 
+    public List<PushTargetDto> selectPushTargetsByProductId(String productId) {
+        return tnProductMapper.selectPushTargetsByProductId(productId);
+    }
 
 }

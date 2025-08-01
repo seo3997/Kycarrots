@@ -6,6 +6,8 @@ import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.file.FileUtil;
+import com.whomade.kycarrots.push.FcmService;
+import com.whomade.kycarrots.push.PushTargetDto;
 import com.whomade.kycarrots.repository.mybatis.product.TnProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: ADMIN
@@ -35,6 +38,8 @@ public class TnProductService {
     @Autowired
     private FileStorageProperties fileStorageProperties;
 
+    @Autowired
+    private FcmService fcmService;
 
     // SELECT
     public List<TnProductVo> selectTbproduct(DataMap param) {
@@ -112,6 +117,43 @@ public class TnProductService {
             }
         }
 
+        //PUSH 전송
+        String saleStatus = productVo.getSaleStatus(); // "0" or "1"
+        String userId = productVo.getUserId();
+        String productId = productVo.getProductId();
+        String productTitle = productVo.getTitle();
+
+        if ("0".equals(saleStatus)) {
+            // 승인요청: 중간센터/도매상에게 token으로 전송
+            List<PushTargetDto> centerUsers = tnProductRepository.selectPushTargetsByProductId(productId); // token + userId
+            for (PushTargetDto user : centerUsers) {
+                fcmService.sendPushToUserAndLog(
+                        user.getUserNo(),
+                        user.getPushToken(),
+                        "상품 승인 요청",
+                        productTitle + " 상품이 등록되었습니다. 승인해주세요.",
+                        productId,
+                        "승인요청",
+                        Map.of(
+                                "productId", productId,
+                                "userId", userId,
+                                "type", "product"  // 이 값을 기준으로 앱에서 처리
+                        )
+                );
+            }
+        } else if ("1".equals(saleStatus)) {
+            // 판매중: 일반 구매자에게 topic으로 브로드캐스트
+            fcmService.sendPushToTopic(
+                    "ROLE_PUB",
+                    "신규 상품 등록",
+                    productTitle + " 상품이 판매중으로 등록되었습니다.",
+                    Map.of(
+                            "productId", productId,
+                            "userId", userId,
+                            "type", "product"  // 이 값을 기준으로 앱에서 처리
+                    )
+            );
+        }
     }
 
     @Transactional

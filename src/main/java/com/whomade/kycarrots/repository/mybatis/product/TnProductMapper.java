@@ -3,6 +3,7 @@ package com.whomade.kycarrots.repository.mybatis.product;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
+import com.whomade.kycarrots.push.PushTargetDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -41,4 +42,6 @@ public interface TnProductMapper {
     DataMap selectProductStatusCounts(Long userNo);
 
     List<TnProductVo> selectRecentProductsByUser(Long userNo);
+
+    List<PushTargetDto> selectPushTargetsByProductId(String productId);
 }
