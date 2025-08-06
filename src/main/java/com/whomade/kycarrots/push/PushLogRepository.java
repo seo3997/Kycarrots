@@ -9,8 +9,8 @@ import java.util.List;
 public interface PushLogRepository extends JpaRepository<PushLog, Long> {
 
     // 예시: 특정 사용자 알림 리스트
-    List<PushLog> findByTARGETUSERIDOrderBySENTATDesc(String userId);
+    //List<PushLog> findByTARGETUSERIDOrderBySENTATDesc(String userId);
 
     // 예시: 읽지 않은 알림
-    List<PushLog> findByTARGETUSERIDAndREADYN(String userId, String readYn);
+    //List<PushLog> findByTARGETUSERIDAndREADYN(String userId, String readYn);
 }

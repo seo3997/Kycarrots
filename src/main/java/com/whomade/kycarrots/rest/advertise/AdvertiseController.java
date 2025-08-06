@@ -230,4 +230,30 @@ public class AdvertiseController {
         return ResponseEntity.ok("푸시 전송 완료");
     }
 
+    @PostMapping("/status/update")
+    public ResponseEntity<String> updateProductStatus(
+            @RequestParam String token,
+            @RequestBody TnProductVo productVo
+    ) {
+        try {
+            // 1. 토큰으로 사용자 조회
+            OpUserVO user = tokenizer.getMember(token);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰");
+            }
+            // 2. 사용자 번호 주입
+            productVo.setUserNo(user.getUserNo());
+
+            // 3. 상태 업데이트 실행
+            int updated = tnProductService.updateProductStatus(productVo);
+            if (updated > 0) {
+                return ResponseEntity.ok("상태 변경 성공");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("변경된 항목 없음");
+            }
+        } catch (Exception e) {
+            log.error("상태 변경 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상태 변경 실패: " + e.getMessage());
+        }
+    }
 }

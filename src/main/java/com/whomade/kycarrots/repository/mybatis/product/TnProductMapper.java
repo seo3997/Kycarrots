@@ -44,4 +44,6 @@ public interface TnProductMapper {
     List<TnProductVo> selectRecentProductsByUser(Long userNo);
 
     List<PushTargetDto> selectPushTargetsByProductId(String productId);
+
+    int updateProductStatus(TnProductVo vo);
 }

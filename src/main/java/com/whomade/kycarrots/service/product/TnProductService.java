@@ -242,4 +242,8 @@ public class TnProductService {
     public List<TnProductVo> getRecentProductsByUser(Long userNo){
         return tnProductRepository.selectRecentProductsByUser(userNo);
     }
+
+    public int updateProductStatus(TnProductVo vo) {
+        return tnProductRepository.updateProductStatus(vo);
+    }
 }

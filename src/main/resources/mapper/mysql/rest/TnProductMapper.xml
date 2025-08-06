@@ -223,6 +223,7 @@
             A.WHOLESALER_NO,
             (SELECT USER_ID FROM op_user WHERE USER_NO = A.WHOLESALER_NO) AS WHOLESALER_ID,
             A.SALE_STATUS,
+            A.REJECT_REASON,
             A.REGISTER_NO,
             A.REGIST_DT,
             A.UPDUSR_NO,
@@ -301,4 +302,15 @@
                  JOIN op_user U ON P.WHOLESALER_NO = U.USER_NO
         WHERE P.PRODUCT_ID = #{productId}
     </select>
+
+    <update id="updateProductStatus" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">
+        UPDATE tb_product
+        SET
+            SALE_STATUS = #{saleStatus},
+            REJECT_REASON = #{rejectReason},
+            UPDUSR_NO = #{updusrNo},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE PRODUCT_ID = #{productId}
+    </update>
+
 </mapper>

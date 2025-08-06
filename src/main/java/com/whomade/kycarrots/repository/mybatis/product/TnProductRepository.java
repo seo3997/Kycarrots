@@ -77,4 +77,8 @@ public class TnProductRepository {
         return tnProductMapper.selectPushTargetsByProductId(productId);
     }
 
+    public int updateProductStatus(TnProductVo vo) {
+        return tnProductMapper.updateProductStatus(vo);
+    }
+
 }
