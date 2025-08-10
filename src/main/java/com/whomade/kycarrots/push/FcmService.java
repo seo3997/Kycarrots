@@ -1,5 +1,6 @@
 package com.whomade.kycarrots.push;
 
+import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -36,17 +37,23 @@ public class FcmService {
 
     public void sendPushToAndroid(
             String targetToken,
-            String title,
-            String body,
             Map<String, String> data // ← 추가!
     ) {
         try {
+
+            Message.Builder messageBuilder = Message.builder()
+                    .setToken(targetToken)
+                    .setAndroidConfig(AndroidConfig.builder()
+                            .setPriority(AndroidConfig.Priority.HIGH) // 중요: 백그라운드에서도 수신
+                            .build());
+            /*
             Message.Builder messageBuilder = Message.builder()
                     .setToken(targetToken)
                     .setNotification(Notification.builder()
                             .setTitle(title)
                             .setBody(body)
                             .build());
+            */
 
             // 데이터 payload 모두 추가
             if (data != null && !data.isEmpty()) {
@@ -81,9 +88,7 @@ public class FcmService {
             Message.Builder messageBuilder = Message.builder()
                     .setTopic(topic)
                     .setNotification(Notification.builder()
-                            .setTitle(title)
-                            .setBody(body)
-                            .build());
+                    .build());
 
             if (data != null && !data.isEmpty()) {
                 messageBuilder.putAllData(data);
@@ -105,6 +110,7 @@ public class FcmService {
                     .READ_YN("N")
                     .build()
             );
+            log.warn("로그저장");
         } catch (Exception e) {
             log.error("Topic 푸시 실패", e);
         }
@@ -117,9 +123,7 @@ public class FcmService {
             Message.Builder messageBuilder = Message.builder()
                     .setToken(targetToken)
                     .setNotification(Notification.builder()
-                            .setTitle(title)
-                            .setBody(body)
-                            .build());
+                    .build());
 
             if (data != null && !data.isEmpty()) {
                 messageBuilder.putAllData(data);

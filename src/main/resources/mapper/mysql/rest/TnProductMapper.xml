@@ -74,7 +74,7 @@
                 AND A.PRICE &lt;= #{maxPrice}
             </if>
         </where>
-        ORDER BY A.REGIST_DT ASC
+        ORDER BY A.REGIST_DT DESC
         LIMIT #{offset}, #{limit}
     </select>
 

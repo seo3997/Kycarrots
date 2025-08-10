@@ -3,10 +3,12 @@ package com.whomade.kycarrots.chat;
 
 import com.whomade.kycarrots.entity.chat.ChatMessageVo;
 import com.whomade.kycarrots.entity.member.OpUserVO;
+import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.push.FcmService;
 import com.whomade.kycarrots.repository.mybatis.chat.ChatMessageRepository;
 import com.whomade.kycarrots.service.chat.ChatMessageService;
 import com.whomade.kycarrots.service.member.OpUserService;
+import com.whomade.kycarrots.service.product.TnProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,8 @@ public class ChatWsController {
     private WebSocketUserTracker userTracker;
     @Autowired
     private FcmService fcmService;
+    @Autowired
+    private TnProductService tnProductService;
 
     @MessageMapping("/chat.sendsample")
     @SendTo("/topic/room1sample")
@@ -73,6 +77,7 @@ public class ChatWsController {
             String sellerId = chatRoom.getSellerId();
 
             String receiverId = "";
+            String messgeTitle = "";
 
             if (senderId.equals(buyerId)) {
                 receiverId = sellerId;
@@ -91,6 +96,8 @@ public class ChatWsController {
                 //log.info("receiver {} 는 접속 중이 아님. 푸시 전송 시도", receiverId);
 
                 Long productId = chatRoom.getProductId();
+                TnProductVo product = tnProductService.getProduct(productId);
+                messgeTitle = product.getTitle() + "  채팅메시지";
 
                 // 2. FCM 데이터 payload 구성
                 Map<String, String> data = new HashMap<>();
@@ -100,7 +107,8 @@ public class ChatWsController {
                 data.put("productId", productId != null ? productId.toString() : "");
                 data.put("type", "chat");
                 data.put("msg", message.getMessage());
-
+                data.put("title", messgeTitle); // 알림 제목
+                data.put("body", message.getMessage());   // 알림 내
 
                 OpUserVO opUserVO = opUserService.fetchFcmToken(receiverId); // 직접 구현 필요
                 String fcmToken = opUserVO.getPushToken();
@@ -110,9 +118,9 @@ public class ChatWsController {
                 if (fcmToken != null) {
 
                     if ("IOS".equalsIgnoreCase(deviceType)) {
-                        fcmService.sendPushToIos(fcmToken, "새 메시지", message.getMessage(), data);
+                        fcmService.sendPushToIos(fcmToken, messgeTitle, message.getMessage(), data);
                     } else {
-                        fcmService.sendPushToAndroid(fcmToken, "새 메시지", message.getMessage(), data);
+                        fcmService.sendPushToAndroid(fcmToken, data);
                     }
                 } else {
                     log.warn("푸시 전송 실패: FCM 토큰 없음");

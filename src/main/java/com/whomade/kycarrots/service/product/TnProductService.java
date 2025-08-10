@@ -116,41 +116,51 @@ public class TnProductService {
                 tnProductRepository.insertProductImage(meta);
             }
         }
-
         //PUSH 전송
         String saleStatus = productVo.getSaleStatus(); // "0" or "1"
         String userId = productVo.getUserId();
         String productId = productVo.getProductId();
         String productTitle = productVo.getTitle();
+        String messaeTitle = "";
+        String messaeBody = "";
 
         if ("0".equals(saleStatus)) {
             // 승인요청: 중간센터/도매상에게 token으로 전송
             List<PushTargetDto> centerUsers = tnProductRepository.selectPushTargetsByProductId(productId); // token + userId
             for (PushTargetDto user : centerUsers) {
+                messaeTitle = "상품 승인 요청";
+                messaeBody  = productTitle + " 상품이 등록되었습니다. 승인해주세요.";
                 fcmService.sendPushToUserAndLog(
                         user.getUserNo(),
                         user.getPushToken(),
-                        "상품 승인 요청",
-                        productTitle + " 상품이 등록되었습니다. 승인해주세요.",
+                        messaeTitle,
+                        messaeBody,
                         productId,
                         "승인요청",
                         Map.of(
                                 "productId", productId,
                                 "userId", userId,
-                                "type", "product"  // 이 값을 기준으로 앱에서 처리
+                                "type", "product",
+                                "title", messaeTitle,
+                                "body", messaeBody
                         )
                 );
             }
         } else if ("1".equals(saleStatus)) {
             // 판매중: 일반 구매자에게 topic으로 브로드캐스트
+            productId="48";
+            messaeTitle = "신규 상품 등록";
+            messaeBody  = productTitle + " 상품이 판매중으로 등록되었습니다.";
             fcmService.sendPushToTopic(
                     "ROLE_PUB",
-                    "신규 상품 등록",
-                    productTitle + " 상품이 판매중으로 등록되었습니다.",
+                    messaeTitle,
+                    messaeBody,
                     Map.of(
                             "productId", productId,
                             "userId", userId,
-                            "type", "product"  // 이 값을 기준으로 앱에서 처리
+                            "type", "product",
+                            "title", messaeTitle,
+                            "body", messaeBody
                     )
             );
         }
@@ -245,5 +255,13 @@ public class TnProductService {
 
     public int updateProductStatus(TnProductVo vo) {
         return tnProductRepository.updateProductStatus(vo);
+    }
+
+    public TnProductVo getProduct(Long productId) {
+        TnProductVo product = tnProductRepository.selectProductById(productId);
+        if (product == null) {
+            throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId);
+        }
+        return product;
     }
 }
