@@ -44,8 +44,8 @@ public class FcmService {
             Message.Builder messageBuilder = Message.builder()
                     .setToken(targetToken)
                     .setAndroidConfig(AndroidConfig.builder()
-                            .setPriority(AndroidConfig.Priority.HIGH) // 중요: 백그라운드에서도 수신
-                            .build());
+                    .setPriority(AndroidConfig.Priority.HIGH) // 중요: 백그라운드에서도 수신
+                    .build());
             /*
             Message.Builder messageBuilder = Message.builder()
                     .setToken(targetToken)
@@ -59,6 +59,7 @@ public class FcmService {
             if (data != null && !data.isEmpty()) {
                 messageBuilder.putAllData(data);
             }
+            log.info("data: {}", data);
 
             Message message = messageBuilder.build();
 
