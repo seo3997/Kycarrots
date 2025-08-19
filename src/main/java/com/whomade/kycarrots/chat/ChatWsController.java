@@ -4,6 +4,7 @@ package com.whomade.kycarrots.chat;
 import com.whomade.kycarrots.entity.chat.ChatMessageVo;
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.entity.product.TnProductVo;
+import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.push.FcmService;
 import com.whomade.kycarrots.repository.mybatis.chat.ChatMessageRepository;
 import com.whomade.kycarrots.service.chat.ChatMessageService;
@@ -96,7 +97,10 @@ public class ChatWsController {
                 //log.info("receiver {} 는 접속 중이 아님. 푸시 전송 시도", receiverId);
 
                 Long productId = chatRoom.getProductId();
-                TnProductVo product = tnProductService.getProduct(productId);
+                DataMap param = new DataMap();
+                param.put("productId", productId);
+                param.put("userNo", "0");
+                TnProductVo product = tnProductService.getProduct(param);
                 messgeTitle = product.getTitle() + "  채팅메시지";
 
                 // 2. FCM 데이터 payload 구성

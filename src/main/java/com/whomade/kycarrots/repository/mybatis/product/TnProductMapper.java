@@ -18,7 +18,7 @@ public interface TnProductMapper {
     // SELECT
     List<TnProductVo> selectTbProduct(DataMap param);
 
-    TnProductVo selectProductById(Long productId); // 🔹 상품 상세 조회 추가
+    TnProductVo selectProductById(DataMap param); // 🔹 상품 상세 조회 추가
 
     // INSERT
     int insertTbProduct(TnProductVo vo);

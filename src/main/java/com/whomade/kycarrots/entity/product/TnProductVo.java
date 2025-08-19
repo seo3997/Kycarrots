@@ -49,5 +49,6 @@ public class TnProductVo {
     private String wholesalerNo;
     private String wholesalerId;
     private String rejectReason;
+    private String fav;
 
 }

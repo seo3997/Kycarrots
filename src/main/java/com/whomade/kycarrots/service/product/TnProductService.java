@@ -215,12 +215,12 @@ public class TnProductService {
         }
     }
 
-    public TnProductDetailResponse getProductDetail(Long productId) {
-        TnProductVo product = tnProductRepository.selectProductById(productId);
+    public TnProductDetailResponse getProductDetail(DataMap param) {
+        TnProductVo product = tnProductRepository.selectProductById(param);
         if (product == null) {
-            throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId);
+            throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + product.getProductId());
         }
-        List<TnProductImageVo> images = tnProductRepository.selectProductImagesByProductId(productId);
+        List<TnProductImageVo> images = tnProductRepository.selectProductImagesByProductId(Long.parseLong(product.getProductId()));
         return new TnProductDetailResponse(product, images);
     }
 
@@ -257,10 +257,10 @@ public class TnProductService {
         return tnProductRepository.updateProductStatus(vo);
     }
 
-    public TnProductVo getProduct(Long productId) {
-        TnProductVo product = tnProductRepository.selectProductById(productId);
+    public TnProductVo getProduct(DataMap param) {
+        TnProductVo product = tnProductRepository.selectProductById(param);
         if (product == null) {
-            throw new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId);
+            throw new IllegalArgumentException("상품을 찾을 수 없습니다: ");
         }
         return product;
     }

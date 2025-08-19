@@ -199,7 +199,7 @@
         DELETE FROM tb_product_image
         WHERE IMAGE_ID = #{imageId}
     </delete>
-    <select id="selectProductById" parameterType="long" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
+    <select id="selectProductById" parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
         SELECT
             A.PRODUCT_ID,
             A.USER_NO,
@@ -227,7 +227,8 @@
             A.REGISTER_NO,
             A.REGIST_DT,
             A.UPDUSR_NO,
-            A.UPDT_DT
+            A.UPDT_DT,
+            (SELECT COUNT(PRODUCT_ID) FROM tb_product_interest WHERE PRODUCT_ID = #{productId} AND USER_NO =#{userNo}) AS FAV
         FROM tb_product A
         WHERE A.PRODUCT_ID = #{productId}
     </select>

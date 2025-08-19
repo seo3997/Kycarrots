@@ -176,8 +176,12 @@ public class AdvertiseController {
     }
 
     @GetMapping("/detail/{productId}")
-    public ResponseEntity<TnProductDetailResponse> getProductDetail(@PathVariable Long productId) {
-        TnProductDetailResponse detail = tnProductService.getProductDetail(productId);
+    public ResponseEntity<TnProductDetailResponse> getProductDetail(@PathVariable Long productId
+            ,@RequestParam(name = "userNo", required = false) Long userNo) {
+        DataMap param = new DataMap();
+        param.put("productId", productId);
+        param.put("userNo", userNo);
+        TnProductDetailResponse detail = tnProductService.getProductDetail(param);
         return ResponseEntity.ok(detail);
     }
 

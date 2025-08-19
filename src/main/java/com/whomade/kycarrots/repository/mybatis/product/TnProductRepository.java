@@ -27,8 +27,8 @@ public class TnProductRepository {
         return tbproducts;
     }
 
-    public TnProductVo selectProductById(Long productId) {
-        return tnProductMapper.selectProductById(productId);
+    public TnProductVo selectProductById(DataMap param) {
+        return tnProductMapper.selectProductById(param);
     }
     // INSERT
     public int insertTbProduct(TnProductVo vo) {
