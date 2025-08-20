@@ -8,6 +8,7 @@ import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
+import com.whomade.kycarrots.framework.common.util.PagingUtil;
 import com.whomade.kycarrots.framework.common.util.encrypt.EncodedTokenizer;
 import com.whomade.kycarrots.push.FcmService;
 import com.whomade.kycarrots.service.product.TnProductService;
@@ -260,4 +261,28 @@ public class AdvertiseController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상태 변경 실패: " + e.getMessage());
         }
     }
+
+    @GetMapping(value = "/interests/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AdvertiseResponse getInterestList(
+            @RequestParam("token") String token,
+            @RequestParam("pageno") int pageNo
+    ) {
+        OpUserVO user;
+        try {
+            user = tokenizer.getMember(token);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("유효하지 않은 토큰");
+        }
+
+        DataMap param = new DataMap();
+        param.put("userNo", Long.parseLong(user.getUserNo()));
+
+        PagingUtil.applyPaging(param, pageNo, PagingUtil.DEFAULT_PAGE_SIZE);
+        List<TnProductVo> items = tnProductService.getInterestProducts(param);
+
+        AdvertiseResponse res = new AdvertiseResponse();
+        res.setItems(items);
+        return res;
+    }
+
 }

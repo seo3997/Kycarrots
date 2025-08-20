@@ -81,4 +81,7 @@ public class TnProductRepository {
         return tnProductMapper.updateProductStatus(vo);
     }
 
+    public List<TnProductVo> selectInterestProducts(DataMap param) {
+        return tnProductMapper.selectInterestProducts(param);
+    }
 }

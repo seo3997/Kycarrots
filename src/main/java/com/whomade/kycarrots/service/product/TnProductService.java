@@ -264,4 +264,9 @@ public class TnProductService {
         }
         return product;
     }
+
+    public List<TnProductVo> getInterestProducts(DataMap param) {
+        return tnProductRepository.selectInterestProducts(param);
+    }
+
 }
