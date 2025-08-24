@@ -16,21 +16,22 @@ public class ChatMessageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
 
-    @Column(name = "room_id", nullable = false)
+    @Column(name = "ROOM_ID", nullable = false)
     private String roomId;
 
-    @Column(name = "sender_id", nullable = false)
+    @Column(name = "SENDER_ID", nullable = false)
     private String senderId;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "MESSAGE", columnDefinition = "TEXT")
     private String message;
 
-    @Column(name = "created_at", insertable = false, updatable = false,
+    @Column(name = "CREATED_AT", insertable = false, updatable = false,
             columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(name = "is_read", columnDefinition = "TINYINT(1) DEFAULT 0")
+    @Column(name = "IS_READ", columnDefinition = "TINYINT(1) DEFAULT 0")
     private Boolean isRead;
 }

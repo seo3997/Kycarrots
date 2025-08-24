@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -230,6 +231,39 @@ public class AdvertiseController {
         AdvertiseResponse res = new AdvertiseResponse();
         res.setItems(items);
         return res;
+    }
+
+    @GetMapping(value = "/purchases/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AdvertiseResponse getPurchaseList(
+            @RequestParam("token") String token,
+            @RequestParam("pageno") int pageNo
+    ) {
+        OpUserVO user;
+        try {
+            user = tokenizer.getMember(token);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("유효하지 않은 토큰");
+        }
+
+        DataMap param = new DataMap();
+        param.put("userNo", Long.parseLong(user.getUserNo()));
+
+        PagingUtil.applyPaging(param, pageNo, PagingUtil.DEFAULT_PAGE_SIZE);
+        List<TnProductVo> items = tnProductService.getPurchasedProducts(param);
+
+        AdvertiseResponse res = new AdvertiseResponse();
+        res.setItems(items);
+        return res;
+    }
+
+    @GetMapping("/chat/buyers")
+    public List<Map<String,Object>> buyers(@RequestParam Long productId,
+                                           @RequestParam String sellerId) {
+        DataMap param = new DataMap();
+        param.put("productId", productId);
+        param.put("sellerId", sellerId);
+
+        return tnProductService.getChatBuyers(param);
     }
 
 }

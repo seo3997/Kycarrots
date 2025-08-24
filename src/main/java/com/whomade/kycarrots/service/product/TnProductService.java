@@ -268,5 +268,11 @@ public class TnProductService {
     public List<TnProductVo> getInterestProducts(DataMap param) {
         return tnProductRepository.selectInterestProducts(param);
     }
-
+    // 구매이력 목록
+    public List<TnProductVo> getPurchasedProducts(DataMap param) {
+        return tnProductRepository.selectPurchasedProducts(param);
+    }
+    public List<Map<String,Object>> getChatBuyers(DataMap param) {
+        return tnProductRepository.findChatBuyersByProductAndSeller(param);
+    }
 }

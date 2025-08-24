@@ -15,17 +15,18 @@ public class ChatRoomEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
 
-    @Column(name = "product_id", nullable = false)
+    @Column(name = "PRODUCT_ID", nullable = false)
     private Long productId;
 
-    @Column(name = "buyer_id", nullable = false)
+    @Column(name = "BUYER_ID", nullable = false)
     private String buyerId;
 
-    @Column(name = "seller_id", nullable = false)
+    @Column(name = "SELLER_ID", nullable = false)
     private String sellerId;
 
-    @Column(name = "room_id", nullable = false, unique = true)
+    @Column(name = "ROOM_ID", nullable = false, unique = true)
     private String roomId;
 }

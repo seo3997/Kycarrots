@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: ADMIN
@@ -83,5 +84,13 @@ public class TnProductRepository {
 
     public List<TnProductVo> selectInterestProducts(DataMap param) {
         return tnProductMapper.selectInterestProducts(param);
+    }
+
+    public List<TnProductVo> selectPurchasedProducts(DataMap param) {
+        return tnProductMapper.selectPurchasedProducts(param);
+    }
+
+    public List<Map<String, Object>> findChatBuyersByProductAndSeller(DataMap param) {
+        return tnProductMapper.selectChatBuyersByProductAndSeller(param);
     }
 }

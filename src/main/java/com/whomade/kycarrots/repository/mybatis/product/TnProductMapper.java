@@ -7,6 +7,7 @@ import com.whomade.kycarrots.push.PushTargetDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: ADMIN
@@ -48,4 +49,8 @@ public interface TnProductMapper {
     int updateProductStatus(TnProductVo vo);
 
     List<TnProductVo> selectInterestProducts(DataMap param);
+
+    List<TnProductVo> selectPurchasedProducts(DataMap param);
+
+    List<Map<String, Object>> selectChatBuyersByProductAndSeller(DataMap params);
 }

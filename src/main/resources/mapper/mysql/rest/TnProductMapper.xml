@@ -118,6 +118,46 @@
         LIMIT #{offset}, #{limit}
     </select>
 
+    <!-- 구매이력 목록 -->
+    <select id="selectPurchasedProducts" parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
+        SELECT
+        A.PRODUCT_ID,
+        A.USER_NO,
+        A.TITLE,
+        A.DESCRIPTION,
+        A.PRICE,
+        A.CATEGORY_GROUP,
+        A.CATEGORY_MID,
+        A.CATEGORY_SCLS,
+        A.AREA_GROUP,
+        A.AREA_MID,
+        A.AREA_SCLS,
+        A.QUANTITY,
+        A.UNIT_GROUP,
+        A.UNIT_CODE,
+        A.DESIRED_SHIPPING_DATE,
+        A.SALE_STATUS,
+        A.REGISTER_NO,
+        PH.CREATED_AT AS REGIST_DT,
+        A.UPDUSR_NO,
+        A.UPDT_DT,
+        (SELECT IMAGE_URL
+        FROM tb_product_image
+        WHERE PRODUCT_ID = A.PRODUCT_ID
+        AND REPRESENT = 1
+        LIMIT 1) AS IMAGE_URL,
+        (SELECT USER_ID
+        FROM op_user
+        WHERE USER_NO = A.USER_NO
+        LIMIT 1) AS USER_ID
+        FROM tb_product A
+        INNER JOIN tb_purchase_history PH
+        ON PH.PRODUCT_ID = A.PRODUCT_ID
+        WHERE PH.BUYER_NO = #{userNo}
+        ORDER BY PH.CREATED_AT DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
     <insert id="insertTbProduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo" useGeneratedKeys="true" keyProperty="productId">
         INSERT INTO tb_product (
             USER_NO,
@@ -354,4 +394,19 @@
         WHERE PRODUCT_ID = #{productId}
     </update>
 
+    <select id="selectChatBuyersByProductAndSeller" parameterType="dataMap" resultType="map">
+        SELECT
+            A.room_id, A.product_id, A.seller_id,
+            B.USER_ID   AS buyer_id,
+            B.USER_NO   AS buyer_no,
+            B.USER_NM   AS buyer_nm,
+            C.USER_NO   AS seller_no,
+            C.USER_NM   AS seller_nm
+        FROM tb_chat_room A
+        LEFT JOIN op_user B ON B.USER_ID = A.buyer_id
+        LEFT JOIN op_user C ON C.USER_ID = A.seller_id
+        WHERE A.PRODUCT_ID = #{productId}
+       AND A.SELLER_ID  = #{sellerId}
+        ORDER BY A.ROOM_ID DESC
+    </select>
 </mapper>

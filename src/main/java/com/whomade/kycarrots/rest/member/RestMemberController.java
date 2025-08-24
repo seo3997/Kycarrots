@@ -89,17 +89,17 @@ public class RestMemberController {
 
         if (member == null) {
             // 아이디 없음
-            return new LoginResponse(601, null, null, null, null, null, null); // RESULT_NO_USER
+            return new LoginResponse(601, null, null, null, null, null, null, null); // RESULT_NO_USER
         }
 
         if (!encodedPassword.equals(member.getPassword())) {
             // 비밀번호 불일치
-            return new LoginResponse(602, null, null, null, null, null, null); // RESULT_PWD_ERR
+            return new LoginResponse(602, null, null, null, null, null, null, null); // RESULT_PWD_ERR
         }
 
         if (!memberCode.equals(member.getMemberCode())) {
             //  회원타입 불일치
-            return new LoginResponse(603, null, null, null, null, null, null); // RESULT_PWD_ERR
+            return new LoginResponse(603, null, null, null, null, null, null, null); // RESULT_PWD_ERR
         }
 
         String token = "";
@@ -109,7 +109,7 @@ public class RestMemberController {
             token = tokenizer.getToken(member);
         } catch (DecoderException e) {
             e.printStackTrace();
-            return new LoginResponse(500, null, null, null, null, null, null); // 서버 에러
+            return new LoginResponse(500, null, null, null, null, null, null,null); // 서버 에러
         }
 
         return new LoginResponse(
@@ -119,7 +119,8 @@ public class RestMemberController {
                 "",
                 "",
                 "",
-                ""
+                "",
+                member.getUserNm()
         );
     }
 

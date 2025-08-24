@@ -15,4 +15,5 @@ public class LoginResponse {
     private String login_gu;
     private String login_sex;
     private String login_age;
+    private String login_nm;
 }
