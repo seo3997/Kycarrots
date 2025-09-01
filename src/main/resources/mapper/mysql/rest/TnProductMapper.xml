@@ -3,8 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.whomade.kycarrots.repository.mybatis.product.TnProductMapper">
 
-    <select id="selectTbProduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
-        SELECT
+    <!-- 공통 컬럼 -->
+    <sql id="productColumns">
         A.PRODUCT_ID,
         A.USER_NO,
         A.TITLE,
@@ -26,19 +26,41 @@
         A.UPDUSR_NO,
         A.UPDT_DT,
         (SELECT IMAGE_URL
-        FROM tb_product_image
-        WHERE PRODUCT_ID = A.PRODUCT_ID
-        AND REPRESENT   = 1) AS IMAGE_URL,
+           FROM tb_product_image
+          WHERE PRODUCT_ID = A.PRODUCT_ID
+            AND REPRESENT = 1) AS IMAGE_URL,
         (SELECT USER_ID
-        FROM op_user
-        WHERE USER_NO = A.USER_NO) AS USER_ID
+           FROM op_user
+          WHERE USER_NO = A.USER_NO) AS USER_ID
+    </sql>
+
+    <select id="selectTbProduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
+        SELECT  <include refid="productColumns"/>
+        FROM tb_product A
+        WHERE A.USER_NO =  #{userNo}
+        <!-- 항상 필터링: 판매 상태 -->
+        <if test="saleStatus != null and saleStatus != ''">
+            AND A.SALE_STATUS = #{saleStatus}
+        </if>
+        ORDER BY A.REGIST_DT DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    <select id="selectBuyTbProduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
+        SELECT  <include refid="productColumns"/>
         FROM tb_product A
         <where>
             <!-- 항상 필터링: 판매 상태 -->
-            <if test="saleStatus != null and saleStatus != ''">
-                AND A.SALE_STATUS = #{saleStatus}
-            </if>
+            <choose>
+                <!-- 체크(on) = 1: 정확히 1만 -->
+                <when test="saleStatus == 1 or saleStatus == '1'">
+                    AND A.SALE_STATUS = 1
+                </when>
 
+                <!-- 체크(off) = 0: 1, 10, 99 모두 -->
+                <when test="saleStatus == 0 or saleStatus == '0'">
+                    AND A.SALE_STATUS IN (1,10,99)
+                </when>
+           </choose>
             <!-- 카테고리 대분류 -->
             <if test="categoryGroup != null and categoryGroup != 'ALL'">
                 AND A.CATEGORY_GROUP = #{categoryGroup}

@@ -46,6 +46,11 @@ public class TnProductService {
         return tnProductRepository.selectTbProduct(param);
     }
 
+    // SELECT
+    public List<TnProductVo> selectBuyTbProduct(DataMap param) {
+        return tnProductRepository.selectBuyTbProduct(param);
+    }
+
     // INSERT
     public int insertTbproduct(TnProductVo vo) {
         return tnProductRepository.insertTbProduct(vo);

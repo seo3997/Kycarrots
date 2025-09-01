@@ -28,6 +28,11 @@ public class TnProductRepository {
         return tbproducts;
     }
 
+    public List<TnProductVo> selectBuyTbProduct(DataMap param) {
+        List<TnProductVo> tbproducts= tnProductMapper.selectBuyTbProduct(param);
+        return tbproducts;
+    }
+
     public TnProductVo selectProductById(DataMap param) {
         return tnProductMapper.selectProductById(param);
     }

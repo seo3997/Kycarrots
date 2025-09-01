@@ -53,6 +53,35 @@ public class AdvertiseController {
         }
 
         DataMap param = new DataMap();
+        param.put("userNo", opUserVO.getUserNo());
+        param.put("saleStatus", q.getSaleStatus());
+        // 페이지당 항목 수
+        PagingUtil.applyPaging(param, q.getPageno(), PagingUtil.DEFAULT_PAGE_SIZE);
+
+        List<TnProductVo> tnProductVos = tnProductService.selectTbproduct(param);
+
+        // 광고 코드는 파라미터 ad_code, 페이지 번호는 pageNo 등을 활용해서 실제 조회를 구현하면 됩니다.
+        // 여기서는 예시 데이터로 고정된 세 개의 광고 항목을 리턴합니다.
+        AdvertiseResponse response = new AdvertiseResponse();
+        response.setItems(tnProductVos);
+        return response;
+    }
+    @PostMapping(
+            value = "/buyListAdvertise",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public AdvertiseResponse getBuyListAdvertise(@RequestBody AdvertiseQueryParams q) {
+        // 실제 구현에서는 token, ad_code, pageno를 활용하여 광고 목록을 조회합니다.
+        // 아래는 예제용으로 고정된 데이터를 리턴하는 예시입니다.
+        OpUserVO opUserVO = null;
+        try {
+            opUserVO = tokenizer.getMember(q.getToken());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DataMap param = new DataMap();
         param.put("saleStatus", q.getSaleStatus());
         // 페이지당 항목 수
         PagingUtil.applyPaging(param, q.getPageno(), PagingUtil.DEFAULT_PAGE_SIZE);
@@ -86,7 +115,7 @@ public class AdvertiseController {
             param.put("maxPrice", q.getMaxPrice());
         }
 
-        List<TnProductVo> tnProductVos = tnProductService.selectTbproduct(param);
+        List<TnProductVo> tnProductVos = tnProductService.selectBuyTbProduct(param);
 
         // 광고 코드는 파라미터 ad_code, 페이지 번호는 pageNo 등을 활용해서 실제 조회를 구현하면 됩니다.
         // 여기서는 예시 데이터로 고정된 세 개의 광고 항목을 리턴합니다.
