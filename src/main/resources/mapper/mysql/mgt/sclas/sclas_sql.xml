@@ -106,6 +106,7 @@
 		, ATTRB_2
 		, ATTRB_3
 		, SORT_ORDR
+        , USE_YN
 		, REGISTER_NO
 		, REGIST_DT
 		, UPDUSR_NO
@@ -119,6 +120,7 @@
 		, #{attrb_2}
 		, #{attrb_3}
 		, #{sort_ordr}
+		, 'Y'
 		, #{ss_user_no}
 		, CURRENT_TIMESTAMP
 		, #{ss_user_no}

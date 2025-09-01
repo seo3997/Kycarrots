@@ -22,7 +22,7 @@
 
 		function fnSelect(op_code){
 			$("[name=op_code]").val(op_code);
-			$("#aform").attr({action:"/mgt/sclas/selectSclasArea.do", method:'get'}).submit();
+			$("#aform").attr({action:"/mgt/sclas/selectSclasItem.do", method:'get'}).submit();
 		}
 	//]]>
 	</script>
@@ -50,8 +50,8 @@
 			<div class="row">
 				<div class="col-12">
 				<!-- content 영역 -->
-				<form id="aform" method="post" action="/mgt/areainfo/selectPageListAreaInfo.do">
-					<input type="hidden" name="group_id"  value=<%=Const.upCodeArea %> />
+				<form id="aform" method="post" action="">
+					<input type="hidden" name="group_id"  value=<%=Const.upCodeItemCode %> />
 					<input type="hidden" name="op_code" />
 					<div class="box box-primary">
 						<!--  
@@ -77,7 +77,7 @@
 								<thead>
 									<tr>
 										<th class="text-center">No</th>
-										<th class="text-center">지역</th>
+										<th class="text-center">품목</th>
 									</tr>
 								</thead>
 								<tbody>

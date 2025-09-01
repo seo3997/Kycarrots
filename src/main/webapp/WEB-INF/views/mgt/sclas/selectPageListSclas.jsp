@@ -67,7 +67,7 @@
 		<!-- Main content -->
 		<section class="content">
 			<div class="row">
-				<div class="col-xs-12">
+				<div class="col-12">
 				<!-- content 영역 -->
 				<form id="aform" method="post" action="/mgt/sclas/selectPageListSclas.do">
 					<input type="hidden" name="group_id"  value=<%=Const.upCodeArea%> />

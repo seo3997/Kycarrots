@@ -1,20 +1,5 @@
 package com.whomade.kycarrots.mgt.sclas.web;
 
-import java.io.IOException;
-import java.util.List;
-
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import net.sf.json.JSONObject;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.whomade.kycarrots.admin.common.vo.UserInfoVo;
 import com.whomade.kycarrots.common.service.CommonCodeService;
 import com.whomade.kycarrots.framework.common.constant.Const;
@@ -23,11 +8,21 @@ import com.whomade.kycarrots.framework.common.util.EgovMessageSource;
 import com.whomade.kycarrots.framework.common.util.RequestUtil;
 import com.whomade.kycarrots.framework.common.util.SessionUtil;
 import com.whomade.kycarrots.mgt.sclas.service.SclasService;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
-public class SclasAreaController {
+public class SclasItemController {
 
-	private static Log log = LogFactory.getLog(SclasAreaController.class);
+	private static Log log = LogFactory.getLog(SclasItemController.class);
 
 	@Resource(name = "egovMessageSource")
 	private EgovMessageSource egovMessageSource;
@@ -54,8 +49,8 @@ public class SclasAreaController {
 	 *   @return
 	 *   @throws Exception
 	 */
-	@RequestMapping(value = "/mgt/sclas/selectPageListOpCodeAreas.do")
-	public String selectPageListOpCodeAreas(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+	@RequestMapping(value = "/mgt/sclas/selectPageListOpCodeItem.do")
+	public String selectPageListOpCodeItem(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 
 		DataMap param = RequestUtil.getDataMap(request);
 		DataMap codeParam= new DataMap();
@@ -64,13 +59,13 @@ public class SclasAreaController {
 		param.put("ss_user_no", userInfoVo.getUserNo());
 		
 		//중분류리스트-지역
-		codeParam.put("group_id", Const.upCodeAreaInfoCode);
+		codeParam.put("group_id", Const.upCodeItemCode);
 		List codeList = commonCodeService.selectCodeList(codeParam);
 		
 		model.addAttribute("param", param);
 		model.addAttribute("codeList", codeList);
 		
-		return "mgt/sclas/selectPageListOpCodeAreas";
+		return "mgt/sclas/selectPageListOpCodeItem";
 	}
 	
 	/**
@@ -88,8 +83,8 @@ public class SclasAreaController {
 	 *   @return
 	 *   @throws Exception
 	 */
-	@RequestMapping(value = "/mgt/sclas/selectSclasArea.do")
-	public String selectSclas(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+	@RequestMapping(value = "/mgt/sclas/selectSclasItem.do")
+	public String selectSclasItem(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 		
 		DataMap param = RequestUtil.getDataMap(request);
 		
@@ -105,7 +100,7 @@ public class SclasAreaController {
 		model.addAttribute("opCodeMap", opCodeMap);
 		model.addAttribute("param", param);
 		
-		return "mgt/sclas/selectSclasArea";
+		return "mgt/sclas/selectSclasItem";
 	}
 
 }

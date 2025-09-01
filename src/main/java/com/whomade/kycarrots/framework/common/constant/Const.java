@@ -64,9 +64,9 @@ public class Const {
 	public static final String seedKey = EgovPropertiesUtil.getProperty("Globals.seedKey");
 	
 	//회원상태코드
-	public static final String userSttusCodeTempJoin = "0";	//임시가입
-	public static final String userSttusCodeActive = "10";		//활동
-	public static final String userSttusCodeOut = "20";			//탈퇴
+	public static final String userSttusCodeTempJoin = "0";			//임시가입
+	public static final String userSttusCodeActive = "10";			//활동
+	public static final String userSttusCodeOut = "20";				//탈퇴
 	public static final String userSttusCodeStop = "99";			//정지
 	
 	//TB_CODE_DTL 그룹코드 리스트
@@ -74,13 +74,13 @@ public class Const {
 	public static final String upCodeFrontCode = "10002000";
 	public static final String upCodeMobileCode = "10003000";
 	public static final String upCodeTopMenuId = "100010002000";
-	public static final String upCodeMenuTypeCode = "R010010";	// 메뉴유형코드
-	public static final String upCodeYn = "R010020";			// 여부코드
-	public static final String upCodeSex = "R010030";			// 성코드
-	public static final String upCodeCttpcSe = "R010040";		// 연락처구분코드
-	public static final String upCodeUserSttus = "R010050";		// 사용자상태코드
-	public static final String upCodeUserSe = "R010060";		// 사용자구분코드
-	public static final String upCodeArea = "R010070";		    // 지역코드 
+	public static final String upCodeMenuTypeCode = "R010010";			// 메뉴유형코드
+	public static final String upCodeYn = "R010020";					// 여부코드
+	public static final String upCodeSex = "R010030";					// 성코드
+	public static final String upCodeCttpcSe = "R010040";				// 연락처구분코드
+	public static final String upCodeUserSttus = "R010050";				// 사용자상태코드
+	public static final String upCodeUserSe = "R010060";				// 사용자구분코드
+	public static final String upCodeArea = "R010070";		    		// 지역코드
 	
 	public static final String upCodeNewsBbsSeCode = "R010130";			// 게시판 구분 코드
 	public static final String upCodeVoteTyCode = "R010140";			// 투표타입 코드
@@ -90,14 +90,9 @@ public class Const {
 	public static final String upCodePushSrvcCode = "R010180";			// 푸시 서비스 코드
 	public static final String upCodeDeviceCode = "R010190";			// 디바이스 코드
 	public static final String upCodeSndngSttusCode = "R010200";		// 발송 상태
-	public static final String upCodeItemCode = "R010210";		//품목류 구분 코드
-	public static final String upCodeAreaInfoCode = "R010220";		// 지역정보 구분 코드
-	public static final String upCodeATBranchCode = "R010230";		//  at 지사 코드
-	public static final String upCodeLdrOrgCode = "R010240";		//  선도조직 코드
-	public static final String upCodeCountryCode = "R010250";		//  국가 코드
-	public static final String upCodeCertCode = "R010260";		//  인증 코드
-	public static final String upCodeDlivyCode = "R010290";		// 출고구분
-	
+	public static final String upCodeItemCode = "R010610";				// 품목류 구분 코드
+	public static final String upCodeAreaInfoCode = "R010070";			// 지역정보 구분 코드
+
 	// 푸시 발송 상태코드
 	public static final String sndngSttusWait = "10";	// 대기중
 	public static final String sndngSttusSend = "20";	// 전송중

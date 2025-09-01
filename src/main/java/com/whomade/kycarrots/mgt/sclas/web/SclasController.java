@@ -44,8 +44,8 @@ public class SclasController {
 	 * 1. MethodName 	: selectPageListSclas
 	 * 2. ClassName  	: SclasController
 	 * 3. Comment   	: 코드대분류/중분류 리스트
-	 * 4. 작성자    			: SooHyun.Seo
-	 * 5. 작성일    			: 2017. 3. 13. 오후 4:08:28
+	 * 4. 작성자    		: SooHyun.Seo
+	 * 5. 작성일    		: 2017. 3. 13. 오후 4:08:28
 	 * </PRE>
 	 *   @return String
 	 *   @param request
@@ -64,7 +64,7 @@ public class SclasController {
 		param.put("ss_user_no", userInfoVo.getUserNo());
 		
 		// 아이템
-		codeParam.put("group_id", Const.upCodeItemCode);
+		codeParam.put("group_id", Const.upCodeAreaInfoCode);
 		codeParam.put("item_code", param.getString("item_code"));
 		
 		//코드리스트    -  대분류/중분류
@@ -85,11 +85,11 @@ public class SclasController {
 	
 	/**
 	 * <PRE>
-	 * 1. MethodName : selectSclas
+	 * 1. MethodName 	: selectSclas
 	 * 2. ClassName  	: SclasController
 	 * 3. Comment   	: 코드소분류리스트
-	 * 4. 작성자    			: SooHyun.Seo
-	 * 5. 작성일    			: 2018. 01. 26. 오후 1:03:07
+	 * 4. 작성자    		: SooHyun.Seo
+	 * 5. 작성일    		: 2018. 01. 26. 오후 1:03:07
 	 * </PRE>
 	 *   @return String
 	 *   @param request
@@ -123,8 +123,8 @@ public class SclasController {
 	 * 1. MethodName 	: updateSclas
 	 * 2. ClassName  	: SclasController
 	 * 3. Comment   	: 품목 수정
-	 * 4. 작성자    			: SooHyun.Seo
-	 * 5. 작성일    			: 2018. 01. 26. 오후 1:03:07
+	 * 4. 작성자    		: SooHyun.Seo
+	 * 5. 작성일    		: 2018. 01. 26. 오후 1:03:07
 	 * </PRE>
 	 *   @return String
 	 *   @param request
@@ -203,8 +203,8 @@ public class SclasController {
 	 * 1. MethodName 	: deleteSclas
 	 * 2. ClassName  	: SclasController
 	 * 3. Comment   	: 품목 삭제
-	 * 4. 작성자    			: SooHyun.Seo
-	 * 5. 작성일    			: 2018. 01. 26. 오후 1:03:07
+	 * 4. 작성자    		: SooHyun.Seo
+	 * 5. 작성일    		: 2018. 01. 26. 오후 1:03:07
 	 * </PRE>
 	 *   @return String
 	 *   @param request
