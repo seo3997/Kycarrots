@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/common")
+@RequestMapping(value = "/api/common")
 @Slf4j
 public class RestCommonController {
     private final OpCodeService opCodeService;

@@ -21,12 +21,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/members")
+@RequestMapping(value = "/api/members")
 @Slf4j
 public class RestMemberController {
     private final OpUserService opUserService;
@@ -212,5 +213,28 @@ public class RestMemberController {
             log.error("푸시 토큰 저장 오류", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류");
         }
+    }
+    @GetMapping("/wholesalers")
+    public ResponseEntity<List<OpUserVO>> getWholesalers(@RequestParam String memberCode) {
+        List<OpUserVO> list = opUserService.selectActiveWholesalers(memberCode);
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/default-wholesaler")
+    public ResponseEntity<Long> getDefaultWholesaler(@RequestParam String userId) {
+        Long wholesalerNo = opUserService.findWholesalerNoByUserId(userId);
+        if (wholesalerNo == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(wholesalerNo); //
+    }
+
+    @PostMapping("/default-wholesaler")
+    public ResponseEntity<Void> setDefaultWholesaler(@RequestParam String userId,@RequestParam Long wholesalerNo) {
+        OpUserVO opUserVO = new OpUserVO();
+        opUserVO.setUserId(userId);
+        opUserVO.setWholesalerNo(wholesalerNo+"");
+        opUserService.updateDefaultWholesalerByUserId(opUserVO);
+        return ResponseEntity.ok().build();
     }
 }

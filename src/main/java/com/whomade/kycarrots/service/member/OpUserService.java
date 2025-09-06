@@ -7,6 +7,8 @@ import com.whomade.kycarrots.repository.mybatis.member.OpUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author: ADMIN
  * @version: 1.0.0
@@ -42,4 +44,15 @@ public class OpUserService {
         return opUserRepository.fetchFcmToken(userId);
     }
 
+    public List<OpUserVO> selectActiveWholesalers(String memberCode) {
+        return opUserRepository.selectActiveWholesalers(memberCode);
+    }
+
+    // ✅ 추가: 기본 중간센터 조회/설정 (USER_ID 기준)
+    public Long findWholesalerNoByUserId(String userId) {
+        return opUserRepository.findWholesalerNoByUserId(userId);
+    }
+    public int updateDefaultWholesalerByUserId(OpUserVO user) {
+        return opUserRepository.updateDefaultWholesalerByUserId(user);
+    }
 }

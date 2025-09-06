@@ -6,6 +6,8 @@ import com.whomade.kycarrots.framework.common.object.DataMap;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @author: ADMIN
  * @version: 1.0.0
@@ -19,4 +21,8 @@ public interface OpUserMapper {
     boolean existsByEmail(@Param("email") String email);
     int updatePushToken(OpUserVO user);
     OpUserVO fetchFcmToken(@Param("userId") String userId);
+    // OpUserMapper.java
+    List<OpUserVO> selectActiveWholesalers(@Param("memberCode") String memberCode);
+    Long findWholesalerNoByUserId(@Param("userId") String userId);
+    int updateDefaultWholesalerByUserId(OpUserVO user);
 }

@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author: ADMIN
  * @version: 1.0.0
@@ -40,4 +42,16 @@ public class OpUserRepository {
     public OpUserVO fetchFcmToken(String userId) {
         return opUserMapper.fetchFcmToken(userId);
     }
+
+    public List<OpUserVO> selectActiveWholesalers(String memberCode) {
+        return opUserMapper.selectActiveWholesalers(memberCode);
+    }
+
+    public Long findWholesalerNoByUserId(String userId) {
+        return opUserMapper.findWholesalerNoByUserId(userId);
+    }
+    public int updateDefaultWholesalerByUserId(OpUserVO user) {
+        return opUserMapper.updateDefaultWholesalerByUserId(user);
+    }
+
 }

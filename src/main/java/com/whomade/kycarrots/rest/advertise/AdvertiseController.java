@@ -30,7 +30,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/product")
+@RequestMapping(value = "/api/product")
 @Slf4j
 public class AdvertiseController {
     private final EncodedTokenizer tokenizer;
