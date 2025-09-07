@@ -199,6 +199,7 @@ public class RestMemberController {
         }
 
         OpUserVO user = new OpUserVO();
+        user.setUserNo(request.getUserNo());
         user.setUserId(request.getUserId());
         user.setPushToken(request.getPushToken());
         user.setDeviceType(request.getDeviceType());

@@ -37,8 +37,19 @@
     <select id="selectTbProduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
         SELECT  <include refid="productColumns"/>
         FROM tb_product A
-        WHERE A.USER_NO =  #{userNo}
-        <!-- 항상 필터링: 판매 상태 -->
+        WHERE
+       <choose>
+            <when test='memberCode == "ROLE_SELL"'>
+                A.USER_NO = #{userNo}
+            </when>
+            <when test='memberCode == "ROLE_PROJ"'>
+                A.WHOLESALER_NO = #{userNo}
+            </when>
+            <otherwise>
+                1 = 0
+            </otherwise>
+        </choose>
+         <!-- 항상 필터링: 판매 상태 -->
         <if test="saleStatus != null and saleStatus != ''">
             AND A.SALE_STATUS = #{saleStatus}
         </if>
@@ -197,6 +208,7 @@
             UNIT_CODE,
             DESIRED_SHIPPING_DATE,
             SALE_STATUS,
+            WHOLESALER_NO,
             REGISTER_NO,
             REGIST_DT,
             UPDUSR_NO,
@@ -217,6 +229,7 @@
                      #{unitCode},             -- 단위 코드
                      #{desiredShippingDate},  -- 희망 출하일
                      #{saleStatus},           -- 판매 상태
+                     #{wholesalerNo},         -- 중간센터
                      #{registerNo},           -- 등록자 번호
                      CURRENT_TIMESTAMP,       -- 등록 일시
                      #{updusrNo},             -- 수정자 번호
@@ -357,14 +370,26 @@
 
     <select id="selectProductStatusCounts" parameterType="long" resultType="com.whomade.kycarrots.framework.common.object.DataMap">
         SELECT
-            COUNT(*) AS totalCount,
+            COUNT(SALE_STATUS) AS totalCount,
+            SUM(CASE WHEN SALE_STATUS = '0' THEN 1 ELSE 0 END) AS reguestCount,
             SUM(CASE WHEN SALE_STATUS IN ('1', '10') THEN 1 ELSE 0 END) AS processingCount,
             SUM(CASE WHEN SALE_STATUS = '99' THEN 1 ELSE 0 END) AS completedCount
         FROM tb_product
-        WHERE USER_NO = #{userNo}
+        WHERE
+        <choose>
+            <when test='memberCode == "ROLE_SELL"'>
+                USER_NO = #{userNo}
+            </when>
+            <when test='memberCode == "ROLE_PROJ"'>
+                WHOLESALER_NO = #{userNo}
+            </when>
+            <otherwise>
+                1 = 0
+            </otherwise>
+        </choose>
     </select>
 
-    <select id="selectRecentProductsByUser" parameterType="long" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
+    <select id="selectRecentProductsByUser" parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
         SELECT
             A.PRODUCT_ID,
             A.TITLE,
@@ -390,7 +415,18 @@
             A.DESIRED_SHIPPING_DATE,
             (SELECT USER_ID FROM op_user WHERE USER_NO = A.USER_NO) AS USER_ID
         FROM tb_product A
-        WHERE A.USER_NO = #{userNo}
+        WHERE
+        <choose>
+            <when test='memberCode == "ROLE_SELL"'>
+                A.USER_NO = #{userNo}
+            </when>
+            <when test='memberCode == "ROLE_PROJ"'>
+                A.WHOLESALER_NO = #{userNo}
+            </when>
+            <otherwise>
+                1 = 0
+            </otherwise>
+        </choose>
         ORDER BY A.REGIST_DT DESC
         LIMIT 3
     </select>
@@ -401,9 +437,8 @@
             U.USER_NO,
             U.DEVICE_TYPE,
             U.PUSH_TOKEN
-        FROM tb_product P
-                 JOIN op_user U ON P.WHOLESALER_NO = U.USER_NO
-        WHERE P.PRODUCT_ID = #{productId}
+        FROM op_user U
+        WHERE U.USER_NO = #{wholesalerNo}
     </select>
 
     <update id="updateProductStatus" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">

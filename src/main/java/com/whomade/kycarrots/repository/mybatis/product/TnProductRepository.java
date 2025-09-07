@@ -71,16 +71,16 @@ public class TnProductRepository {
         return tnProductMapper.deleteProductImage(imageId);
     }
 
-    public DataMap selectProductStatusCounts(Long userNo) {
-        return tnProductMapper.selectProductStatusCounts(userNo);
+    public DataMap selectProductStatusCounts(DataMap param) {
+        return tnProductMapper.selectProductStatusCounts(param);
     }
 
-    public List<TnProductVo> selectRecentProductsByUser(Long userNo){
-        return tnProductMapper.selectRecentProductsByUser(userNo);
+    public List<TnProductVo> selectRecentProductsByUser(DataMap param){
+        return tnProductMapper.selectRecentProductsByUser(param);
     }
 
-    public List<PushTargetDto> selectPushTargetsByProductId(String productId) {
-        return tnProductMapper.selectPushTargetsByProductId(productId);
+    public List<PushTargetDto> selectPushTargetsByProductId(long wholesalerNo) {
+        return tnProductMapper.selectPushTargetsByProductId(wholesalerNo);
     }
 
     public int updateProductStatus(TnProductVo vo) {

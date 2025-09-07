@@ -43,11 +43,11 @@ public interface TnProductMapper {
 
     int deleteProductImage(Long imageId);
 
-    DataMap selectProductStatusCounts(Long userNo);
+    DataMap selectProductStatusCounts(DataMap param);
 
-    List<TnProductVo> selectRecentProductsByUser(Long userNo);
+    List<TnProductVo> selectRecentProductsByUser(DataMap param);
 
-    List<PushTargetDto> selectPushTargetsByProductId(String productId);
+    List<PushTargetDto> selectPushTargetsByProductId(long wholesalerNo);
 
     int updateProductStatus(TnProductVo vo);
 

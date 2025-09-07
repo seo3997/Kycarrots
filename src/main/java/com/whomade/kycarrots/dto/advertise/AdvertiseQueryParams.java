@@ -23,4 +23,6 @@ public class AdvertiseQueryParams {
     private BigDecimal maxPrice;
 
     private String saleStatus;
+    private String memberCode;
+
 }

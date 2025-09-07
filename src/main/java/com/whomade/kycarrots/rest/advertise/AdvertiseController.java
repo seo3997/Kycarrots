@@ -12,6 +12,7 @@ import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.PagingUtil;
 import com.whomade.kycarrots.framework.common.util.encrypt.EncodedTokenizer;
 import com.whomade.kycarrots.push.FcmService;
+import com.whomade.kycarrots.service.member.OpUserService;
 import com.whomade.kycarrots.service.product.TnProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ import java.util.Map;
 public class AdvertiseController {
     private final EncodedTokenizer tokenizer;
     private final TnProductService tnProductService;
+    private final OpUserService opUserService;
     private final FcmService fcmService;
 
     @PostMapping(
@@ -55,6 +57,7 @@ public class AdvertiseController {
         DataMap param = new DataMap();
         param.put("userNo", opUserVO.getUserNo());
         param.put("saleStatus", q.getSaleStatus());
+        param.put("memberCode", q.getMemberCode());
         // 페이지당 항목 수
         PagingUtil.applyPaging(param, q.getPageno(), PagingUtil.DEFAULT_PAGE_SIZE);
 
@@ -131,6 +134,15 @@ public class AdvertiseController {
             @RequestPart("images") List<MultipartFile> images) {
 
         try {
+            if(!productVo.getSystemType().isEmpty() && productVo.getSystemType().equals("2")) {
+                Long defaultWh = opUserService.findWholesalerNoByUserNo(Long.parseLong(productVo.getUserNo()));
+                if (defaultWh == null) {
+                    return ResponseEntity.status(HttpStatus.PRECONDITION_REQUIRED)
+                            .body("중간센터 미지정. 먼저 기본 중간센터를 설정하세요.");
+                }
+                productVo.setWholesalerNo(defaultWh+"");
+            }
+
             tnProductService.insertProductWithImages(productVo, imageMetas, images);
             return ResponseEntity.ok("등록 성공");
         } catch (Exception e) {
@@ -178,9 +190,11 @@ public class AdvertiseController {
     public ResponseEntity<DataMap> getProductDashboard(@RequestParam("token") String token) {
         try {
             OpUserVO user = tokenizer.getMember(token);
-            Long userNo = Long.parseLong(user.getUserNo());
+            DataMap param = new DataMap();
+            param.put("userNo", user.getUserNo());
+            param.put("memberCode", user.getMemberCode());
 
-            DataMap result = tnProductService.getProductStatusCounts(userNo);
+            DataMap result = tnProductService.getProductStatusCounts(param);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             log.error("상품 대시보드 정보 조회 실패", e);
@@ -192,9 +206,10 @@ public class AdvertiseController {
     public ResponseEntity<List<TnProductVo>> getRecentProducts(@RequestParam("token") String token) {
         try {
             OpUserVO user = tokenizer.getMember(token);
-            Long userNo = Long.parseLong(user.getUserNo());
-
-            List<TnProductVo> recentProducts = tnProductService.getRecentProductsByUser(userNo);
+            DataMap param = new DataMap();
+            param.put("userNo", user.getUserNo());
+            param.put("memberCode", user.getMemberCode());
+            List<TnProductVo> recentProducts = tnProductService.getRecentProductsByUser(param);
             return ResponseEntity.ok(recentProducts);
         } catch (Exception e) {
             log.error("최근 상품 조회 실패", e);

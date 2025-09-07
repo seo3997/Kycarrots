@@ -126,30 +126,34 @@ public class TnProductService {
         String userId = productVo.getUserId();
         String productId = productVo.getProductId();
         String productTitle = productVo.getTitle();
+
         String messaeTitle = "";
         String messaeBody = "";
 
         if ("0".equals(saleStatus)) {
             // 승인요청: 중간센터/도매상에게 token으로 전송
-            List<PushTargetDto> centerUsers = tnProductRepository.selectPushTargetsByProductId(productId); // token + userId
-            for (PushTargetDto user : centerUsers) {
-                messaeTitle = "상품 승인 요청";
-                messaeBody  = productTitle + " 상품이 등록되었습니다. 승인해주세요.";
-                fcmService.sendPushToUserAndLog(
-                        user.getUserNo(),
-                        user.getPushToken(),
-                        messaeTitle,
-                        messaeBody,
-                        productId,
-                        "승인요청",
-                        Map.of(
-                                "productId", productId,
-                                "userId", userId,
-                                "type", "product",
-                                "title", messaeTitle,
-                                "body", messaeBody
-                        )
-                );
+            long wholesalerNo = Long.parseLong(productVo.getWholesalerNo());
+            List<PushTargetDto> centerUsers = tnProductRepository.selectPushTargetsByProductId(wholesalerNo); // token + userId
+            if(centerUsers != null) {
+                for (PushTargetDto user : centerUsers) {
+                    messaeTitle = "상품 승인 요청";
+                    messaeBody = productTitle + " 상품이 등록되었습니다. 승인해주세요.";
+                    fcmService.sendPushToUserAndLog(
+                            user.getUserNo(),
+                            user.getPushToken(),
+                            messaeTitle,
+                            messaeBody,
+                            productId,
+                            "승인요청",
+                            Map.of(
+                                    "productId", productId,
+                                    "userId", userId,
+                                    "type", "product",
+                                    "title", messaeTitle,
+                                    "body", messaeBody
+                            )
+                    );
+                }
             }
         } else if ("1".equals(saleStatus)) {
             // 판매중: 일반 구매자에게 topic으로 브로드캐스트
@@ -250,12 +254,12 @@ public class TnProductService {
         tnProductRepository.deleteProductImage(imageId);
     }
 
-    public DataMap getProductStatusCounts(Long userNo) {
-        return tnProductRepository.selectProductStatusCounts(userNo);
+    public DataMap getProductStatusCounts(DataMap param) {
+        return tnProductRepository.selectProductStatusCounts(param);
     }
 
-    public List<TnProductVo> getRecentProductsByUser(Long userNo){
-        return tnProductRepository.selectRecentProductsByUser(userNo);
+    public List<TnProductVo> getRecentProductsByUser(DataMap param){
+        return tnProductRepository.selectRecentProductsByUser(param);
     }
 
     public int updateProductStatus(TnProductVo vo) {

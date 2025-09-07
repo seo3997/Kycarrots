@@ -24,5 +24,6 @@ public interface OpUserMapper {
     // OpUserMapper.java
     List<OpUserVO> selectActiveWholesalers(@Param("memberCode") String memberCode);
     Long findWholesalerNoByUserId(@Param("userId") String userId);
+    Long findWholesalerNoByUserNo(@Param("userNo") Long userNo);
     int updateDefaultWholesalerByUserId(OpUserVO user);
 }

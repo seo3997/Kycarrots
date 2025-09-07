@@ -50,6 +50,9 @@ public class OpUserRepository {
     public Long findWholesalerNoByUserId(String userId) {
         return opUserMapper.findWholesalerNoByUserId(userId);
     }
+    public Long findWholesalerNoByUserNo(Long userNo) {
+        return opUserMapper.findWholesalerNoByUserNo(userNo);
+    }
     public int updateDefaultWholesalerByUserId(OpUserVO user) {
         return opUserMapper.updateDefaultWholesalerByUserId(user);
     }

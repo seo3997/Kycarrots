@@ -97,9 +97,9 @@
 
     <update id="updatePushToken" parameterType="com.whomade.kycarrots.entity.member.OpUserVO">
         UPDATE op_user
-        SET PUSH_TOKEN = #{pushToken}
+        SET PUSH_TOKEN  = #{pushToken}
            ,DEVICE_TYPE = #{deviceType}
-        WHERE USER_ID = #{userId}
+        WHERE USER_NO   = #{userNo}
     </update>
 
     <select id="fetchFcmToken" resultType="com.whomade.kycarrots.entity.member.OpUserVO" parameterType="string">
@@ -122,6 +122,13 @@
         SELECT A.WHOLESALER_NO
         FROM op_user A
         WHERE A.USER_ID = #{userId}
+            LIMIT 1
+    </select>
+
+    <select id="findWholesalerNoByUserNo" parameterType="long" resultType="long">
+        SELECT A.WHOLESALER_NO
+        FROM op_user A
+        WHERE A.USER_NO = #{userNo}
         LIMIT 1
     </select>
 

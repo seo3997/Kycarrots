@@ -50,5 +50,6 @@ public class TnProductVo {
     private String wholesalerId;
     private String rejectReason;
     private String fav;
+    private String systemType;
 
 }
