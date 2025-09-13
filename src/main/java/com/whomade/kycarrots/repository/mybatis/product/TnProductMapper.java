@@ -47,7 +47,7 @@ public interface TnProductMapper {
 
     List<TnProductVo> selectRecentProductsByUser(DataMap param);
 
-    List<PushTargetDto> selectPushTargetsByProductId(long wholesalerNo);
+    PushTargetDto selectPushTargetsByProductId(long wholesalerNo);
 
     int updateProductStatus(TnProductVo vo);
 

@@ -79,7 +79,7 @@ public class TnProductRepository {
         return tnProductMapper.selectRecentProductsByUser(param);
     }
 
-    public List<PushTargetDto> selectPushTargetsByProductId(long wholesalerNo) {
+    public PushTargetDto selectPushTargetsByProductId(long wholesalerNo) {
         return tnProductMapper.selectPushTargetsByProductId(wholesalerNo);
     }
 

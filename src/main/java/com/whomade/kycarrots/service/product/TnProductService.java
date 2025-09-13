@@ -8,8 +8,10 @@ import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.file.FileUtil;
 import com.whomade.kycarrots.push.FcmService;
 import com.whomade.kycarrots.push.PushTargetDto;
+import com.whomade.kycarrots.push.SaleStatus;
 import com.whomade.kycarrots.repository.mybatis.product.TnProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +31,7 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TnProductService {
 
     @Value("${file.public-url}")
@@ -133,27 +137,25 @@ public class TnProductService {
         if ("0".equals(saleStatus)) {
             // 승인요청: 중간센터/도매상에게 token으로 전송
             long wholesalerNo = Long.parseLong(productVo.getWholesalerNo());
-            List<PushTargetDto> centerUsers = tnProductRepository.selectPushTargetsByProductId(wholesalerNo); // token + userId
+            PushTargetDto centerUsers = tnProductRepository.selectPushTargetsByProductId(wholesalerNo); // token + userId
             if(centerUsers != null) {
-                for (PushTargetDto user : centerUsers) {
-                    messaeTitle = "상품 승인 요청";
-                    messaeBody = productTitle + " 상품이 등록되었습니다. 승인해주세요.";
-                    fcmService.sendPushToUserAndLog(
-                            user.getUserNo(),
-                            user.getPushToken(),
-                            messaeTitle,
-                            messaeBody,
-                            productId,
-                            "승인요청",
-                            Map.of(
-                                    "productId", productId,
-                                    "userId", userId,
-                                    "type", "product",
-                                    "title", messaeTitle,
-                                    "body", messaeBody
-                            )
-                    );
-                }
+                messaeTitle = "상품 승인 요청";
+                messaeBody = productTitle + " 상품이 등록되었습니다. 승인해주세요.";
+                fcmService.sendPushToUserAndLog(
+                        centerUsers.getUserNo(),
+                        centerUsers.getPushToken(),
+                        messaeTitle,
+                        messaeBody,
+                        productId,
+                        "승인요청",
+                        Map.of(
+                                "productId", productId,
+                                "userId", userId,
+                                "type", "product",
+                                "title", messaeTitle,
+                                "body", messaeBody
+                        )
+                );
             }
         } else if ("1".equals(saleStatus)) {
             // 판매중: 일반 구매자에게 topic으로 브로드캐스트
@@ -263,7 +265,24 @@ public class TnProductService {
     }
 
     public int updateProductStatus(TnProductVo vo) {
-        return tnProductRepository.updateProductStatus(vo);
+        int iReturn =0;
+        // 1) 기존 상태 조회
+        String productId = vo.getProductId();
+        DataMap param = new DataMap();
+        param.put("productId", productId);
+        TnProductVo product = tnProductRepository.selectProductById(param);
+        String oldStatus = product.getSaleStatus();
+
+        iReturn = tnProductRepository.updateProductStatus(vo);
+
+        //중간센터 도매상용
+        if (vo.getSystemType().equals("2")) {
+            if (vo != null && oldStatus != null && vo.getSaleStatus() != null) {
+                handleStatusChange(product, oldStatus, vo.getSaleStatus());
+            }
+        }
+
+        return iReturn;
     }
 
     public TnProductVo getProduct(DataMap param) {
@@ -283,5 +302,113 @@ public class TnProductService {
     }
     public List<Map<String,Object>> getChatBuyers(DataMap param) {
         return tnProductRepository.findChatBuyersByProductAndSeller(param);
+    }
+
+    public void handleStatusChange(TnProductVo p, String oldStatusCode, String newStatusCode) {
+        var oldS = SaleStatus.of(oldStatusCode);
+        var newS = SaleStatus.of(newStatusCode);
+        Map<String, String> payload = new LinkedHashMap<>(); // 순서 유지해서 로그 가독성 ↑
+
+        // 0->1: 승인됨 → 모든 구매자에게 브로드캐스트
+        if (oldS == SaleStatus.REQUEST && newS == SaleStatus.ON_SALE) {
+            String title = "신규 상품 등록";
+            String body  = p.getTitle() + " 상품이 판매중으로 등록되었습니다.";
+
+            payload.put("type", "product");
+            payload.put("productId", p.getProductId());
+            payload.put("userId", p.getUserId());
+            payload.put("title", title);
+            payload.put("body", body);
+            log.debug("####payload[" + payload + "]");
+
+            fcmService.sendPushToTopic(
+                    "ROLE_PUB",
+                    title,
+                    body,
+                    payload
+            );
+        }
+
+        // 0->98: 반려됨 → 판매자에게 수정요청
+        else if (oldS == SaleStatus.REQUEST && newS == SaleStatus.REJECT) {
+            String title = "상품 반려 안내";
+            String body  = p.getTitle() + " 상품이 반려되었습니다. 내용을 수정 후 재승인 요청해주세요.";
+            // 판매자 단일 대상 푸시 (토큰/유저 조회)
+            PushTargetDto seller = tnProductRepository.selectPushTargetsByProductId(Long.parseLong(p.getUserNo())); // userNo, pushToken 등
+            if (seller != null) {
+                payload.put("type", "product");
+                payload.put("productId", p.getProductId());
+                payload.put("userId", p.getUserId());
+                payload.put("title", title);
+                payload.put("body", body);
+                log.debug("####payload[" + payload + "]");
+
+                fcmService.sendPushToUserAndLog(
+                        seller.getUserNo(),
+                        seller.getPushToken(),
+                        title,
+                        body,
+                        p.getProductId(),
+                        "반려",
+                        payload
+                );
+            }
+        }
+
+        // 98->0: 재승인 요청 → 중간센터/도매상에게 알림
+        else if (oldS == SaleStatus.REJECT && newS == SaleStatus.REQUEST) {
+            String title = "재승인 요청";
+            String body  = p.getTitle() + " 상품이 수정되어 재승인 요청되었습니다.";
+            long wholesalerNo = Long.parseLong(p.getWholesalerNo());
+            PushTargetDto centerUsers = tnProductRepository.selectPushTargetsByProductId(wholesalerNo);
+            if (centerUsers != null) {
+                payload.put("type", "product");
+                payload.put("productId", p.getProductId());
+                payload.put("userId", p.getUserId());
+                payload.put("title", title);
+                payload.put("body", body);
+                log.debug("####payload[" + payload + "]");
+
+                fcmService.sendPushToUserAndLog(
+                        centerUsers.getUserNo(),
+                        centerUsers.getPushToken(),
+                        title,
+                        body,
+                        p.getProductId(),
+                        "재승인요청",
+                        payload
+                );
+            }
+        }
+
+        // 필요 시: 1->99(판매완료) 등도 여기서 추가 가능
+        else if (oldS == SaleStatus.ON_SALE && newS == SaleStatus.DONE) {
+            String title = "판매 완료";
+            String body  = p.getTitle() + " 상품이 판매 완료되었습니다.";
+
+            payload = new LinkedHashMap<>();
+            payload.put("type", "product");
+            payload.put("productId", p.getProductId());
+            payload.put("userId", p.getUserId());
+            payload.put("title", title);
+            payload.put("body", body);
+            log.debug("####payload {}", payload);
+
+            // 판매자 단건 (p.getUserId()를 판매자 ID로 사용)
+            PushTargetDto seller = tnProductRepository.selectPushTargetsByProductId(Long.parseLong(p.getUserNo()));
+            if (seller != null) {
+                fcmService.sendPushToUserAndLog(
+                        seller.getUserNo(),
+                        seller.getPushToken(),
+                        title,
+                        body,
+                        p.getProductId(),
+                        "판매완료",
+                        payload
+                );
+            } else {
+                log.warn("판매완료 푸시 스킵: 판매자 토큰 없음 userId={}", p.getUserId());
+            }
+        }
     }
 }
