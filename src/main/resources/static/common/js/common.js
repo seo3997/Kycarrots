@@ -8,9 +8,22 @@
  *       파라미터로 받는다. 필드의 값(myform.myfield.value)이 아님을
  *       유념할 것.
  *
- * @version 1.1, 2000/10/06
- * @author 박종진(JongJin Park), ecogeo@dreamwiz.com
- */
+ * @version 1.1, 2025/09/13
+ * @author SeoSooHyun, ecogeo@dreamwiz.com
+ * */
+
+// common.js 내부, 전역(= $(function) 바깥)
+window.addEventListener('pageshow', function (e) {
+	// 뒤로 가기(bfcache 복원)든 신규 로드든 도착하면 항상 마스크 OFF
+	wrapLoadingMask('hide');
+	// 디버그 확인용
+	if (e.persisted) console.log('[BFCache] restored');
+});
+
+window.addEventListener('pagehide', function () {
+	// 페이지 떠날 때(앞/뒤 이동 포함) 항상 OFF
+	wrapLoadingMask('hide');
+});
 
 //로딩바 이벤트 (로딩 on)
 window.onbeforeunload = function(e){
