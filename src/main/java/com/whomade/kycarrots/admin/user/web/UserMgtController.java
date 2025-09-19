@@ -77,7 +77,9 @@ public class UserMgtController {
 		
 		DataMap param = RequestUtil.getDataMap(request);
 		DataMap codeParam= new DataMap();
-		
+		// 권한 리스트 조회
+		List authList = userMgtService.selectListAuthor(param);
+
 		/* ### Pasing 시작 ### */
 		int totCnt = userMgtService.selectTotCntUser(param);
 		param.put("totalCount", totCnt);
@@ -98,7 +100,8 @@ public class UserMgtController {
 		model.addAttribute("totalCount", totCnt);
 		model.addAttribute("resultList", resultList);
 		model.addAttribute("param", param);
-		
+		model.addAttribute("authList", authList);
+
 		return "admin/user/selectPageListUserMgt";
 	}
 
@@ -317,8 +320,8 @@ public class UserMgtController {
 	 * 1. MethodName 	: updateUserMgt
 	 * 2. ClassName  	: UserMgtController
 	 * 3. Comment   	: 사용자 수정
-	 * 4. 작성자				: 서수현
-	 * 5. 작성일				: 2017.12.22. 오후 3:39:20
+	 * 4. 작성자			: 서수현
+	 * 5. 작성일			: 2017.12.22. 오후 3:39:20
 	 * </PRE>
 	 *   @return String
 	 *   @param request

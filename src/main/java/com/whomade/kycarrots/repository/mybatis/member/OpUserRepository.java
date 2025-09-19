@@ -28,9 +28,6 @@ public class OpUserRepository {
     public int insertUser(OpUserVO user) {
         return opUserMapper.insertUser(user);
     }
-    public int insertAuthUser(OpUserAuthorVO opUserAuthorVO) {
-        return opUserMapper.insertAuthUser(opUserAuthorVO);
-    }
 
     public boolean existsByEmail(String email) {
         return opUserMapper.existsByEmail(email);

@@ -17,7 +17,6 @@ import java.util.List;
 public interface OpUserMapper {
     OpUserVO seelectUser(DataMap param);
     int insertUser(OpUserVO user);
-    int insertAuthUser(OpUserAuthorVO opUserAuthorVO);
     boolean existsByEmail(@Param("email") String email);
     int updatePushToken(OpUserVO user);
     OpUserVO fetchFcmToken(@Param("userId") String userId);

@@ -38,13 +38,6 @@ public class MemberServiceImpl extends EgovAbstractServiceImpl implements Member
 	@Transactional 
 	public void insertUser(DataMap param) throws Exception {
 		commonMybatisDao.insert("front.user.insertUser", param);
-		
-		DataMap authMap = new DataMap();
-		authMap.put("user_no",    param.getString("user_no"));
-		authMap.put("author_id", "ROLE_PUB");
-		authMap.put("register_no",1);
-		commonMybatisDao.insert("front.user.insertAuthUser", authMap);
-		
 	}
 	/**
 	 * <PRE>

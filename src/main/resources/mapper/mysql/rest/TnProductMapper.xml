@@ -236,7 +236,14 @@
                      #{unitCode},             -- 단위 코드
                      #{desiredShippingDate},  -- 희망 출하일
                      #{saleStatus},           -- 판매 상태
-                     #{wholesalerNo},         -- 중간센터
+                    <choose>
+                        <when test="wholesalerNo != null and wholesalerNo != ''">
+                            #{wholesalerNo}
+                        </when>
+                        <otherwise>
+                            NULL
+                        </otherwise>
+                    </choose>,
                      #{registerNo},           -- 등록자 번호
                      CURRENT_TIMESTAMP,       -- 등록 일시
                      #{updusrNo},             -- 수정자 번호
@@ -379,9 +386,10 @@
     <select id="selectProductStatusCounts" parameterType="long" resultType="com.whomade.kycarrots.framework.common.object.DataMap">
         SELECT
             COUNT(SALE_STATUS) AS totalCount,
-            SUM(CASE WHEN SALE_STATUS IN ('0', '98') THEN 1 ELSE 0 END) AS reguestCount,
-            SUM(CASE WHEN SALE_STATUS IN ('1', '10') THEN 1 ELSE 0 END) AS processingCount,
-            SUM(CASE WHEN SALE_STATUS = '99' THEN 1 ELSE 0 END) AS completedCount
+            IFNULL(SUM(CASE WHEN SALE_STATUS IN ('0', '98') THEN 1 ELSE 0 END), 0) AS reguestCount,
+            IFNULL(SUM(CASE WHEN SALE_STATUS IN ('1', '10') THEN 1 ELSE 0 END), 0) AS processingCount,
+            IFNULL(SUM(CASE WHEN SALE_STATUS = '99' THEN 1 ELSE 0 END), 0) AS completedCount,
+            IFNULL(SUM(CASE WHEN DATE(REGIST_DT) = CURDATE() THEN 1 ELSE 0 END), 0) AS todayCount
         FROM tb_product
         WHERE
         <choose>
@@ -392,7 +400,7 @@
                 WHOLESALER_NO = #{userNo}
             </when>
             <otherwise>
-                1 = 0
+                1 = 1
             </otherwise>
         </choose>
     </select>

@@ -86,21 +86,6 @@ public class UserMgtServiceImpl extends EgovAbstractServiceImpl implements UserM
 	 */
 	public void insertUser(DataMap param) throws Exception {
 		commonMybatisDao.insert("admin.user.insertUser", param);
-		
-		List authList = param.getList("author_id");
-		
-		DataMap authMap = new DataMap();
-		authMap.put("user_no", param.getString("user_no"));
-		authMap.put("ss_user_no", param.getString("ss_user_no"));
-		if(authList != null){
-			for(int i = 0; i < authList.size(); i++){
-				if("ROLE_EXT".equals( authList.get(i))) continue;
-				authMap.put("author_id", authList.get(i));
-				commonMybatisDao.insert("admin.user.insertAuthUser", authMap);
-			}
-		}
-		
-		
 	}
 	/**
 	 * <PRE>
@@ -152,22 +137,6 @@ public class UserMgtServiceImpl extends EgovAbstractServiceImpl implements UserM
 	 */
 	public void updateUser(DataMap param) throws Exception {
 		commonMybatisDao.update("admin.user.updateUser", param);
-		commonMybatisDao.delete("admin.user.deleteAuthUser", param);
-		
-		List authList = param.getList("author_id");
-
-		DataMap authMap = new DataMap();
-		authMap.put("user_no", param.getString("user_no"));
-		authMap.put("ss_user_no", param.getString("ss_user_no"));
-		if(authList != null){
-			for(int i = 0; i < authList.size(); i++){
-				if("ROLE_EXT".equals( authList.get(i))) continue;
-				authMap.put("author_id", authList.get(i));
-				commonMybatisDao.insert("admin.user.insertAuthUser", authMap);
-			}
-		}
-
-		
 	}
 	
 	/**
@@ -228,7 +197,6 @@ public class UserMgtServiceImpl extends EgovAbstractServiceImpl implements UserM
 	 *   @throws Exception
 	 */
 	public void deleteUser(DataMap param) throws Exception {
-		commonMybatisDao.delete("admin.user.deleteAuthUser", param);  //권한을 삭제 하지 않는다.
     	commonMybatisDao.delete("admin.user.deleteUser", param);
 	}
 

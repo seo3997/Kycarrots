@@ -118,7 +118,7 @@
 	LEFT OUTER JOIN (
 		SELECT DISTINCT(MENU_ID) FROM op_author_menu
 		WHERE AUTHOR_ID IN (
-			SELECT AUTHOR_ID FROM op_user_author
+			SELECT MEMBER_CODE FROM op_user
 			WHERE USER_NO = #{ss_user_no}
 		)
 	) B
@@ -141,7 +141,7 @@
 	LEFT OUTER JOIN (
 		SELECT DISTINCT(MENU_ID) FROM op_author_menu
 		WHERE AUTHOR_ID IN (
-			SELECT AUTHOR_ID FROM op_user_author
+			SELECT MEMBER_CODE FROM op_user
 			WHERE USER_NO = #{ss_user_no}
 		)
 	) B
@@ -198,9 +198,9 @@
 	<select id="selectListUserAcessMenu" parameterType="dataMap" resultType="String">
 	/* common.selectListUserAcessMenu */
 	SELECT DISTINCT D.URL
-	FROM op_user A, op_user_author B, op_author_menu C, op_menu D
+	FROM op_user A, op_author_menu C, op_menu D
 	WHERE A.USER_NO = B.USER_NO
-		AND B.AUTHOR_ID = C.AUTHOR_ID
+		AND A.MEMBER_CODE = C.AUTHOR_ID
 		AND C.MENU_ID = D.MENU_ID
 		AND A.USER_NO = #{ss_user_no}
 		AND D.URL IS NOT NULL

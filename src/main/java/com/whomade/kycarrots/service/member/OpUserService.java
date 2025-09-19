@@ -28,10 +28,6 @@ public class OpUserService {
         return opUserRepository.insertUser(user);
     }
 
-    public int insertAuthUser(OpUserAuthorVO opUserAuthorVO) {
-        return opUserRepository.insertAuthUser(opUserAuthorVO);
-    }
-
     public boolean existsByEmail(String email) {
         return opUserRepository.existsByEmail(email);
     }

@@ -45,6 +45,8 @@
 			, A.EMAIL
 			, A.USER_STTUS_CODE
 			, C.CODE_NM AS USER_STTUS_NM
+		    , A.MEMBER_CODE AS AUTHOR_ID
+		    , (SELECT AUTHOR_NM FROM op_author WHERE AUTHOR_ID = A.MEMBER_CODE) AS AUTHOR_NM
 		FROM op_user A
 		LEFT OUTER JOIN op_user B ON A.REGISTER_NO = B.USER_NO
 		LEFT OUTER JOIN op_code C ON A.USER_STTUS_CODE = C.CODE AND C.GROUP_ID = 'R010050'
@@ -73,6 +75,9 @@
 		<if test="sch_user_sttus_code != null and sch_user_sttus_code != ''">
 			AND A.USER_STTUS_CODE =#{sch_user_sttus_code}
 		</if>
+		<if test="sch_user_author != null and sch_user_author != ''">
+			AND A.MEMBER_CODE =#{sch_user_author}
+		</if>
 	</sql>
 
 
@@ -96,6 +101,7 @@
 		, CTTPC
 		, EMAIL
 		, USER_STTUS_CODE
+		, MEMBER_CODE
 		, REGISTER_NO
 		, REGIST_DT
 	) VALUES (
@@ -110,6 +116,7 @@
 		, #{cttpc}
 		, #{email}
 		, #{user_sttus_code}
+		, #{author_id}
 		, #{ss_user_no}
 		, CURRENT_TIMESTAMP
 	)
@@ -187,6 +194,7 @@
 		, A.AREA_SE_CODE_S
 		, A.AREA_SE_CODE_D
 		, D.CODE_NM AS AREA_NM
+	    , (SELECT SCLAS_NM FROM op_sclas_code WHERE GROUP_ID='R010070' AND CODE = A.AREA_CODE AND SCLAS_CODE = A.AREA_SE_CODE_S) AS AREA_SE_CODE_S_NM
 		, A.USER_NM
 		, A.CTTPC_SE_CODE
 		, C.CODE_NM AS CTTPC_SE_NM
@@ -225,6 +233,7 @@
 		<if test="enPwd != null and enPwd != ''">
 		, PASSWORD = #{enPwd}
 		</if>
+	    , MEMBER_CODE   = #{author_id}
 		, UPDUSR_NO 	= #{ss_user_no}
 		, UPDT_DT 		= CURRENT_TIMESTAMP
 	WHERE USER_NO = #{user_no}
@@ -275,15 +284,6 @@
 	]]>
 	</delete>
 
-	<delete id="deleteAuthUser" parameterType="dataMap">
-	/* admin.user.deleteAuthUser */
-	<![CDATA[
-	DELETE 
-	FROM op_user_author
-	WHERE USER_NO = #{user_no}
-	]]>
-	</delete>
-	
 	<select id="selectIdExistYn" parameterType="dataMap" resultType="string">
 	/* admin.user.selectIdExistYn */
 	SELECT
@@ -323,29 +323,15 @@
 	FROM op_author A
 	</select>
 	
-	<insert id="insertAuthUser" parameterType="dataMap">
-	/* admin.user.insertAuthUser */
-	INSERT INTO op_user_author (
-		USER_NO
-		, AUTHOR_ID
-		, REGISTER_NO
-		, REGIST_DT
-	) VALUES (
-		#{user_no}
-		, #{author_id}
-		, #{ss_user_no}
-		, CURRENT_TIMESTAMP
-	)
-	</insert>
-	
+
 	<select id="selectListAuthorUser" parameterType="dataMap" resultType="dataMap">
 	/* admin.user.selectListAuthorUser */
-	 SELECT A.AUTHOR_ID
+	 SELECT A.MEMBER_CODE AS AUTHOR_ID
 		, A.USER_NO 
 		, B.AUTHOR_NM
-	FROM op_user_author A
+	FROM op_user A
 	LEFT OUTER JOIN op_author B
-		ON A.AUTHOR_ID = B.AUTHOR_ID
+		ON A.MEMBER_CODE = B.AUTHOR_ID
 	WHERE A.USER_NO = #{user_no}
 	</select>
 	

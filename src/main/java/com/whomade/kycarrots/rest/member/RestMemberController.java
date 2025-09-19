@@ -151,11 +151,6 @@ public class RestMemberController {
             user.setPassword(encryptedPassword);
 
             int result = opUserService.insertUser(user);
-            OpUserAuthorVO opUserAuthorVO = new OpUserAuthorVO();
-            opUserAuthorVO.setUserNo(Long.parseLong(user.getUserNo()));
-            opUserAuthorVO.setAuthorId(user.getMemberCode());
-            opUserAuthorVO.setRegisterNo(1);
-            opUserService.insertAuthUser(opUserAuthorVO);
 
             if (result > 0) {
                 response.put("result", true);

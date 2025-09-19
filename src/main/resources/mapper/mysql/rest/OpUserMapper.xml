@@ -75,20 +75,6 @@
                  )
     </insert>
 
-    <insert id="insertAuthUser" parameterType="com.whomade.kycarrots.entity.member.OpUserAuthorVO">
-        /* admin.user.insertAuthUser */
-        INSERT INTO op_user_author (
-                                     USER_NO
-                                   , AUTHOR_ID
-                                   , REGISTER_NO
-                                   , REGIST_DT
-        ) VALUES (
-                   #{userNo}
-                 , #{authorId}
-                 , #{registerNo}
-                 , CURRENT_TIMESTAMP
-                 )
-    </insert>
     <select id="existsByEmail" resultType="boolean" parameterType="string">
         SELECT COUNT(1) > 0
         FROM op_user

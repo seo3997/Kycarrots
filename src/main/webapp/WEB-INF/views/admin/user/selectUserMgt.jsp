@@ -124,42 +124,17 @@
 					</div>
 
 					<div class="form-group row">
-						<label for="" class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">업체명</label>
+						<label for="" class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">등록일</label>
 						<div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
-							<%=resultMap.getString("COMPANY_NAME") %>
-						</div>
-						<div class="form-hidden-line w-100 d-sm-block d-md-none d-lg-none" style="height: 1px; background-color: #ebebeb;"></div>
-						<label for="" class="control-label col-xs-12 col-sm-3 col-md-2 col-lg-2">등록일</label>
-						<div class="col-xs-12 col-sm-9 col-md-4 col-lg-4">
 							<%=resultMap.getString("REGIST_YMD") %>
 						</div>
-					</div>
-					
-					<div class="form-group row">
-						<label for="CTTPC_SE_CODE" class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">사용자 레벨</label>
-						<div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
-							<%=resultMap.getString("CTTPC_SE_NM") %>
-						</div>
-					</div>
-
-
-					<% 
-						if("ROLE_PUBD".equals(resultMap.getString("AUTHOR_ID")) || "ROLE_LCONF".equals(resultMap.getString("AUTHOR_ID"))){
-					%>
-					<div class="form-group row">
-						<label for="" class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">카테고리</label>
-						<div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
-							<%=resultMap.getString("PROJECT_COMPANY_NM")+" / "+resultMap.getString("PROJECT_CODE_MNM") %>
-						</div>
 						<div class="form-hidden-line w-100 d-sm-block d-md-none d-lg-none" style="height: 1px; background-color: #ebebeb;"></div>
-						<label for="" class="control-label col-xs-12 col-sm-3 col-md-2 col-lg-2">검수건수</label>
+						<label for="" class="control-label col-xs-12 col-sm-3 col-md-2 col-lg-2">지역</label>
 						<div class="col-xs-12 col-sm-9 col-md-4 col-lg-4">
-							<%=resultMap.getString("APPLY_CNT") %>
+							<%=resultMap.getString("AREA_NM") %> <%=resultMap.getString("AREA_SE_CODE_S_NM") %>
 						</div>
 					</div>
-					<% 
-						}
-					%>
+
 
 				</div>
 

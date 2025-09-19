@@ -60,6 +60,27 @@
 				return false;
 			}
 
+			if($("#email").val() == ""){
+				alert("이메일을 입력해 주세요.");
+				$("#email").focus();
+				return;
+			}
+			const $areaM = $("#area_se_code_m");
+			// 첫 옵션(placeholder)이 선택된 상태면 실패
+			if ($areaM.prop("selectedIndex") === 0) {
+				alert("지역을 선택해 주세요.");
+				$areaM.focus();
+				return;
+			}
+
+			const $areaS = $("#area_se_code_s");
+			// 첫 옵션(placeholder)이 선택된 상태면 실패
+			if ($areaS.prop("selectedIndex") === 0) {
+			  alert("지역(중분류)을 선택해 주세요.");
+			  $areaS.focus();
+			  return;
+			}
+
 			if($("input:radio[name='author_id']").is(":checked") == false){
 				alert("사용자 권한을 체크해 주세요");
 				return false;
@@ -96,12 +117,12 @@
 		<section class="content container-fluid vw-page">
 					<form role="form" id="aform" method="post" action="/admin/user/updateUserMgt.do" class="form-horizontal">
 						<input type="hidden" id="user_no" 				name="user_no" 				value="<%=resultMap.getString("USER_NO") %>" />
-						<input type="hidden" id="cttpc" 					name="cttpc" 					value="<%=resultMap.getString("CTTPC") %>" />
-						<input type="hidden" id="cttpc_se_code" 		name="cttpc_se_code" 	value="10" />
-						<input type="hidden" id="user_nm_chg" 		name="user_nm_chg" 		value="<%=resultMap.getString("USER_NM") %>" />
+						<input type="hidden" id="cttpc" 				name="cttpc" 				value="<%=resultMap.getString("CTTPC") %>" />
+						<input type="hidden" id="cttpc_se_code" 		name="cttpc_se_code" 		value="10" />
+						<input type="hidden" id="user_nm_chg" 			name="user_nm_chg" 			value="<%=resultMap.getString("USER_NM") %>" />
 						<input type="hidden" id="cttpc_chg" 			name="cttpc_chg" 			value="<%=resultMap.getString("CTTPC") %>" />
 						<input type="hidden" id="email_chg" 			name="email_chg" 	 		value="<%=resultMap.getString("EMAIL") %>" />
-						<input type="hidden" 	name="area_se_code_l"	id="area_se_code_l" 			value="R010070"  />
+						<input type="hidden" id="area_se_code_l"		name="area_se_code_l"	 	value="R010070"  />
 						
 					<div class="card">
 						<h4 class="cardTitle"><i class="fa fa-caret-square-right"></i> 기본정보</h4>
@@ -171,11 +192,13 @@
 										<option value="">선택하세요</option>
 									</select>
 								</div>
+								<!--
 					    		<div class="col-sm-2">
 									<select class="form-control"  name="area_se_code_d"  id="area_se_code_d" >
 										<option value="">선택하세요</option>
 									</select>
 								</div>
+								-->
 					    	</div>
 
 						</div>

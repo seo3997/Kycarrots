@@ -123,18 +123,7 @@ public class LoginController {
 					param.put("area_code_d", userInfoVo.getAreaCodeD());
 				    String sAreaName = loginService.selectUserAreaName(param);
 				    userInfoVo.setAreaName(sAreaName);
-					
-					
-					//권한을 가져오자
-					List resultList = loginService.selectListUserauth(userInfoVo.getUserNo());
-					String sAuthorId="";
-					for(int i = 0; i < resultList.size(); i++){
-						DataMap dataMap = (DataMap) resultList.get(i);
-						if(i==0)	sAuthorId=dataMap.getString("AUTHOR_ID");
-						else sAuthorId=sAuthorId+","+dataMap.getString("AUTHOR_ID");
-					}		
-					
-					userInfoVo.setAuthorId(sAuthorId);
+
 					request.getSession().setAttribute("userInfoVo", userInfoVo);
 					
 					//login DateTime Update 

@@ -27,12 +27,12 @@
 		, A.USER_NM
 		, A.EMAIL
 		, A.AREA_CODE
-		, 'ROLE_USER'  AS AUTHOR_ID
 		, USER_STTUS_CODE
 		, PASSWORD
 		,'R010070' AS AREA_SE_CODE_L
 		,IFNULL(AREA_SE_CODE_S ,'') AS AREA_SE_CODE_S
 		,IFNULL(AREA_SE_CODE_D ,'') AS AREA_SE_CODE_D
+        ,MEMBER_CODE AS  AUTHOR_ID
 	FROM op_user A
 	WHERE A.USER_ID = #{id}
 	</select>
@@ -50,8 +50,8 @@
 
 	<select id="selectListAuthor" parameterType="String" resultType="dataMap">
 		/* login.selectListAuthor */
-		SELECT 	AUTHOR_ID
-		FROM 	op_user_author
+		SELECT 	MEMBER_CODE AS AUTHOR_ID
+		FROM 	op_user
 		WHERE 	USER_NO=#{userNo}
 	</select>
 

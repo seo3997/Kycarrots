@@ -82,14 +82,7 @@
 	]]>
 	</delete>
 
-	<delete id="deleteUserAuthor" parameterType="dataMap">
-	/* admin.author.deleteUserAuthor */
-	<![CDATA[
-	DELETE FROM op_user_author
-	WHERE AUTHOR_ID = #{author_id}
-	]]>
-	</delete>
-	
+
 	<select id="selectExistYnAuthor" parameterType="dataMap" resultType="string">
 	/* admin.author.selectExistYnAuthor */
 	<![CDATA[

@@ -78,9 +78,9 @@
 					return;
 				}
 	
-				if($("#ncnm").val() == ""){
+				if($("#user_nm").val() == ""){
 					alert("이름을 입력해 주세요.");
-					$("#ncnm").focus();
+					$("#user_nm").focus();
 					return;
 				}
 
@@ -89,7 +89,28 @@
 					$("#password").focus();
 					return;
 				}
-				
+
+				if($("#email").val() == ""){
+					alert("이메일을 입력해 주세요.");
+					$("#email").focus();
+					return;
+				}
+				const $areaM = $("#area_se_code_m");
+				// 첫 옵션(placeholder)이 선택된 상태면 실패
+				if ($areaM.prop("selectedIndex") === 0) {
+					alert("지역을 선택해 주세요.");
+					$areaM.focus();
+					return;
+				}
+
+				const $areaS = $("#area_se_code_s");
+				// 첫 옵션(placeholder)이 선택된 상태면 실패
+				if ($areaS.prop("selectedIndex") === 0) {
+				  alert("지역(중분류)을 선택해 주세요.");
+				  $areaS.focus();
+				  return;
+				}
+
 				if($("input:radio[name='author_id']").is(":checked") == false){
 					alert("사용자 권한을 체크해 주세요");
 					return;
@@ -179,8 +200,33 @@
 												</select>
 										</div>
 							  </div>
-							</div>  
-							    	
+							<div class="form-group row">
+								<label class="control-label col-sm-1" for="area_se_code_m">지역</label>
+					    		<div class="col-sm-2">
+										<select class="form-control" name="area_se_code_m" id="area_se_code_m">
+											<%=CommboUtil.getComboStr(areaCodeComboStr, "CODE", "CODE_NM", "", "C")%>
+										</select>
+								</div>
+					    		<div class="col-sm-2">
+									<select class="form-control"  name="area_se_code_s"  id="area_se_code_s" >
+										<option value="">선택하세요</option>
+									</select>
+								</div>
+					    		<div class="col-sm-1">
+								</div>				<!--
+					    		<div class="col-sm-2">
+									<select class="form-control"  name="area_se_code_d"  id="area_se_code_d" >
+										<option value="">선택하세요</option>
+									</select>
+								</div>
+								-->
+								<label class="control-label col-sm-1" for="user_sttus_code"></label>
+							    <div class="col-sm-5">
+								</div>
+
+					    	</div>
+						</div>
+
 							<h4 class="cardTitle"><i class="fa fa-caret-square-right"></i> 권한선택</h4>
 							<div class="card-body viewForm">
 									<div class="form-group row">
@@ -189,15 +235,6 @@
 												for(int i=0; i<authList.size(); i++) {
 													DataMap authMap = (DataMap)authList.get(i);
 													String authorName = "author" + i;  
-													
-													if("ROLE_APC".equals(authMap.getString("AUTHOR_ID"))
-														||"ROLE_EXP".equals(authMap.getString("AUTHOR_ID"))
-														||"ROLE_DANJI".equals(authMap.getString("AUTHOR_ID"))
-														||"ROLE_USER".equals(authMap.getString("AUTHOR_ID"))
-														) {
-														userRollchecked="checked";
-														continue;
-													}
 											%>
 												<div class="checkbox">
 													<label for="<%=authorName%>">
