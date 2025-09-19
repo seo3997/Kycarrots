@@ -11,10 +11,10 @@ public class ErrorPagesConfig implements WebServerFactoryCustomizer<Configurable
     @Override
     public void customize(ConfigurableServletWebServerFactory factory) {
         factory.addErrorPages(
-            new ErrorPage(HttpStatus.NOT_FOUND, "/admin/login.do"),          // 404
-            new ErrorPage(HttpStatus.UNAUTHORIZED, "/admin/login.do"),       // 401
-            new ErrorPage(HttpStatus.FORBIDDEN, "/admin/login.do"),          // 403
-            new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/admin/login.do") // 500
+                new ErrorPage(HttpStatus.NOT_FOUND, "/admin/error.do"),
+                new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/admin/error.do"),
+                new ErrorPage(HttpStatus.FORBIDDEN, "/admin/error.do"),
+                new ErrorPage(HttpStatus.UNAUTHORIZED, "/admin/login.do") // 세션끊김/미인증 → 로그인
         );
     }
 }
