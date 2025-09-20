@@ -1,4 +1,5 @@
-<%@ page import="com.whomade.kycarrots.framework.common.util.file.vo.AtFileVO"%>
+<%@ page import="com.whomade.kycarrots.entity.product.TnProductImageVo"%>
+<%@ page import="com.whomade.kycarrots.framework.common.util.StringUtil"%>
 <%@ page import="com.whomade.kycarrots.framework.common.util.SysUtil"%>
 <%@ page import="com.whomade.kycarrots.framework.common.util.CommboUtil"%>
 <%@ page import="com.whomade.kycarrots.framework.common.object.DataMap" %>
@@ -10,7 +11,11 @@
 <jsp:useBean id="resultMap" class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
 <jsp:useBean id="param" class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
 <jsp:useBean id="fileList"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
-<jsp:useBean id="boardComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="saleStatusComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="categoryMComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="areaMComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="unitCodeComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
+
 
 <%@ include file="/common/inc/common.jspf" %>
 <%@ include file="/common/inc/docType.jspf" %>
@@ -23,6 +28,10 @@
 	<script type="text/javascript">
 	//<![CDATA[
 		$(function(){
+            $('#desiredShippingDate').datetimepicker(
+               { format: 'YYYY-MM-DD' }).on('dp.change', function (e) {
+			});
+
 			fnComboStrFile('.fileBoxWrap', <%=fileList.size()%>, 5);
 			
 			$('.attach_file').on({
@@ -108,6 +117,7 @@
 			}
 		}
 
+
 	//]]>
 	</script>
 </head>
@@ -133,14 +143,15 @@
 		<section class="content container-fluid vw-page">
 
 			<form role="form" id="aform" method="post" action="/mgt/product/updateProduct.do" enctype="multipart/form-data" class="form-horizontal">
-				<input type="hidden" name="bbs_seq" 				value="<%=resultMap.getString("BBS_SEQ") %>" />
-				<input type="hidden" name="atch_doc_id" 			value="<%=resultMap.getString("ATCH_DOC_ID") %>" />
-				<input type="hidden" name="sch_type" 				value="<%=param.getString("sch_type")%>" />
-				<input type="hidden" name="sch_text" 				value="<%=param.getString("sch_text")%>" />
-				<input type="hidden" name="sch_bbs_se_code_m" 		value="<%=param.getString("sch_bbs_se_code_m")%>" />
-				<input type="hidden" name="currentPage" 			value="<%=param.getString("currentPage")%>"/>
-				<input type="hidden" name="file_id" />
-				<input type="hidden" name="bbs_se_code_l"	id="bbs_se_code_l" 			 	value="R010170"  />
+                <input type="hidden" id="productId"             name="productId" 				value="<%=resultMap.getString("PRODUCT_ID") %>" />
+                <input type="hidden" id="categoryGroup"         name="categoryGroup" 			value="R010610" />
+				<input type="hidden" id="areaGroup"              name="areaGroup" 			    value="R010070" />
+				<input type="hidden" id="sch_type"              name="sch_type" 				value="<%=param.getString("sch_type")%>" />
+				<input type="hidden" id="sch_text"              name="sch_text" 				value="<%=param.getString("sch_text")%>" />
+                <input type="hidden" id="sch_sale_status_code"  name="sch_sale_status_code" 	value="<%=param.getString("sch_sale_status_code")%>" />
+				<input type="hidden" id="sch_category_m_code"   name="sch_category_m_code" 	    value="<%=param.getString("sch_category_m_code")%>" />
+				<input type="hidden" id="sch_area_m_code"       name="sch_area_m_code" 	        value="<%=param.getString("sch_area_m_code")%>" />
+				<input type="hidden" id="currentPage"           name="currentPage" 			    value="<%=param.getString("currentPage")%>"/>
 
 			<div class="card">
 			
@@ -148,66 +159,101 @@
 				<div class="card-body viewForm">
 
 					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="bbs_se_code_m">게시판구분</label>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="saleStatus">판매상태</label>
 						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-							<select id="bbs_se_code_m" name="bbs_se_code_m" class="form-control input-sm" >
-								<%=CommboUtil.getComboStr(boardComboStr, "CODE", "CODE_NM", param.getString("bbs_se_code_m", resultMap.getString("BBS_SE_CODE_M")) , "C")%>
+							<select id="saleStatus" name="saleStatus" class="form-control input-sm w-25" >
+								<%=CommboUtil.getComboStr(saleStatusComboStr, "CODE", "CODE_NM", param.getString("saleStatus", resultMap.getString("SALE_STATUS")) , "C")%>
 							</select>
 						</div>
 					</div>
 
 					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="bbs_se_code_m">제목</label>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="title">상품명</label>
 						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-							<input type="text" class="form-control" name="sj" id="sj" placeholder="제목" value="<%=param.getString("sj", resultMap.getString("SJ")) %>" maxlength="100" />
+							<input type="text" class="form-control" name="title" id="title" placeholder="제목" value="<%=param.getString("title", resultMap.getString("TITLE")) %>" maxlength="100" />
+						</div>
+					</div>
+
+                    <div class="form-group row">
+						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품가격</label>
+						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+							<input type="text" class="form-control numeric w-25" name="price" id="price" placeholder="상품가격" value="<%=StringUtil.setComma(param.getString("title", resultMap.getString("PRICE")))%>" maxlength="10" />
+						</div>
+                        <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">희망 출하일</label>
+                        <div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
+                          <div class="input-group date dateTimePicker" id="desiredShippingDate">
+                            <input type="text" class="form-control" name="desiredShippingDate" required="required" maxlength="12"  value="<%=param.getString("desiredShippingDate", resultMap.getString("DESIRED_SHIPPING_DATE")) %>"/>
+                            <span class="input-group-addon" id="btnDesiredShippingDate" style="cursor:pointer;">
+                              <i class="fa fa-calendar-alt" style="bottom:1px;"></i>
+                            </span>
+                          </div>
+                        </div>
+					</div>
+
+                    <div class="form-group row">
+                        <label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">남은수량</label>
+                        <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+                            <input type="text" class="form-control numeric w-25" name="quantity" id="quantity" placeholder="남은수량" value="<%=StringUtil.setComma(param.getString("quantity", resultMap.getString("QUANTITY"))) %>" maxlength="10" />
+                        </div>
+                        <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">단위</label>
+                        <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+   						    <select id="unitCode" name="unitCode" class="form-control input-sm w-25" >
+								<%=CommboUtil.getComboStr(unitCodeComboStr, "CODE", "CODE_NM", param.getString("unitCode", resultMap.getString("UNIT_CODE")) , "C")%>
+							</select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">카테고리</label>
+						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+					        <select id="categoryMid" name="categoryMid" class="form-control input-sm w-25" style="display:inline">
+								<%=CommboUtil.getComboStr(categoryMComboStr, "CODE", "CODE_NM", param.getString("categoryMid", resultMap.getString("CATEGORY_MID")) , "C")%>
+							</select>
+							<select id="categoryScls" name="categoryScls" class="form-control input-sm w-25" style="display:inline">
+								<option value="">선택하세요</option>
+							</select>
+                        </div>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">지역</label>
+						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+					        <select id="areaMid" name="areaMid" class="form-control input-sm w-25" style="display:inline">
+								<%=CommboUtil.getComboStr(areaMComboStr, "CODE", "CODE_NM", param.getString("areaMid", resultMap.getString("AREA_MID")) , "C")%>
+							</select>
+							<select id="areaScls" name="areaScls" class="form-control input-sm w-25" style="display:inline">
+								<option value="">선택하세요</option>
+							</select>
 						</div>
 					</div>
 
 					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="bbs_se_code_m">내용</label>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="description">긴급사유</label>
 						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-							<textarea class="form-control" rows="5" name="cn" id="cn"><%=param.getString("cn", resultMap.getString("CN")) %></textarea>
+							<textarea class="form-control" rows="5" name="description" id="description"><%=param.getString("description", resultMap.getString("DESCRIPTION")) %></textarea>
 						</div>
 					</div>
 
 					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="bbs_se_code_m">첨부파일</label>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="bbs_se_code_m">상품이미지</label>
 						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
 							<div class="outBox1 fileBoxWrap"></div>
 							<div class="outBox2 ftRed"></div>
 						</div>
 					</div>
 					
-					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="atch_yn_y">첨부파일 표시여부</label>
-						<div class="checkbox col-xs-11 col-sm-8 col-md-3 col-lg-3">
-							<div class="form-check form-check-inline">
-								<input type="radio" name="atch_yn" id="atch_yn_y" value="Y" <c:if test="${'Y' eq resultMap.getString('ATCH_YN') || empty resultMap.getString('ATCH_YN')}"> checked="checked"</c:if> />
-								<label for="atch_yn_y" class="form-check-label ml-1 mr-2">다운로드</label>
-								<input type="radio" name="atch_yn" id="atch_yn_n" value="N" <c:if test="${'N' eq resultMap.getString('ATCH_YN') }"> checked="checked"</c:if> />
-								<label for="atch_yn_n" class="form-check-label ml-1">화면표시</label>
-							</div>
-						</div>
-						<div>
-							<span><strong>화면표시 체크시 확장자는 이미지일 경우  소문자 jpg/png/gif/bmp,동영상일 경우 소문자 mp4로 업로드해주시기 바랍니다.</strong></span>
-						</div>
-					</div>
 
 					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="bbs_se_code_m">첨부파일 목록</label>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품이미지</label>
 						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
 							<% //파일이 존재하지 않으면 첨부파일 목록태그 그리지 않음
 								if(fileList.size() > 0){
 							%>
 							<%
 								for(int i = 0; i < fileList.size(); i++) {
-											AtFileVO fvo = (AtFileVO)fileList.get(i);
+                                    TnProductImageVo fvo = (TnProductImageVo)fileList.get(i);
 							%>
-							<a href="#"  onclick="fnDownload('<%=fvo.getFile_id()%>'); return false;">
-							<img src = "/common/images/file_ext_ico/attach_<%=fvo.getFile_ext_nm().toLowerCase()%>.gif" width="16" height="16" class="attach_file" />
-							<%=fvo.getFile_nm()%> (<%=fvo.getFile_size()/1000.0%>) KB
+							<a href="#"  onclick="fnDownload('<%=fvo.getImageId()%>'); return false;">
+							<img src = "<%=fvo.getImageUrl()%>" width="16" height="16" class="attach_file" />
 							</a>
-							<a href="#" onclick="fnFileDel(this, '<%=fvo.getFile_id() %>'); return false;">[삭제]</a><br/>
+							<a href="#" onclick="fnFileDel(this, '<%=fvo.getImageId() %>'); return false;">[삭제]</a><br/>
 							<%
 									}
 								}
@@ -233,6 +279,26 @@
 	<%@ include file="/common/inc/footer.jspf" %>
 	<!-- //fooer -->
 </div>
+<script type="text/javascript">
+    $('#categoryMid').on('change', function(e) {
+        fnGetSCodeList('R010610',this.value,$("#categoryScls"),'','C');
+    });
+
+    $('#areaMid').on('change', function(e) {
+		fnGetSCodeList('R010070',this.value,$("#areaScls"),'','C');
+	});
+
+    $('#price').on('change', function(e) {
+        this.value=setComma(this.value);
+    });
+
+    $('#quantity').on('change', function(e) {
+        this.value=setComma(this.value);
+    });
+
+    fnGetSCodeList('R010610','<%=resultMap.getString("CATEGORY_MID")%>',$("#categoryScls"),'<%=resultMap.getString("CATEGORY_SCLS")%>','C');
+    fnGetSCodeList('R010070','<%=resultMap.getString("AREA_MID")%>',$("#areaScls"),'<%=resultMap.getString("AREA_SCLS")%>','C');
+</script>
 </body>
 </html>
 <%@ include file="/common/inc/msg.jspf" %>

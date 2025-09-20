@@ -79,12 +79,13 @@ public class ProdcutController {
 		// 카테고리 R010610
 		codeParam.put("group_id","R010610");
 		List cateooryMComboStr = commonCodeService.selectCodeList(codeParam);
-		model.addAttribute("cateooryMComboStr", cateooryMComboStr);
+		model.addAttribute("categoryMComboStr", cateooryMComboStr);
 
-		// 카테고리 R010070
+		// 지역 R010070
 		codeParam.put("group_id","R010070");
 		List areaMComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("areaMComboStr", areaMComboStr);
+
 
 		//리스트 조회
 		List<DataMap> resultList = productService.selectPageListProcuct(model, param);
@@ -243,19 +244,33 @@ public class ProdcutController {
 		
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
-		// 게시판 구분 코드 조회 R010170
-		codeParam.put("group_id", Const.upCodeNoticeBbsSeCode);
-		List boardComboStr = commonCodeService.selectCodeList(codeParam);
-		model.addAttribute("boardComboStr", boardComboStr);
-		
-		
+
+		// 판매상태 R010630
+		codeParam.put("group_id","R010630");
+		List saleStatusComboStr = commonCodeService.selectCodeList(codeParam);
+		model.addAttribute("saleStatusComboStr", saleStatusComboStr);
+
+		// 카테고리 R010610
+		codeParam.put("group_id","R010610");
+		List cateooryMComboStr = commonCodeService.selectCodeList(codeParam);
+		model.addAttribute("categoryMComboStr", cateooryMComboStr);
+
+		// 카테고리 R010070
+		codeParam.put("group_id","R010070");
+		List areaMComboStr = commonCodeService.selectCodeList(codeParam);
+		model.addAttribute("areaMComboStr", areaMComboStr);
+
+		// 단위코드 R010070
+		codeParam.put("group_id","R010620");
+		List unitCodeComboStr = commonCodeService.selectCodeList(codeParam);
+		model.addAttribute("unitCodeComboStr", unitCodeComboStr);
+
+
+
 		DataMap resultMap = productService.selectProduct(param);
 		
 		// #### FILE LIST 검색 Start ####
-		AtFileVO fvo = new AtFileVO();
-		fvo.setDoc_id(resultMap.getString("ATCH_DOC_ID"));
-		
-		List<AtFileVO> fileList = atFileMngService.selectFileInfs(fvo);
+		List<TnProductImageVo> fileList = tnProductRepository.selectProductImagesByProductId(param.getLong("productId"));
 		// #### FILE LIST 검색 End ####
 		
 		model.addAttribute("fileList", fileList);

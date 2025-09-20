@@ -94,7 +94,7 @@
 		<section class="content container-fluid vw-page">
 
 			<form role="form" id="aform" method="post" action="/mgt/product/selectProduct.do" class="form-horizontal" enctype="multipart/form-data">
-				<input type="hidden" name="productId" value="<%=resultMap.getString("productId") %>" />
+				<input type="hidden" name="productId" value="<%=resultMap.getString("PRODUCT_ID") %>" />
 				<!-- 검색관련 -->
 				<input type="hidden" name="sch_type" value="<%=param.getString("sch_type")%>" />
 				<input type="hidden" name="sch_text" value="<%=param.getString("sch_text")%>" />
@@ -102,8 +102,7 @@
 				<input type="hidden" name="sch_category_m_code" value="<%=param.getString("sch_category_m_code")%>" />
 				<input type="hidden" name="sch_area_m_code" value="<%=resultMap.getString("sch_area_m_code") %>" />
 				<input type="hidden" name="currentPage" value="<%=param.getString("currentPage")%>"/>
-				<input type="hidden" name="file_id" />
-				
+
 
 			<div class="card">
 				<div class="card-body viewForm">
@@ -161,7 +160,7 @@
 						</div>
 					</div>
 					<div class="form-group row">
-					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">긴급내용</label>
+					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">긴급사유</label>
 					  <div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
 						<%=resultMap.getHtml("DESCRIPTION") %>
 					  </div>

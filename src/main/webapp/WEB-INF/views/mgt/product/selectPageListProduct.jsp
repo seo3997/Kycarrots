@@ -12,7 +12,7 @@
 <jsp:useBean id="pageNavigationVo" class="com.whomade.kycarrots.framework.common.page.vo.pageNavigationVo" scope="request"/>
 <jsp:useBean id="navigationBar" class="java.lang.String" scope="request"/>
 <jsp:useBean id="saleStatusComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
-<jsp:useBean id="cateooryMComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="categoryMComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
 <jsp:useBean id="areaMComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
 
 
@@ -105,7 +105,7 @@
 								<label for="sch_category_m_code" class="control-label col-md-2 px-0">카테고리</label>
 								<div class="col-md-9 px-0">
 									<select id="sch_category_m_code" name="sch_category_m_code" class="form-control w-100">
-										<%=CommboUtil.getComboStr(cateooryMComboStr, "CODE", "CODE_NM", param.getString("sch_category_m_code") , "A")%>
+										<%=CommboUtil.getComboStr(categoryMComboStr, "CODE", "CODE_NM", param.getString("sch_category_m_code") , "A")%>
 									</select>
 								</div>
 							</div>
