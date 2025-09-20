@@ -1,6 +1,8 @@
 package com.whomade.kycarrots.framework.common.util;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -1143,33 +1145,19 @@ public class StringUtil {
      *   @param num
      *   @return
      */
-    public static String setComma(String num) {
-        
-        //Null 체크
-        if(num == null || num.isEmpty()) return "0"; 
-    
-        //숫자형태가 아닌 문자열일경우 디폴트 0으로 반환 
-        String numberExpr = "^[-+]?(0|[1-9][0-9]*)(\\.[0-9]+)?([eE][-+]?[0-9]+)?$";
-        boolean isNumber = num.matches(numberExpr);
-        if (!isNumber) return "0";             
-    
-        String strResult = num; //출력할 결과를 저장할 변수
-        Pattern p = Pattern.compile("(^[+-]?\\d+)(\\d{3})"); //정규표현식 
-        Matcher regexMatcher = p.matcher(num); 
-        
-        int cnt = 0;
-        while(regexMatcher.find()) {                
-            strResult = regexMatcher.replaceAll("$1,$2"); //치환 : 그룹1 + "," + 그룹2
-                
-            //System.out.println("과정("+ (++cnt) +"):"+strResult);
-                
-            //치환된 문자열로 다시 matcher객체 얻기 
-            //regexMatcher = p.matcher(strResult); 
-            regexMatcher.reset(strResult); 
-        }        
-        return strResult;
-    }
-    
+	public static String setComma(String num) {
+		if (num == null || num.trim().isEmpty()) return "0";
+		num = num.trim().replace(",", ""); // 혹시 들어온 콤마 제거
+
+		try {
+			BigDecimal bd = new BigDecimal(num).stripTrailingZeros(); // 소수부 0 제거
+			boolean hasFraction = bd.scale() > 0;                     // 남은 소수부가 있는가
+			DecimalFormat df = new DecimalFormat(hasFraction ? "#,##0.################" : "#,##0");
+			return df.format(bd);
+		} catch (NumberFormatException e) {
+			return "0";
+		}
+	}
     
     public static String castMoneyType(int amount) {
 
