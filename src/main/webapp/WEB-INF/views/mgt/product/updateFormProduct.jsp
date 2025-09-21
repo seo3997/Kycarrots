@@ -102,6 +102,7 @@
 				return false;
 			}
 
+			if (!ensureImagesOrAlert()) return false;
 			//console.log($('[name=imageMetasJson]').val())
 
 			if(confirm('수정하시겠습니까?')){
@@ -369,7 +370,17 @@
   function touchImages(){
 	  $('#imagesTouched').val('1');
   }
+  function hasAtLeastOneImage(){
+	  return $('#productImages .thumb-box').length >= 1;
+  }
 
+  function ensureImagesOrAlert(){
+	  if (!hasAtLeastOneImage()){
+		alert('상품 이미지는 최소 1장 이상 등록해야 합니다.');
+		return false;
+	  }
+	  return true;
+  }
   function openImgModal(imgEl){
     $('#img01').attr('src', imgEl.src);
     $('#caption').text(imgEl.alt || '');

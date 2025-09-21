@@ -48,6 +48,7 @@
 		
 		// 등록
 		function fnGoInsert(){
+
 			if($('[name=saleStatus]').val() == ''){
 				alert('판매상태를 선택주세요.');
 				$('[name=saleStatus]').focus();
@@ -101,6 +102,7 @@
 				$('[name=areaScls]').focus();
 				return false;
 			}
+			if (!ensureImagesOrAlert()) return false;
 
 
 			if(confirm('등록하시겠습니까?')){
@@ -274,6 +276,7 @@
 	<!-- //fooer -->
 </div>
 <script type="text/javascript">
+
     $('#categoryMid').on('change', function(e) {
         fnGetSCodeList('R010610',this.value,$("#categoryScls"),'','C');
     });
@@ -295,6 +298,17 @@
 
   function touchImages(){
 	  $('#imagesTouched').val('1');
+  }
+  function hasAtLeastOneImage(){
+	  return $('#productImages .thumb-box').length >= 1;
+  }
+
+  function ensureImagesOrAlert(){
+	  if (!hasAtLeastOneImage()){
+		alert('상품 이미지는 최소 1장 이상 등록해야 합니다.');
+		return false;
+	  }
+	  return true;
   }
 
   function openImgModal(imgEl){
