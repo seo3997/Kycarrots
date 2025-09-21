@@ -63,5 +63,5 @@ logging:
 
 file:
   upload-dir: E:/uploads/product
-  public-url: http://172.31.162.25:9000/common/img/product
+  public-url: http://127.0.0.1:9000/common/img/product
   resource-path: file:///E:/uploads/product/

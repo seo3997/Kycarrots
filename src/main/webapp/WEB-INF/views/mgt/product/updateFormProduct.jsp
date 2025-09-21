@@ -24,7 +24,15 @@
 	<%@ include file="/common/inc/meta.jspf" %>
 	<title><%=headTitle%></title>
 	<%@ include file="/common/inc/cssScript.jspf" %>
-	
+	<style>
+	  .thumb-grid { display:flex; flex-wrap:wrap; }
+	  .thumb-box { position:relative; margin:0 8px 8px 0; }
+	  .product-thumb { width:200px; height:200px; object-fit:cover; border:1px solid #ccc; cursor:zoom-in; }
+	  .badge-main { position:absolute; top:6px; left:6px; }
+	  .thumb-actions { position:absolute; right:6px; bottom:6px; display:flex; gap:6px; }
+	  .thumb-actions .btn { padding:2px 6px; font-size:12px; line-height:1.2; }
+	</style>
+
 	<script type="text/javascript">
 	//<![CDATA[
 		$(function(){
@@ -32,14 +40,9 @@
                { format: 'YYYY-MM-DD' }).on('dp.change', function (e) {
 			});
 
-			fnComboStrFile('.fileBoxWrap', <%=fileList.size()%>, 5);
-			
-			$('.attach_file').on({
-				// 이미지가 없어서 error 날시
-				'error' : function(){
-					$(this).attr('src', '/common/images/file_ext_ico/attach_etc.gif');
-				}
-			});
+			rebuildImageMetas();
+		    $('#aform').on('submit', function(){ rebuildImageMetas(); });
+
 		});
 		
 		// 상세
@@ -50,35 +53,61 @@
 		// 수정
 		function fnGoUpdate(){
 
-			if($('[name=bbs_se_code_m]').val() == ''){
-				alert('게시판구분을 선택하세요');
-				$('[name=bbs_se_code_m]').focus();
+			if($('[name=title]').val() == ''){
+				alert('상품명을 입력해 주세요.');
+				$('[name=title]').focus();
 				return false;
 			}
-			
-			if($('[name=sj]').val() == ''){
-				alert('제목을 입력해 주세요.');
-				$('[name=sj]').focus();
+			if($('[name=price]').val() == ''){
+				alert('상품가격을 입력해 주세요.');
+				$('[name=price]').focus();
 				return false;
 			}
-			
-			
-			if($('[name=cn]').val() == ''){
-				alert('내용을 입력해 주세요.');
-				$('[name=cn]').focus();
+			$('[name=price]').val(removeComma($('[name=price]').val()));
+			if($('[name=desiredShippingDate]').val() == ''){
+				alert('희망 출하일을 입력해 주세요.');
+				$('[name=desiredShippingDate]').focus();
 				return false;
 			}
-			
-			// 확장자 체크
-			var msg = f_CheckExceptFileExt('upload');
-			if(msg != ''){
-				alert(msg);
+			if($('[name=quantity]').val() == ''){
+				alert('남은수량을 입력해 주세요.');
+				$('[name=quantity]').focus();
 				return false;
 			}
-			
+			$('[name=quantity]').val(removeComma($('[name=quantity]').val()));
+
+			if($('[name=unitCode]').val() == ''){
+				alert('단위를 선택주세요.');
+				$('[name=unitCode]').focus();
+				return false;
+			}
+			if($('[name=categoryMid]').val() == ''){
+				alert('카테고리를 선택주세요.');
+				$('[name=categoryMid]').focus();
+				return false;
+			}
+			if($('[name=categoryScls]').val() == ''){
+				alert('카테고리(중)를 선택주세요.');
+				$('[name=categoryScls]').focus();
+				return false;
+			}
+			if($('[name=areaMid]').val() == ''){
+				alert('지역를 선택주세요.');
+				$('[name=areaMid]').focus();
+				return false;
+			}
+			if($('[name=areaScls]').val() == ''){
+				alert('지역(중)를 선택주세요.');
+				$('[name=areaScls]').focus();
+				return false;
+			}
+
+			//console.log($('[name=imageMetasJson]').val())
+
 			if(confirm('수정하시겠습니까?')){
 				$('#aform').attr({ action : '/mgt/product/updateProduct.do', method : 'post' }).submit();
 			}
+
 		}
 		
 		//파일 다운로드
@@ -145,14 +174,15 @@
 			<form role="form" id="aform" method="post" action="/mgt/product/updateProduct.do" enctype="multipart/form-data" class="form-horizontal">
                 <input type="hidden" id="productId"             name="productId" 				value="<%=resultMap.getString("PRODUCT_ID") %>" />
                 <input type="hidden" id="categoryGroup"         name="categoryGroup" 			value="R010610" />
-				<input type="hidden" id="areaGroup"              name="areaGroup" 			    value="R010070" />
+				<input type="hidden" id="areaGroup"             name="areaGroup" 			    value="R010070" />
+				<input type="hidden" id="unitGroup"             name="unitGroup" 			    value="R010620" />
 				<input type="hidden" id="sch_type"              name="sch_type" 				value="<%=param.getString("sch_type")%>" />
 				<input type="hidden" id="sch_text"              name="sch_text" 				value="<%=param.getString("sch_text")%>" />
                 <input type="hidden" id="sch_sale_status_code"  name="sch_sale_status_code" 	value="<%=param.getString("sch_sale_status_code")%>" />
 				<input type="hidden" id="sch_category_m_code"   name="sch_category_m_code" 	    value="<%=param.getString("sch_category_m_code")%>" />
 				<input type="hidden" id="sch_area_m_code"       name="sch_area_m_code" 	        value="<%=param.getString("sch_area_m_code")%>" />
 				<input type="hidden" id="currentPage"           name="currentPage" 			    value="<%=param.getString("currentPage")%>"/>
-
+				<input type="hidden" name="imagesTouched" id="imagesTouched" value="0" />
 			<div class="card">
 			
 				<h4 class="cardTitle"><i class="fa fa-caret-square-right"></i> 기본정보</h4>
@@ -177,7 +207,7 @@
                     <div class="form-group row">
 						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품가격</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
-							<input type="text" class="form-control numeric w-25" name="price" id="price" placeholder="상품가격" value="<%=StringUtil.setComma(param.getString("title", resultMap.getString("PRICE")))%>" maxlength="10" />
+							<input type="text" class="form-control numeric w-25" name="price" id="price" placeholder="상품가격" value="<%=StringUtil.setComma(param.getString("price", resultMap.getString("PRICE")))%>" maxlength="10" />
 						</div>
                         <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">희망 출하일</label>
                         <div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
@@ -232,33 +262,57 @@
 					</div>
 
 					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="bbs_se_code_m">상품이미지</label>
-						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-							<div class="outBox1 fileBoxWrap"></div>
-							<div class="outBox2 ftRed"></div>
-						</div>
-					</div>
-					
+					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품 이미지</label>
+					  <div class="col-xs-12 col-sm-9 col-md-9 col-lg-10">
 
-					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품이미지</label>
-						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-							<% //파일이 존재하지 않으면 첨부파일 목록태그 그리지 않음
-								if(fileList.size() > 0){
-							%>
-							<%
-								for(int i = 0; i < fileList.size(); i++) {
-                                    TnProductImageVo fvo = (TnProductImageVo)fileList.get(i);
-							%>
-							<a href="#"  onclick="fnDownload('<%=fvo.getImageId()%>'); return false;">
-							<img src = "<%=fvo.getImageUrl()%>" width="16" height="16" class="attach_file" />
-							</a>
-							<a href="#" onclick="fnFileDel(this, '<%=fvo.getImageId() %>'); return false;">[삭제]</a><br/>
-							<%
-									}
-								}
-							%>
+						<!-- 업로드 버튼 -->
+						<div class="mb-2">
+						  <button type="button" class="btn btn-secondary btn-sm" onclick="addNewImage(); return false;">
+							<i class="fa fa-plus"></i> 이미지 추가
+						  </button>
+						  <small class="text-muted ml-2">최대 4장까지 등록 가능 (첫 번째가 대표)</small>
 						</div>
+
+						<!-- 썸네일 리스트 -->
+						<div class="thumb-grid" id="productImages">
+						  <%
+							java.util.List<TnProductImageVo> imgs = new java.util.ArrayList<>();
+							if (fileList != null) {
+							  for (int i = 0; i < fileList.size() && i < 4; i++) {
+								imgs.add((TnProductImageVo) fileList.get(i));
+							  }
+							}
+							if (imgs.isEmpty()) {
+						  %>
+							<span class="text-muted empty-placeholder">이미지 없음</span>
+						  <%
+							} else {
+							  for (int i = 0; i < imgs.size(); i++) {
+								TnProductImageVo iv = imgs.get(i);
+								String alt = (i == 0) ? "대표 이미지" : ("추가 이미지 " + i);
+						  %>
+							<div class="thumb-box" data-image-id="<%= iv.getImageId() %>">
+							  <img src="<%= iv.getImageUrl() %>" class="img-thumbnail product-thumb"
+								   alt="<%= alt %>" onclick="openImgModal(this)">
+							  <% if (i == 0) { %>
+								<span class="badge badge-primary badge-main">대표</span>
+							  <% } %>
+								  <div class="thumb-actions">
+								  <button type="button" class="btn btn-primary btn-xs btn-designate"  onclick="setAsMain('<%= iv.getImageId() %>')">대표지정</button>
+								  <button type="button" class="btn btn-danger btn-xs" onclick="deleteImage('<%= iv.getImageId() %>')">삭제</button>
+								</div>
+							</div>
+						  <%
+							  }
+							}
+						  %>
+						</div>
+						<!-- 현재 이미지 배열/대표 정보 제출용 -->
+						<input type="hidden" name="imageMetasJson" id="imageMetasJson" />
+						<!-- 새 파일 input들을 담아둘 컨테이너(숨김) -->
+						<div id="newImageInputs" style="display:none;"></div>
+
+					  </div>
 					</div>
 
 				</div>
@@ -275,6 +329,15 @@
 			</form>
 		</section><!-- /.content -->
 	</div>
+	<!-- The Modal -->
+	<div id="myModal" class="modal">
+	  <span class="close">&times;</span>
+	  <div class="myzoom">
+	  <img class="modal-content" id="img01">
+	  </div>
+	  <div id="caption"></div>
+	</div>
+
 	<!-- footer -->
 	<%@ include file="/common/inc/footer.jspf" %>
 	<!-- //fooer -->
@@ -298,6 +361,130 @@
 
     fnGetSCodeList('R010610','<%=resultMap.getString("CATEGORY_MID")%>',$("#categoryScls"),'<%=resultMap.getString("CATEGORY_SCLS")%>','C');
     fnGetSCodeList('R010070','<%=resultMap.getString("AREA_MID")%>',$("#areaScls"),'<%=resultMap.getString("AREA_SCLS")%>','C');
+
+
+  var MAX_IMAGES = 4;
+  var newImageIndexCounter = 0;
+
+  function touchImages(){
+	  $('#imagesTouched').val('1');
+  }
+
+  function openImgModal(imgEl){
+    $('#img01').attr('src', imgEl.src);
+    $('#caption').text(imgEl.alt || '');
+    $('#myModal').fadeIn(100);
+  }
+  $('.close').on('click', function(){ $('#myModal').fadeOut(100); });
+  $('#myModal').on('click', function(e){ if (e.target.id === 'myModal') $('#myModal').fadeOut(100); });
+
+  // 대표 배지/버튼 토글 + '이미지 없음' 표시 관리
+  function refreshMainUI(){
+    var $grid  = $('#productImages');
+    var $boxes = $grid.find('.thumb-box');
+
+    // 배지/버튼 초기화
+    $grid.find('.badge-main').remove();
+    $boxes.find('.btn-designate').show();
+
+    // 첫 번째 = 대표 → 배지 붙이고 ‘대표지정’ 버튼 숨김
+    var $first = $boxes.first();
+    if ($first.length){
+      $first.append('<span class="badge badge-primary badge-main">대표</span>');
+      $first.find('.btn-designate').hide();
+    }
+  }
+
+  // 현재 DOM 순서 → imageMetasJson 생성 (첫 번째 대표)
+  function rebuildImageMetas(){
+    var arr = [];
+    $('#productImages .thumb-box').each(function(idx){
+      var imageId = $(this).data('imageId');  // 기존
+      var newIdx  = $(this).data('newIndex'); // 신규/교체 시 사용 가능(현재 UI는 교체 미사용)
+      var meta = {
+        imageId: imageId ? String(imageId) : null,
+        represent: (idx === 0 ? 1 : 0)
+      };
+      if (newIdx !== undefined) meta.newIndex = Number(newIdx);
+      arr.push(meta);
+    });
+    $('#imageMetasJson').val(JSON.stringify(arr));
+    refreshMainUI();
+  }
+
+  // 대표 지정: 해당 썸네일을 맨 앞으로
+  function setAsMain(imageIdOrNew){
+    var $box;
+    if (imageIdOrNew && /^\d+$/.test(String(imageIdOrNew))) {
+      $box = $('#productImages .thumb-box[data-image-id="'+imageIdOrNew+'"]'); // 기존
+    } else {
+      $box = $('#productImages .thumb-box[data-new-index="'+imageIdOrNew+'"]'); // 신규
+    }
+    if ($box && $box.length) {
+      $('#productImages').prepend($box);
+      rebuildImageMetas();
+	  touchImages();
+    }
+  }
+
+  // 기존 이미지 삭제 (서버 즉시 삭제)
+  function deleteImage(imageId){
+    if (!confirm('이미지를 삭제하시겠습니까?')) return;
+    $.ajax({
+      url: '/api/product/image/delete',
+      type: 'POST',
+      data: { imageId: imageId },
+      success: function(){
+        $('#productImages .thumb-box[data-image-id="'+imageId+'"]').remove();
+        rebuildImageMetas();
+		touchImages();
+      },
+      error: function(xhr){
+        alert('삭제 실패: ' + (xhr.responseText || xhr.status));
+      }
+    });
+  }
+
+  // 신규 이미지 삭제 (클라이언트에서만 제거 + 해당 파일 input 제거)
+  function deleteNewImage(newIndex){
+    $('#productImages .thumb-box[data-new-index="'+newIndex+'"]').remove();
+    $('#input-images-' + newIndex).remove();
+    rebuildImageMetas();
+	touchImages();
+  }
+
+  // 신규 이미지 추가
+  function addNewImage(){
+    var currCnt = $('#productImages .thumb-box').length;
+    if (currCnt >= MAX_IMAGES) {
+      alert('이미지는 최대 ' + MAX_IMAGES + '장까지 등록할 수 있습니다.');
+      return;
+    }
+    var idx = newImageIndexCounter++;
+    //var $inp = $('<input type="file" accept="image/*" name="images['+idx+']" id="input-images-'+idx+'">');
+    var $inp = $('<input type="file" accept="image/*" name="upload" id="input-images-'+idx+'">');
+    $inp.on('change', function(){
+      if (!this.files || !this.files[0]) { $(this).remove(); return; }
+      var url = URL.createObjectURL(this.files[0]);
+      // 빈 placeholder 제거
+      $('#productImages .empty-placeholder').remove();
+
+      var thumb =
+        '<div class="thumb-box" data-new-index="'+idx+'">'+
+          '<img src="'+url+'" class="img-thumbnail product-thumb" alt="신규 이미지" onclick="openImgModal(this)">'+
+          '<div class="thumb-actions">'+
+            '<button type="button" class="btn btn-primary btn-xs btn-designate" onclick="setAsMain('+idx+')">대표지정</button>'+
+            '<button type="button" class="btn btn-danger btn-xs" onclick="deleteNewImage('+idx+')">삭제</button>'+
+          '</div>'+
+        '</div>';
+
+      $('#productImages').append(thumb);
+      rebuildImageMetas();
+	  touchImages();
+    });
+    $('#newImageInputs').append($inp);
+    $inp.trigger('click');
+  }
 </script>
 </body>
 </html>

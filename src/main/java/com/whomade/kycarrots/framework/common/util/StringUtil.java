@@ -1158,8 +1158,11 @@ public class StringUtil {
 			return "0";
 		}
 	}
-    
-    public static String castMoneyType(int amount) {
+	public static String stripComma(String s) {
+		return s == null ? null : s.replaceAll(",", "");
+	}
+
+	public static String castMoneyType(int amount) {
 
 		java.text.DecimalFormat decFormat = new java.text.DecimalFormat("###,###,###,###");
 

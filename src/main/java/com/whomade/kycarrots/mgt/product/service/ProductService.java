@@ -1,7 +1,9 @@
 package com.whomade.kycarrots.mgt.product.service;
 
+import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,9 +14,9 @@ public interface ProductService {
 	
 	DataMap selectProduct(DataMap param)throws Exception;
 	
-	void insertProduct(DataMap param , List fileList)throws Exception;
+	void insertProduct(DataMap param , List<MultipartFile> fileList, List<TnProductImageVo> metas)throws Exception;
 	
-	void updateProduct(DataMap param, List fileList)throws Exception;
+	void updateProduct(DataMap param, List<MultipartFile> files, List<TnProductImageVo> metas)throws Exception;
 	
 	void deleteProduct(DataMap param)throws Exception;
 

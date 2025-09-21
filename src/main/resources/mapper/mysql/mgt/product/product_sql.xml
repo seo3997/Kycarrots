@@ -117,7 +117,7 @@
 		WHERE A.PRODUCT_ID = #{productId}
 	</select>
 
-	<insert id="insertTbProduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo" useGeneratedKeys="true" keyProperty="productId">
+	<insert id="insertProduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo" useGeneratedKeys="true" keyProperty="productId">
 		INSERT INTO tb_product (
 		USER_NO,
 		TITLE,
@@ -171,7 +171,7 @@
 	</insert>
 
 
-	<update id="updateTbProduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">
+	<update id="updateProduct" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">
 		UPDATE tb_product
 		SET
 			TITLE = #{title},
@@ -193,11 +193,52 @@
 		WHERE PRODUCT_ID = #{productId}
 	</update>
 	
-	<update id="deleteProduct" parameterType="dataMap">
+	<update id="deleteProduct" parameterType="long">
 		/* mgt.mboard.deleteBoard */
 		DELETE FROM tb_product
 		WHERE PRODUCT_ID = #{productId}
 	</update>
 
-	
+	<insert id="insertProductImage" parameterType="com.whomade.kycarrots.entity.product.TnProductImageVo" useGeneratedKeys="true" keyProperty="imageId">
+		INSERT INTO tb_product_image (
+			PRODUCT_ID, IMAGE_CD, IMAGE_URL, IMAGE_NAME,
+			REPRESENT, IMAGE_SIZE, IMAGE_TEXT, IMAGE_TYPE,
+			REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
+		) VALUES (
+					 #{productId}, #{imageCd}, #{imageUrl}, #{imageName},
+					 #{represent}, #{imageSize}, #{imageText}, #{imageType},
+					 #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP
+				 )
+	</insert>
+
+	<update id="updateRepresentByProduct">
+		UPDATE tb_product_image
+		SET REPRESENT = CASE WHEN IMAGE_ID = #{imageId} THEN 1 ELSE 0 END
+		WHERE PRODUCT_ID = #{productId}
+	</update>
+
+	<select id="selectProductImagesByProductId" parameterType="long" resultType="com.whomade.kycarrots.entity.product.TnProductImageVo">
+		SELECT
+			IMAGE_ID,
+			PRODUCT_ID,
+			IMAGE_CD,
+			IMAGE_URL,
+			IMAGE_NAME,
+			REPRESENT,
+			IMAGE_SIZE,
+			IMAGE_TEXT,
+			IMAGE_TYPE,
+			REGISTER_NO,
+			REGIST_DT,
+			UPDUSR_NO,
+			UPDT_DT
+		FROM tb_product_image
+		WHERE PRODUCT_ID = #{productId}
+		ORDER BY REPRESENT DESC,IMAGE_ID ASC
+	</select>
+
+	<delete id="deleteProductImagesByProductId" parameterType="long">
+		DELETE FROM tb_product_image
+		WHERE PRODUCT_ID = #{productId}
+	</delete>
 </mapper>

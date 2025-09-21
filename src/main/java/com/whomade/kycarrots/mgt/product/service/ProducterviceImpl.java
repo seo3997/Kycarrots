@@ -1,28 +1,46 @@
 package com.whomade.kycarrots.mgt.product.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.whomade.kycarrots.config.FileStorageProperties;
+import com.whomade.kycarrots.entity.product.TnProductImageVo;
+import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.dao.CommonMybatisDao;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.page.util.pageNavigationUtil;
 import com.whomade.kycarrots.framework.common.util.StringUtil;
 import com.whomade.kycarrots.framework.common.util.SysUtil;
 import com.whomade.kycarrots.framework.common.util.file.AtFileMngUtil;
+import com.whomade.kycarrots.framework.common.util.file.FileUtil;
 import com.whomade.kycarrots.framework.common.util.file.dao.AtFileManageDAO;
 import com.whomade.kycarrots.framework.common.util.file.vo.AtFileVO;
+import com.whomade.kycarrots.repository.mybatis.product.TnProductRepository;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
+@Slf4j
 @Service("procuctService")
 public class ProducterviceImpl extends EgovAbstractServiceImpl implements ProductService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProducterviceImpl.class);
+	@Autowired
+	private FileStorageProperties fileStorageProperties;
+
+	@Value("${file.public-url}")
+	private String publicUrl;
+
 
 	/** commonDao */
 	@Resource(name="commonMybatisDao")
@@ -91,28 +109,78 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 	 *   @param fileList
 	 *   @throws Exception
 	 */
-	public void insertProduct(DataMap param, List fileList)throws Exception {
-		
-		// ########### Upload File 처리 시작 #############
-		AtFileVO _reAtFile = null;
-		if(!fileList.isEmpty()){
-			// 문서 ID 셋팅
-			String doc_id = StringUtil.nvl(param.getString("atch_doc_id"), SysUtil.getDocId());
-			param.put("atch_doc_id", doc_id );
-			
-			for(int i=0; i < fileList.size(); i++){
-				MultipartFile mfile = (MultipartFile)fileList.get(i);
-				if(!mfile.isEmpty()){
-					// 파일을 서버에 물리적으로 저장하고
-					_reAtFile	= atFileMngUtil.parseFileInf(mfile, doc_id, "mboard/", param.getString("ss_user_no"), "Y");
-					// 파일이 생성되고나면 생성된 첨부파일 정보를 DB에 넣는다.
-					commonMybatisDao.insert("common.file.insertAttchFile", _reAtFile);
+	public void insertProduct(DataMap param, List<MultipartFile> fileList, List<TnProductImageVo> metas)throws Exception {
+
+		// 0) 기본정보 매핑 + INSERT (useGeneratedKeys로 tnProductVo.productId 세팅)
+		TnProductVo tnProductVo = buildInsTnProductVo(param);
+		commonMybatisDao.insert("mgt.product.insertProduct", tnProductVo);
+
+		String productIdStr = tnProductVo.getProductId();
+		if (productIdStr == null || productIdStr.isEmpty()) {
+			throw new IllegalStateException("productId 생성 실패: mgt.product.insertProduct 매퍼에 useGeneratedKeys/keyProperty 설정을 확인하세요.");
+		}
+		Long productId = Long.valueOf(productIdStr);
+
+		// 등록/수정 사용자 번호
+		String userNoStr = tnProductVo.getUserNo();
+		int userNo = (userNoStr == null || userNoStr.isEmpty()) ? 0 : Integer.parseInt(userNoStr);
+
+		// 이미지 메타가 없으면 빈 리스트로
+		if (metas == null) metas = java.util.Collections.emptyList();
+
+		// 1) 이미지가 없으면 종료
+		if (fileList == null || fileList.isEmpty()) return;
+
+		// 대표 후보 추적
+		Long representId = null;
+		Long firstInsertedId = null;
+
+		// 2) 신규 파일 저장 + DB insert
+		int nMetas = metas.size();
+		for (int i = 0; i < fileList.size(); i++) {
+			MultipartFile file = fileList.get(i);
+			if (file == null || file.isEmpty()) continue;
+
+			// 메타에서 대표 여부(없으면 0)
+			int represent = 0;
+			if (i < nMetas) {
+				TnProductImageVo m = metas.get(i);
+				if (m != null && m.getRepresent() != null && m.getRepresent() == 1) {
+					represent = 1;
 				}
 			}
+
+			// 2-1) 물리 저장
+			String baseDir  = fileStorageProperties.getUploadDir();
+			java.io.File destFile = FileUtil.saveFile(file, baseDir, productIdStr);
+			String imageUrl = publicUrl + "/" + productIdStr + "/" + destFile.getName();
+
+			// 2-2) DB insert (useGeneratedKeys → imageId 세팅)
+			TnProductImageVo toInsert = new TnProductImageVo();
+			toInsert.setProductId(productId);
+			toInsert.setImageCd("1");
+			toInsert.setImageUrl(imageUrl);
+			toInsert.setImageName(file.getOriginalFilename());
+			toInsert.setImageSize(file.getSize());
+			toInsert.setImageType(file.getContentType()); // MIME 타입 저장
+			toInsert.setRepresent(represent);             // 대표 플래그(0/1)
+			toInsert.setRegisterNo(userNo);
+			toInsert.setUpdusrNo(userNo);
+
+			commonMybatisDao.update("mgt.product.insertProductImage", toInsert);
+
+			if (firstInsertedId == null) firstInsertedId = toInsert.getImageId();
+			if (represent == 1)          representId     = toInsert.getImageId();
 		}
-		// ########### Upload File 처리 종료 ############
-		
-		commonMybatisDao.insert("mgt.product.insertProduct", param);
+
+		// 3) 대표 플래그 일관성 정리 (대표가 명시되지 않았다면 첫 이미지 대표)
+		if (representId == null) representId = firstInsertedId;
+		if (representId != null) {
+			DataMap r = new DataMap();
+			r.put("productId", productId);
+			r.put("imageId",   representId);
+			commonMybatisDao.update("mgt.product.updateRepresentByProduct", r);
+		}
 
 	}
 	
@@ -124,34 +192,125 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 	 * 4. 작성자    		: SooHyun.Seo
 	 * 5. 작성일    		: 2025. 09. 19. 오후 4:08:41
 	 * </PRE>
-	 *   @param param
-	 *   @param fileList
 	 *   @throws Exception
 	 */
-	public void updateProduct(DataMap param, List fileList)throws Exception {
+	public void updateProduct(DataMap param, List<MultipartFile> files, List<TnProductImageVo> metas)throws Exception {
+		// 상품 기본정보 업데이트
+		TnProductVo tnProductVo = buildUpTnProductVo(param);
+		commonMybatisDao.update("mgt.product.updateProduct", tnProductVo);
 
 		// ########### Upload File 처리 시작 #############
-		AtFileVO _reAtFile = null;
-		if(!fileList.isEmpty()){
-			// 문서 ID 셋팅
-			String doc_id = StringUtil.nvl(param.getString("atch_doc_id", SysUtil.getDocId()));
-			param.put("atch_doc_id", doc_id);
+		//1) 이미지 변경 안했으면 종료
+		String imagesTouched = StringUtil.nvl(param.getString("imagesTouched"), "0");
+		if (!"1".equals(imagesTouched)) return;
 
-			for(int i=0; i < fileList.size(); i++){
-				MultipartFile mfile = (MultipartFile)fileList.get(i);
-				if(!mfile.isEmpty()){
-					// 파일을 서버에 물리적으로 저장하고
-					_reAtFile	= atFileMngUtil.parseFileInf(mfile, doc_id, "mboard/", param.getString("ss_user_no"), "Y");
-					// 파일이 생성되고나면 생성된 첨부파일 정보를 DB에 넣는다.
-					commonMybatisDao.insert("common.file.insertAttchFile", _reAtFile);
-				}
+		Long productId = Long.valueOf(tnProductVo.getProductId());
+		int userNo = Integer.parseInt(tnProductVo.getUserNo());
+
+		if (metas == null) metas = java.util.Collections.emptyList();
+
+		// 2) 대표 후보 먼저 찾기(기존 이미지 중 represent=1)
+		Long representId = null;
+		for (TnProductImageVo m : metas) {
+			if (m.getImageId() != null && Integer.valueOf(1).equals(m.getRepresent())) {
+				representId = m.getImageId();
+				break;
 			}
 		}
-		// ########### Upload File 처리 종료 ############
-		
-		commonMybatisDao.update("mgt.product.updateProduct", param);
+
+		// 3) 신규만 파일 저장 + DB insert (metas 순회하며 imageId == null 인 항목마다 files에서 하나씩 소비)
+		int cursor = 0;
+		if (files != null && !files.isEmpty()) {
+			for (TnProductImageVo m : metas) {
+				if (m.getImageId() != null) continue;        // 기존은 건너뜀
+				if (cursor >= files.size()) break;
+
+				MultipartFile file = files.get(cursor++);
+				if (file == null || file.isEmpty()) continue;
+
+				// 물리 저장
+				String baseDir = fileStorageProperties.getUploadDir();
+				java.io.File destFile = FileUtil.saveFile(file, baseDir, String.valueOf(productId));
+				String imageUrl = publicUrl + "/" + productId + "/" + destFile.getName();
+
+				// 서버에서 MAIN/SUB 계산(대표=MAIN)
+				boolean isRep = Integer.valueOf(1).equals(m.getRepresent());
+
+				TnProductImageVo toInsert = new TnProductImageVo();
+				toInsert.setProductId(productId);
+				toInsert.setImageCd("1");
+				toInsert.setImageUrl(imageUrl);
+				toInsert.setImageName(file.getOriginalFilename());
+				toInsert.setImageSize(file.getSize());
+				toInsert.setImageType(file.getContentType());
+				toInsert.setRepresent(isRep ? 1 : 0);
+				toInsert.setRegisterNo(userNo);
+				toInsert.setUpdusrNo(userNo);
+				commonMybatisDao.update("mgt.product.insertProductImage", toInsert);
+				if (isRep) {
+					representId = toInsert.getImageId(); // 신규가 대표라면 대표 후보 갱신
+				}
+			}
+			// 4) 대표 한 방에 정리
+			if (representId != null) {
+				DataMap r = new DataMap();
+				r.put("productId", productId);
+				r.put("imageId", representId);
+				commonMybatisDao.update("mgt.product.updateRepresentByProduct", r);
+			}
+			// ########### Upload File 처리 종료 ############
+
+		}
 	}
-	
+
+	/** DataMap → TnProductVo 매핑 */
+	public  TnProductVo buildUpTnProductVo(DataMap param) {
+		TnProductVo tnProductVo = new TnProductVo();
+		tnProductVo.setProductId(param.getString("productId"));
+		tnProductVo.setTitle(param.getString("title"));
+		tnProductVo.setDescription(param.getString("description"));
+		tnProductVo.setPrice(StringUtil.stripComma(param.getString("price")));
+		tnProductVo.setCategoryGroup(param.getString("categoryGroup"));
+		tnProductVo.setCategoryMid(param.getString("categoryMid"));
+		tnProductVo.setCategoryScls(param.getString("categoryScls"));
+		tnProductVo.setAreaGroup(param.getString("areaGroup"));
+		tnProductVo.setAreaMid(param.getString("areaMid"));
+		tnProductVo.setAreaScls(param.getString("areaScls"));
+		tnProductVo.setQuantity(StringUtil.stripComma(param.getString("quantity")));
+		tnProductVo.setUnitGroup(param.getString("unitGroup"));
+		tnProductVo.setUnitCode(param.getString("unitCode"));
+		tnProductVo.setDesiredShippingDate(param.getString("desiredShippingDate"));
+		tnProductVo.setSaleStatus(param.getString("saleStatus"));
+		tnProductVo.setUserNo(param.getString("ss_user_no"));
+		tnProductVo.setUpdusrNo(param.getString("ss_user_no"));
+		return tnProductVo;
+	}
+	/** DataMap → TnProductVo 매핑 */
+	public  TnProductVo buildInsTnProductVo(DataMap param) {
+		TnProductVo tnProductVo = new TnProductVo();
+		//USER_NO  와  WHOLESALER_NO 가 빠졌음
+		tnProductVo.setUserNo("2");
+		//tnProductVo.setWholesalerId(param.getString("wholesalerId"));
+		tnProductVo.setSaleStatus(param.getString("saleStatus"));
+		tnProductVo.setProductId(param.getString("productId"));
+		tnProductVo.setTitle(param.getString("title"));
+		tnProductVo.setDescription(param.getString("description"));
+		tnProductVo.setPrice(StringUtil.stripComma(param.getString("price")));
+		tnProductVo.setCategoryGroup(param.getString("categoryGroup"));
+		tnProductVo.setCategoryMid(param.getString("categoryMid"));
+		tnProductVo.setCategoryScls(param.getString("categoryScls"));
+		tnProductVo.setAreaGroup(param.getString("areaGroup"));
+		tnProductVo.setAreaMid(param.getString("areaMid"));
+		tnProductVo.setAreaScls(param.getString("areaScls"));
+		tnProductVo.setQuantity(StringUtil.stripComma(param.getString("quantity")));
+		tnProductVo.setUnitGroup(param.getString("unitGroup"));
+		tnProductVo.setUnitCode(param.getString("unitCode"));
+		tnProductVo.setDesiredShippingDate(param.getString("desiredShippingDate"));
+		tnProductVo.setSaleStatus(param.getString("saleStatus"));
+		tnProductVo.setUserNo(param.getString("ss_user_no"));
+		tnProductVo.setUpdusrNo(param.getString("ss_user_no"));
+		return tnProductVo;
+	}
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: deleteProduct
@@ -163,23 +322,38 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 	 *   @param param
 	 *   @throws Exception
 	 */
-	public void deleteProduct(DataMap param)throws Exception {
-		AtFileVO fvo = new AtFileVO();
-		
-		// 글 첨부파일 삭제 ================================================================
-		fvo.setDoc_id(param.getString("atch_doc_id"));
-		List<AtFileVO> fileList = commonMybatisDao.selectList("common.file.selectAttchFiles", fvo);
-		
-		// 글 첨부파일 삭제
-		atFileMngUtil.deleteFile(fileList);
-		// 글 첨부파일 DB 삭제
-		param.put("doc_id", fvo.getDoc_id());
-		commonMybatisDao.delete("common.file.deleteAttchFiles", param);
-		//===================================================================================
-		//comment삭제
-		//commonMybatisDao.update("mgt.product.deleteBoardComment", param);
-		// 글 삭제
-		commonMybatisDao.update("mgt.product.deleteProduct", param);
+	public void deleteProduct(DataMap param) throws Exception {
+		// 0) 필수값
+		String productIdStr = param.getString("productId");
+		if (productIdStr == null || productIdStr.isEmpty()) {
+			throw new IllegalArgumentException("productId가 없습니다.");
+		}
+		Long productId = Long.valueOf(productIdStr);
+
+		// 1) 이미지 목록 조회
+		List<TnProductImageVo> images = commonMybatisDao.selectList("mgt.product.selectProductImagesByProductId", productId);
+
+		// 2) 물리 파일 삭제
+		String baseDir = fileStorageProperties.getUploadDir(); // 예: /data/uploads
+		for (TnProductImageVo img : images) {
+			try {
+				boolean deleted = FileUtil.deleteFile(baseDir, productIdStr, img.getImageName());
+				if (!deleted) {
+					String targetPath = baseDir + java.io.File.separator + productIdStr + java.io.File.separator + img.getImageName();
+					// 파일이 이미 없을 수 있으니 강하게 막지 않음(로그만)
+					log.warn("파일 삭제 실패 또는 존재하지 않음: {}", targetPath);
+				}
+			} catch (Exception e) {
+				// 파일 삭제 실패 시 트랜잭션 롤백을 원하면 throw, 아니면 경고 로그만
+				log.warn("파일 삭제 중 오류(imageId={}): {}", img.getImageId(), e.getMessage());
+			}
+		}
+
+		// 3) 이미지 DB 삭제
+		commonMybatisDao.delete("mgt.product.deleteProductImagesByProductId", productId);
+
+		// 4) 상품 삭제
+		commonMybatisDao.update("mgt.product.deleteProduct", productId);
 	}
 
 }

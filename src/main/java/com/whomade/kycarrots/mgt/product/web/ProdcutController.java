@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
@@ -152,11 +153,26 @@ public class ProdcutController {
 		
 		DataMap param = RequestUtil.getDataMap(request);
 		DataMap codeParam = new DataMap();
-		
-		// 게시판 구분 코드 조회 R010170
-		codeParam.put("group_id", Const.upCodeNoticeBbsSeCode);
-		List boardComboStr = commonCodeService.selectCodeList(codeParam);
-		model.addAttribute("boardComboStr", boardComboStr);
+
+		// 판매상태 R010630
+		codeParam.put("group_id","R010630");
+		List saleStatusComboStr = commonCodeService.selectCodeList(codeParam);
+		model.addAttribute("saleStatusComboStr", saleStatusComboStr);
+
+		// 카테고리 R010610
+		codeParam.put("group_id","R010610");
+		List cateooryMComboStr = commonCodeService.selectCodeList(codeParam);
+		model.addAttribute("categoryMComboStr", cateooryMComboStr);
+
+		// 카테고리 R010070
+		codeParam.put("group_id","R010070");
+		List areaMComboStr = commonCodeService.selectCodeList(codeParam);
+		model.addAttribute("areaMComboStr", areaMComboStr);
+
+		// 단위코드 R010070
+		codeParam.put("group_id","R010620");
+		List unitCodeComboStr = commonCodeService.selectCodeList(codeParam);
+		model.addAttribute("unitCodeComboStr", unitCodeComboStr);
 		
 		
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
@@ -190,28 +206,16 @@ public class ProdcutController {
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
 
-		// 파일 객체 가져옴
-		List fileList = atFileMngUtil.getFiles((MultipartHttpServletRequest)request);
-		
-		// 파일 확장자 계산
-		String msg = atFileMngUtil.checkFileExt(fileList);
-		if(!msg.equals("")){
-			MessageUtil.setMessage(request, msg);
-			param.put("redirectUrl", "/mgt/product/insertFormProduct.do");
-			model.addAttribute("param", param);
-			return "common/redirect";
-		}
-		
-		// 파일 크기 계산(최대크기 넘었을경우 다시 쓰기 페이지로 리턴)
-		if(!atFileMngUtil.checkEachFileSize(fileList)){
-			MessageUtil.setMessage(request, egovMessageSource.getMessage("error.file.size.over", new String[]{atFileMngUtil.getFileSize(EgovPropertiesUtil.getProperty("Globals.fileMaxSize"))}));
-			
-			param.put("redirectUrl", "/mgt/product/insertFormProduct.do");
-			model.addAttribute("param", param);
-			return "common/redirect";
-		}
+		String metasJson =request.getParameter("imageMetasJson");
+		log.debug("metasJson: "+metasJson);
 
-		productService.insertProduct(param, fileList);
+		List<TnProductImageVo> metas = parseImageMetas(metasJson);
+		log.debug("metas: {}"+ metas);
+
+		// 파일 객체 가져옴
+		List<MultipartFile> fileList =  atFileMngUtil.getFiles((MultipartHttpServletRequest)request);
+
+		productService.insertProduct(param, fileList, metas);
 		
 		MessageUtil.setMessage(request, egovMessageSource.getMessage("succ.data.insert"));
 		
@@ -298,33 +302,23 @@ public class ProdcutController {
 	@RequestMapping(value = "/mgt/product/updateProduct.do")
 	public String updateProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
-		
+
+		String metasJson =request.getParameter("imageMetasJson");
+		log.debug("metasJson: "+metasJson);
+
+		List<TnProductImageVo> metas = parseImageMetas(metasJson);
+		log.debug("metas: {}"+ metas);
+
+
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
 		
 		// 파일 객체 가져옴
-		List fileList = atFileMngUtil.getFiles((MultipartHttpServletRequest)request);
-		
-		// 파일 확장자 계산
-		String msg = atFileMngUtil.checkFileExt(fileList);
-		if(!msg.equals("")){
-			MessageUtil.setMessage(request, msg);
-			param.put("redirectUrl", "/mgt/product/updateFormProduct.do");
-			model.addAttribute("param", param);
-			return "common/redirect";
-		}
-		
-		// 파일 크기 계산(최대크기 넘었을경우 다시 쓰기 페이지로 리턴)
-		if(!atFileMngUtil.checkEachFileSize(fileList)){
-			MessageUtil.setMessage(request, egovMessageSource.getMessage("error.file.size.over", new String[]{atFileMngUtil.getFileSize(EgovPropertiesUtil.getProperty("Globals.fileMaxSize"))}));
-			
-			param.put("redirectUrl", "/mgt/product/updateFormProduct.do");
-			model.addAttribute("param", param);
-			
-			return "common/redirect";
-		}
+		//MultipartHttpServletRequest mreq = (MultipartHttpServletRequest) request;
+		//List<MultipartFile> fileList = extractIndexedFiles(mreq, "images"); // ↓ 헬
+		List<MultipartFile> fileList = atFileMngUtil.getFiles((MultipartHttpServletRequest)request);
 
-		productService.updateProduct(param, fileList);
+		productService.updateProduct(param, fileList, metas);
 
 		model.addAttribute("param", param);
 		MessageUtil.setMessage(request, egovMessageSource.getMessage("succ.data.update"));
@@ -332,7 +326,34 @@ public class ProdcutController {
 		
 		return "common/redirect";
 	}
-	
+
+	private List<MultipartFile> extractIndexedFiles(MultipartHttpServletRequest req, String prefix) {
+		java.util.regex.Pattern p = java.util.regex.Pattern.compile("^" + java.util.regex.Pattern.quote(prefix) + "\\[(\\d+)]$");
+		java.util.TreeMap<Integer, MultipartFile> sorted = new java.util.TreeMap<>();
+		for (java.util.Map.Entry<String, MultipartFile> e : req.getFileMap().entrySet()) {
+			java.util.regex.Matcher m = p.matcher(e.getKey());
+			if (m.matches()) {
+				int idx = Integer.parseInt(m.group(1));
+				MultipartFile f = e.getValue();
+				if (f != null && !f.isEmpty()) {
+					sorted.put(idx, f);
+				}
+			}
+		}
+		return new java.util.ArrayList<>(sorted.values());
+	}
+
+	private List<TnProductImageVo> parseImageMetas(String json){
+		if (json == null || json.isBlank()) return java.util.Collections.emptyList();
+		try {
+			var om = new com.fasterxml.jackson.databind.ObjectMapper()
+					.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			TnProductImageVo[] arr = om.readValue(json, TnProductImageVo[].class);
+			return java.util.Arrays.asList(arr);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("imageMetasJson 파싱 오류: " + e.getMessage(), e);
+		}
+	}
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: deleteProduct
@@ -350,20 +371,13 @@ public class ProdcutController {
 	 */
 	@RequestMapping(value = "/mgt/product/deleteProduct.do")
 	public String deleteProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
-
 		DataMap param = RequestUtil.getDataMap(request);
 
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
-		
-		DataMap resultMap = productService.selectProduct(param);
-		
-		// doc_id 및 내용 doc_id 셋팅
-		param.put("atch_doc_id", resultMap.getString("ATCH_DOC_ID"));
-		param.put("cn_doc_id", resultMap.getString("CN_DOC_ID"));
-		
-		// 참고자료 삭제
+
 		productService.deleteProduct(param);
+
 		MessageUtil.setMessage(request, egovMessageSource.getMessage("succ.data.delete"));
 		model.addAttribute("param", param);
 		return "redirect:/mgt/product/selectPageListProduct.do";

@@ -1,3 +1,4 @@
+<%@ page import="com.whomade.kycarrots.entity.product.TnProductImageVo"%>
 <%@ page import="com.whomade.kycarrots.framework.common.util.CommboUtil"%>
 <%@ page import="com.whomade.kycarrots.framework.common.util.SysUtil"%>
 <%@ page import="com.whomade.kycarrots.framework.common.object.DataMap" %>
@@ -7,7 +8,10 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <jsp:useBean id="param" class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
-<jsp:useBean id="boardComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="saleStatusComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="categoryMComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="areaMComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="unitCodeComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
 
 <%@ include file="/common/inc/common.jspf" %>
 <%@ include file="/common/inc/docType.jspf" %>
@@ -16,11 +20,25 @@
 	<%@ include file="/common/inc/meta.jspf" %>
 	<title><%=headTitle%></title>
 	<%@ include file="/common/inc/cssScript.jspf" %>
-    
+	<style>
+	  .thumb-grid { display:flex; flex-wrap:wrap; }
+	  .thumb-box { position:relative; margin:0 8px 8px 0; }
+	  .product-thumb { width:200px; height:200px; object-fit:cover; border:1px solid #ccc; cursor:zoom-in; }
+	  .badge-main { position:absolute; top:6px; left:6px; }
+	  .thumb-actions { position:absolute; right:6px; bottom:6px; display:flex; gap:6px; }
+	  .thumb-actions .btn { padding:2px 6px; font-size:12px; line-height:1.2; }
+	</style>
+
 	<script type="text/javascript">
 	//<![CDATA[
 		$(function(){
-			fnComboStrFile('.fileBoxWrap', 0, 5);
+			$('#desiredShippingDate').datetimepicker(
+               { format: 'YYYY-MM-DD' }).on('dp.change', function (e) {
+			});
+
+			rebuildImageMetas();
+		    $('#aform').on('submit', function(){ rebuildImageMetas(); });
+
 		});
 		
 		// 목록
@@ -30,32 +48,61 @@
 		
 		// 등록
 		function fnGoInsert(){
-			
-			if($('[name=bbs_se_code_m]').val() == ''){
-				alert('게시판구분을 선택하세요');
-				$('[name=bbs_se_code_m]').focus();
+			if($('[name=saleStatus]').val() == ''){
+				alert('판매상태를 선택주세요.');
+				$('[name=saleStatus]').focus();
+				return false;
+			}
+			if($('[name=title]').val() == ''){
+				alert('상품명을 입력해 주세요.');
+				$('[name=title]').focus();
+				return false;
+			}
+			if($('[name=price]').val() == ''){
+				alert('상품가격을 입력해 주세요.');
+				$('[name=price]').focus();
+				return false;
+			}
+			$('[name=price]').val(removeComma($('[name=price]').val()));
+			if($('[name=desiredShippingDate]').val() == ''){
+				alert('희망 출하일을 입력해 주세요.');
+				$('[name=desiredShippingDate]').focus();
+				return false;
+			}
+			if($('[name=quantity]').val() == ''){
+				alert('남은수량을 입력해 주세요.');
+				$('[name=quantity]').focus();
+				return false;
+			}
+			$('[name=quantity]').val(removeComma($('[name=quantity]').val()));
+
+			if($('[name=unitCode]').val() == ''){
+				alert('단위를 선택주세요.');
+				$('[name=unitCode]').focus();
+				return false;
+			}
+			if($('[name=categoryMid]').val() == ''){
+				alert('카테고리를 선택주세요.');
+				$('[name=categoryMid]').focus();
+				return false;
+			}
+			if($('[name=categoryScls]').val() == ''){
+				alert('카테고리(중)를 선택주세요.');
+				$('[name=categoryScls]').focus();
+				return false;
+			}
+			if($('[name=areaMid]').val() == ''){
+				alert('지역를 선택주세요.');
+				$('[name=areaMid]').focus();
+				return false;
+			}
+			if($('[name=areaScls]').val() == ''){
+				alert('지역(중)를 선택주세요.');
+				$('[name=areaScls]').focus();
 				return false;
 			}
 
-			if($('[name=sj]').val() == ''){
-				alert('제목을 입력해 주세요.');
-				$('[name=sj]').focus();
-				return false;
-			}
-			
-			if($('#cn').val() == ''){
-				alert('내용을 입력해 주세요.');
-				$('#cn').focus();
-				return false;
-			}
-			
-			// 확장자 체크
-			var msg = f_CheckExceptFileExt('upload');
-			if(msg != ''){
-				alert(msg);
-				return false;
-			}
-			
+
 			if(confirm('등록하시겠습니까?')){
 				$('#aform').attr({ action : '/mgt/product/insertProduct.do', method : 'post' }).submit();
 			}
@@ -84,64 +131,119 @@
 		<!-- Main content -->
 		<section class="content container-fluid vw-page">
 			<form role="form" id="aform" method="post" action="/mgt/product/insertProduct.do" enctype="multipart/form-data" class="form-horizontal">
-				<input type="hidden" 	name="cn_doc_id"				id="cn_doc_id" 						value="<%=param.getString("cn_doc_id")%>" />
-				<input type="hidden" 	name="bbs_se_code_l"			id="bbs_se_code_l" 			 		value="R010170"  />
-
+            	<input type="hidden" id="productId"             name="productId" 				 />
+                <input type="hidden" id="categoryGroup"         name="categoryGroup" 			value="R010610" />
+				<input type="hidden" id="areaGroup"             name="areaGroup" 			    value="R010070" />
+				<input type="hidden" id="unitGroup"             name="unitGroup" 			    value="R010620" />
+				<input type="hidden" id="sch_type"              name="sch_type" 				value="<%=param.getString("sch_type")%>" />
+				<input type="hidden" id="sch_text"              name="sch_text" 				value="<%=param.getString("sch_text")%>" />
+                <input type="hidden" id="sch_sale_status_code"  name="sch_sale_status_code" 	value="<%=param.getString("sch_sale_status_code")%>" />
+				<input type="hidden" id="sch_category_m_code"   name="sch_category_m_code" 	    value="<%=param.getString("sch_category_m_code")%>" />
+				<input type="hidden" id="sch_area_m_code"       name="sch_area_m_code" 	        value="<%=param.getString("sch_area_m_code")%>" />
+				<input type="hidden" id="currentPage"           name="currentPage" 			    value="<%=param.getString("currentPage")%>"/>
+				<input type="hidden" name="imagesTouched" id="imagesTouched" value="0" />
 			<div class="card">
 
 				<h4 class="cardTitle"><i class="fa fa-caret-square-right"></i> 기본정보</h4>
 				<div class="card-body viewForm">
 
 					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="bbs_se_code_m">게시판구분</label>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="saleStatus">판매상태</label>
 						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-							<select id="bbs_se_code_m" name="bbs_se_code_m" class="form-control input-sm" >
-								<%=CommboUtil.getComboStr(boardComboStr, "CODE", "CODE_NM", param.getString("bbs_se_code_m") , "C")%>
+							<select id="saleStatus" name="saleStatus" class="form-control input-sm w-25" >
+								<%=CommboUtil.getComboStr(saleStatusComboStr, "CODE", "CODE_NM", param.getString("saleStatus") , "C")%>
 							</select>
 						</div>
 					</div>
 
 					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="sj">제목</label>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="title">상품명</label>
 						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-							<input type="text" class="form-control" name="sj" id="sj" placeholder="제목" value="<%=param.getString("sj") %>" maxlength="100" />
+							<input type="text" class="form-control" name="title" id="title" placeholder="제목" value="<%=param.getString("title") %>" maxlength="100" />
+						</div>
+					</div>
+
+                    <div class="form-group row">
+						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품가격</label>
+						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+							<input type="text" class="form-control numeric w-25" name="price" id="price" placeholder="상품가격" value="<%=param.getString("price")%>" maxlength="10" />
+						</div>
+                        <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">희망 출하일</label>
+                        <div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
+                          <div class="input-group date dateTimePicker" id="desiredShippingDate">
+                            <input type="text" class="form-control" name="desiredShippingDate" required="required" maxlength="12"  value="<%=param.getString("desiredShippingDate") %>"/>
+                            <span class="input-group-addon" id="btnDesiredShippingDate" style="cursor:pointer;">
+                              <i class="fa fa-calendar-alt" style="bottom:1px;"></i>
+                            </span>
+                          </div>
+                        </div>
+					</div>
+
+                    <div class="form-group row">
+                        <label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">남은수량</label>
+                        <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+                            <input type="text" class="form-control numeric w-25" name="quantity" id="quantity" placeholder="남은수량" value="<%=param.getString("quantity") %>" maxlength="10" />
+                        </div>
+                        <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">단위</label>
+                        <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+   						    <select id="unitCode" name="unitCode" class="form-control input-sm w-25" >
+								<%=CommboUtil.getComboStr(unitCodeComboStr, "CODE", "CODE_NM", param.getString("unitCode") , "C")%>
+							</select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">카테고리</label>
+						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+					        <select id="categoryMid" name="categoryMid" class="form-control input-sm w-25" style="display:inline">
+								<%=CommboUtil.getComboStr(categoryMComboStr, "CODE", "CODE_NM", param.getString("categoryMid") , "C")%>
+							</select>
+							<select id="categoryScls" name="categoryScls" class="form-control input-sm w-25" style="display:inline">
+								<option value="">선택하세요</option>
+							</select>
+                        </div>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">지역</label>
+						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+					        <select id="areaMid" name="areaMid" class="form-control input-sm w-25" style="display:inline">
+								<%=CommboUtil.getComboStr(areaMComboStr, "CODE", "CODE_NM", param.getString("areaMid") , "C")%>
+							</select>
+							<select id="areaScls" name="areaScls" class="form-control input-sm w-25" style="display:inline">
+								<option value="">선택하세요</option>
+							</select>
 						</div>
 					</div>
 
 					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="cn">내용</label>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="description">긴급사유</label>
 						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-							<textarea class="form-control" rows="3" name="cn" id="cn"><%=param.getString("cn") %></textarea>
+							<textarea class="form-control" rows="5" name="description" id="description"><%=param.getString("description") %></textarea>
 						</div>
 					</div>
 
 					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="apply_cnt">첨부파일</label>
-						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-							<div class="outBox1 fileBoxWrap"></div>
-							<div class="outBox2 ftRed"></div>
+					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품 이미지</label>
+					  <div class="col-xs-12 col-sm-9 col-md-9 col-lg-10">
+
+						<!-- 업로드 버튼 -->
+						<div class="mb-2">
+						  <button type="button" class="btn btn-secondary btn-sm" onclick="addNewImage(); return false;">
+							<i class="fa fa-plus"></i> 이미지 추가
+						  </button>
+						  <small class="text-muted ml-2">최대 4장까지 등록 가능 (첫 번째가 대표)</small>
 						</div>
+
+						<!-- 썸네일 리스트 -->
+						<div class="thumb-grid" id="productImages">
+						</div>
+						<!-- 현재 이미지 배열/대표 정보 제출용 -->
+						<input type="hidden" name="imageMetasJson" id="imageMetasJson" />
+						<!-- 새 파일 input들을 담아둘 컨테이너(숨김) -->
+						<div id="newImageInputs" style="display:none;"></div>
+
+					  </div>
 					</div>
-					
-					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="atch_yn_y">첨부파일 표시여부</label>
-						
-						<div class="checkbox col-xs-11 col-sm-8 col-md-3 col-lg-3">
-							<div class="form-check form-check-inline">
-								<input type="radio" name="atch_yn" id="atch_yn_y" value="Y" checked="checked" />
-								<label for="atch_yn_y" class="form-check-label ml-1 mr-2">다운로드</label>
-								<input type="radio" name="atch_yn" id="atch_yn_n" value="N" />
-								<label for="atch_yn_n" class="form-check-label ml-1">화면표시</label>
-							</div>
-							
-						</div>
-						
-						<div>
-							<span><strong>화면표시 체크시 확장자는 이미지일 경우  소문자 jpg/png/gif/bmp,동영상일 경우 소문자 mp4로 업로드해주시기 바랍니다.</strong></span>
-						</div>
-						
-					</div>
-				
+
+
 				</div>
 
 				<div class="box-footer">
@@ -157,10 +259,161 @@
 			</form>
 		</section>
 	</div>
+
+	<!-- The Modal -->
+	<div id="myModal" class="modal">
+	  <span class="close">&times;</span>
+	  <div class="myzoom">
+	  <img class="modal-content" id="img01">
+	  </div>
+	  <div id="caption"></div>
+	</div>
+
 	<!-- footer -->
 	<%@ include file="/common/inc/footer.jspf" %>
 	<!-- //fooer -->
 </div>
+<script type="text/javascript">
+    $('#categoryMid').on('change', function(e) {
+        fnGetSCodeList('R010610',this.value,$("#categoryScls"),'','C');
+    });
+
+    $('#areaMid').on('change', function(e) {
+		fnGetSCodeList('R010070',this.value,$("#areaScls"),'','C');
+	});
+
+    $('#price').on('change', function(e) {
+        this.value=setComma(this.value);
+    });
+
+    $('#quantity').on('change', function(e) {
+        this.value=setComma(this.value);
+    });
+
+  var MAX_IMAGES = 4;
+  var newImageIndexCounter = 0;
+
+  function touchImages(){
+	  $('#imagesTouched').val('1');
+  }
+
+  function openImgModal(imgEl){
+    $('#img01').attr('src', imgEl.src);
+    $('#caption').text(imgEl.alt || '');
+    $('#myModal').fadeIn(100);
+  }
+  $('.close').on('click', function(){ $('#myModal').fadeOut(100); });
+  $('#myModal').on('click', function(e){ if (e.target.id === 'myModal') $('#myModal').fadeOut(100); });
+
+  // 대표 배지/버튼 토글 + '이미지 없음' 표시 관리
+  function refreshMainUI(){
+    var $grid  = $('#productImages');
+    var $boxes = $grid.find('.thumb-box');
+
+    // 배지/버튼 초기화
+    $grid.find('.badge-main').remove();
+    $boxes.find('.btn-designate').show();
+
+    // 첫 번째 = 대표 → 배지 붙이고 ‘대표지정’ 버튼 숨김
+    var $first = $boxes.first();
+    if ($first.length){
+      $first.append('<span class="badge badge-primary badge-main">대표</span>');
+      $first.find('.btn-designate').hide();
+    }
+  }
+
+  // 현재 DOM 순서 → imageMetasJson 생성 (첫 번째 대표)
+  function rebuildImageMetas(){
+    var arr = [];
+    $('#productImages .thumb-box').each(function(idx){
+      var imageId = $(this).data('imageId');  // 기존
+      var newIdx  = $(this).data('newIndex'); // 신규/교체 시 사용 가능(현재 UI는 교체 미사용)
+      var meta = {
+        imageId: imageId ? String(imageId) : null,
+        represent: (idx === 0 ? 1 : 0)
+      };
+      if (newIdx !== undefined) meta.newIndex = Number(newIdx);
+      arr.push(meta);
+    });
+    $('#imageMetasJson').val(JSON.stringify(arr));
+    refreshMainUI();
+  }
+
+  // 대표 지정: 해당 썸네일을 맨 앞으로
+  function setAsMain(imageIdOrNew){
+    var $box;
+    if (imageIdOrNew && /^\d+$/.test(String(imageIdOrNew))) {
+      $box = $('#productImages .thumb-box[data-image-id="'+imageIdOrNew+'"]'); // 기존
+    } else {
+      $box = $('#productImages .thumb-box[data-new-index="'+imageIdOrNew+'"]'); // 신규
+    }
+    if ($box && $box.length) {
+      $('#productImages').prepend($box);
+      rebuildImageMetas();
+	  touchImages();
+    }
+  }
+
+  // 기존 이미지 삭제 (서버 즉시 삭제)
+  function deleteImage(imageId){
+    if (!confirm('이미지를 삭제하시겠습니까?')) return;
+    $.ajax({
+      url: '/api/product/image/delete',
+      type: 'POST',
+      data: { imageId: imageId },
+      success: function(){
+        $('#productImages .thumb-box[data-image-id="'+imageId+'"]').remove();
+        rebuildImageMetas();
+		touchImages();
+      },
+      error: function(xhr){
+        alert('삭제 실패: ' + (xhr.responseText || xhr.status));
+      }
+    });
+  }
+
+  // 신규 이미지 삭제 (클라이언트에서만 제거 + 해당 파일 input 제거)
+  function deleteNewImage(newIndex){
+    $('#productImages .thumb-box[data-new-index="'+newIndex+'"]').remove();
+    $('#input-images-' + newIndex).remove();
+    rebuildImageMetas();
+	touchImages();
+  }
+
+  // 신규 이미지 추가
+  function addNewImage(){
+    var currCnt = $('#productImages .thumb-box').length;
+    if (currCnt >= MAX_IMAGES) {
+      alert('이미지는 최대 ' + MAX_IMAGES + '장까지 등록할 수 있습니다.');
+      return;
+    }
+    var idx = newImageIndexCounter++;
+    //var $inp = $('<input type="file" accept="image/*" name="images['+idx+']" id="input-images-'+idx+'">');
+    var $inp = $('<input type="file" accept="image/*" name="upload" id="input-images-'+idx+'">');
+    $inp.on('change', function(){
+      if (!this.files || !this.files[0]) { $(this).remove(); return; }
+      var url = URL.createObjectURL(this.files[0]);
+      // 빈 placeholder 제거
+      $('#productImages .empty-placeholder').remove();
+
+      var thumb =
+        '<div class="thumb-box" data-new-index="'+idx+'">'+
+          '<img src="'+url+'" class="img-thumbnail product-thumb" alt="신규 이미지" onclick="openImgModal(this)">'+
+          '<div class="thumb-actions">'+
+            '<button type="button" class="btn btn-primary btn-xs btn-designate" onclick="setAsMain('+idx+')">대표지정</button>'+
+            '<button type="button" class="btn btn-danger btn-xs" onclick="deleteNewImage('+idx+')">삭제</button>'+
+          '</div>'+
+        '</div>';
+
+      $('#productImages').append(thumb);
+      rebuildImageMetas();
+	  touchImages();
+    });
+    $('#newImageInputs').append($inp);
+    $inp.trigger('click');
+  }
+</script>
+
 </body>
 </html>
 <%@ include file="/common/inc/msg.jspf" %>
