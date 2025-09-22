@@ -233,4 +233,6 @@ public class RestMemberController {
         opUserService.updateDefaultWholesalerByUserId(opUserVO);
         return ResponseEntity.ok().build();
     }
+
+
 }

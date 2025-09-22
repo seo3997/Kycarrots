@@ -39,6 +39,113 @@
 			rebuildImageMetas();
 		    $('#aform').on('submit', function(){ rebuildImageMetas(); });
 
+			// 하나의 모달을 사용자/센터 검색에 모두 재사용
+			$("#selectModal").on("show.bs.modal", function (event) {
+			  var $btn  = $(event.relatedTarget);
+			  var discd = $btn.data("discd");           // modalUser | modalWholesaler
+			  var goUrl = "";
+			  var mode  = "";                           // 'user' | 'wh'
+
+			  if (discd === "modalUser") {
+				goUrl = "/api/members/wholesalers?memberCode=ROLE_SELL";
+				$(".modal-title").text("판매자검색");
+				mode = "user";
+			  } else if (discd === "modalWholesaler") {
+				goUrl = "/api/members/wholesalers?memberCode=ROLE_PROJ";
+				$(".modal-title").text("센터검색");
+				mode = "wh";
+			  } else {
+				return; // 정의되지 않은 호출은 무시
+			  }
+
+			  var $modal = $(this);
+			  $modal.data("mode", mode);                // 선택 후 어디에 세팅할지 기억
+			  $modal.find("#modal-body").html('<div class="p-3 text-center">Loading...</div>');
+
+			  $.ajax({
+				type: "GET",
+				url: goUrl,
+				dataType: "json",
+				cache: false,
+				success: function (list) {
+				  if (!Array.isArray(list)) list = [];
+				  // 테이블 렌더
+				  var rows = list.map(function (u, i) {
+					var no = u.userNo || "";
+					var id = u.userId || "";
+					var nm = u.userNm || "";
+					return (
+					  '<tr data-user-no="'+no+'" data-user-id="'+id+'" data-user-nm="'+nm+'">'+
+						'<td class="text-center">'+(i+1)+'</td>'+
+						'<td class="text-left">'+id+'</td>'+
+						'<td class="text-left">'+nm+'</td>'+
+						'<td class="text-center"><button type="button" class="btn btn-primary btn-xs js-pick">선택</button></td>'+
+					  '</tr>'
+					);
+				  }).join("");
+
+				  var html =
+					'<div class="mb-2">'+
+					  '<input type="text" class="form-control form-control-sm" id="sellerFilter" placeholder="아이디/이름 검색...">'+
+					'</div>'+
+					'<div class="table-responsive" style="max-height:360px;overflow:auto">'+
+					  '<table class="table table-sm table-hover" id="sellerTable">'+
+						'<thead><tr>'+
+						  '<th style="width:60px">No</th>'+
+						  '<th>아이디</th>'+
+						  '<th>이름</th>'+
+						  '<th style="width:80px">선택</th>'+
+						'</tr></thead>'+
+						'<tbody>'+(rows || '<tr><td colspan="4" class="text-center text-muted">데이터 없음</td></tr>')+'</tbody>'+
+					  '</table>'+
+					'</div>';
+
+				  $modal.find("#modal-body").html(html);
+				},
+				statusCode: { 401: function(){ window.location.href = "/admin/login.do"; } },
+				error: function (xhr) {
+				  console.error(xhr);
+				  $modal.find("#modal-body").html('<div class="text-danger p-3">조회 실패</div>');
+				}
+			  });
+			});
+
+			// 선택 버튼 클릭 → 분기해서 값 세팅
+			$("#selectModal").on("click", "#sellerTable .js-pick", function () {
+			  var $tr   = $(this).closest("tr");
+			  var no    = $tr.data("userNo");
+			  var id    = $tr.data("userId");
+			  var nm    = $tr.data("userNm");
+			  var mode  = $("#selectModal").data("mode");
+
+			  if (mode === "user") {
+				// 판매자 세팅
+				$("#userNo").val(no);                        // hidden
+				$("#sellerNmView").val(id + "/" + nm);       // 표시용
+			  } else if (mode === "wh") {
+				// 센터(중간센터) 세팅
+				$("#wholesalerNo").val(no);                  // hidden
+				$("#wholesalerNm").val(id + "/" + nm);       // 표시용
+			  }
+			  $("#selectModal").modal("hide");
+			});
+
+			// 간단 필터
+			$("#selectModal").on("input", "#sellerFilter", function () {
+			  var q = $(this).val().toLowerCase();
+			  $("#sellerTable tbody tr").each(function () {
+				var id = String($(this).data("userId") || "").toLowerCase();
+				var nm = String($(this).data("userNm") || "").toLowerCase();
+				$(this).toggle(id.indexOf(q) > -1 || nm.indexOf(q) > -1);
+			  });
+			});
+
+			// 닫힐 때 내용 정리(선택)
+			$("#selectModal").on("hidden.bs.modal", function(){
+			  $(this).find("#modal-body").empty().end().removeData("mode");
+			});
+
+
 		});
 		
 		// 목록
@@ -157,6 +264,43 @@
 							</select>
 						</div>
 					</div>
+					<!-- 판매자 -->
+					<div class="form-group row">
+					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">판매자</label>
+					  <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+						<div class="input-group w-100">
+						  <input type="text" class="form-control" id="sellerNmView" name="sellerNmView" placeholder="중간센터를 선택하세요" readonly>
+						  <div class="input-group-append">
+							<button type="button"
+									class="btn btn-secondary"
+									data-toggle="modal"
+									data-target="#selectModal"
+									data-discd="modalUser">
+							  <i class="fa fa-search"></i> 검색
+							</button>
+						  </div>
+						</div>
+						<!-- 실제 전송되는 값 -->
+						<input type="hidden" id="userNo" name="userNo">
+					  </div>
+					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">중간센터</label>
+					  <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+						<div class="input-group w-100">
+						  <input type="text" class="form-control" id="wholesalerNm" name="wholesalerNm" placeholder="판매자를 선택하세요" readonly>
+						  <div class="input-group-append">
+							<button type="button"
+									class="btn btn-secondary"
+									data-toggle="modal"
+									data-target="#selectModal"
+									data-discd="modalWholesaler">
+							  <i class="fa fa-search"></i> 검색
+							</button>
+						  </div>
+						</div>
+						<!-- 실제 전송되는 값 -->
+						<input type="hidden" id="wholesalerNo" name="wholesalerNo">
+					  </div>
+					</div>
 
 					<div class="form-group row">
 						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="title">상품명</label>
@@ -270,7 +414,23 @@
 	  </div>
 	  <div id="caption"></div>
 	</div>
+	<div id="selectModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog modal-lg">
+		<!-- Modal content-->
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			<h4 class="modal-title">팝업제목</h4>
+		  </div>
+		   <div id="modal-body">
 
+			</div>
+		  <div class="modal-footer">
+			<button type="button" id="btn-close" class="btn btn-default" data-dismiss="modal">Close</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
 	<!-- footer -->
 	<%@ include file="/common/inc/footer.jspf" %>
 	<!-- //fooer -->

@@ -57,4 +57,5 @@ public class OpUserService {
     public int updateDefaultWholesalerByUserId(OpUserVO user) {
         return opUserRepository.updateDefaultWholesalerByUserId(user);
     }
+
 }
