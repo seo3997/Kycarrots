@@ -247,4 +247,15 @@
 		DELETE FROM tb_product_image
 		WHERE PRODUCT_ID = #{productId}
 	</delete>
+
+	<update id="updateProductStatus" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">
+		UPDATE tb_product
+		SET
+			SALE_STATUS = #{saleStatus},
+			REJECT_REASON = #{rejectReason},
+			UPDUSR_NO = #{updusrNo},
+			UPDT_DT = CURRENT_TIMESTAMP
+		WHERE PRODUCT_ID = #{productId}
+	</update>
+
 </mapper>

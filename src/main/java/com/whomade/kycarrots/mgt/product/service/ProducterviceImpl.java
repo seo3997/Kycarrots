@@ -289,7 +289,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 	public  TnProductVo buildInsTnProductVo(DataMap param) {
 		TnProductVo tnProductVo = new TnProductVo();
 		//USER_NO  와  WHOLESALER_NO 가 빠졌음
-		tnProductVo.setUserNo("2");
+		tnProductVo.setUserNo(param.getString("userNo"));
 		//tnProductVo.setWholesalerId(param.getString("wholesalerId"));
 		tnProductVo.setSaleStatus(param.getString("saleStatus"));
 		tnProductVo.setProductId(param.getString("productId"));
@@ -354,6 +354,26 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 
 		// 4) 상품 삭제
 		commonMybatisDao.update("mgt.product.deleteProduct", productId);
+	}
+
+	/**
+	 * <PRE>
+	 * 1. MethodName 	: updateProduct
+	 * 2. ClassName  	: ProducterviceImpl
+	 * 3. Comment   	: 상품 수정
+	 * 4. 작성자    		: SooHyun.Seo
+	 * 5. 작성일    		: 2025. 09. 19. 오후 4:08:41
+	 * </PRE>
+	 *   @throws Exception
+	 */
+	public void updateProductStatus(DataMap param)throws Exception {
+		TnProductVo tnProductVo = new TnProductVo();
+		tnProductVo.setProductId(param.getString("productId"));
+		tnProductVo.setUserNo(param.getString("userNo"));
+		tnProductVo.setSaleStatus(param.getString("saleStatus"));
+		tnProductVo.setRejectReason(param.getString("rejectReason"));
+		tnProductVo.setUpdusrNo(param.getString("ss_user_no"));
+		commonMybatisDao.update("mgt.product.updateProductStatus", tnProductVo);
 	}
 
 }

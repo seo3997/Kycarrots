@@ -16,6 +16,22 @@
 <%@ include file="/common/inc/common.jspf" %>
 <%@ include file="/common/inc/docType.jspf" %>
 
+<%
+  String systemType   = Const.SYSTEM_TYPE;
+  String role         = ssAuthorId; // 세션 권한
+  String saleStatus   = resultMap.getString("SALE_STATUS","");
+  String saleStatusNm = resultMap.getString("SALE_STATUS_NM","");
+  boolean saleStatusEnable  = true;
+
+  if("ROLE_SELL".equals(role) && "2".equals(systemType)) {
+	  if ("0".equals(saleStatus) || "98".equals(saleStatus)) {
+	     saleStatusEnable = true;
+	  } else {
+	     saleStatusEnable = false;
+	  }
+  }
+
+%>
 <html>
 <head>
 	<%@ include file="/common/inc/meta.jspf" %>
@@ -42,6 +58,16 @@
 					$(this).attr('src', '/common/images/file_ext_ico/attach_etc.gif');
 				}
 			});
+			function refreshStatusChangeBtn() {
+			  var cur = $('#curSaleStatus').val();   // 서버에서 내려온 현재 상태
+			  var now = $('#saleStatus').val();      // 사용자가 선택한 상태(혹은 hidden값)
+			  var changed = now && (cur !== now);
+			  $('#btnStatusChange').prop('disabled', !changed)
+								   .toggleClass('disabled', !changed);
+			}
+			$(document).on('change', '#saleStatus', refreshStatusChangeBtn);
+
+
 		});
 		
 		// 목록
@@ -53,14 +79,33 @@
 		function fnGoUpdateForm(){
 			$('#aform').attr({ action : '/mgt/product/updateFormProduct.do', method : 'get' }).submit();
 		}
-		
+
 		 //삭제
 		function fnGoDelete(){
 			if(confirm('삭제하시겠습니까?')){
 				$('#aform').attr({ action : '/mgt/product/deleteProduct.do', method : 'post' }).submit();
 			}
 		}
-		
+
+		 //상태변경
+		function fnUpdateStatus(){
+		  var sel = $('#saleStatus').val();
+		  if (!sel){
+			alert('변경할 판매상태를 선택해 주세요.');
+			return;
+		  }
+
+		  if (sel === '98'){ // 반려
+			openRejectModal();
+			return;
+		  }
+
+		  if(confirm('상품 판매상태를 변경 하시겠습니까?')){
+			$('#aform').attr({ action : '/mgt/product/updateProductStatus.do', method : 'post' }).submit();
+		  }
+
+		}
+
 		// 첨부파일 다운로드
 		function fnDownload(file_id){
 			$('[name=file_id]').val(file_id);
@@ -101,7 +146,8 @@
 				<input type="hidden" name="sch_category_m_code" value="<%=param.getString("sch_category_m_code")%>" />
 				<input type="hidden" name="sch_area_m_code" value="<%=resultMap.getString("sch_area_m_code") %>" />
 				<input type="hidden" name="currentPage" value="<%=param.getString("currentPage")%>"/>
-
+				<input type="hidden" name="rejectReason" id="rejectReason" />
+				<input type="hidden" name="curSaleStatus" id="curSaleStatus" value="<%=resultMap.getString("SALE_STATUS") %>"/>
 
 			<div class="card">
 				<div class="card-body viewForm">
@@ -109,15 +155,29 @@
 					<div class="form-group row">
 						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">판매상태</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+					        <% if (saleStatusEnable) { %>
 					        <select id="saleStatus" name="saleStatus" class="form-control input-sm w-25" >
 								<%=CommboUtil.getComboStr(saleStatusComboStr, "CODE", "CODE_NM", resultMap.getString("SALE_STATUS") , "C")%>
 							</select>
+							<% } else { %>
+								<input type="hidden" name="saleStatus" id="saleStatus" value="<%=resultMap.getString("SALE_STATUS") %>"/>
+					            <%=resultMap.getString("SALE_STATUS_NM")%>
+					        <% } %>
 						</div>
 						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품명</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
 							<%=resultMap.getString("TITLE") %>
 						</div>
 					</div>
+					<% if ("98".equals(resultMap.getString("SALE_STATUS"))) { %>
+					  <div class="form-group row">
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">반려 사유</label>
+						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
+						  <!-- 개행 유지하고 안전하게 보여주고 싶으면 pre 사용 -->
+						  <pre style="white-space:pre-wrap; margin:0;"><%= resultMap.getString("REJECT_REASON") %></pre>
+						</div>
+					  </div>
+					<% } %>
 					<div class="form-group row">
 						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품가격</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
@@ -211,8 +271,9 @@
 						<button type="button" class="btn btn-modify" onclick="fnGoUpdateForm(); return false;"><i class="fa fa-eraser"></i> 수정</button>
 
                         <button type="button" class="btn btn-delete" onclick="fnGoDelete(); return false;"><i class="fa fa-trash"></i> 삭제</button>
-
-						<button type="button" class="btn btn-write" onclick="fnGoDelete(); return false;"><i class="fa fa-plus"></i> 상태변경</button>
+						<% if( (Const.ROLE_ADMIN.equals(ssAuthorId) || Const.ROLE_SELL.equals(ssAuthorId)|| Const.ROLE_PROJ.equals(ssAuthorId)) && (saleStatusEnable=true)){ %>
+						<button type="button" class="btn btn-write" id="btnStatusChange" onclick="fnUpdateStatus(); return false;" disabled><i class="fa fa-sync"></i> 상태변경</button>
+						<% } %>
 
 					</div>
 				</div>
@@ -223,15 +284,34 @@
 		</section>
 	</div>
 
-<!-- The Modal -->
-<div id="myModal" class="modal">
-  <span class="close">&times;</span>
-  <div class="myzoom">
-  <img class="modal-content" id="img01">
-  </div>
-  <div id="caption"></div>
-</div>
-
+	<!-- The Modal -->
+	<div id="myModal" class="modal">
+	  <span class="close">&times;</span>
+	  <div class="myzoom">
+	  <img class="modal-content" id="img01">
+	  </div>
+	  <div id="caption"></div>
+	</div>
+	<!-- 반려 사유 전용 모달 (Bootstrap) -->
+	<div id="rejectModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="rejectModalLabel">반려 사유</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			<textarea id="rejectText" class="form-control" rows="5" placeholder="반려 사유를 입력해 주세요."></textarea>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+			<button type="button" class="btn btn-primary" id="btnRejectOk">확인</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
 
 	<!-- footer -->
 	<%@ include file="/common/inc/footer.jspf" %>
@@ -250,14 +330,59 @@
   	$('#myModal').on('click', function(e){
     	if (e.target.id === 'myModal') $('#myModal').fadeOut(100);
   	});
+	// 반려 사유 모달 열기
+	function openRejectModal(){
+	  $('#rejectText').val('');
+	  $('#rejectModal').modal('show');
+	}
 
-    /*
-    var allowed = ['0','98'];
-    var $sel = $('#saleStatus');
+	// 반려 사유 모달 확인
+	$('#btnRejectOk').on('click', function(){
+	  var reason = ($('#rejectText').val() || '').trim();
+	  if (!reason){
+		alert('반려 사유를 입력해 주세요.');
+		$('#rejectText').focus();
+		return;
+	  }
+	  $('#rejectReason').val(reason);
+	  $('#rejectModal').modal('hide');
+	  // 상태변경 제출
+	  $('#aform').attr({ action : '/mgt/product/updateProductStatus.do', method : 'post' }).submit();
+	});
 
-    // 허용 외 옵션 제거
-    $sel.find('option').not(function(){ return this.value === '' || allowed.includes(this.value); }).remove();
-    */
+	var SYSTEM_TYPE = '<%=systemType%>';
+  	var ROLE        = '<%=role%>';
+	  // 역할/시스템타입별 허용 상태
+	function allowedStatuses() {
+		// 전체 코드 예: ['0','98','1','10','99']  // 0:승인요청, 98:반려, 1:판매중, 10:예약중, 99:판매완료
+		if (SYSTEM_TYPE === '1') {
+		  // 승인/반려 기능 없음 → 0,98 제거
+		  return ['1','10','99'];
+		}
+		if (SYSTEM_TYPE === '2') {
+		  if (ROLE === 'ROLE_SELL') return ['0','98']; // 판매자는 승인요청만
+		  // 관리자/센터는 전체
+		  return ['0','98','1','10','99'];
+		}
+		// 기본(안전)
+		return ['0','98','1','10','99'];
+	}
+	 // 드롭다운 옵션 필터링
+	  function filterSaleStatusOptions() {
+		var $sel = $('#saleStatus');
+		var allow = allowedStatuses();
+		// 기존 선택값가 허용 밖이면 초기화
+		if ($sel.val() && allow.indexOf($sel.val()) === -1) {
+		  $sel.val('');
+		}
+		// 옵션 필터 (placeholder 빈값은 유지)
+		$sel.find('option').each(function(){
+		  var v = this.value;
+		  if (!v) return; // '선택하세요' 유지
+		  if (allow.indexOf(v) === -1) $(this).remove();
+		});
+	  }
+	  filterSaleStatusOptions();
 </script>
 
 </body>

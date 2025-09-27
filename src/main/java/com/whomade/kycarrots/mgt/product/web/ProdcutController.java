@@ -389,4 +389,37 @@ public class ProdcutController {
 		model.addAttribute("param", param);
 		return "redirect:/mgt/product/selectPageListProduct.do";
 	}
+
+	/**
+	 * <PRE>
+	 * 1. MethodName 	: updateProduct
+	 * 2. ClassName  	: ProdcutController
+	 * 3. Comment   	: 상품 수정
+	 * 4. 작성자    		: SooHyun.Seo
+	 * 5. 작성일    		: 2025. 09. 19 18:00
+	 * </PRE>
+	 *   @return String
+	 *   @param request
+	 *   @param response
+	 *   @param model
+	 *   @return
+	 *   @throws Exception
+	 */
+	@RequestMapping(value = "/mgt/product/updateProductStatus.do")
+	public String updateProductStatus(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+		DataMap param = RequestUtil.getDataMap(request);
+
+		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+		param.put("ss_user_no", userInfoVo.getUserNo());
+
+
+		productService.updateProductStatus(param);
+
+		model.addAttribute("param", param);
+		MessageUtil.setMessage(request, egovMessageSource.getMessage("succ.data.update"));
+
+		return "redirect:/mgt/product/selectProduct.do?productId="+param.getLong("productId");
+
+	}
+
 }
