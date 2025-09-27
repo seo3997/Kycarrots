@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ page import="com.whomade.kycarrots.framework.common.util.DateUtil"%>
+<%@ page import="com.whomade.kycarrots.framework.common.constant.Const"%>
 <%@ page import="com.whomade.kycarrots.framework.common.util.CommboUtil"%>
 <%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"     uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -149,7 +150,7 @@
 								<option>100개</option>
 							</select>
 							// -->
-							<% if("ROLE_ADMIN".equals(ssAuthorId)){ %>
+							<% if(Const.ROLE_ADMIN.equals(ssAuthorId) || Const.ROLE_SELL.equals(ssAuthorId)){ %>
 							<button type="button" class="btn btn-info btn-write" onclick="fnInsertForm(); return false;"><i class="fa fa-plus"></i> 상품 등록</button>
 							<% } %>
 						</div>
@@ -200,7 +201,7 @@
 						<%}%>
 						<%if(resultList.size() == 0){%>
 							<tr>
-								<td class="text-center" colspan="5" ><spring:message code="msg.data.empty" /></td>
+								<td class="text-center" colspan="8" ><spring:message code="msg.data.empty" /></td>
 							</tr>
 						<%}%>
 

@@ -71,6 +71,7 @@ public class ProdcutController {
 
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
+		param.put("memberCode", userInfoVo.getAuthorId());
 
 		// 판매상태 R010630
 		codeParam.put("group_id","R010630");
@@ -119,7 +120,13 @@ public class ProdcutController {
 		
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
-		
+
+		DataMap codeParam = new DataMap();
+		// 판매상태 R010630
+		codeParam.put("group_id","R010630");
+		List saleStatusComboStr = commonCodeService.selectCodeList(codeParam);
+		model.addAttribute("saleStatusComboStr", saleStatusComboStr);
+
 		DataMap resultMap = productService.selectProduct(param);
 		
 		// #### FILE LIST 검색 Start ####

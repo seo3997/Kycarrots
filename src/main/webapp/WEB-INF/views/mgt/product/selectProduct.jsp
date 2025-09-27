@@ -11,8 +11,7 @@
 <jsp:useBean id="resultMap" class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
 <jsp:useBean id="param" class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
 <jsp:useBean id="fileList" class="java.util.ArrayList" type="java.util.List" scope="request"/>
-<jsp:useBean id="companyComboStr" class="java.util.ArrayList" type="java.util.List" scope="request" />
-<jsp:useBean id="answerComboStr" type="java.util.List" class="java.util.ArrayList" scope="request" />
+<jsp:useBean id="saleStatusComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
 
 <%@ include file="/common/inc/common.jspf" %>
 <%@ include file="/common/inc/docType.jspf" %>
@@ -110,7 +109,9 @@
 					<div class="form-group row">
 						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">판매상태</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
-							<%=resultMap.getString("SALE_STATUS_NM") %>
+					        <select id="saleStatus" name="saleStatus" class="form-control input-sm w-25" >
+								<%=CommboUtil.getComboStr(saleStatusComboStr, "CODE", "CODE_NM", resultMap.getString("SALE_STATUS") , "C")%>
+							</select>
 						</div>
 						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품명</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
@@ -208,8 +209,10 @@
 						<button type="button" class="btn btn-list" onclick="fnGoList(); return false;"><i class="fa fa-reply"></i> 목록</button>
 		        
 						<button type="button" class="btn btn-modify" onclick="fnGoUpdateForm(); return false;"><i class="fa fa-eraser"></i> 수정</button>
-					
-						<button type="button" class="btn btn-delete" onclick="fnGoDelete(); return false;"><i class="fa fa-trash"></i> 삭제</button>
+
+                        <button type="button" class="btn btn-delete" onclick="fnGoDelete(); return false;"><i class="fa fa-trash"></i> 삭제</button>
+
+						<button type="button" class="btn btn-write" onclick="fnGoDelete(); return false;"><i class="fa fa-plus"></i> 상태변경</button>
 
 					</div>
 				</div>
@@ -248,6 +251,13 @@
     	if (e.target.id === 'myModal') $('#myModal').fadeOut(100);
   	});
 
+    /*
+    var allowed = ['0','98'];
+    var $sel = $('#saleStatus');
+
+    // 허용 외 옵션 제거
+    $sel.find('option').not(function(){ return this.value === '' || allowed.includes(this.value); }).remove();
+    */
 </script>
 
 </body>

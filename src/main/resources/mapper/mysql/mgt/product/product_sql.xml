@@ -65,8 +65,14 @@
 	WHERE 1 = 1
 	</sql>
 	<sql id="whereParam">
+		<if test="memberCode == 'ROLE_SELL'">
+			AND A.USER_NO = #{ss_user_no}
+		</if>
+		<if test="memberCode == 'ROLE_PROJ'">
+			AND A.WHOLESALER_NO = #{ss_user_no}
+		</if>
 		<if test="sch_sale_status_code != null and sch_sale_status_code != ''">
-  			AND A.SALE_STATUS = #{sch_sale_status_code}
+			AND A.SALE_STATUS = #{sch_sale_status_code}
 		</if>
 		<if test="sch_category_m_code != null and sch_category_m_code != ''">
 			AND A.CATEGORY_GROUP = 'R010610'

@@ -156,11 +156,19 @@
 		// 등록
 		function fnGoInsert(){
 
-			if($('[name=saleStatus]').val() == ''){
-				alert('판매상태를 선택주세요.');
-				$('[name=saleStatus]').focus();
+			<% if(Const.ROLE_ADMIN.equals(ssAuthorId)){ %>
+			if($('[name=userNo]').val() == ''){
+				alert('판매자를 선택주세요.');
 				return false;
 			}
+			<% } %>
+			<% if(Const.SYSTEM_TYPE.equals("2")){ %>
+				if($('[name=wholesalerNo]').val() == ''){
+					alert('중간센터를 선택주세요.');
+					return false;
+				}
+			<% } %>
+
 			if($('[name=title]').val() == ''){
 				alert('상품명을 입력해 주세요.');
 				$('[name=title]').focus();
@@ -255,21 +263,25 @@
 
 				<h4 class="cardTitle"><i class="fa fa-caret-square-right"></i> 기본정보</h4>
 				<div class="card-body viewForm">
-
-					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="saleStatus">판매상태</label>
-						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-							<select id="saleStatus" name="saleStatus" class="form-control input-sm w-25" >
-								<%=CommboUtil.getComboStr(saleStatusComboStr, "CODE", "CODE_NM", param.getString("saleStatus") , "C")%>
-							</select>
-						</div>
-					</div>
 					<!-- 판매자 -->
+					<%
+					  String saleStatus="";
+						if (Const.SYSTEM_TYPE.equals("1")) saleStatus = "1";
+					    if (Const.SYSTEM_TYPE.equals("2")) saleStatus = "0";
+
+					%>
 					<div class="form-group row">
+					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">판매상태</label>
+					  <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+							<select id="saleStatus" name="saleStatus" class="form-control input-sm w-25" disabled >
+								<%=CommboUtil.getComboStr(saleStatusComboStr, "CODE", "CODE_NM", saleStatus , "C")%>
+							</select>
+					  </div>
+					  <% if(Const.ROLE_ADMIN.equals(ssAuthorId)){ %>
 					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">판매자</label>
 					  <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
 						<div class="input-group w-100">
-						  <input type="text" class="form-control" id="sellerNmView" name="sellerNmView" placeholder="중간센터를 선택하세요" readonly>
+						  <input type="text" class="form-control" id="sellerNmView" name="sellerNmView" placeholder="판매자를 선택하세요" readonly>
 						  <div class="input-group-append">
 							<button type="button"
 									class="btn btn-secondary"
@@ -281,12 +293,26 @@
 						  </div>
 						</div>
 						<!-- 실제 전송되는 값 -->
-						<input type="hidden" id="userNo" name="userNo">
+						<input type="hidden" id="userNo" name="userNo" value="">
 					  </div>
-					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">중간센터</label>
+					<%
+					} else {
+					%>
+					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2"></label>
 					  <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
-						<div class="input-group w-100">
-						  <input type="text" class="form-control" id="wholesalerNm" name="wholesalerNm" placeholder="판매자를 선택하세요" readonly>
+						<input type="hidden" id="userNo" name="userNo" value="<%=ssUserNo%>">
+					  </div>
+					<%
+					}
+					%>
+					</div>
+
+					<% if(Const.SYSTEM_TYPE.equals("2")){ %>
+					<div class="form-group row">
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="saleStatus">중간센터</label>
+						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-4">
+						<div class="input-group w-20">
+						  <input type="text" class="form-control" id="wholesalerNm" name="wholesalerNm" placeholder="중간센터를 선택하세요" readonly>
 						  <div class="input-group-append">
 							<button type="button"
 									class="btn btn-secondary"
@@ -299,8 +325,11 @@
 						</div>
 						<!-- 실제 전송되는 값 -->
 						<input type="hidden" id="wholesalerNo" name="wholesalerNo">
-					  </div>
+						</div>
 					</div>
+					<% } %>
+
+
 
 					<div class="form-group row">
 						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="title">상품명</label>
