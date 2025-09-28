@@ -15,6 +15,20 @@
 
 <%@ include file="/common/inc/common.jspf" %>
 <%@ include file="/common/inc/docType.jspf" %>
+<%
+   String saleStatus="";
+   String saleStatusNm="";
+	if (Const.SYSTEM_TYPE.equals("1")) {
+		saleStatus = "1";
+		saleStatusNm = "판매중";
+	}
+	if (Const.SYSTEM_TYPE.equals("2")) {
+		saleStatus = "0";
+		saleStatusNm = "승인요청";
+	}
+
+%>
+
 <html>
 <head>
 	<%@ include file="/common/inc/meta.jspf" %>
@@ -259,23 +273,16 @@
 				<input type="hidden" id="sch_area_m_code"       name="sch_area_m_code" 	        value="<%=param.getString("sch_area_m_code")%>" />
 				<input type="hidden" id="currentPage"           name="currentPage" 			    value="<%=param.getString("currentPage")%>"/>
 				<input type="hidden" name="imagesTouched" id="imagesTouched" value="0" />
+				<input type="hidden" id="saleStatus"           name="saleStatus" 			    value="<%=saleStatus%>"/>
 			<div class="card">
 
 				<h4 class="cardTitle"><i class="fa fa-caret-square-right"></i> 기본정보</h4>
 				<div class="card-body viewForm">
 					<!-- 판매자 -->
-					<%
-					  String saleStatus="";
-						if (Const.SYSTEM_TYPE.equals("1")) saleStatus = "1";
-					    if (Const.SYSTEM_TYPE.equals("2")) saleStatus = "0";
-
-					%>
 					<div class="form-group row">
 					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">판매상태</label>
 					  <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
-							<select id="saleStatus" name="saleStatus" class="form-control input-sm w-25" disabled >
-								<%=CommboUtil.getComboStr(saleStatusComboStr, "CODE", "CODE_NM", saleStatus , "C")%>
-							</select>
+							<%=saleStatusNm%>
 					  </div>
 					  <% if(Const.ROLE_ADMIN.equals(ssAuthorId)){ %>
 					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">판매자</label>
