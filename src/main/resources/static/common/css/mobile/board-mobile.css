@@ -1,0 +1,81 @@
+/* ===== 1) 리셋 & 가로 넘침 방지 ===== */
+html, body { margin:0; padding:0; width:100%; overflow-x:hidden; -webkit-text-size-adjust:100%; }
+* { box-sizing:border-box; min-width:0; }
+img, video, iframe { max-width:100%; height:auto; display:block; }
+body {
+    /* iOS 노치 대응 (선택) */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    background:#fafafa;
+    color:#111;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
+}
+
+/* ===== 2) 헤더 / 타이틀바 ===== */
+.header { position:sticky; top:0; z-index:10; background:#fff; border-bottom:1px solid #eee; }
+.titlebar { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px 16px; }
+.titlebar h1 { margin:0; font-size:18px; line-height:1.2; }
+
+/* 버튼 공통 */
+.btn { appearance:none; -webkit-appearance:none; border:0; border-radius:8px; padding:8px 12px; font-size:14px; }
+.btn-primary { background:#5F567E; color:#fff; }
+.btn-write { background:#5F567E; color:#fff; white-space:nowrap; }
+
+/* ===== 3) 검색 바 (안 넘치게 Grid 레이아웃) ===== */
+.search{
+    display:grid;
+    grid-template-columns: minmax(100px, 32%) 1fr auto; /* select / input / button */
+    gap:8px;
+    padding:12px 16px;
+    background:#fff;
+}
+.search select,
+.search input[type="text"],
+.search .btn { min-width:0; }
+.search select { width:100%; }
+.search input[type="text"]{ width:100%; }
+.search .btn { white-space:nowrap; padding:8px 12px; }
+
+/* 좁은 화면: select가 1줄 차지, 아래에 input+button */
+@media (max-width: 420px){
+    .search{ grid-template-columns: 1fr auto; }
+    .search select{ grid-column:1 / -1; }
+}
+/* 아주 좁은 화면: 모두 세로 */
+@media (max-width:340px){
+    .search{ grid-template-columns: 1fr; }
+    .search .btn{ width:100%; justify-self:stretch; text-align:center; }
+}
+
+/* ===== 4) 본문 컨테이너 ===== */
+.container { padding:12px 16px 24px; }
+
+/* ===== 5) 리스트 카드 ===== */
+a.tap { display:block; text-decoration:none; color:inherit; }
+.card {
+    background:#fff; border:1px solid #eee; border-radius:12px;
+    padding:12px; margin-bottom:12px;
+    box-shadow:0 1px 2px rgba(0,0,0,.03);
+}
+.sj {
+    font-size:15px; font-weight:600; margin-bottom:8px;
+    overflow-wrap:anywhere; word-break:break-word;
+    /* 두 줄로 자르려면 주석 해제
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    */
+}
+.meta { display:flex; flex-wrap:wrap; gap:6px 12px; color:#666; font-size:12px; }
+.meta .no { margin-left:auto; }
+
+/* ===== 6) 더보기 / 빈 상태 ===== */
+.more {
+    width:100%; padding:12px; border:1px solid #ddd; background:#fff;
+    border-radius:8px;
+}
+.end, .empty {
+    padding:16px; text-align:center; color:#777; background:#fff;
+    border-radius:8px; border:1px solid #eee; margin-top:8px;
+}
+
+/* ===== 7) 터치 피드백 ===== */
+a.tap:active .card, .btn:active { filter:brightness(.96); }
