@@ -2,8 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="common.file">
-	
-	<select id="selectAttchFile" parameterType="atFileVO" resultType="atFileVO">
+
+	<!-- 결과 매핑: DB 컬럼 → VO 프로퍼티(언더스코어 그대로) -->
+	<resultMap id="AtFileResultMap" type="com.whomade.kycarrots.framework.common.util.file.vo.AtFileVO">
+		<id   property="file_seq"      		column="FILE_SEQ"/>
+		<result property="file_id"       	column="FILE_ID"/>
+		<result property="doc_id"        	column="DOC_ID"/>
+		<result property="file_nm"       	column="FILE_NM"/>
+		<result property="file_size"     	column="FILE_SIZE"/>
+		<result property="file_ext_nm"   	column="FILE_EXT_NM"/>
+		<result property="file_rltv_path" 	column="FILE_RLTV_PATH"/>
+		<result property="file_aslt_path" 	column="FILE_ASLT_PATH"/>
+		<result property="content_type"  	column="CONTENT_TYPE"/>
+		<result property="srt_ord"       	column="SRT_ORD"/>
+	</resultMap>
+
+	<select id="selectAttchFile" parameterType="atFileVO" resultMap="AtFileResultMap">
 	/* common.file.selectAttchFile */
 	<![CDATA[
 		SELECT
@@ -25,7 +39,7 @@
 	]]>
 	</select> 
 	
-	<select id="selectAttchFiles" parameterType="atFileVO" resultType="atFileVO">
+	<select id="selectAttchFiles" parameterType="atFileVO" resultMap="AtFileResultMap">
 	/* common.file.selectAttchFiles */
 	<![CDATA[
 		SELECT

@@ -58,6 +58,15 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
 
 file:
-  upload-dir: /var/www/uploads/product
-  public-url: http://52.231.229.156:9000/common/img/product
-  resource-path: file:/var/www/uploads/product/
+  # 총 업로드 용량(요청 내 모든 파일 합계)
+  max-size-total: 50MB
+  # 개별 파일 최대 용량
+  max-size-each: 10MB
+  product:
+    upload-dir: /var/www/uploads/product
+    public-url: http://52.231.229.156:9000/common/img/product
+    resource-path: file:/var/www/uploads/product/
+  board:
+    upload-dir: /var/www/uploads/board
+    public-url: http://52.231.229.156:9000/common/img/board
+    resource-path: file:/var/www/uploads/board/

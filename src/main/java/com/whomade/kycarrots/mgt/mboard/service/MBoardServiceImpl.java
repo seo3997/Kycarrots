@@ -105,7 +105,7 @@ public class MBoardServiceImpl extends EgovAbstractServiceImpl implements MicroB
 				MultipartFile mfile = (MultipartFile)fileList.get(i);
 				if(!mfile.isEmpty()){
 					// 파일을 서버에 물리적으로 저장하고
-					_reAtFile	= atFileMngUtil.parseFileInf(mfile, doc_id, "mboard/", param.getString("ss_user_no"), "Y");
+					_reAtFile	= atFileMngUtil.parseFileInf(mfile, doc_id, "board", param.getString("ss_user_no"));
 					// 파일이 생성되고나면 생성된 첨부파일 정보를 DB에 넣는다.
 					commonMybatisDao.insert("common.file.insertAttchFile", _reAtFile);
 				}
@@ -154,7 +154,7 @@ public class MBoardServiceImpl extends EgovAbstractServiceImpl implements MicroB
 				MultipartFile mfile = (MultipartFile)fileList.get(i);
 				if(!mfile.isEmpty()){
 					// 파일을 서버에 물리적으로 저장하고
-					_reAtFile	= atFileMngUtil.parseFileInf(mfile, doc_id, "mboard/", param.getString("ss_user_no"), "Y");
+					_reAtFile	= atFileMngUtil.parseFileInf(mfile, doc_id, "board", param.getString("ss_user_no"));
 					// 파일이 생성되고나면 생성된 첨부파일 정보를 DB에 넣는다.
 					commonMybatisDao.insert("common.file.insertAttchFile", _reAtFile);
 				}

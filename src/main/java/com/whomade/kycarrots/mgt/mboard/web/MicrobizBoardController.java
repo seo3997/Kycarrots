@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +45,8 @@ public class MicrobizBoardController {
 	@Resource(name="AtFileMngUtil")
 	private AtFileMngUtil atFileMngUtil;
 
+	@Value("${file.max-size-each}")   // 예: "10MB"
+	private String maxSizeEachConf;
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: selectPageListBoard
@@ -194,8 +197,11 @@ public class MicrobizBoardController {
 		
 		// 파일 크기 계산(최대크기 넘었을경우 다시 쓰기 페이지로 리턴)
 		if(!atFileMngUtil.checkEachFileSize(fileList)){
-			MessageUtil.setMessage(request, egovMessageSource.getMessage("error.file.size.over", new String[]{atFileMngUtil.getFileSize(EgovPropertiesUtil.getProperty("Globals.fileMaxSize"))}));
-			
+			String pretty = atFileMngUtil.humanReadable(maxSizeEachConf); // "10.0MB" 등
+			MessageUtil.setMessage(request,
+					egovMessageSource.getMessage("error.file.size.over", new String[]{ pretty })
+			);
+
 			param.put("redirectUrl", "/mgt/mboard/insertFormBoard.do");
 			model.addAttribute("param", param);
 			return "common/redirect";
@@ -216,8 +222,8 @@ public class MicrobizBoardController {
 	 * 1. MethodName 	: updateFormBoard
 	 * 2. ClassName  	: BoardController
 	 * 3. Comment   	: 게시판 수정폼
-	 * 4. 작성자    	: SooHyun.Seo
-	 * 5. 작성일    	: 2017. 3. 13. 오후 4:09:28
+	 * 4. 작성자    		: SooHyun.Seo
+	 * 5. 작성일    		: 2017. 3. 13. 오후 4:09:28
 	 * </PRE>
 	 *   @return String
 	 *   @param request
@@ -292,8 +298,11 @@ public class MicrobizBoardController {
 		
 		// 파일 크기 계산(최대크기 넘었을경우 다시 쓰기 페이지로 리턴)
 		if(!atFileMngUtil.checkEachFileSize(fileList)){
-			MessageUtil.setMessage(request, egovMessageSource.getMessage("error.file.size.over", new String[]{atFileMngUtil.getFileSize(EgovPropertiesUtil.getProperty("Globals.fileMaxSize"))}));
-			
+			String pretty = atFileMngUtil.humanReadable(maxSizeEachConf); // "10.0MB" 등
+			MessageUtil.setMessage(request,
+					egovMessageSource.getMessage("error.file.size.over", new String[]{ pretty })
+			);
+
 			param.put("redirectUrl", "/mgt/mboard/updateFormBoard.do");
 			model.addAttribute("param", param);
 			

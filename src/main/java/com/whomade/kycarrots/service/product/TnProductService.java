@@ -34,7 +34,7 @@ import java.util.Map;
 @Slf4j
 public class TnProductService {
 
-    @Value("${file.public-url}")
+    @Value("${file.product.public-url}")
     private String publicUrl;
 
 

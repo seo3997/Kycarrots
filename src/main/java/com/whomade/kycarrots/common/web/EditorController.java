@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +43,10 @@ public class EditorController {
 	
 	@Resource(name="AtFileMngUtil")
 	private AtFileMngUtil atFileMngUtil;
-	
+
+	@Value("${file.max-size-each}")   // 예: "10MB"
+	private String maxSizeEachConf;
+
 	@RequestMapping(value = "/editor/editorFileUpload.do")
 	public @ResponseBody void ckeditorFileUpload(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 
@@ -56,7 +60,8 @@ public class EditorController {
 		
 		// 파일 크기 계산(최대크기 넘었을경우 다시 쓰기 페이지로 리턴)
 		if(!atFileMngUtil.checkEachFileSize(fileList, "Globals.ImgfileMaxSize")){
-			msg = egovMessageSource.getMessage("error.img.size.over", new String[]{atFileMngUtil.getFileSize(EgovPropertiesUtil.getProperty("Globals.ImgfileMaxSize"))});
+			String pretty = atFileMngUtil.humanReadable(maxSizeEachConf); // "10.0MB" 등
+			msg = egovMessageSource.getMessage("error.img.size.over", new String[]{ pretty });
 			// 메세지 셋팅하여 호출
 			returnStr += "<script type=\"text/javascript\">window.parent.fnEditorFileUploadCallback.apply(window.parent, ['" + param.getString("CKEditorFuncNum") + "', '', false, '" + msg + "']);</script>";
 		} else {

@@ -57,9 +57,7 @@ public class Const {
 	public static final String fileMaxSize = EgovPropertiesUtil.getProperty("Globals.fileMaxSize");
 	public static final String imgFileMaxSize = EgovPropertiesUtil.getProperty("Globals.ImgfileMaxSize");
 	
-	// 적정 이미지 해상도
-	public static final String imgMaxSize = EgovPropertiesUtil.getProperty("Globals.imgMaxSize");
-	
+
 	// 암복호화 키
 	public static final String seedKey = EgovPropertiesUtil.getProperty("Globals.seedKey");
 	

@@ -38,7 +38,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 	@Autowired
 	private FileStorageProperties fileStorageProperties;
 
-	@Value("${file.public-url}")
+	@Value("${file.product.public-url}")
 	private String publicUrl;
 
 

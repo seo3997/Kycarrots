@@ -62,6 +62,15 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
 
 file:
-  upload-dir: E:/uploads/product
-  public-url: http://127.0.0.1:9000/common/img/product
-  resource-path: file:///E:/uploads/product/
+  # 총 업로드 용량(요청 내 모든 파일 합계)
+  max-size-total: 50MB
+  # 개별 파일 최대 용량
+  max-size-each: 10MB
+  product:
+    upload-dir: E:/uploads/product
+    public-url: http://127.0.0.1:9000/common/img/product
+    resource-path: file:///E:/uploads/product/
+  board:
+    upload-dir: E:/uploads/board
+    public-url: http://127.0.0.1:9000/common/img/board
+    resource-path: file:///E:/uploads/board/

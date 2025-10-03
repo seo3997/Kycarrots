@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,9 @@ public class FrontBoardController {
 	
 	@Resource(name="AtFileMngUtil")
 	private AtFileMngUtil atFileMngUtil;
+
+	@Value("${file.max-size-each}")   // 예: "10MB"
+	private String maxSizeEachConf;
 
 	/**
 	 * <PRE>
@@ -101,10 +105,6 @@ public class FrontBoardController {
 	public String selectBoard(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 		
 		DataMap param = RequestUtil.getDataMap(request);
-		
-		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
-		param.put("ss_user_no", userInfoVo.getUserNo());
-		
 		DataMap resultMap = boardService.selectBoard(param);
 		
 		// #### FILE LIST 검색 Start ####
@@ -193,8 +193,12 @@ public class FrontBoardController {
 		
 		// 파일 크기 계산(최대크기 넘었을경우 다시 쓰기 페이지로 리턴)
 		if(!atFileMngUtil.checkEachFileSize(fileList)){
-			MessageUtil.setMessage(request, egovMessageSource.getMessage("error.file.size.over", new String[]{atFileMngUtil.getFileSize(EgovPropertiesUtil.getProperty("Globals.fileMaxSize"))}));
-			
+
+			String pretty = atFileMngUtil.humanReadable(maxSizeEachConf); // "10.0MB" 등
+			MessageUtil.setMessage(request,
+					egovMessageSource.getMessage("error.file.size.over", new String[]{ pretty })
+			);
+
 			param.put("redirectUrl", "/front/board/insertFormBoard.do");
 			model.addAttribute("param", param);
 			return "common/redirect";
@@ -291,8 +295,11 @@ public class FrontBoardController {
 		
 		// 파일 크기 계산(최대크기 넘었을경우 다시 쓰기 페이지로 리턴)
 		if(!atFileMngUtil.checkEachFileSize(fileList)){
-			MessageUtil.setMessage(request, egovMessageSource.getMessage("error.file.size.over", new String[]{atFileMngUtil.getFileSize(EgovPropertiesUtil.getProperty("Globals.fileMaxSize"))}));
-			
+			String pretty = atFileMngUtil.humanReadable(maxSizeEachConf); // "10.0MB" 등
+			MessageUtil.setMessage(request,
+					egovMessageSource.getMessage("error.file.size.over", new String[]{ pretty })
+			);
+
 			param.put("redirectUrl", "/front/board/updateFormBoard.do");
 			model.addAttribute("param", param);
 			

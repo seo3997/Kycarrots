@@ -38,6 +38,7 @@
 			, A.SJ
 			, A.CN
 			, A.ATCH_DOC_ID
+		    , A.ATCH_YN
 			, A.REGISTER_NO
 			, B.USER_NM AS REGISTER_NM
 			,DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
@@ -59,6 +60,7 @@
 				, C.CODE_NM AS BBS_SE_NM
 				, A.SJ
 				, A.ATCH_DOC_ID
+				, A.ATCH_YN
 				, A.REGISTER_NO
 				, B.USER_NM AS REGISTER_NM
 				,DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT 
@@ -85,6 +87,7 @@
 		, A.SJ
 		, A.CN
 		, A.ATCH_DOC_ID
+		, A.ATCH_YN
 		, A.HIT_CNT
 		, A.DELETE_YN
 		, A.REGISTER_NO
@@ -105,6 +108,7 @@
 		, SJ
 		, CN
 		, ATCH_DOC_ID
+		, ATCH_YN
 		, HIT_CNT
 		, DELETE_YN
 		, REGISTER_NO
@@ -118,6 +122,14 @@
 		,#{sj}
 		,#{cn}
 		,#{atch_doc_id}
+		<choose>
+			<when test="atch_yn != null and atch_yn != ''">
+				,#{atch_yn}
+			</when>
+			<otherwise>
+				,'Y'
+			</otherwise>
+		</choose>
 		, 0
 		,'N'
 		,#{ss_user_no}
@@ -132,7 +144,12 @@
 	UPDATE tb_board
 	SET SJ = #{sj}
 		, CN = #{cn}
-		, ATCH_DOC_ID = #{atch_doc_id}
+		<if test="atch_doc_id != null and atch_doc_id != ''">
+			, ATCH_DOC_ID = #{atch_doc_id}
+			<if test="atch_yn != null and atch_yn != ''">
+				, ATCH_YN = #{atch_yn}
+			</if>
+		</if>
 		, UPDUSR_NO = #{ss_user_no}
 		, UPDT_DT = CURRENT_TIMESTAMP
 	WHERE BBS_SEQ = #{bbs_seq}

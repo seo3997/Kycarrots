@@ -48,7 +48,7 @@ public class EditorServiceImpl extends EgovAbstractServiceImpl implements Editor
 				if(!mfile.isEmpty()){
 					// 파일을 서버에 물리적으로 저장하고
 					// 내용 doc_id를 doc_id로 저장을 한다.
-					_reAtFile	= atFileMngUtil.parseFileInf(mfile, param.getString("cn_doc_id"), "editor/data/", param.getString("ss_user_no"), "Y");
+					_reAtFile	= atFileMngUtil.parseFileInf(mfile, param.getString("cn_doc_id"), "editor/data/", param.getString("ss_user_no"));
 					// 파일이 생성되고나면 생성된 첨부파일 정보를 DB에 넣는다.
 					commonMybatisDao.insert("common.file.insertAttchFile", _reAtFile);
 				}

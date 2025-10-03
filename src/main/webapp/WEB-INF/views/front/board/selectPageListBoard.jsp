@@ -44,18 +44,18 @@
         }
         function fnGoPage(p){
             $('currentPage').value=String(p);
-            submitTo('/mgt/mboard/selectPageListBoard.do','get');
+            submitTo('/front/board/selectPageListBoard.do','get');
         }
         function fnInsertForm(){
-            submitTo('/mgt/mboard/insertFormBoard.do','post');
+            submitTo('/front/board/insertFormBoard.do','post');
         }
         function fnSelect(seq){
             document.getElementsByName('bbs_seq')[0].value=seq;
-            submitTo('/mgt/mboard/selectBoard.do','get');
+            submitTo('/front/board/selectBoard.do','get');
         }
         function fnSearch(){
             $('currentPage').value='1';
-            submitTo('/mgt/mboard/selectPageListBoard.do','get');
+            submitTo('/front/board/selectPageListBoard.do','get');
         }
         document.addEventListener('DOMContentLoaded',function(){
             var t=document.querySelector('[name=sch_text]');
@@ -75,24 +75,13 @@
         <button type="button" class="btn btn-write" onclick="fnInsertForm();return false;">+ 등록</button>
         <% } %>
     </div>
-    <form id="aform" method="get" action="/mgt/mboard/selectPageListBoard.do" style="margin:0;">
+    <form id="aform" method="get" action="/front/board/selectPageListBoard.do" style="margin:0;">
         <input type="hidden" name="sch_bbs_se_code_l" id="sch_bbs_se_code_l" value="R010170"/>
         <input type="hidden" name="bbs_seq"/>
         <input type="hidden" name="currentPage" id="currentPage" value="<%=currentPage%>"/>
         <input type="hidden" name="sch_type" id="search_list_st" value="<%=schType%>"/>
+        <input type="hidden" name="sch_bbs_se_code_m" id="sch_bbs_se_code_m" value="<%=selMid%>"/>
         <div class="search">
-            <select id="sch_bbs_se_code_m" name="sch_bbs_se_code_m">
-                <option value="">전체</option>
-                <%
-                    for (Object o : boardComboStr){
-                        DataMap r = (DataMap)o;
-                        String code=r.getString("CODE");
-                        String nm=r.getString("CODE_NM");
-                        String sel=(code!=null && code.equals(selMid))?"selected":"";
-                %>
-                <option value="<%=code%>" <%=sel%>><%=nm%></option>
-                <% } %>
-            </select>
             <input type="text" name="sch_text" placeholder="검색어를 입력하세요" value="<%=schText%>"/>
             <button type="button" class="btn btn-primary" onclick="fnSearch();return false;">검색</button>
         </div>
