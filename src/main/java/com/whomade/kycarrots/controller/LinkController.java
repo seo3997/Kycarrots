@@ -42,6 +42,16 @@ import java.util.List;
 @Slf4j
 public class LinkController {
 
+    @RequestMapping(value = "/link/join_terms.do")
+    public String join_terms(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+        DataMap param = RequestUtil.getDataMap(request);
+        DataMap codeParam = new DataMap();
+
+        model.addAttribute("param", param);
+
+        return "link/join_terms";
+    }
+
     @RequestMapping(value = "/link/join_terms1.do")
     public String join_terms1(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
         DataMap param = RequestUtil.getDataMap(request);

@@ -1,4 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" ?> 
+<%
+    // join_terms1.jsp / join_terms2.jsp 공통으로 맨 위에 추가
+    boolean __fragment = "Y".equalsIgnoreCase(request.getParameter("fragment"));
+    if (!__fragment) {
+%>
+
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//KO" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="ko">
 <head>
@@ -60,3 +66,4 @@
 	}
 </style>
 </head>
+<%  } // if (!__fragment) 끝 %>

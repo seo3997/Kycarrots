@@ -166,3 +166,23 @@ a.tap:active .card, .btn:active { filter:brightness(.96); }
     color: #fff;
     border-radius: 10px;
 }
+
+/* 하단 고정 바/버튼 */
+.footer-actions {
+    position: sticky; /* 또는 position: fixed */
+    bottom: 0;
+    /* 기본 여백 + 안전영역(제스처 바/네비게이션 바) 만큼 추가 */
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+
+/* 혹시 다른 고정 요소가 있으면 동일하게 */
+.fixed-bottom {
+    position: fixed;
+    left: 0; right: 0;
+    bottom: env(safe-area-inset-bottom);
+}
+
+/* 페이지 전체에도 여유를 주고 싶으면 (선택) */
+html, body {
+    padding-bottom: env(safe-area-inset-bottom);
+}

@@ -1,11 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false"%>
-<%@ include file="header.jsp"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%
+	// join_terms1.jsp / join_terms2.jsp 공통으로 맨 위에 추가
+	boolean __fragment = "Y".equalsIgnoreCase(request.getParameter("fragment"));
+	if (!__fragment) {
+%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+	<title>이용약관</title>
+	<!-- 공통 CSS 직접 링크 (캐시무력화 포함) -->
+	<link rel="stylesheet" href="/common/css/mobile/terms.css?v=<%=System.currentTimeMillis()/1000%>">
+</head>
 <body>
 <div id="wrapper">
-	
 	<div class="join_terms">
-
+<%  } // if (!__fragment) 끝 %>
 		<dl>
 			<dt>제 1조 목적</dt>
 			<dd>
@@ -207,8 +218,11 @@
 			</dd>
 		</dl>
 
+<%
+	if (!__fragment) {
+%>
 	</div><!--terms-->
-
 </div><!--wrapper-->
 </body>
 </html>
+<%  } // if (!__fragment) 끝 %>

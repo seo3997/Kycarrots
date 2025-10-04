@@ -1,0 +1,126 @@
+/* ==========================================================================
+   terms.css  —  Terms pages (mobile WebView friendly)
+   --------------------------------------------------------------------------
+   - Light/Dark 모드 자동 대응
+   - 모바일 타이포/여백 최적화
+   - 인쇄/접근성 보강
+   ========================================================================== */
+
+:root{
+    --bg:#FFFFFF;
+    --text:#111111;
+    --muted:#555555;
+    --primary:#0A84FF;
+    --divider:#E5E5EA;
+    --chip-bg:#F2F2F7;
+    --card:#FFFFFF;
+    --radius:14px;
+    --shadow:0 1px 3px rgba(0,0,0,.06), 0 6px 18px rgba(0,0,0,.06);
+    --base:16px;
+    --line:1.65;
+}
+
+@media (prefers-color-scheme: dark){
+    :root{
+        --bg:#0B0B0F;
+        --text:#F2F2F2;
+        --muted:#B9BBC1;
+        --primary:#6CA8FF;
+        --divider:#24242A;
+        --chip-bg:#17171C;
+        --card:#0F0F14;
+        --shadow:none;
+    }
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body{
+    margin:0; padding:0;
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR",
+    "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", Arial, sans-serif;
+    font-size:var(--base); line-height:var(--line);
+    -webkit-text-size-adjust:100%; text-size-adjust:100%;
+}
+
+#wrapper{ padding:12px; }
+.join_terms{ max-width:880px; margin:0 auto; }
+
+/* DL 구조 */
+.join_terms dl{ margin:0; padding:0; }
+.join_terms dt, .join_terms dd{ margin:0; }
+
+/* 소제목(칩 스타일) */
+.join_terms dt{
+    display:inline-block;
+    margin:20px 8px 10px 0;
+    padding:8px 12px;
+    background:var(--chip-bg);
+    border:1px solid var(--divider);
+    border-radius:999px;
+    font-weight:700;
+    font-size:clamp(15px, 2.8vw, 17px);
+    color:var(--text);
+}
+
+/* 본문 카드 */
+.join_terms dd{
+    margin:0 0 18px 0;
+    padding:14px 16px;
+    background:var(--card);
+    border:1px solid var(--divider);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    font-size:clamp(14px, 2.6vw, 16px);
+    color:var(--text);
+}
+
+.join_terms dd p{ margin:0 0 10px; }
+.join_terms dd br{ line-height:var(--line); }
+
+/* - 대시 리스트 도우미 (원문 포맷 유지용) */
+.join_terms dd .dash{ position:relative; padding-left:14px; }
+.join_terms dd .dash::before{
+    content:"–";
+    position:absolute; left:0; top:0;
+    color:var(--muted);
+}
+
+/* 표 */
+table{ width:100%; border-collapse:collapse; margin:10px 0; font-size:0.95em; }
+th, td{ padding:10px 12px; border:1px solid var(--divider); }
+th{ text-align:left; background:var(--chip-bg); }
+
+/* 링크/텍스트 */
+a{ color:var(--primary); text-decoration:none; }
+a:hover, a:focus{ text-decoration:underline; }
+b, strong{ font-weight:700; }
+small{ color:var(--muted); }
+
+/* 구분선 (join_terms3에서 파트 사이 구분용) */
+.hr{ height:1px; background:var(--divider); border:0; margin:16px 0; }
+
+/* 미디어 요소 반응형 */
+img, video, iframe{ max-width:100%; height:auto; }
+
+/* 접근성 포커스 */
+:focus-visible{ outline:2px solid var(--primary); outline-offset:2px; }
+
+/* 작은 화면 보정 */
+@media (max-width:480px){
+    #wrapper{ padding:10px; }
+    .join_terms dd{ padding:12px 13px; }
+}
+
+/* 프린트 최적화 */
+@media print{
+    :root{ --bg:#FFFFFF; --text:#000000; --divider:#CCCCCC; }
+    body{ background:#FFFFFF; color:#000000; }
+    #wrapper{ padding:0; }
+    .join_terms dd{
+        box-shadow:none;
+        border-color:#CCCCCC;
+        page-break-inside:avoid;
+    }
+    a{ color:#000; text-decoration:underline; }
+}
