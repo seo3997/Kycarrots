@@ -97,3 +97,42 @@ a.tap:active .card, .btn:active { filter:brightness(.96); }
 /* 필요하면 헤더도 스코프 */
 .board-view .header { position:sticky; top:0; background:#fff; z-index:10; border-bottom:1px solid #eee; }
 .board-view .titlebar h1 { font-size:18px; }
+
+/* 섹션 */
+.files-section { margin-top:14px; }
+.section-title { font-weight:700; font-size:14px; margin:8px 2px 10px; }
+
+/* 이미지 그리드 */
+.file-gallery {
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:10px;
+}
+@media (min-width:560px){ .file-gallery{ grid-template-columns: repeat(3, 1fr); } }
+.file-card { background:#fff; border:1px solid #eee; border-radius:10px; overflow:hidden; }
+.file-card img { width:100%; height:auto; display:block; }
+.file-card .caption { font-size:12px; padding:8px; color:#555; }
+
+/* 비디오/첨부 */
+.video-list { display:flex; flex-direction:column; gap:12px; }
+.video-item .caption { font-size:12px; color:#555; margin-top:6px; }
+
+.file-list { display:flex; flex-direction:column; gap:8px; }
+.file-item { display:flex; align-items:center; gap:10px; border:1px solid #eee; border-radius:10px; background:#fff; padding:10px 12px; }
+.file-item .name { flex:1 1 auto; word-break:break-word; }
+
+/* --- Board Insert (작성) 전용 --- */
+.board-form .form-wrap { padding: 12px 16px 24px; }
+.board-form .card { background:#fff; border:1px solid #eee; border-radius:12px; padding:14px; box-shadow:0 1px 2px rgba(0,0,0,.03); }
+.board-form .field { margin-bottom:14px; }
+.board-form .field label { display:block; font-size:14px; color:#555; margin-bottom:6px; }
+.board-form .input,
+.board-form .textarea,
+.board-form select { width:100%; box-sizing:border-box; padding:11px 12px; border:1px solid #ddd; border-radius:10px; font-size:15px; }
+.board-form .textarea { min-height:140px; resize:vertical; line-height:1.5; }
+.board-form .hint { font-size:12px; color:#888; margin-top:6px; }
+.board-form .radio-row { display:flex; gap:16px; align-items:center; }
+.board-form .footer-actions { position:sticky; bottom:0; background:#fff; padding:12px 16px; border-top:1px solid #eee; display:flex; gap:8px; }
+.board-form .btn { padding:12px 14px; border-radius:10px; border:1px solid transparent; font-size:15px; }
+.board-form .btn-primary { background:#5F567E; color:#fff; }
+.board-form .btn-outline { background:#fff; border-color:#ddd; color:#333; }

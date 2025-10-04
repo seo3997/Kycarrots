@@ -8,8 +8,6 @@
 <jsp:useBean id="boardComboStr"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
 
 <%
-    String ssAuthorId = (String)request.getAttribute("ssAuthorId");
-    if (ssAuthorId == null) ssAuthorId = "";
 
     int currentPage = 1, totalPage = 1, currDataNo = resultList.size();
     try {
@@ -18,9 +16,11 @@
         currDataNo  = ((Number)pageNavigationVo.getClass().getMethod("getCurrDataNo").invoke(pageNavigationVo)).intValue();
     } catch(Exception ignore){}
 
+    String ssUserNo =  param.getString("ss_user_no");
     String selMid  = param.getString("sch_bbs_se_code_m");
     String schText = param.getString("sch_text");
     String schType = param.getString("sch_type");
+    String selMidNm  = "10".equals(selMid)? "공지사항" :"문의하기";
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -30,7 +30,7 @@
     <title>게시판</title>
 
     <!-- 분리된 모바일 CSS 링크 (경로는 프로젝트 구조에 맞춰 조정) -->
-    <link rel="stylesheet" href="/common/css/mobile/board-mobile.css?v=1.02"/>
+    <link rel="stylesheet" href="/common/css/mobile/board-mobile.css?v=<%= System.currentTimeMillis() / 1000 %>" />
 
     <script>
         function $(id){
@@ -59,10 +59,15 @@
         }
         document.addEventListener('DOMContentLoaded',function(){
             var t=document.querySelector('[name=sch_text]');
-            if(t){t.addEventListener('keydown',e=>{if(e.key==='Enter')e.preventDefault();});
-                t.addEventListener('keyup',e=>{if(e.key==='Enter')fnSearch();});}
-            var cb=$('sch_bbs_se_code_m'); if(cb) cb.addEventListener('change',fnSearch);
-            var more=$('btnMore'); if(more) more.addEventListener('click',()=>{var c=parseInt($('currentPage').value||'1',10);fnGoPage(c+1);});
+            if(t){
+                t.addEventListener('keydown',e=>{if(e.key==='Enter')e.preventDefault();});
+                t.addEventListener('keyup',e=>{if(e.key==='Enter')fnSearch();});
+            }
+
+            var more=$('btnMore');
+            if(more) more.addEventListener('click',()=>{
+                var c=parseInt($('currentPage').value||'1',10);fnGoPage(c+1);
+            });
         });
     </script>
 </head>
@@ -70,12 +75,13 @@
 
 <div class="header">
     <div class="titlebar">
-        <h1>공지사항</h1>
-        <% if ("ROLE_ADMIN".equals(ssAuthorId)) { %>
+        <h1><%=selMidNm%></h1>
+        <% if ("20".equals(selMid)) { %>
         <button type="button" class="btn btn-write" onclick="fnInsertForm();return false;">+ 등록</button>
         <% } %>
     </div>
     <form id="aform" method="get" action="/front/board/selectPageListBoard.do" style="margin:0;">
+        <input type="hidden" name="ss_user_no" id="ss_user_no" value="<%=ssUserNo%>"/>
         <input type="hidden" name="sch_bbs_se_code_l" id="sch_bbs_se_code_l" value="R010170"/>
         <input type="hidden" name="bbs_seq"/>
         <input type="hidden" name="currentPage" id="currentPage" value="<%=currentPage%>"/>

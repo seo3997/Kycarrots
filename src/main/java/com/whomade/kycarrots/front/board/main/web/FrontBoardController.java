@@ -70,13 +70,17 @@ public class FrontBoardController {
 		//UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		//param.put("ss_user_no", userInfoVo.getUserNo());
 
+		String schBbsSeCodeM = param.getString("sch_bbs_se_code_m","10");
+		String ss_user_no = param.getString("ss_user_no","1");
+		param.put("ss_user_no", ss_user_no);
+		param.put("sch_bbs_se_code_m", schBbsSeCodeM);
+		param.put("sch_bbs_se_code", schBbsSeCodeM);
+
 		// 게시판 구분 코드 조회 R010170
 		codeParam.put("group_id", Const.upCodeNoticeBbsSeCode);
 		List boardComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("boardComboStr", boardComboStr);
 		
-		param.put("sch_bbs_se_code", "10");		//공지사항 
-		param.put("bbs_se_code_m", 	 "10");		//공지사항 
 		//리스트 조회
 		List<DataMap> resultList = boardService.selectPageListBoard(model, param);
 
@@ -146,12 +150,7 @@ public class FrontBoardController {
 		codeParam.put("group_id", Const.upCodeNoticeBbsSeCode);
 		List boardComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("boardComboStr", boardComboStr);
-		
-		
-		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
-		param.put("ss_user_no", userInfoVo.getUserNo());
-		
-		
+
 		model.addAttribute("param", param);
 		
 		return "front/board/insertFormBoard";
@@ -176,8 +175,9 @@ public class FrontBoardController {
 	public String insertBoard(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
 		
-		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
-		param.put("ss_user_no", userInfoVo.getUserNo());
+
+		String ssUserNo = param.getString("ss_user_no","1");
+		param.put("ss_user_no", ssUserNo);
 
 		// 파일 객체 가져옴
 		List fileList = atFileMngUtil.getFiles((MultipartHttpServletRequest)request);
@@ -235,8 +235,6 @@ public class FrontBoardController {
 		DataMap param = RequestUtil.getDataMap(request);
 		DataMap codeParam = new DataMap();
 		
-		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
-		param.put("ss_user_no", userInfoVo.getUserNo());
 		// 게시판 구분 코드 조회 R010170
 		codeParam.put("group_id", Const.upCodeNoticeBbsSeCode);
 		List boardComboStr = commonCodeService.selectCodeList(codeParam);
@@ -277,9 +275,9 @@ public class FrontBoardController {
 	@RequestMapping(value = "/front/board/updateBoard.do")
 	public String updateBoard(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
-		
-		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
-		param.put("ss_user_no", userInfoVo.getUserNo());
+
+		String ssUserNo = param.getString("ss_user_no","1");
+		param.put("ss_user_no", ssUserNo);
 		
 		// 파일 객체 가져옴
 		List fileList = atFileMngUtil.getFiles((MultipartHttpServletRequest)request);
@@ -335,9 +333,6 @@ public class FrontBoardController {
 
 		DataMap param = RequestUtil.getDataMap(request);
 
-		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
-		param.put("ss_user_no", userInfoVo.getUserNo());
-		
 		DataMap resultMap = boardService.selectBoard(param);
 		
 		// doc_id 및 내용 doc_id 셋팅
@@ -348,6 +343,9 @@ public class FrontBoardController {
 		boardService.deleteBoard(param);
 		MessageUtil.setMessage(request, egovMessageSource.getMessage("succ.data.delete"));
 		model.addAttribute("param", param);
-		return "redirect:/front/board/selectPageListBoard.do";
+		String schBbsSeCodeM = param.getString("sch_bbs_se_code_m","10");
+		String ssUserNo = param.getString("ss_user_no","1");
+
+		return "redirect:/front/board/selectPageListBoard.do?sch_bbs_se_code_m="+schBbsSeCodeM+"&ss_user_no="+ssUserNo;
 	}
 }
