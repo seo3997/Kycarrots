@@ -12,7 +12,7 @@
     String bbsNm  = resultMap.getString("BBS_SE_NM");
     String title  = resultMap.getString("SJ");
     String regNm  = resultMap.getString("REGISTER_NM");
-    String regId  = resultMap.getString("REGISTER_ID");
+    String regId  = resultMap.getString("REGISTER_NO");
     String regDt  = resultMap.getString("REGIST_DT");
     String atchYn = resultMap.getString("ATCH_YN"); // "N"이면 이미지/동영상은 본문 표시
 

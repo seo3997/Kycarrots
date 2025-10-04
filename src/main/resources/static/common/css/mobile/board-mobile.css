@@ -136,3 +136,33 @@ a.tap:active .card, .btn:active { filter:brightness(.96); }
 .board-form .btn { padding:12px 14px; border-radius:10px; border:1px solid transparent; font-size:15px; }
 .board-form .btn-primary { background:#5F567E; color:#fff; }
 .board-form .btn-outline { background:#fff; border-color:#ddd; color:#333; }
+
+/* 검색 바 컨트롤 공통 스타일 */
+.header .search {
+    display: flex;
+    gap: 8px;
+    padding: 8px 12px 12px;
+}
+
+.header .search select,
+.header .search input[type="text"],
+.header .search .btn {
+    height: 44px;                 /* 터치 타겟 높이 */
+    font-size: 16px;              /* iOS 확대 방지 */
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 0 12px;
+}
+
+.header .search select {
+    padding-right: 28px;          /* 화살표 여백 */
+}
+
+.header .search .btn {
+    border: none;
+    padding: 0 16px;
+    background: #5F567E;
+    color: #fff;
+    border-radius: 10px;
+}

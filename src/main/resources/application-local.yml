@@ -61,6 +61,11 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
 
+spring.servlet.multipart:
+  max-file-size: 10MB        # 파일 하나 최대
+  max-request-size: 50MB     # 요청 전체 최대(파일 여러 개 합)
+  enabled: true
+
 file:
   # 총 업로드 용량(요청 내 모든 파일 합계)
   max-size-total: 50MB

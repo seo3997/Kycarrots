@@ -75,6 +75,8 @@ public class FrontBoardController {
 		param.put("ss_user_no", ss_user_no);
 		param.put("sch_bbs_se_code_m", schBbsSeCodeM);
 		param.put("sch_bbs_se_code", schBbsSeCodeM);
+		param.put("front_yn", "1");
+
 
 		// 게시판 구분 코드 조회 R010170
 		codeParam.put("group_id", Const.upCodeNoticeBbsSeCode);

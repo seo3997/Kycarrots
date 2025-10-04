@@ -73,6 +73,11 @@
 
 	<sql id="whereParam">
 		   AND A.BBS_SE_CODE_M  = #{sch_bbs_se_code}
+			<if test="(front_yn == '1' or front_yn == 1)
+				  and sch_bbs_se_code_m == '20'
+				  and ss_user_no != null and ss_user_no != ''">
+				AND A.REGISTER_NO = #{ss_user_no}
+			</if>
 		<if test="sch_text != null and sch_text != ''">
 			AND CONCAT(A.SJ, A.CN) LIKE CONCAT('%',#{sch_text},'%')
 		</if>
