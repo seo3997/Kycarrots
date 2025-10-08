@@ -62,6 +62,10 @@ spring.servlet.multipart:
   max-request-size: 50MB     # 요청 전체 최대(파일 여러 개 합)
   enabled: true
 
+sendgrid:
+  api-key: ${SENDGRID_API_KEY}        # OS 환경변수에서 주입
+  from-address: ${SENDGRID_FROM:seo3997@gmail.com}
+
 file:
   # 총 업로드 용량(요청 내 모든 파일 합계)
   max-size-total: 50MB
