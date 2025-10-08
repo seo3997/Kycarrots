@@ -54,4 +54,8 @@ public class OpUserRepository {
         return opUserMapper.updateDefaultWholesalerByUserId(user);
     }
 
+    public OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO) {
+        return opUserMapper.findEmailByNameAndPhone(opUserVO);
+    }
+
 }

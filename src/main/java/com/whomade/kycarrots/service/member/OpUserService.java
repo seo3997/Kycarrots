@@ -58,4 +58,8 @@ public class OpUserService {
         return opUserRepository.updateDefaultWholesalerByUserId(user);
     }
 
+    public OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO) {
+        return opUserRepository.findEmailByNameAndPhone(opUserVO);
+    }
+
 }

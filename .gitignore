@@ -39,3 +39,5 @@ test-output/
 # Ignore local environment files
 .env
 src/main/resources/firebase/firebase-service-account.json
+src/main/resources/application-local.yml
+src/main/resources/application-dev.yml

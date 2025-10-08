@@ -1,11 +1,7 @@
 package com.whomade.kycarrots.service;
 
-import jakarta.activation.DataSource;
-import jakarta.annotation.Resource;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.util.ByteArrayDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -21,7 +17,7 @@ import java.util.Properties;
  * @since: 2024-07-11
  */
 @Service
-public class EmailService {
+public class EmailCafe24Service {
     //@Autowired
     //private JavaMailSender mailSender;
 

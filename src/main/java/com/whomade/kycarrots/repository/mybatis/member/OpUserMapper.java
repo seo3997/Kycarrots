@@ -25,5 +25,6 @@ public interface OpUserMapper {
     Long findWholesalerNoByUserId(@Param("userId") String userId);
     Long findWholesalerNoByUserNo(@Param("userNo") Long userNo);
     int updateDefaultWholesalerByUserId(OpUserVO user);
+    OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO);
 
 }

@@ -1,6 +1,7 @@
 package com.whomade.kycarrots.rest.member;
 
 import com.whomade.kycarrots.dto.login.LoginResponse;
+import com.whomade.kycarrots.dto.user.FindEmailResponse;
 import com.whomade.kycarrots.dto.user.PushTokenVo;
 import com.whomade.kycarrots.entity.TbUserSite;
 import com.whomade.kycarrots.entity.member.OpUserAuthorVO;
@@ -232,6 +233,27 @@ public class RestMemberController {
         opUserVO.setWholesalerNo(wholesalerNo+"");
         opUserService.updateDefaultWholesalerByUserId(opUserVO);
         return ResponseEntity.ok().build();
+    }
+
+    // GET /api/members/find-email?nm=이름&hp=010-1234-5678
+    @GetMapping("/find-email")
+    public ResponseEntity<FindEmailResponse> findEmail(
+            @RequestParam("nm") String name,
+            @RequestParam("hp") String phone) {
+
+        // 하이픈 등 제거해서 비교
+        OpUserVO opUserVO = new OpUserVO();
+        opUserVO.setUserNm(name);
+        opUserVO.setCttpc(phone);
+
+        OpUserVO found  = opUserService.findEmailByNameAndPhone(opUserVO);
+
+        String email = (found != null) ? found.getEmail() : null;
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.notFound().build(); // 404
+        }
+        return ResponseEntity.ok(new FindEmailResponse(email));
+
     }
 
 

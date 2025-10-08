@@ -124,4 +124,12 @@
         WHERE USER_ID = #{userId}
     </update>
 
+    <select id="findEmailByNameAndPhone" parameterType="com.whomade.kycarrots.entity.member.OpUserVO" resultType="com.whomade.kycarrots.entity.member.OpUserVO">
+        SELECT A.EMAIL
+        FROM op_user A
+        WHERE A.CTTPC   = #{cttpc}
+        AND   A.USER_NM = #{userNm}
+        LIMIT 1
+    </select>
+
 </mapper>

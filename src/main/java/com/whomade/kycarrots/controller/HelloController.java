@@ -1,9 +1,6 @@
 package com.whomade.kycarrots.controller;
 
-import com.whomade.kycarrots.service.EmailService;
-import com.whomade.kycarrots.service.TbUserSiteService;
-import com.whomade.kycarrots.entity.TbUserSite;
-import io.swagger.v3.oas.annotations.Operation;
+import com.whomade.kycarrots.service.EmailCafe24Service;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +11,7 @@ import org.knowm.xchart.style.lines.SeriesLines;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author: ADMIN
@@ -40,7 +33,7 @@ import java.util.Optional;
 @Slf4j
 public class HelloController {
     @Autowired
-    private EmailService emailService;
+    private EmailCafe24Service emailService;
 
     @Value("${spring.mail.username}")
     private String maiFrom;
