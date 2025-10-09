@@ -190,7 +190,9 @@
 								</div>
 								
 								<div class="bt-roundbox2">
+									<!--
 									<div class="text-ln">아직 회원이 아니시라면 지금회원으로 가입하세요. <button type="button" class="btn btn-xs btn-dpgray" id="btn_memberAdd">회원가입</button></div>
+									-->
 									<div class="text-ln">아이디나 비밀번호를 분실하셨다면, 지금 찾아보세요. <button type="button" class="btn btn-xs btn-dpgray" id="btn_findId">아이디/비밀번호 찾기</button></div>
 								</div>
 							</div><!-- box-wrap -->
@@ -205,7 +207,7 @@
    		location.href="/front/member/termAndConditions.do";
    	});
    	$('#btn_findId').on('click', function(e) {
-   		location.href="/front/member/memberFindId.do";
+   		location.href="/mgt/member/findIdPw.do";
    	});
 </script>		
 

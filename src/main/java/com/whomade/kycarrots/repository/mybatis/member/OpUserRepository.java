@@ -1,12 +1,15 @@
 package com.whomade.kycarrots.repository.mybatis.member;
 
+import com.whomade.kycarrots.email.PasswordResetToken;
 import com.whomade.kycarrots.entity.member.OpUserAuthorVO;
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -56,6 +59,22 @@ public class OpUserRepository {
 
     public OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO) {
         return opUserMapper.findEmailByNameAndPhone(opUserVO);
+    }
+
+    public OpUserVO selectByEmail(@Param("email") String email) {
+        return opUserMapper.selectByEmail(email);
+    }
+
+    public PasswordResetToken selectValidForUser(@Param("userId") String userId,@Param("now") LocalDateTime now) {
+        return opUserMapper.selectValidForUser(userId, now);
+    }
+    // 1회성 사용 처리
+    public int markUsed(@Param("userId") String userId) {
+        return opUserMapper.markUsed(userId);
+    }
+
+    public int updatePw(DataMap param) {
+        return opUserMapper.updatePw(param);
     }
 
 }

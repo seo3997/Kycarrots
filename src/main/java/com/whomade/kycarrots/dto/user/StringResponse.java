@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FindEmailResponse {
-    private String email;
+public class StringResponse {
+    private String resultString;
 }

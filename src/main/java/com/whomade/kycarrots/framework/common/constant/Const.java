@@ -99,4 +99,12 @@ public class Const {
 	// 접근 구분
 	public static final String accesSeAdmin = "10";						// 관리자
 	public static final String accesSeFront = "20";						// 프론트
+
+	public static final String RESULT_NO_USER = "601";
+	public static final String RESULT_PWD_ERR = "602";
+	public static final String RESULT_MEMBER_CODE_ERR = "603";
+	public static final String RESULT_CODE_200 = "200";
+	public static final String  RESULT_NO_DATA = "604";
+	public static final String  RESULT_CODE_ERR = "0";
+
 }

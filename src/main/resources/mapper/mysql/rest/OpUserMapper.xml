@@ -132,4 +132,48 @@
         LIMIT 1
     </select>
 
+    <select id="selectByEmail" parameterType="string"  resultType="com.whomade.kycarrots.entity.member.OpUserVO">
+        SELECT USER_ID, USER_NM, EMAIL
+        FROM op_user
+        WHERE EMAIL = #{email}
+        LIMIT 1
+    </select>
+
+    <!-- USER_ID 가 PK 이므로 DUPLICATE KEY 충돌 시 최신 토큰으로 덮어씀 -->
+    <insert id="upsertToken" parameterType="com.whomade.kycarrots.email.PasswordResetToken">
+        INSERT INTO tb_password_reset(USER_ID, SELECTOR, VERIFIER_HASH, EXPIRES_AT, USED_YN, REGIST_DT)
+        VALUES
+            (#{userId}, #{selector}, #{verifierHash}, #{expiresAt}, 'N', NOW())
+            ON DUPLICATE KEY UPDATE
+                                 SELECTOR = VALUES(SELECTOR),
+                                 VERIFIER_HASH = VALUES(VERIFIER_HASH),
+                                 EXPIRES_AT = VALUES(EXPIRES_AT),
+                                 USED_YN = 'N'
+    </insert>
+
+    <!-- 유효 토큰 조회: 항상 USER_ID 한 행만 존재
+         (가장 최근 메일만 유효) -->
+    <select id="selectValidForUser" resultType="com.whomade.kycarrots.email.PasswordResetToken">
+        SELECT USER_ID, SELECTOR, VERIFIER_HASH, EXPIRES_AT, USED_YN
+        FROM tb_password_reset
+        WHERE USER_ID = #{userId}
+        AND USED_YN = 'N'
+        AND EXPIRES_AT &gt; #{now}
+        LIMIT 1
+    </select>
+
+    <!-- 토큰 사용 처리 -->
+    <update id="markUsed">
+        UPDATE tb_password_reset
+        SET USED_YN = 'Y'
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <update id="updatePw" parameterType="dataMap">
+        UPDATE op_user
+        SET PASSWORD = #{member_new_pw}
+            UPDT_DT  = NOW()
+        WHERE user_ID= #{member_id}
+    </update>
+
 </mapper>

@@ -1,15 +1,16 @@
 package com.whomade.kycarrots.rest.member;
 
 import com.whomade.kycarrots.dto.login.LoginResponse;
-import com.whomade.kycarrots.dto.user.FindEmailResponse;
+import com.whomade.kycarrots.dto.login.ResetChangeRequest;
+import com.whomade.kycarrots.dto.user.StringResponse;
 import com.whomade.kycarrots.dto.user.PushTokenVo;
-import com.whomade.kycarrots.entity.TbUserSite;
-import com.whomade.kycarrots.entity.member.OpUserAuthorVO;
+import com.whomade.kycarrots.email.EmailService;
+import com.whomade.kycarrots.email.PasswordResetResult;
+import com.whomade.kycarrots.framework.common.constant.Const;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.EgovFileScrty;
 import com.whomade.kycarrots.framework.common.util.encrypt.EncodedTokenizer;
 import com.whomade.kycarrots.entity.member.OpUserVO;
-import com.whomade.kycarrots.service.TbUserSiteService;
 import com.whomade.kycarrots.service.member.OpUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +20,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.whomade.kycarrots.api.member.PasswordResetService;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,9 +33,14 @@ import java.util.Optional;
 @Slf4j
 public class RestMemberController {
     private final OpUserService opUserService;
+    private final PasswordResetService passwordResetService;
+
+    private final EmailService eailService;
+
     @Autowired
     private EncodedTokenizer tokenizer = new EncodedTokenizer();
 
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     /*
     @PostMapping(value = "/login",
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -237,7 +243,7 @@ public class RestMemberController {
 
     // GET /api/members/find-email?nm=이름&hp=010-1234-5678
     @GetMapping("/find-email")
-    public ResponseEntity<FindEmailResponse> findEmail(
+    public ResponseEntity<StringResponse> findEmail(
             @RequestParam("nm") String name,
             @RequestParam("hp") String phone) {
 
@@ -252,8 +258,60 @@ public class RestMemberController {
         if (email == null || email.isBlank()) {
             return ResponseEntity.notFound().build(); // 404
         }
-        return ResponseEntity.ok(new FindEmailResponse(email));
+        return ResponseEntity.ok(new StringResponse(email));
 
+    }
+
+    // GET /api/members/find-password?mail=abc@xyz.com
+    @GetMapping("/find-password")
+    public ResponseEntity<StringResponse> findPassword(@RequestParam("mail") String mail) {
+        // 1) 파라미터 체크
+        String email = mail == null ? "" : mail.trim().toLowerCase();
+        if (email.isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {
+            // 잘못된 입력 → 앱 규격상 0(RESULT_CODE_ERR)로 통일
+            return ResponseEntity.ok(new StringResponse(Const.RESULT_CODE_ERR));
+        }
+
+        // 2) 사용자 존재 확인
+        OpUserVO user = opUserService.selectByEmail(email);
+        if (user == null) {
+            return ResponseEntity.ok(new StringResponse(Const.RESULT_NO_USER)); // 601
+        }
+
+        // 3) 리셋 메일 발송
+        try {
+            PasswordResetResult result = passwordResetService.sendResetMail(email);
+            return switch (result) {
+                case OK -> ResponseEntity.ok(new StringResponse(Const.RESULT_CODE_200)); // 200
+                case EMAIL_SEND_FAILED -> ResponseEntity.ok(new StringResponse(Const.RESULT_PWD_ERR)); // 602
+                case USER_NOT_FOUND -> ResponseEntity.ok(new StringResponse(Const.RESULT_NO_USER)); // double-check
+            };
+        } catch (Exception e) {
+            // 예외는 0으로 통일
+            return ResponseEntity.ok(new StringResponse(String.valueOf(Const.RESULT_CODE_ERR)));
+        }
+    }
+
+    @PostMapping(value = "/reset/change.do", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<StringResponse> resetChange(
+            @RequestParam("uid") String userId,
+            @RequestParam("sel") String selector,
+            @RequestParam("ver") String verifier,
+            @RequestBody ResetChangeRequest body) {
+
+        // 입력검증 (간단)
+        String np = (body != null && body.getNewPassword() != null) ? body.getNewPassword().trim() : "";
+        String cp = (body != null && body.getConfirmPassword() != null) ? body.getConfirmPassword().trim() : "";
+
+        if (userId == null || userId.isBlank()
+                || selector == null || selector.isBlank()
+                || verifier == null || verifier.isBlank()
+                || np.isEmpty() || !np.equals(cp) || np.length() < 8 || np.length() > 20) {
+            return ResponseEntity.ok(new StringResponse(Const.RESULT_CODE_ERR)); // "0"
+        }
+
+        String code = opUserService.verifyAndChange(userId, selector, verifier, np);
+        return ResponseEntity.ok(new StringResponse(code)); // "200"/"604"/"601"/"0"
     }
 
 
