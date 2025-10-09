@@ -1,14 +1,10 @@
-package com.whomade.kycarrots.api.member;
+package com.whomade.kycarrots.email;
 
-import com.whomade.kycarrots.email.EmailService;
-import com.whomade.kycarrots.email.PasswordResetResult;
-import com.whomade.kycarrots.email.PasswordResetToken;
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.repository.mybatis.member.OpUserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

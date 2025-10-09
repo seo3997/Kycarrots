@@ -33,7 +33,7 @@ import java.util.List;
 @Slf4j
 public class HelloController {
     @Autowired
-    private EmailCafe24Service emailService;
+    private EmailCafe24Service emailCafe24Service;
 
     @Value("${spring.mail.username}")
     private String maiFrom;
@@ -66,7 +66,7 @@ public class HelloController {
         try {
             //byte[] imageData = emailService.readFileToByteArray(imageFile);
             InputStreamSource imageData = chartBitmapMultipartFile();
-            emailService.sendEmailWithAttachment(maiFrom,to, subject, htmlContent, imageData, attachmentName, mimeType);
+            emailCafe24Service.sendEmailWithAttachment(maiFrom,to, subject, htmlContent, imageData, attachmentName, mimeType);
             System.out.println("Email sent successfully.");
         } catch (MessagingException | IOException e) {
             System.err.println("Failed to send email: " + e.getMessage());

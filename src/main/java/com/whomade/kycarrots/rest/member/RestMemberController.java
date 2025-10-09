@@ -20,13 +20,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.whomade.kycarrots.api.member.PasswordResetService;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
+import com.whomade.kycarrots.email.PasswordResetService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/members")
