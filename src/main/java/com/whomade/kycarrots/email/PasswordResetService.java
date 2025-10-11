@@ -68,10 +68,20 @@ public class PasswordResetService {
             """.formatted(safe(user.getUserNm()), ttlMinutes, link, link);
 
         try {
-            //emailService.send(normalized, subject, html, "html");
-            emailCafe24Service.send(normalized, subject, html, "html");
-            return PasswordResetResult.OK;
+            // SendGrid 또는 Cafe24 중 하나 선택
+            //String status = emailService.send(normalized, subject, html, "html");      // SendGrid
+            String status = emailCafe24Service.send(normalized, subject, html, "html");   // Cafe24
+           int code;
+            try { code = Integer.parseInt(status.trim()); }
+            catch (NumberFormatException e) { code = 0; }
+
+            if (code == 200 || code == 202) {
+                return PasswordResetResult.OK;
+            } else {
+                return PasswordResetResult.EMAIL_SEND_FAILED;
+            }
         } catch (Exception e) {
+            // SendGrid에서 4xx/5xx는 여기로 떨어짐
             return PasswordResetResult.EMAIL_SEND_FAILED;
         }
     }
