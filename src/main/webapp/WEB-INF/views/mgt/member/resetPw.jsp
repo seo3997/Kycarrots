@@ -42,6 +42,8 @@
 		function closeModal(id){ document.getElementById(id).style.display='none'; }
 
 		function fnResetPw(){
+            var $btn = $("#btnResetPw");
+
 			var pw = $("#member_new_pw").val();
 			var pw_chk = $("#member_new_pw_chk").val();
 
@@ -60,7 +62,7 @@
 			var num = pw.search(/[0-9]/g);
 			var eng = pw.search(/[a-z]/ig);
 			var spe = pw.search(/[`~!@#$%^&*|\\'\";:\/?_+\-=()\[\]{}.,<>]/g);
-
+            /*
 			if(pw.length === 0){
 				$("#msg").text("비밀번호를 입력해주세요"); openModal('modal-default4'); return;
 			}else if(pw.length < 8 || pw.length > 20){
@@ -74,7 +76,17 @@
 			}else if(pw !== pw_chk){
 				$("#msg").text("비밀번호가 일치하지 않습니다."); openModal('modal-default4'); return;
 			}
-
+            */
+			if(pw.length === 0){
+				$("#msg").text("비밀번호를 입력해주세요"); openModal('modal-default4'); return;
+			}else if(/\s/.test(pw)){
+				$("#msg").text("비밀번호는 공백 없이 입력해주세요."); openModal('modal-default4'); return;
+			}else if(!pw_chk){
+				$("#msg").text("비밀번호 확인을 입력해주세요."); openModal('modal-default4'); return;
+			}else if(pw !== pw_chk){
+				$("#msg").text("비밀번호가 일치하지 않습니다."); openModal('modal-default4'); return;
+			}
+           setLoading($btn, true, "비밀번호 재설정");
 			// /api/members/reset/change 호출 (쿼리: uid/sel/ver, 바디: JSON)
 			$.ajax({
 				type: "POST",
@@ -85,7 +97,8 @@
 				contentType: "application/json",
 				dataType: "json",
 				success: function(res){
-					var code = res && res.rusultString ? (""+res.rusultString).trim() : "0";
+                    setLoading($btn, false, "비밀번호 재설정");
+					var code = res && res.resultString ? (""+res.resultString).trim() : "0";
 					if(code === "200"){
 						openModal('modal-default3');
 					} else if(code === "604") {
@@ -95,6 +108,7 @@
 					}
 				},
 				error: function(){
+                    setLoading($btn, false, "비밀번호 재설정");
 					$("#msg").text("서버 통신 오류가 발생했습니다."); openModal('modal-default4');
 				}
 			});
@@ -132,7 +146,7 @@
         </div>
         <div class="row">
           <div class="col-xs-12">
-            <button type="button" class="btn btn-primary btn-block btn-flat" onclick="fnResetPw();">확인</button>
+            <button type="button" id="btnResetPw" class="btn btn-primary btn-block btn-flat" onclick="fnResetPw();">확인</button>
           </div>
         </div>
       </div>
@@ -159,12 +173,27 @@
           <div class="find_id">
             <p class="txt2" style="font-size: 24px;color: #37a1e4; font-weight: 500;">비밀번호 재설정이 완료되었습니다.</p>
             <p class="txt">새로운 비밀번호로 다시 로그인해주세요.</p>
+            <!--
             <button type="button" class="btn btn-primary" style="font-size: 18px;" onclick="location.href='/admin/login.do'">확인</button>
+            -->
           </div>
         </div>
       </div>
     </div>
   </div>
+
+<script type="text/javascript">
+  function setLoading($btn, isLoading, textWhenIdle){
+    if (isLoading) {
+      $btn.prop("disabled", true)
+          .data("orig-text", textWhenIdle || $btn.text())
+          .html('<i class="fa fa-spinner fa-spin"></i> 처리 중...');
+    } else {
+      var t = $btn.data("orig-text") || textWhenIdle || "확인";
+      $btn.prop("disabled", false).html(t);
+    }
+  }
+</script>
 
 </body>
 </html>

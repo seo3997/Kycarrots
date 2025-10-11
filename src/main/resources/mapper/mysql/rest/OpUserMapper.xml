@@ -172,7 +172,7 @@
     <update id="updatePw" parameterType="dataMap">
         UPDATE op_user
         SET PASSWORD = #{member_new_pw}
-            UPDT_DT  = NOW()
+           ,UPDT_DT  = CURRENT_TIMESTAMP
         WHERE user_ID= #{member_id}
     </update>
 

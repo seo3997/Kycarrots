@@ -305,7 +305,7 @@ public class RestMemberController {
         if (userId == null || userId.isBlank()
                 || selector == null || selector.isBlank()
                 || verifier == null || verifier.isBlank()
-                || np.isEmpty() || !np.equals(cp) || np.length() < 8 || np.length() > 20) {
+                || np.isEmpty() || !np.equals(cp)  || np.length() > 20) {
             return ResponseEntity.ok(new StringResponse(Const.RESULT_CODE_ERR)); // "0"
         }
 

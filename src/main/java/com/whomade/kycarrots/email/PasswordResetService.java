@@ -2,7 +2,9 @@ package com.whomade.kycarrots.email;
 
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.repository.mybatis.member.OpUserMapper;
+import com.whomade.kycarrots.service.EmailCafe24Service;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.net.URLEncoder;
@@ -14,11 +16,14 @@ import java.time.ZoneOffset;
 import java.util.Base64;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PasswordResetService {
 
     private final OpUserMapper opUserMapper;
     private final EmailService emailService;
+    private final EmailCafe24Service emailCafe24Service;
+
 
     @Value("${mailreset.base-url}")
     private String resetBaseUrl; // 예: https://your.app/reset
@@ -52,16 +57,19 @@ public class PasswordResetService {
         String link = String.format("%s?uid=%s&sel=%s&ver=%s",
                 resetBaseUrl, url(user.getUserId()), url(selector), url(verifier));
 
+        log.debug("link: {}", link);
+
         String subject = "[kyCarrots] Password reset";
         String html = """
-            <p>Hello %s,</p>
-            <p>Click the link below to reset your password (valid for %d minutes):</p>
+            <p>안녕핫요 %s,</p>
+            <p>아래 링크를 클릭하여 비밀번호를 재설정하세요( %d분 동안 유효):</p>
             <p><a href="%s">%s</a></p>
-            <p>If you didn't request this, you can ignore this email.</p>
+            <p>요청하지 않으셨다면 이 이메일을 무시하셔도 됩니다.</p>
             """.formatted(safe(user.getUserNm()), ttlMinutes, link, link);
 
         try {
-            emailService.send(normalized, subject, html, "html");
+            //emailService.send(normalized, subject, html, "html");
+            emailCafe24Service.send(normalized, subject, html, "html");
             return PasswordResetResult.OK;
         } catch (Exception e) {
             return PasswordResetResult.EMAIL_SEND_FAILED;

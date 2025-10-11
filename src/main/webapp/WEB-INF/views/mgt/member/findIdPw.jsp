@@ -75,6 +75,7 @@
 		   - 휴대폰 방식 제거
 		===================== */
         function fnFindIdAjax(){
+          var $btn = $("#btnFindId");
           var name = $("#member_name").val().trim();
           var p1 = $("#member_phone1").val().replace(/\D/g,'');
           var p2 = $("#member_phone2").val().replace(/\D/g,'');
@@ -92,11 +93,13 @@
           }
           // hidden 필드에 조립된 번호 설정
           $("#member_phone").val(p1+"-"+p2+"-"+p3);
+           setLoading($btn, true, "아이디 찾기");
 
           var sUrl = "/mgt/member/findIdAjax.do";
           var fFrom  = $("#sch_id_form_email"); // 폼 id가 이 이름인지 확인!
           fnCallbackFormAjax(sUrl, fFrom, function(pResponse){
             if(pResponse && pResponse.resultStats && pResponse.resultStats.resultCode === "ok"){
+              setLoading($btn, false, "아이디 찾기");
               if(pResponse.resultStats.user_id_exist === true){
                 var results = pResponse.resultStats.user_id_res;
                 $("#txt_id").text(results);
@@ -105,6 +108,7 @@
                 openModal('modal-default2');
               }
             } else {
+              setLoading($btn, false, "아이디 찾기");
               $("#msg").text("오류가 발생했습니다."); openModal('modal-default4');
             }
           });
@@ -115,11 +119,12 @@
 		   - 이메일만 입력 (서버: GET /api/members/find-password?mail=)
 		===================== */
         function fnSendPwMailAjax(){
+          var $btn = $("#btnSendPw");
           var email = $("#member_email").val().trim(); // ← 필드 id 확인!
           if (email === "") {
             $("#msg").text("이메일을 입력하세요"); openModal('modal-default4'); return;
           }
-
+          setLoading($btn, true, "비밀번호 재설정 메일 받기");
           $.ajax({
             type: "get",
             url: "/api/members/find-password",
@@ -127,6 +132,7 @@
             dataType: "json",
             success: function(res){
               var code = (res && res.resultString ? (""+res.resultString).trim() : "0");
+              setLoading($btn, false, "비밀번호 재설정 메일 받기");
               if (code === "200") {
                 openModal('modal-default3');       // 발송 완료
               } else if (code === "601") {
@@ -137,6 +143,7 @@
               }
             },
             error: function(){
+              setLoading($btn, false, "비밀번호 재설정 메일 받기");
               $("#msg").text("서버 통신 오류가 발생했습니다."); openModal('modal-default4');
             }
           });
@@ -195,7 +202,7 @@
             </div>
             </div>
             <div class="box-footer text-right">
-              <button type="button" class="btn btn-primary btn-block" onclick="fnFindIdAjax();">아이디 찾기</button>
+              <button type="button" id="btnFindId" class="btn btn-primary btn-block" onclick="fnFindIdAjax();">아이디 찾기</button>
             </div>
           </form>
         </div>
@@ -210,7 +217,7 @@
               </div>
             </div>
             <div class="box-footer text-right">
-              <button type="button" class="btn btn-primary btn-block" onclick="fnSendPwMailAjax();">비밀번호 재설정 메일 받기</button>
+              <button type="button" id="btnSendPw" class="btn btn-primary btn-block" onclick="fnSendPwMailAjax();">비밀번호 재설정 메일 받기</button>
             </div>
           </form>
         </div>
@@ -275,6 +282,18 @@
     </div>
   </div>
 
+<script type="text/javascript">
+  function setLoading($btn, isLoading, textWhenIdle){
+    if (isLoading) {
+      $btn.prop("disabled", true)
+          .data("orig-text", textWhenIdle || $btn.text())
+          .html('<i class="fa fa-spinner fa-spin"></i> 처리 중...');
+    } else {
+      var t = $btn.data("orig-text") || textWhenIdle || "확인";
+      $btn.prop("disabled", false).html(t);
+    }
+  }
+</script>
 </body>
 </html>
 <%@ include file="/common/inc/msg.jspf" %>
