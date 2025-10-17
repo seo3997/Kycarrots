@@ -176,4 +176,62 @@
         WHERE user_ID= #{member_id}
     </update>
 
+    <insert id="insertTbSocialAccount" parameterType="com.whomade.kycarrots.entity.member.OpUserVO">
+        INSERT INTO tb_social_account
+            (USER_NO, PROVIDER, PROVIDER_USER_ID, LINKED_AT, LAST_LOGIN_AT)
+        VALUES
+            (#{userNo}, #{provider}, #{providerUserId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="updatetouchLastLogin" parameterType="dataMap">
+        UPDATE tb_social_account
+        SET LAST_LOGIN_AT = CURRENT_TIMESTAMP
+        WHERE PROVIDER = #{provider}
+          AND PROVIDER_USER_ID = #{providerUserId}
+    </update>
+
+    <select id="selectUserBySocial"
+            parameterType="dataMap"
+            resultType="com.whomade.kycarrots.entity.member.OpUserVO">
+        SELECT
+            A.USER_NO,
+            A.USER_ID,
+            A.PASSWORD,
+            A.USER_NM,
+            A.CTTPC_SE_CODE,
+            A.CTTPC,
+            A.EMAIL,
+            A.AREA_CODE,
+            C.CODE_NM AS AREA_CODE_NM,
+            A.AREA_SE_CODE_S,
+            D.SCLAS_NM AS AREA_SE_CODE_S_NM,
+            A.AREA_SE_CODE_D,
+            A.USER_STTUS_CODE,
+            A.LOGIN_DT,
+            A.USER_AGE,
+            A.BIRTH_DATE,
+            A.UNIQUE_IDENTIFIER,
+            A.DEVICE_ID,
+            A.DUPLICATE_IDENTIFIER,
+            A.GENDER,
+            A.MEMBER_CODE,
+            A.CITIZENSHIP_TYPE,
+            A.PASSWORD_HASH,
+            A.REFERRER_ID,
+            A.REGISTER_NO,
+            A.REGIST_DT,
+            A.UPDUSR_NO,
+            A.UPDT_DT
+        FROM op_user A
+                 JOIN tb_social_account S
+                      ON S.USER_NO = A.USER_NO
+                 LEFT JOIN op_code C
+                           ON C.GROUP_ID='R010070' AND C.CODE=A.AREA_CODE
+                 LEFT JOIN op_sclas_code D
+                           ON D.GROUP_ID='R010070' AND D.CODE=A.AREA_CODE AND D.SCLAS_CODE=A.AREA_SE_CODE_S
+        WHERE S.PROVIDER = #{provider}
+          AND S.PROVIDER_USER_ID = #{providerUserId}
+            LIMIT 1
+    </select>
+
 </mapper>

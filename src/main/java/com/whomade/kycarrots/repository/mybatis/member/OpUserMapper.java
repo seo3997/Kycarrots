@@ -39,4 +39,10 @@ public interface OpUserMapper {
 
     int updatePw(DataMap param);
 
+    int insertTbSocialAccount(OpUserVO use);
+
+    int updatetouchLastLogin(DataMap param);
+
+    OpUserVO selectUserBySocial(DataMap param);
+
 }

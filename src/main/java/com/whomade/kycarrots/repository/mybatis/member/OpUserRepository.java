@@ -77,4 +77,17 @@ public class OpUserRepository {
         return opUserMapper.updatePw(param);
     }
 
+    public int insertTbSocialAccount(OpUserVO opUserVO) {
+        return opUserMapper.insertTbSocialAccount(opUserVO);
+    }
+
+    public int updatetouchLastLogin(DataMap param) {
+        return opUserMapper.updatetouchLastLogin(param);
+    }
+
+    public OpUserVO selectUserBySocial(DataMap param) {
+        OpUserVO opUserVO = opUserMapper.selectUserBySocial(param);
+        return opUserVO;
+    }
+
 }

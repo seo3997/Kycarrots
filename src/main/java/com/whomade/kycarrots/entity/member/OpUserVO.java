@@ -39,4 +39,6 @@ public class OpUserVO {
     private String pushToken;
     private String deviceType;
     private String wholesalerNo;
+    private String provider;
+    private String providerUserId;
 }

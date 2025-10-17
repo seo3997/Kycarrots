@@ -70,6 +70,19 @@ public class OpUserService {
         return opUserRepository.findEmailByNameAndPhone(opUserVO);
     }
 
+    public int insertTbSocialAccount(OpUserVO opUserVO) {
+        return opUserRepository.insertTbSocialAccount(opUserVO);
+    }
+
+    public int updatetouchLastLogin(DataMap param) {
+        return opUserRepository.updatetouchLastLogin(param);
+    }
+
+
+    public OpUserVO selectUserBySocial(DataMap param) {
+        return opUserRepository.selectUserBySocial(param);
+    }
+
     public OpUserVO selectByEmail(String email) {
         return opUserRepository.selectByEmail(email);
     }

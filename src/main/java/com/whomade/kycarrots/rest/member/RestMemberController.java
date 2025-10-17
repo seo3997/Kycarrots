@@ -1,5 +1,6 @@
 package com.whomade.kycarrots.rest.member;
 
+import com.whomade.kycarrots.dto.SocialAuthRequest;
 import com.whomade.kycarrots.dto.login.LoginResponse;
 import com.whomade.kycarrots.dto.login.ResetChangeRequest;
 import com.whomade.kycarrots.dto.user.StringResponse;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -96,17 +98,17 @@ public class RestMemberController {
 
         if (member == null) {
             // 아이디 없음
-            return new LoginResponse(601, null, null, null, null, null, null, null); // RESULT_NO_USER
+            return new LoginResponse(601, null, null, null, null, null, null, null,null); // RESULT_NO_USER
         }
 
         if (!encodedPassword.equals(member.getPassword())) {
             // 비밀번호 불일치
-            return new LoginResponse(602, null, null, null, null, null, null, null); // RESULT_PWD_ERR
+            return new LoginResponse(602, null, null, null, null, null, null, null,null); // RESULT_PWD_ERR
         }
 
         if (!memberCode.equals(member.getMemberCode())) {
             //  회원타입 불일치
-            return new LoginResponse(603, null, null, null, null, null, null, null); // RESULT_PWD_ERR
+            return new LoginResponse(603, null, null, null, null, null, null, null,null); // RESULT_PWD_ERR
         }
 
         String token = "";
@@ -116,7 +118,7 @@ public class RestMemberController {
             token = tokenizer.getToken(member);
         } catch (DecoderException e) {
             e.printStackTrace();
-            return new LoginResponse(500, null, null, null, null, null, null,null); // 서버 에러
+            return new LoginResponse(500, null, null, null, null, null, null,null,null); // 서버 에러
         }
 
         return new LoginResponse(
@@ -127,7 +129,8 @@ public class RestMemberController {
                 "",
                 "",
                 "",
-                member.getUserNm()
+                member.getUserNm(),
+                member.getMemberCode()
         );
     }
 
@@ -313,5 +316,58 @@ public class RestMemberController {
         return ResponseEntity.ok(new StringResponse(code)); // "200"/"604"/"601"/"0"
     }
 
+    /** 소셜 공용 로그인 */
+    @PostMapping(value = "/social", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<LoginResponse> socialLogin(@RequestBody SocialAuthRequest req) {
+
+        // 0) 파라미터 검증
+        if (!StringUtils.hasText(req.getProvider())) {
+            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "provider required",""));
+        }
+
+        // 1) 토큰 검증 → provider_user_id(+email) 추출 (실구현으로 교체)
+        /*
+        TokenInfo tokenInfo = introspect(req);
+        if (!tokenInfo.valid) {
+            return ResponseEntity.ok(new LoginResponse(604, null, null, null, null, null, null, "invalid token")); // RESULT_NO_DATA(온보딩 유도)
+        }
+         */
+
+        final String provider = req.getProvider().toUpperCase();
+        final String providerUserId = req.getProviderUserId(); // 핵심
+        // final String email = tokenInfo.email; // 필요 시 활용
+
+        // 2) 소셜로 사용자 조회 (JOIN 한방 쿼리)
+        DataMap dm = new DataMap();
+        dm.put("provider", provider);
+        dm.put("providerUserId", providerUserId);
+
+        OpUserVO member = opUserService.selectUserBySocial(dm);
+        if (member == null) {
+            // 매핑 없음 → 온보딩 필요
+            return ResponseEntity.ok(new LoginResponse(604, null, null, null, null, null, null, "onboarding required",""));
+        }
+
+        // 3) 마지막 로그인 갱신
+        opUserService.updatetouchLastLogin(dm);
+
+        // 4) 토큰 발급 (기존 login과 동일)
+        String token;
+        try {
+            token = tokenizer.getToken(member);
+        } catch (DecoderException e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(new LoginResponse(500, null, null, null, null, null, null, "server error",null));
+        }
+
+        return ResponseEntity.ok(new LoginResponse(
+                200,                                 // RESULT_CODE_200
+                token,
+                String.valueOf(member.getUserNo()),  // userNo
+                "", "", "", "",                      // 예전 필드 자리 유지
+                member.getUserNm(),                   // userName
+                member.getMemberCode()
+        ));
+    }
 
 }
