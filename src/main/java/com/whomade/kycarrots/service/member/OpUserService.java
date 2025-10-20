@@ -33,7 +33,13 @@ public class OpUserService {
     }
 
     public int insertUser(OpUserVO user) {
-        return opUserRepository.insertUser(user);
+        int iReturn = 0;
+        iReturn = opUserRepository.insertUser(user);
+        if(!"PWD".equals(user.getProvider())) {
+            opUserRepository.insertTbSocialAccount(user);
+            iReturn++;
+        }
+        return iReturn;
     }
 
     public boolean existsByEmail(String email) {

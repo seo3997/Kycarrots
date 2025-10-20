@@ -183,7 +183,7 @@ public class RestMemberController {
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> registerUser(@RequestBody OpUserVO user) {
+    public LoginResponse registerUser(@RequestBody OpUserVO user) {
         Map<String, Object> response = new HashMap<>();
         try {
             // 비밀번호 암호화
@@ -193,20 +193,33 @@ public class RestMemberController {
             int result = opUserService.insertUser(user);
 
             if (result > 0) {
-                response.put("result", true);
-                response.put("message", "회원가입이 완료되었습니다.");
-                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+                String token = "";
+                try {
+                    token = tokenizer.getToken(user);
+                } catch (DecoderException e) {
+                    e.printStackTrace();
+                }
 
+                return new LoginResponse(
+                        200,                    // RESULT_CODE_200
+                        token,
+                        String.valueOf(user.getUserNo()),
+                        "",
+                        "",
+                        "",
+                        "",
+                        user.getUserNm(),
+                        user.getMemberCode(),
+                        user.getUserId(),
+                        user.getProvider(),
+                        user.getProviderUserId()
+                );
             } else {
-                response.put("result", true);
-                response.put("message", "회원가입 실패.");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                return new LoginResponse(0, null, null, null, null, null, null,null,null,null,null,null); // 서버 에러
             }
         } catch (Exception e) {
             log.error("회원가입 중 오류 발생", e);
-            response.put("result", true);
-            response.put("message", "서버 오류.");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return new LoginResponse(0, null, null, null, null, null, null,null,null,null,null,null); // 서버 에러
         }
     }
 
