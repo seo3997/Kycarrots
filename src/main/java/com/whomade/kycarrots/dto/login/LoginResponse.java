@@ -17,4 +17,7 @@ public class LoginResponse {
     private String login_age;
     private String login_nm;
     private String member_code;
+    private String login_id;
+    private String login_cd;
+    private String login_social_id;
 }

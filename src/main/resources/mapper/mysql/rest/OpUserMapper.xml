@@ -234,4 +234,11 @@
             LIMIT 1
     </select>
 
+    <select id="existsSocialAccount" resultType="boolean" parameterType="dataMap">
+        SELECT COUNT(1) > 0
+        FROM tb_social_account
+        WHERE   PROVIDER        = #{provider}
+        AND     PROVIDER_USER_ID= #{providerUserId}
+    </select>
+
 </mapper>

@@ -45,4 +45,6 @@ public interface OpUserMapper {
 
     OpUserVO selectUserBySocial(DataMap param);
 
+    boolean existsSocialAccount(DataMap param);
+
 }

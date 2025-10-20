@@ -90,4 +90,8 @@ public class OpUserRepository {
         return opUserVO;
     }
 
+    public boolean existsSocialAccount(DataMap param) {
+        return opUserMapper.existsSocialAccount(param);
+    }
+
 }

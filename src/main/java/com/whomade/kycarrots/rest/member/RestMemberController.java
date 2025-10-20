@@ -1,5 +1,6 @@
 package com.whomade.kycarrots.rest.member;
 
+import com.whomade.kycarrots.dto.LinkSocialRequest;
 import com.whomade.kycarrots.dto.SocialAuthRequest;
 import com.whomade.kycarrots.dto.login.LoginResponse;
 import com.whomade.kycarrots.dto.login.ResetChangeRequest;
@@ -80,9 +81,11 @@ public class RestMemberController {
     public LoginResponse login(
             @RequestParam("id") String id,
             @RequestParam("pass") String pass,
-            @RequestParam("member_code") String memberCode,
+            @RequestParam("login_cd") String loginCd,
             @RequestParam("reg_id") String regId,  // 클라이언트에서 보내는 이름에 맞춤
-            @RequestParam("appver") String appver) {
+            @RequestParam("appver") String appver,
+            @RequestParam("providerUserId") String providerUserId
+            ) {
 
         String encodedPassword = "";
         try {
@@ -98,18 +101,31 @@ public class RestMemberController {
 
         if (member == null) {
             // 아이디 없음
-            return new LoginResponse(601, null, null, null, null, null, null, null,null); // RESULT_NO_USER
+            return new LoginResponse(601, null, null, null, null, null, null, null,null,null,null,null); // RESULT_NO_USER
         }
 
-        if (!encodedPassword.equals(member.getPassword())) {
+        if (!encodedPassword.equals(member.getPassword()) && "PWD".equals(loginCd)) {
             // 비밀번호 불일치
-            return new LoginResponse(602, null, null, null, null, null, null, null,null); // RESULT_PWD_ERR
+            return new LoginResponse(602, null, null, null, null, null, null, null,null,null,null,null); // RESULT_PWD_ERR
         }
 
+        if (!"PWD".equals(loginCd)) {
+            //  소셜회원 아님
+            DataMap socialParam = new DataMap();
+            socialParam.put("provider", loginCd);
+            socialParam.put("providerUserId", providerUserId);
+
+            if(!opUserService.existsSocialAccount(socialParam)) {
+                return new LoginResponse(605, null, null, null, null, null, null, null, null, null, null, null); // RESULT_PWD_ERR
+            }
+        }
+
+        /*
         if (!memberCode.equals(member.getMemberCode())) {
             //  회원타입 불일치
-            return new LoginResponse(603, null, null, null, null, null, null, null,null); // RESULT_PWD_ERR
+            return new LoginResponse(603, null, null, null, null, null, null, null,null,null,null,null); // RESULT_PWD_ERR
         }
+        */
 
         String token = "";
         //token = "%2FV%2F26xyieYwgQKUf6wFvdeMy3O%2Fw%2Fc6g0sAskcxhDZq1I3kiw2GIHmlt3Mm5SSL0eVM%2BtFASntulXfELYjlr3oQr%2Bu%2FUmTdipdABtBlxDBugFIv9vHqd8bN4TZl7vqGPlL5VRHhKxKzJayL1K6vQ6P1IUZe%2Bz5z1mnnQvRm66b4%3D";
@@ -118,7 +134,7 @@ public class RestMemberController {
             token = tokenizer.getToken(member);
         } catch (DecoderException e) {
             e.printStackTrace();
-            return new LoginResponse(500, null, null, null, null, null, null,null,null); // 서버 에러
+            return new LoginResponse(500, null, null, null, null, null, null,null,null,null,null,null); // 서버 에러
         }
 
         return new LoginResponse(
@@ -130,7 +146,10 @@ public class RestMemberController {
                 "",
                 "",
                 member.getUserNm(),
-                member.getMemberCode()
+                member.getMemberCode(),
+                member.getUserId(),
+                "PWD",
+                String.valueOf(member.getUserNo())
         );
     }
 
@@ -138,17 +157,29 @@ public class RestMemberController {
     @PostMapping(value = "/email-check", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> checkEmailDuplicate(@RequestParam("email") String email) {
         Map<String, Object> response = new HashMap<>();
-        boolean exists = opUserService.existsByEmail(email);
+
+        DataMap param = new DataMap();
+        param.put("userId", email);
+        // 4) 유저 조회 후 토큰 발급
+        OpUserVO member = opUserService.seelectUser(param);
+        boolean exists = true;
+
+        if (member == null) {
+            exists =false;
+        } else {
+            exists =true;
+        }
 
         if (exists) {
             response.put("result", false);
-            response.put("message", "이미 사용 중인 이메일입니다.");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            response.put("message", member.getUserNo());
         } else {
             response.put("result", true);
-            response.put("message", "사용 가능한 이메일입니다.");
-            return ResponseEntity.ok(response);
+            response.put("message", "사용가능한 이메일입니다.");
         }
+        return ResponseEntity.ok(response);
+
+
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -322,7 +353,7 @@ public class RestMemberController {
 
         // 0) 파라미터 검증
         if (!StringUtils.hasText(req.getProvider())) {
-            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "provider required",""));
+                return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "provider required","",null,null,null));
         }
 
         // 1) 토큰 검증 → provider_user_id(+email) 추출 (실구현으로 교체)
@@ -345,7 +376,7 @@ public class RestMemberController {
         OpUserVO member = opUserService.selectUserBySocial(dm);
         if (member == null) {
             // 매핑 없음 → 온보딩 필요
-            return ResponseEntity.ok(new LoginResponse(604, null, null, null, null, null, null, "onboarding required",""));
+            return ResponseEntity.ok(new LoginResponse(604, null, null, null, null, null, null, "onboarding required","",null,null,null));
         }
 
         // 3) 마지막 로그인 갱신
@@ -357,7 +388,7 @@ public class RestMemberController {
             token = tokenizer.getToken(member);
         } catch (DecoderException e) {
             e.printStackTrace();
-            return ResponseEntity.ok(new LoginResponse(500, null, null, null, null, null, null, "server error",null));
+            return ResponseEntity.ok(new LoginResponse(500, null, null, null, null, null, null, "server error",null,null,null,null));
         }
 
         return ResponseEntity.ok(new LoginResponse(
@@ -366,7 +397,83 @@ public class RestMemberController {
                 String.valueOf(member.getUserNo()),  // userNo
                 "", "", "", "",                      // 예전 필드 자리 유지
                 member.getUserNm(),                   // userName
-                member.getMemberCode()
+                member.getMemberCode(),
+                member.getUserId(),
+                provider,
+                providerUserId
+        ));
+    }
+
+    @PostMapping(value = "/link", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<LoginResponse> linkSocial(@RequestBody LinkSocialRequest req) {
+
+        // 0) 파라미터 검증
+        if (req.getUserNo() == null || req.getUserNo().isEmpty()) {
+            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "userNo required", null,null,null,null));
+        }
+        if (!StringUtils.hasText(req.getProvider())) {
+            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "provider required", null,null,null,null));
+        }
+        if (!StringUtils.hasText(req.getProviderUserId())) {
+            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "providerUserId required", null,null,null,null));
+        }
+
+        final String provider = req.getProvider().toUpperCase();
+
+        // 1) 이미 해당 소셜 UID가 다른 사용자에 매핑되어 있는지 확인 (권장)
+        DataMap chk = new DataMap();
+        chk.put("provider", provider);
+        chk.put("providerUserId", req.getProviderUserId());
+        OpUserVO mapped = opUserService.selectUserBySocial(chk);
+        if (mapped != null && !String.valueOf(req.getUserNo()).equals(mapped.getUserNo())) {
+            // 이미 다른 유저에 묶여 있으면 충돌
+            return ResponseEntity.ok(new LoginResponse(409, null, null, null, null, null, null,
+                    "providerUserId already linked to another user", null,null,null,null));
+        }
+
+        // 2) INSERT (또는 이미 동일 유저에 매핑되어 있으면 스킵)
+        if (mapped == null) {
+            OpUserVO vo = new OpUserVO();
+            vo.setUserNo(req.getUserNo());
+            vo.setProvider(provider);
+            vo.setProviderUserId(req.getProviderUserId());
+
+            int ins = opUserService.insertTbSocialAccount(vo);  // <-- 네가 준비한 서비스 메서드
+            if (ins < 1) {
+                return ResponseEntity.ok(new LoginResponse(500, null, null, null, null, null, null,
+                        "insert social account failed", null,null,null,null));
+            }
+        }
+
+        // 3) 마지막 로그인 갱신(선택)
+        opUserService.updatetouchLastLogin(chk);
+
+        DataMap param = new DataMap();
+        param.put("userId", req.getUserId());
+        // 4) 유저 조회 후 토큰 발급
+        OpUserVO member = opUserService.seelectUser(param);
+        if (member == null) {
+            return ResponseEntity.ok(new LoginResponse(601, null, null, null, null, null, null, "user not found", null,null,null,null));
+        }
+
+        String token;
+        try {
+            token = tokenizer.getToken(member);
+        } catch (DecoderException e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(new LoginResponse(500, null, null, null, null, null, null, "server error", null,null,null,null));
+        }
+
+        return ResponseEntity.ok(new LoginResponse(
+                200,                                 // RESULT_CODE_200
+                token,
+                String.valueOf(member.getUserNo()),  // userNo
+                "", "", "", "",                      // 예전 필드 유지
+                member.getUserNm(),                  // userName
+                member.getMemberCode(),               // memberCode (있다면)
+                member.getUserId(),
+                provider,
+                req.getProviderUserId()
         ));
     }
 

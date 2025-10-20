@@ -132,4 +132,8 @@ public class OpUserService {
         }
     }
 
+    public boolean existsSocialAccount(DataMap param) {
+        return opUserRepository.existsSocialAccount(param);
+    }
+
 }
