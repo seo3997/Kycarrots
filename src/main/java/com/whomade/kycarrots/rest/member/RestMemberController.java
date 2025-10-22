@@ -148,7 +148,7 @@ public class RestMemberController {
                 member.getUserNm(),
                 member.getMemberCode(),
                 member.getUserId(),
-                "PWD",
+                loginCd,
                 String.valueOf(member.getUserNo())
         );
     }
