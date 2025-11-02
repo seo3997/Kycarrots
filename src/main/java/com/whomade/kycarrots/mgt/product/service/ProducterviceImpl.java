@@ -151,7 +151,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			}
 
 			// 2-1) 물리 저장
-			String baseDir  = fileStorageProperties.getUploadDir();
+			String baseDir  = fileStorageProperties.getProduct().getUploadDir();
 			java.io.File destFile = FileUtil.saveFile(file, baseDir, productIdStr);
 			String imageUrl = publicUrl + "/" + productIdStr + "/" + destFile.getName();
 
@@ -229,7 +229,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 				if (file == null || file.isEmpty()) continue;
 
 				// 물리 저장
-				String baseDir = fileStorageProperties.getUploadDir();
+				String baseDir = fileStorageProperties.getProduct().getUploadDir();
 				java.io.File destFile = FileUtil.saveFile(file, baseDir, String.valueOf(productId));
 				String imageUrl = publicUrl + "/" + productId + "/" + destFile.getName();
 
@@ -334,7 +334,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		List<TnProductImageVo> images = commonMybatisDao.selectList("mgt.product.selectProductImagesByProductId", productId);
 
 		// 2) 물리 파일 삭제
-		String baseDir = fileStorageProperties.getUploadDir(); // 예: /data/uploads
+		String baseDir = fileStorageProperties.getProduct().getUploadDir(); // 예: /data/uploads
 		for (TnProductImageVo img : images) {
 			try {
 				boolean deleted = FileUtil.deleteFile(baseDir, productIdStr, img.getImageName());

@@ -96,7 +96,7 @@ public class TnProductService {
 
             if (!file.isEmpty()) {
 
-                String baseDir = fileStorageProperties.getUploadDir();
+                String baseDir = fileStorageProperties.getProduct().getUploadDir();
                 String productId = productVo.getProductId(); // 예: "123"
                 String imageUrl  ="";
 
@@ -184,7 +184,8 @@ public class TnProductService {
 
         // 1. 상품 정보 수정
         tnProductRepository.updateTbProduct(productVo);
-
+        log.debug("imageMetas:",imageMetas);
+        log.debug("imageMetas Size:",imageMetas.size());
         // 2. 이미지 메타 정보와 파일 동기화
         for (int i = 0; i < imageMetas.size(); i++) {
             TnProductImageVo meta = imageMetas.get(i);
@@ -194,7 +195,7 @@ public class TnProductService {
 
             // 새 이미지 추가
             if (isNew && file != null && !file.isEmpty()) {
-                File destFile = FileUtil.saveFile(file, fileStorageProperties.getUploadDir(), productVo.getProductId());
+                File destFile = FileUtil.saveFile(file, fileStorageProperties.getProduct().getUploadDir(), productVo.getProductId());
                 String imageUrl = publicUrl + "/" + productVo.getProductId() + "/" + destFile.getName();
 
                 meta.setImageUrl(imageUrl);
@@ -212,7 +213,7 @@ public class TnProductService {
             // 기존 이미지 수정
             else if (meta.getImageId() != null) {
                 if (file != null && !file.isEmpty()) {
-                    File destFile = FileUtil.saveFile(file, fileStorageProperties.getUploadDir(), productVo.getProductId());
+                    File destFile = FileUtil.saveFile(file, fileStorageProperties.getProduct().getUploadDir(), productVo.getProductId());
                     String imageUrl = publicUrl + "/" + productVo.getProductId() + "/" + destFile.getName();
                     meta.setImageUrl(imageUrl);
                     meta.setImageName(file.getOriginalFilename());
