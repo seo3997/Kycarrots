@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -102,9 +103,11 @@ public class ChatWsController {
                 param.put("userNo", "0");
                 TnProductVo product = tnProductService.getProduct(param);
                 messgeTitle = product.getTitle() + "  채팅메시지";
+                String pushId = UUID.randomUUID().toString(); // ✅ 푸시 고유키
 
                 // 2. FCM 데이터 payload 구성
                 Map<String, String> data = new HashMap<>();
+                data.put("id", pushId);                        // ✅ 핵심(중복방지용)
                 data.put("roomId", roomId);
                 data.put("buyerId", buyerId);
                 data.put("sellerId", sellerId);

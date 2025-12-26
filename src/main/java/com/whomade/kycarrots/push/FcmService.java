@@ -82,6 +82,68 @@ public class FcmService {
             log.error("FCM 전송 실패", e);
         }
     }
+    /*
+    public void sendPushToIos(
+            String targetToken,
+            String title,
+            String body,
+            Map<String, String> data
+    ) {
+        try {
+            ApnsConfig apnsConfig = ApnsConfig.builder()
+                    .putHeader("apns-push-type", "alert")
+                    .putHeader("apns-priority", "10")
+                    .setAps(Aps.builder()
+                            .setAlert(ApsAlert.builder()
+                                    .setTitle(title)
+                                    .setBody(body)
+                                    .build())
+                            .setSound("default")
+                            .build())
+                    .build();
+
+            Message.Builder builder = Message.builder()
+                    .setToken(targetToken)
+                    .setApnsConfig(apnsConfig);
+
+            if (data != null && !data.isEmpty()) {
+                builder.putAllData(data); // ✅ aps 밖으로 data가 같이 내려감
+            }
+
+            String response = FirebaseMessaging.getInstance().send(builder.build());
+            log.info("iOS FCM 전송 성공: {}", response);
+            log.info("iOS FCM data: {}", data);
+
+        } catch (Exception e) {
+            log.error("iOS FCM 전송 실패", e);
+        }
+    }
+     */
+    /*
+    public void sendSilentPushToIos(String targetToken, Map<String, String> data) {
+        try {
+            ApnsConfig apnsConfig = ApnsConfig.builder()
+                    .putHeader("apns-push-type", "background")
+                    .putHeader("apns-priority", "5")
+                    .setAps(Aps.builder()
+                            .setContentAvailable(true) // ✅ silent 핵심
+                            .build())
+                    .build();
+
+            Message.Builder builder = Message.builder()
+                    .setToken(targetToken)
+                    .setApnsConfig(apnsConfig);
+
+            if (data != null && !data.isEmpty()) builder.putAllData(data);
+
+            String response = FirebaseMessaging.getInstance().send(builder.build());
+            log.info("iOS Silent FCM 전송 성공: {}", response);
+        } catch (Exception e) {
+            log.error("iOS Silent FCM 전송 실패", e);
+        }
+    }
+
+     */
 
     // ✅ 1. Topic 푸시 (ex. /topics/ROLE_PUB)
     public void sendPushToTopic(String topic, String title, String body, Map<String, String> data) {
