@@ -1,5 +1,6 @@
 package com.whomade.kycarrots.rest.advertise;
 
+import com.whomade.kycarrots.dto.SimpleResultResponse;
 import com.whomade.kycarrots.dto.advertise.AdvertiseItem;
 import com.whomade.kycarrots.dto.advertise.AdvertiseQueryParams;
 import com.whomade.kycarrots.dto.advertise.AdvertiseResponse;
@@ -128,7 +129,7 @@ public class AdvertiseController {
     }
 
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> registerProductWithImages(
+    public ResponseEntity<SimpleResultResponse> registerProductWithImages(
             @RequestPart("product") TnProductVo productVo,
             @RequestPart("imageMetas") List<TnProductImageVo> imageMetas,
             @RequestPart("images") List<MultipartFile> images) {
@@ -138,30 +139,30 @@ public class AdvertiseController {
                 Long defaultWh = opUserService.findWholesalerNoByUserNo(Long.parseLong(productVo.getUserNo()));
                 if (defaultWh == null) {
                     return ResponseEntity.status(HttpStatus.PRECONDITION_REQUIRED)
-                            .body("중간센터 미지정. 먼저 기본 중간센터를 설정하세요.");
+                            .body(SimpleResultResponse.fail("중간센터 미지정. 먼저 기본 중간센터를 설정하세요."));
                 }
                 productVo.setWholesalerNo(defaultWh+"");
             }
 
             tnProductService.insertProductWithImages(productVo, imageMetas, images);
-            return ResponseEntity.ok("등록 성공");
+            return ResponseEntity.ok(SimpleResultResponse.ok("등록 성공"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("등록 실패: " + e.getMessage());
+                    .body(SimpleResultResponse.fail("등록 실패: " + e.getMessage()));
         }
     }
 
     @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateProductWithImages(
+    public ResponseEntity<SimpleResultResponse> updateProductWithImages(
             @RequestPart("product") TnProductVo productVo,
             @RequestPart(name = "imageMetas", required = false) List<TnProductImageVo> imageMetas,
             @RequestPart(name = "images", required = false) List<MultipartFile> images) {
         try {
             tnProductService.updateProductWithImages(productVo, imageMetas, images);
-            return ResponseEntity.ok("수정 성공");
+            return ResponseEntity.ok(SimpleResultResponse.ok("수정 성공"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("수정 실패: " + e.getMessage());
+                    .body(SimpleResultResponse.fail("수정 실패: " + e.getMessage()));
         }
     }
 

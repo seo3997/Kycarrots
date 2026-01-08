@@ -1,9 +1,6 @@
 package com.whomade.kycarrots.push;
 
-import com.google.firebase.messaging.AndroidConfig;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -74,22 +71,15 @@ public class FcmService {
             String targetToken,
             String title,
             String body,
-            Map<String, String> data // ← 추가!
-    ) {
-        try {
-            log.info("FCM 전송 성공: {}", "To Do");
-        } catch (Exception e) {
-            log.error("FCM 전송 실패", e);
-        }
-    }
-    /*
-    public void sendPushToIos(
-            String targetToken,
-            String title,
-            String body,
             Map<String, String> data
     ) {
         try {
+            if (data != null) {
+                data.putIfAbsent("id", java.util.UUID.randomUUID().toString());
+                data.putIfAbsent("title", title);
+                data.putIfAbsent("body", body);
+            }
+
             ApnsConfig apnsConfig = ApnsConfig.builder()
                     .putHeader("apns-push-type", "alert")
                     .putHeader("apns-priority", "10")
@@ -103,11 +93,11 @@ public class FcmService {
                     .build();
 
             Message.Builder builder = Message.builder()
-                    .setToken(targetToken)
+                    .setToken(targetToken)    // ✅ iOS FCM token
                     .setApnsConfig(apnsConfig);
 
             if (data != null && !data.isEmpty()) {
-                builder.putAllData(data); // ✅ aps 밖으로 data가 같이 내려감
+                builder.putAllData(data);
             }
 
             String response = FirebaseMessaging.getInstance().send(builder.build());
@@ -118,7 +108,7 @@ public class FcmService {
             log.error("iOS FCM 전송 실패", e);
         }
     }
-     */
+
     /*
     public void sendSilentPushToIos(String targetToken, Map<String, String> data) {
         try {
