@@ -1,6 +1,7 @@
 package com.whomade.kycarrots.rest.member;
 
 import com.whomade.kycarrots.dto.LinkSocialRequest;
+import com.whomade.kycarrots.dto.SimpleResultResponse;
 import com.whomade.kycarrots.dto.SocialAuthRequest;
 import com.whomade.kycarrots.dto.login.LoginResponse;
 import com.whomade.kycarrots.dto.login.ResetChangeRequest;
@@ -241,9 +242,13 @@ public class RestMemberController {
     }
 
     @PostMapping(value = "/push/savetoken", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> registerPushToken(@RequestBody PushTokenVo request) {
+    public ResponseEntity<SimpleResultResponse> registerPushToken(
+            @RequestBody PushTokenVo request
+    ) {
         if (request.getUserId() == null || request.getPushToken() == null) {
-            return ResponseEntity.badRequest().body("userId와 pushToken은 필수입니다.");
+            return ResponseEntity
+                    .badRequest()
+                    .body(SimpleResultResponse.fail("userId와 pushToken은 필수입니다."));
         }
 
         OpUserVO user = new OpUserVO();
@@ -251,18 +256,28 @@ public class RestMemberController {
         user.setUserId(request.getUserId());
         user.setPushToken(request.getPushToken());
         user.setDeviceType(request.getDeviceType());
+
         try {
             int updated = opUserService.updatePushToken(user);
+
             if (updated > 0) {
-                return ResponseEntity.ok().build();
+                return ResponseEntity.ok(
+                        SimpleResultResponse.ok("푸시 토큰 저장 성공")
+                );
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(SimpleResultResponse.fail("해당 사용자를 찾을 수 없습니다."));
             }
+
         } catch (Exception e) {
             log.error("푸시 토큰 저장 오류", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류");
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(SimpleResultResponse.fail("서버 오류"));
         }
     }
+
     @GetMapping("/wholesalers")
     public ResponseEntity<List<OpUserVO>> getWholesalers(@RequestParam String memberCode) {
         List<OpUserVO> list = opUserService.selectActiveWholesalers(memberCode);
