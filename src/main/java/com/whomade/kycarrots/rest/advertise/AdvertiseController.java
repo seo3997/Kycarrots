@@ -224,7 +224,7 @@ public class AdvertiseController {
             @RequestParam String title,
             @RequestParam String body
     ) {
-        fcmService.sendPush(token, title, body);
+        //fcmService.sendPush(token, title, body);
         return ResponseEntity.ok("푸시 전송 완료");
     }
 

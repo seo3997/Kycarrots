@@ -142,6 +142,7 @@ public class TnProductService {
                 messaeTitle = "상품 승인 요청";
                 messaeBody = productTitle + " 상품이 등록되었습니다. 승인해주세요.";
                 fcmService.sendPushToUserAndLog(
+                        wholesalerNo,
                         centerUsers.getDeviceType(),
                         centerUsers.getUserNo(),
                         centerUsers.getPushToken(),
@@ -344,7 +345,12 @@ public class TnProductService {
                 payload.put("body", body);
                 log.debug("####payload[" + payload + "]");
 
+                Long wholesalerNo = (p.getWholesalerNo() != null && p.getWholesalerNo().matches("\\d+"))
+                        ? Long.parseLong(p.getWholesalerNo())
+                        : 0L;
+
                 fcmService.sendPushToUserAndLog(
+                        wholesalerNo,
                         seller.getDeviceType(),
                         seller.getUserNo(),
                         seller.getPushToken(),
@@ -370,8 +376,11 @@ public class TnProductService {
                 payload.put("title", title);
                 payload.put("body", body);
                 log.debug("####payload[" + payload + "]");
-
+                Long userNo = (p.getUserNo() != null && !p.getUserNo().isBlank())
+                        ? Long.parseLong(p.getUserNo())
+                        : 0L;
                 fcmService.sendPushToUserAndLog(
+                        userNo,
                         centerUsers.getDeviceType(),
                         centerUsers.getUserNo(),
                         centerUsers.getPushToken(),
@@ -400,7 +409,11 @@ public class TnProductService {
             // 판매자 단건 (p.getUserId()를 판매자 ID로 사용)
             PushTargetDto seller = tnProductRepository.selectPushTargetsByProductId(Long.parseLong(p.getUserNo()));
             if (seller != null) {
+                Long wholesalerNo = (p.getWholesalerNo() != null && !p.getWholesalerNo().isBlank())
+                        ? Long.parseLong(p.getWholesalerNo())
+                        : 0L;
                 fcmService.sendPushToUserAndLog(
+                        wholesalerNo,
                         seller.getDeviceType(),
                         seller.getUserNo(),
                         seller.getPushToken(),

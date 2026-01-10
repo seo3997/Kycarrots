@@ -121,14 +121,15 @@ public class ChatWsController {
                 String fcmToken = opUserVO.getPushToken();
                 String deviceType = opUserVO.getDeviceType(); // "ANDROID", "IOS"
                 log.info("fcmToken:["+fcmToken+"]");
-                //String fcmToken = "cZFtxLX6QWSjMT8GpMyXEh:APA91bH8VmxPN1UTOxiU3aNAWh8i6-2V15_862EfxkrV5KpcZ-j29cxr28MEclGU17s-HnS0-mrToHbRZxVpQDWdzjOKafm0GSvrHhefzR5VugFFW6-e8nE"; // 직접 구현 필요
                 if (fcmToken != null) {
+                    fcmService.sendPushToUser(
+                            deviceType,                   // ✅ IOS / ANDROID
+                            fcmToken,
+                            messgeTitle,
+                            message.getMessage(),
+                            data
+                    );
 
-                    if ("IOS".equalsIgnoreCase(deviceType)) {
-                        fcmService.sendPushToIos(fcmToken, messgeTitle, message.getMessage(), data);
-                    } else {
-                        fcmService.sendPushToAndroid(fcmToken, data);
-                    }
                 } else {
                     log.warn("푸시 전송 실패: FCM 토큰 없음");
                 }
