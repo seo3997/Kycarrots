@@ -142,6 +142,7 @@ public class TnProductService {
                 messaeTitle = "상품 승인 요청";
                 messaeBody = productTitle + " 상품이 등록되었습니다. 승인해주세요.";
                 fcmService.sendPushToUserAndLog(
+                        centerUsers.getDeviceType(),
                         centerUsers.getUserNo(),
                         centerUsers.getPushToken(),
                         messaeTitle,
@@ -159,7 +160,6 @@ public class TnProductService {
             }
         } else if ("1".equals(saleStatus)) {
             // 판매중: 일반 구매자에게 topic으로 브로드캐스트
-            productId="48";
             messaeTitle = "신규 상품 등록";
             messaeBody  = productTitle + " 상품이 판매중으로 등록되었습니다.";
             fcmService.sendPushToTopic(
@@ -345,6 +345,7 @@ public class TnProductService {
                 log.debug("####payload[" + payload + "]");
 
                 fcmService.sendPushToUserAndLog(
+                        seller.getDeviceType(),
                         seller.getUserNo(),
                         seller.getPushToken(),
                         title,
@@ -371,6 +372,7 @@ public class TnProductService {
                 log.debug("####payload[" + payload + "]");
 
                 fcmService.sendPushToUserAndLog(
+                        centerUsers.getDeviceType(),
                         centerUsers.getUserNo(),
                         centerUsers.getPushToken(),
                         title,
@@ -399,6 +401,7 @@ public class TnProductService {
             PushTargetDto seller = tnProductRepository.selectPushTargetsByProductId(Long.parseLong(p.getUserNo()));
             if (seller != null) {
                 fcmService.sendPushToUserAndLog(
+                        seller.getDeviceType(),
                         seller.getUserNo(),
                         seller.getPushToken(),
                         title,
