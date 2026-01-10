@@ -190,10 +190,10 @@ public class FcmService {
             String deviceType, // "ANDROID" / "IOS"
             String userId,
             String token,
-            String productId,
-            String pushType,
             String title,
             String body,
+            String productId,
+            String pushType,
             Map<String, String> data
     ) {
         String sendStatus = "실패";
