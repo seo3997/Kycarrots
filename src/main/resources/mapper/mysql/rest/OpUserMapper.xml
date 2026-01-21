@@ -241,4 +241,9 @@
         AND     PROVIDER_USER_ID= #{providerUserId}
     </select>
 
+    <delete id="deleteTbSocialAccount" parameterType="com.whomade.kycarrots.framework.common.object.DataMap">
+        DELETE FROM tb_social_account
+        WHERE PROVIDER = #{provider}
+          AND PROVIDER_USER_ID = #{providerUserId}
+    </delete>
 </mapper>

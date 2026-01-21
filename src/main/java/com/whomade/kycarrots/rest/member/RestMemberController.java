@@ -7,6 +7,7 @@ import com.whomade.kycarrots.dto.login.LoginResponse;
 import com.whomade.kycarrots.dto.login.ResetChangeRequest;
 import com.whomade.kycarrots.dto.user.StringResponse;
 import com.whomade.kycarrots.dto.user.PushTokenVo;
+import com.whomade.kycarrots.dto.user.UnlinkSocialRequest;
 import com.whomade.kycarrots.email.EmailService;
 import com.whomade.kycarrots.email.PasswordResetResult;
 import com.whomade.kycarrots.framework.common.constant.Const;
@@ -503,6 +504,33 @@ public class RestMemberController {
                 provider,
                 req.getProviderUserId()
         ));
+    }
+
+    @PostMapping(value = "/unlink", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SimpleResultResponse> unlinkSocial(@RequestBody UnlinkSocialRequest req) {
+
+        if (!StringUtils.hasText(req.getProvider())) {
+            return ResponseEntity.ok(SimpleResultResponse.fail("provider required"));
+        }
+        if (!StringUtils.hasText(req.getProviderUserId())) {
+            return ResponseEntity.ok(SimpleResultResponse.fail("providerUserId required"));
+        }
+
+        String provider = req.getProvider().toUpperCase();
+
+        DataMap dm = new DataMap();
+        dm.put("provider", provider);
+        dm.put("providerUserId", req.getProviderUserId());
+
+        // (권장) dm.put("userNo", req.getUserNo());
+
+        int deleted = opUserService.deleteTbSocialAccount(dm);
+
+        if (deleted > 0) {
+            return ResponseEntity.ok(SimpleResultResponse.ok("unlink success"));
+        } else {
+            return ResponseEntity.ok(SimpleResultResponse.fail("no mapping found"));
+        }
     }
 
 }

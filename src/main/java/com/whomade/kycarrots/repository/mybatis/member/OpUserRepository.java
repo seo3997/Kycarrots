@@ -94,4 +94,7 @@ public class OpUserRepository {
         return opUserMapper.existsSocialAccount(param);
     }
 
+    public int deleteTbSocialAccount(DataMap param) {
+        return opUserMapper.deleteTbSocialAccount(param);
+    }
 }

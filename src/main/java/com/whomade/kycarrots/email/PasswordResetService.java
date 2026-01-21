@@ -69,8 +69,8 @@ public class PasswordResetService {
 
         try {
             // SendGrid 또는 Cafe24 중 하나 선택
-            //String status = emailService.send(normalized, subject, html, "html");      // SendGrid
-            String status = emailCafe24Service.send(normalized, subject, html, "html");   // Cafe24
+            String status = emailService.send(normalized, subject, html, "html");      // SendGrid
+            //String status = emailCafe24Service.send(normalized, subject, html, "html");   // Cafe24
            int code;
             try { code = Integer.parseInt(status.trim()); }
             catch (NumberFormatException e) { code = 0; }

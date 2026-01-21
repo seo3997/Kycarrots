@@ -47,4 +47,6 @@ public interface OpUserMapper {
 
     boolean existsSocialAccount(DataMap param);
 
+    int deleteTbSocialAccount(DataMap param);
+
 }
