@@ -1,0 +1,103 @@
+-- kycarrotsdb.tb_payments definition
+
+CREATE TABLE `tb_payments` (
+`PAYMENT_ID` bigint NOT NULL AUTO_INCREMENT COMMENT '결제 PK',
+`ORDER_ID` bigint NOT NULL COMMENT '주문 PK',
+`USER_NO` bigint DEFAULT NULL COMMENT '결제 사용자 PK',
+`PAYMENT_STATUS` varchar(20) NOT NULL COMMENT 'READY/PAID/CANCELLED/FAILED',
+`PAYMENT_METHOD` varchar(30) NOT NULL COMMENT 'CARD/VBANK/BANK/MOBILE',
+`PG_PROVIDER` varchar(30) DEFAULT NULL COMMENT 'PG사(toss/inicis/nicepay/kakao 등)',
+`PG_TID` varchar(100) DEFAULT NULL COMMENT 'PG 거래번호(TID)',
+`MERCHANT_UID` varchar(100) DEFAULT NULL COMMENT '가맹점 주문번호(결제 요청 ID)',
+`AMOUNT_TOTAL` int NOT NULL DEFAULT '0' COMMENT '총 결제금액',
+`AMOUNT_TAX_FREE` int NOT NULL DEFAULT '0' COMMENT '면세금액',
+`AMOUNT_VAT` int NOT NULL DEFAULT '0' COMMENT '부가세',
+`CURRENCY` varchar(10) NOT NULL DEFAULT 'KRW' COMMENT '통화',
+`CARD_COMPANY` varchar(50) DEFAULT NULL COMMENT '카드사',
+`CARD_NUMBER_MASKED` varchar(30) DEFAULT NULL COMMENT '마스킹 카드번호',
+`CARD_INSTALLMENT_MONTH` int NOT NULL DEFAULT '0' COMMENT '할부개월(0=일시불)',
+`RECEIPT_URL` varchar(500) DEFAULT NULL COMMENT '영수증 URL',
+`PAID_AT` datetime DEFAULT NULL COMMENT '결제 완료일시',
+`CANCELLED_AT` datetime DEFAULT NULL COMMENT '결제 취소일시',
+`FAIL_CODE` varchar(50) DEFAULT NULL COMMENT '결제 실패 코드',
+`FAIL_MESSAGE` varchar(255) DEFAULT NULL COMMENT '결제 실패 메시지',
+`REGISTER_NO` int DEFAULT NULL,
+`REGIST_DT` datetime DEFAULT NULL,
+`UPDUSR_NO` int DEFAULT NULL,
+`UPDT_DT` datetime DEFAULT NULL,
+PRIMARY KEY (`PAYMENT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='결제 정보 테이블';
+
+-- kycarrotsdb.tb_orders definition
+
+CREATE TABLE `tb_orders` (
+`ORDER_ID` bigint NOT NULL AUTO_INCREMENT COMMENT '주문 PK',
+`ORDER_NO` varchar(50) NOT NULL COMMENT '주문번호(외부 노출용)',
+`USER_NO` bigint NOT NULL COMMENT '주문자 사용자 PK',
+`ORDER_STATUS` varchar(20) NOT NULL COMMENT 'READY/PAID/SHIPPING/DONE/CANCEL',
+`PAYMENT_STATUS` varchar(20) NOT NULL COMMENT 'READY/PAID/CANCELLED/FAILED',
+`TOTAL_ITEM_AMOUNT` int NOT NULL DEFAULT '0' COMMENT '상품합계금액',
+`DELIVERY_FEE` int NOT NULL DEFAULT '0' COMMENT '배송비',
+`DISCOUNT_AMOUNT` int NOT NULL DEFAULT '0' COMMENT '할인금액(쿠폰/프로모션)',
+`TOTAL_PAY_AMOUNT` int NOT NULL DEFAULT '0' COMMENT '최종결제금액',
+`RECEIVER_NAME` varchar(100) DEFAULT NULL COMMENT '수령인 이름',
+`RECEIVER_PHONE` varchar(30) DEFAULT NULL COMMENT '수령인 연락처',
+`ZIP_CODE` varchar(20) DEFAULT NULL COMMENT '우편번호',
+`ADDRESS1` varchar(255) DEFAULT NULL COMMENT '기본주소',
+`ADDRESS2` varchar(255) DEFAULT NULL COMMENT '상세주소',
+`ORDER_MEMO` varchar(500) DEFAULT NULL COMMENT '배송메모',
+`ORDERED_AT` datetime DEFAULT NULL COMMENT '주문일시',
+`PAID_AT` datetime DEFAULT NULL COMMENT '결제완료일시',
+`CANCELLED_AT` datetime DEFAULT NULL COMMENT '주문취소일시',
+`REGISTER_NO` int DEFAULT NULL,
+`REGIST_DT` datetime DEFAULT NULL,
+`UPDUSR_NO` int DEFAULT NULL,
+`UPDT_DT` datetime DEFAULT NULL,
+PRIMARY KEY (`ORDER_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='주문 헤더 테이블';
+
+-- kycarrotsdb.tb_order_items definition
+CREATE TABLE `tb_order_items` (
+`ORDER_ITEM_ID` bigint NOT NULL AUTO_INCREMENT COMMENT '주문상품 PK',
+`ORDER_ID` bigint NOT NULL COMMENT '주문 PK',
+`PRODUCT_ID` bigint NOT NULL COMMENT '상품 PK',
+`PRODUCT_NAME` varchar(255) NOT NULL COMMENT '주문 당시 상품명 스냅샷',
+`OPTION_NAME` varchar(255) DEFAULT NULL COMMENT '선택옵션명 스냅샷',
+`UNIT_PRICE` int NOT NULL DEFAULT '0' COMMENT '단가',
+`QUANTITY` int NOT NULL DEFAULT '1' COMMENT '수량',
+`ITEM_TOTAL_AMOUNT` int NOT NULL DEFAULT '0' COMMENT '상품금액합계(단가\*수량)',
+`REGISTER_NO` int DEFAULT NULL,
+`REGIST_DT` datetime DEFAULT NULL,
+`UPDUSR_NO` int DEFAULT NULL,
+`UPDT_DT` datetime DEFAULT NULL,
+PRIMARY KEY (`ORDER_ITEM_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='주문 상품 상세 테이블';
+
+-- kycarrotsdb.tb_product definition
+CREATE TABLE `tb_product` (
+`PRODUCT_ID` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '상품 고유 ID',
+`USER_NO` bigint unsigned NOT NULL COMMENT '상품 등록자 (op_user의 USER_NO)',
+`TITLE` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '상품 제목',
+`DESCRIPTION` text COLLATE utf8mb4_unicode_ci COMMENT '상품 상세 설명',
+`PRICE` decimal(10,2) NOT NULL COMMENT '상품 가격',
+`CATEGORY_GROUP` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '상품 대분류 코드',
+`CATEGORY_MID` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '상품 중분류 코드',
+`CATEGORY_SCLS` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '상품 소분류 코드',
+`SALE_STATUS` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '판매 상태 (예: 판매중, 예약중, 판매완료)',
+`AREA_GROUP` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '도시 대분류 코드',
+`AREA_MID` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '도시 중분류 코드',
+`AREA_SCLS` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '도시 소분류 코드',
+`QUANTITY` int unsigned DEFAULT NULL COMMENT '남은 수량',
+`UNIT_GROUP` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '단위 대분류 코드',
+`UNIT_CODE` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '단위 중분류 코드',
+`DESIRED_SHIPPING_DATE` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '희망 출하일 (yyyy-mm-dd)',
+`WHOLESALER_NO` bigint DEFAULT NULL,
+`REJECT_REASON` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '반려사유',
+`REGISTER_NO` int DEFAULT NULL COMMENT '등록자 번호',
+`REGIST_DT` datetime DEFAULT NULL COMMENT '등록 일시',
+`UPDUSR_NO` int DEFAULT NULL COMMENT '수정자 번호',
+`UPDT_DT` datetime DEFAULT NULL COMMENT '수정 일시',
+PRIMARY KEY (`PRODUCT_ID`),
+KEY `idx_user_no` (`USER_NO`),
+CONSTRAINT `fk_product_user` FOREIGN KEY (`USER_NO`) REFERENCES `op_user` (`USER_NO`)
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
