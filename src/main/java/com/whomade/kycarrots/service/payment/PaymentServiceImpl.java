@@ -80,7 +80,8 @@ public class PaymentServiceImpl implements PaymentService {
                 throw new RuntimeException("Product not found: " + productId);
             }
 
-            int unitPrice = (int) Double.parseDouble(productVo.getPrice());            int itemTotalAmount = unitPrice * quantity;
+            int unitPrice = (int) Double.parseDouble(productVo.getPrice());
+            int itemTotalAmount = unitPrice * quantity;
             totalItemAmount += itemTotalAmount;
 
             OrderItemVo orderItemVo = new OrderItemVo();
@@ -98,10 +99,12 @@ public class PaymentServiceImpl implements PaymentService {
 
         orderVo.setTotalItemAmount(totalItemAmount);
         orderVo.setTotalPayAmount(totalItemAmount + orderVo.getDeliveryFee() - orderVo.getDiscountAmount());
-        paymentRepository.updateOrderStatus(orderVo);
+        paymentRepository.updateOrderAmount(orderVo);
 
+        result.put("success", true);
+        result.put("orderId", orderId);
         result.put("orderNo", orderNo);
-        result.put("totalPayAmount", orderVo.getTotalPayAmount());
+        result.put("amount", orderVo.getTotalPayAmount());
         result.put("orderName", items.size() > 1 ? items.get(0).get("productName") + " 외 " + (items.size() - 1) + "건"
                 : items.get(0).get("productName"));
 

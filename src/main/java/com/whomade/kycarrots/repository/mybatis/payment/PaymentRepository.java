@@ -25,6 +25,10 @@ public class PaymentRepository {
         return paymentMapper.updateOrderStatus(orderVo);
     }
 
+    public int updateOrderAmount(OrderVo orderVo) {
+        return paymentMapper.updateOrderAmount(orderVo);
+    }
+
     public OrderVo selectOrderByNo(String orderNo) {
         return paymentMapper.selectOrderByNo(orderNo);
     }

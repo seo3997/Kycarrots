@@ -41,6 +41,15 @@
         WHERE ORDER_ID = #{orderId}
     </update>
 
+    <update id="updateOrderAmount" parameterType="com.whomade.kycarrots.entity.payment.OrderVo">
+        UPDATE tb_orders
+        SET TOTAL_ITEM_AMOUNT = #{totalItemAmount},
+            TOTAL_PAY_AMOUNT = #{totalPayAmount},
+            UPDUSR_NO = #{updusrNo},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE ORDER_ID = #{orderId}
+    </update>
+
     <select id="selectOrderByNo" parameterType="string" resultType="com.whomade.kycarrots.entity.payment.OrderVo">
         SELECT * FROM tb_orders WHERE ORDER_NO = #{orderNo}
     </select>

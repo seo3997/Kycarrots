@@ -15,6 +15,8 @@ public interface PaymentMapper {
 
     int updateOrderStatus(OrderVo orderVo);
 
+    int updateOrderAmount(OrderVo orderVo);
+
     OrderVo selectOrderByNo(String orderNo);
 
     OrderVo selectOrderById(Long orderId);
