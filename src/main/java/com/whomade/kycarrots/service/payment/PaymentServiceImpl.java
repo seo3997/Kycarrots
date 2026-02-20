@@ -59,6 +59,10 @@ public class PaymentServiceImpl implements PaymentService {
         orderVo.setAddress2(param.getString("address2"));
         orderVo.setOrderMemo(param.getString("orderMemo"));
         orderVo.setDeliveryFee(param.get("deliveryFee") == null ? 0 : param.getInt("deliveryFee"));
+        orderVo.setTotalItemAmount(totalItemAmount);
+        orderVo.setTotalPayAmount(totalItemAmount);
+        orderVo.setRegisterNo(Integer.parseInt(userNo));
+        orderVo.setUpdusrNo(Integer.parseInt(userNo));
         orderVo.setDiscountAmount(param.get("discountAmount") == null ? 0 : param.getInt("discountAmount"));
 
         paymentRepository.insertOrder(orderVo);
@@ -76,8 +80,7 @@ public class PaymentServiceImpl implements PaymentService {
                 throw new RuntimeException("Product not found: " + productId);
             }
 
-            int unitPrice = Integer.parseInt(productVo.getPrice());
-            int itemTotalAmount = unitPrice * quantity;
+            int unitPrice = (int) Double.parseDouble(productVo.getPrice());            int itemTotalAmount = unitPrice * quantity;
             totalItemAmount += itemTotalAmount;
 
             OrderItemVo orderItemVo = new OrderItemVo();
@@ -87,7 +90,8 @@ public class PaymentServiceImpl implements PaymentService {
             orderItemVo.setOptionName((String) item.get("optionName"));
             orderItemVo.setUnitPrice(unitPrice);
             orderItemVo.setQuantity(quantity);
-            orderItemVo.setItemTotalAmount(itemTotalAmount);
+            orderItemVo.setRegisterNo(Integer.parseInt(userNo));
+            orderItemVo.setUpdusrNo(Integer.parseInt(userNo));
 
             paymentRepository.insertOrderItem(orderItemVo);
         }

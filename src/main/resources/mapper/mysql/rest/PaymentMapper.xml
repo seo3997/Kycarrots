@@ -21,11 +21,11 @@
     <insert id="insertOrderItem" parameterType="com.whomade.kycarrots.entity.payment.OrderItemVo">
         INSERT INTO tb_order_items (
             ORDER_ID, PRODUCT_ID, PRODUCT_NAME, OPTION_NAME,
-            UNIT_PRICE, QUANTITY, ITEM_TOTAL_AMOUNT,
+            UNIT_PRICE, QUANTITY,
             REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
         ) VALUES (
             #{orderId}, #{productId}, #{productName}, #{optionName},
-            #{unitPrice}, #{quantity}, #{itemTotalAmount},
+            #{unitPrice}, #{quantity},
             #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP
         )
     </insert>

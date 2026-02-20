@@ -15,7 +15,6 @@ public class OrderItemVo {
     private String optionName;
     private Integer unitPrice;
     private Integer quantity;
-    private Integer itemTotalAmount;
     private Integer registerNo;
     private String registDt;
     private Integer updusrNo;
