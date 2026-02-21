@@ -11,7 +11,7 @@ public class PaymentVo {
     private Long paymentId;
     private Long orderId;
     private Long userNo;
-    private String paymentStatus; // READY/PAID/CANCELLED/FAILED
+    private String paymentStatus; // READY/PAID/CANCEL/FAILED
     private String paymentMethod; // CARD/VBANK/BANK/MOBILE
     private String pgProvider; // toss/inicis/nicepay/kakao
     private String pgTid; // PG Transaction ID

@@ -97,13 +97,13 @@ public class OrderServiceImpl implements OrderService {
             if (response.getStatusCode() == HttpStatus.OK) {
                 // DB Update
                 orderVo.setOrderStatus("CANCEL");
-                orderVo.setPaymentStatus("CANCELLED");
+                orderVo.setPaymentStatus("CANCEL");
                 orderVo.setUpdusrNo(userNo);
                 orderRepository.updateOrderStatus(orderVo);
 
                 PaymentVo updatePayment = new PaymentVo();
                 updatePayment.setPgTid(paymentVo.getPgTid());
-                updatePayment.setPaymentStatus("CANCELLED");
+                updatePayment.setPaymentStatus("CANCEL");
                 updatePayment.setUpdusrNo(userNo);
                 paymentRepository.updatePaymentStatus(updatePayment);
 

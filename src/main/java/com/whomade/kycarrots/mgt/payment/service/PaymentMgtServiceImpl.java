@@ -81,7 +81,7 @@ public class PaymentMgtServiceImpl implements PaymentMgtService {
             if (response.getStatusCode() == HttpStatus.OK) {
                 PaymentVo paymentVo = new PaymentVo();
                 paymentVo.setPgTid(paymentKey);
-                paymentVo.setPaymentStatus("CANCELLED");
+                paymentVo.setPaymentStatus("CANCEL");
                 commonMybatisDao.update("mgt.payment.updatePaymentStatus", paymentVo);
 
                 PaymentVo fullPaymentVo = commonMybatisDao.selectOne("mgt.payment.selectPaymentByMerchantUid",
@@ -90,7 +90,7 @@ public class PaymentMgtServiceImpl implements PaymentMgtService {
                     OrderVo orderVo = new OrderVo();
                     orderVo.setOrderId(fullPaymentVo.getOrderId());
                     orderVo.setOrderStatus("CANCEL");
-                    orderVo.setPaymentStatus("CANCELLED");
+                    orderVo.setPaymentStatus("CANCEL");
                     commonMybatisDao.update("mgt.payment.updateOrderStatus", orderVo);
                 }
 

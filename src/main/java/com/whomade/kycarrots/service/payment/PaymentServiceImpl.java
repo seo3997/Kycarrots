@@ -234,12 +234,12 @@ public class PaymentServiceImpl implements PaymentService {
                 OrderVo orderVo = paymentRepository.selectOrderByNo(orderId);
                 if (orderVo != null) {
                     orderVo.setOrderStatus("CANCEL");
-                    orderVo.setPaymentStatus("CANCELLED");
+                    orderVo.setPaymentStatus("CANCEL");
                     paymentRepository.updateOrderStatus(orderVo);
 
                     PaymentVo paymentVo = new PaymentVo();
                     paymentVo.setMerchantUid(orderId);
-                    paymentVo.setPaymentStatus("CANCELLED");
+                    paymentVo.setPaymentStatus("CANCEL");
                     paymentRepository.updatePaymentStatus(paymentVo);
                 }
             }

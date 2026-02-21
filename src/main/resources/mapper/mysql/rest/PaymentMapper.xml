@@ -82,7 +82,7 @@
     <update id="updatePaymentStatus" parameterType="com.whomade.kycarrots.entity.payment.PaymentVo">
         UPDATE tb_payments
         SET PAYMENT_STATUS = #{paymentStatus},
-            CANCELLED_AT = CASE WHEN #{paymentStatus} = 'CANCELLED' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            CANCELLED_AT = CASE WHEN #{paymentStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
             FAIL_CODE = #{failCode},
             FAIL_MESSAGE = #{failMessage},
             UPDUSR_NO = #{updusrNo},
