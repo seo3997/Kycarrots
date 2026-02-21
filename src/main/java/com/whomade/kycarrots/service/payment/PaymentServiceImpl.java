@@ -31,7 +31,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final TnProductRepository tnProductRepository;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${toss.payments.secret-key:test_sk_z60G06bY86xlMG9OnW0VW3W47jyp}")
+    @Value("${toss.payments.secret-key:test_sk_vZnjEJeQVxawBOMzxKXZrPmOoBN0}")
+
     private String secretKey;
 
     @Override
@@ -167,11 +168,27 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentVo.setMerchantUid(orderId);
                 paymentVo.setAmountTotal(amount);
 
+                // Set default values for NOT NULL columns
+                paymentVo.setAmountTaxFree(responseBody.get("taxFreeAmount") != null
+                        ? ((Number) responseBody.get("taxFreeAmount")).intValue()
+                        : 0);
+                paymentVo.setAmountVat(
+                        responseBody.get("vat") != null ? ((Number) responseBody.get("vat")).intValue() : 0);
+                paymentVo.setCurrency(
+                        responseBody.get("currency") != null ? (String) responseBody.get("currency") : "KRW");
+                paymentVo.setCardInstallmentMonth(0);
+
+                // Audit info
+                paymentVo.setRegisterNo(orderVo.getRegisterNo());
+                paymentVo.setUpdusrNo(orderVo.getUpdusrNo());
+
                 Map<String, Object> card = (Map<String, Object>) responseBody.get("card");
                 if (card != null) {
                     paymentVo.setCardCompany((String) card.get("company"));
                     paymentVo.setCardNumberMasked((String) card.get("number"));
-                    paymentVo.setCardInstallmentMonth((Integer) card.get("installmentPlanMonths"));
+                    if (card.get("installmentPlanMonths") != null) {
+                        paymentVo.setCardInstallmentMonth(((Number) card.get("installmentPlanMonths")).intValue());
+                    }
                 }
 
                 Map<String, Object> receipt = (Map<String, Object>) responseBody.get("receipt");
