@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Tag(name = "Order", description = "주문 현황 및 상세 관리 API")
+@Tag(name = "Order", description = "주문(결제 완료/취소) 상품 목록 및 상세 관리 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
@@ -30,7 +30,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @Operation(summary = "구매자별 주문 목록 조회", description = "구매자의 회원번호를 기준으로 페이징된 주문 목록을 조회합니다.")
+    @Operation(summary = "구매자별 주문 상품 목록 조회 (구매내역)", description = "구매자의 회원번호를 기준으로 결제 완료된 상품 주문 목록을 조회합니다. (READY 상태 제외)")
     @GetMapping("/buyer/{buyerNo}")
     public Page<DataMap> listByBuyer(
             @Parameter(description = "구매자 회원번호") @PathVariable Long buyerNo,

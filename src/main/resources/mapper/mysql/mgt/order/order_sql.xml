@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.whomade.kycarrots.repository.mybatis.order.OrderMapper">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mgt.order">
 
     <select id="selectPageListOrder" parameterType="dataMap" resultType="dataMap">
         SELECT 
@@ -16,8 +15,18 @@
         FROM tb_product A
         INNER JOIN tb_order_items I ON A.PRODUCT_ID = I.PRODUCT_ID
         INNER JOIN tb_orders O ON I.ORDER_ID = O.ORDER_ID
-        WHERE O.USER_NO = #{userNo}
-          AND O.ORDER_STATUS != 'READY'
+        <where>
+            O.ORDER_STATUS != 'READY'
+            <if test="userNo != null and userNo != ''">
+                AND O.USER_NO = #{userNo}
+            </if>
+            <if test="sch_order_no != null and sch_order_no != ''">
+                AND O.ORDER_NO LIKE CONCAT('%', #{sch_order_no}, '%')
+            </if>
+            <if test="sch_order_status != null and sch_order_status != ''">
+                AND O.ORDER_STATUS = #{sch_order_status}
+            </if>
+        </where>
         ORDER BY O.ORDERED_AT DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
@@ -27,19 +36,29 @@
         FROM tb_product A
         INNER JOIN tb_order_items I ON A.PRODUCT_ID = I.PRODUCT_ID
         INNER JOIN tb_orders O ON I.ORDER_ID = O.ORDER_ID
-        WHERE O.USER_NO = #{userNo}
-          AND O.ORDER_STATUS != 'READY'
+        <where>
+            O.ORDER_STATUS != 'READY'
+            <if test="userNo != null and userNo != ''">
+                AND O.USER_NO = #{userNo}
+            </if>
+            <if test="sch_order_no != null and sch_order_no != ''">
+                AND O.ORDER_NO LIKE CONCAT('%', #{sch_order_no}, '%')
+            </if>
+            <if test="sch_order_status != null and sch_order_status != ''">
+                AND O.ORDER_STATUS = #{sch_order_status}
+            </if>
+        </where>
     </select>
 
-    <select id="selectOrderByNo" parameterType="string" resultType="com.whomade.kycarrots.entity.payment.OrderVo">
+    <select id="selectOrderByNo" parameterType="dataMap" resultType="dataMap">
         SELECT * FROM tb_orders WHERE ORDER_NO = #{orderNo}
     </select>
 
-    <select id="selectOrderItemsByOrderId" parameterType="long" resultType="com.whomade.kycarrots.entity.payment.OrderItemVo">
+    <select id="selectOrderItemsByOrderId" parameterType="long" resultType="dataMap">
         SELECT * FROM tb_order_items WHERE ORDER_ID = #{orderId}
     </select>
 
-    <update id="updateOrderStatus" parameterType="com.whomade.kycarrots.entity.payment.OrderVo">
+    <update id="updateOrderStatus" parameterType="dataMap">
         UPDATE tb_orders
         SET ORDER_STATUS = #{orderStatus},
             PAYMENT_STATUS = #{paymentStatus},

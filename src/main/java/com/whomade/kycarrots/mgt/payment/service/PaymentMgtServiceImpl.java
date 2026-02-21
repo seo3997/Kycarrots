@@ -3,8 +3,9 @@ package com.whomade.kycarrots.mgt.payment.service;
 import com.whomade.kycarrots.entity.payment.OrderItemVo;
 import com.whomade.kycarrots.entity.payment.OrderVo;
 import com.whomade.kycarrots.entity.payment.PaymentVo;
+import com.whomade.kycarrots.framework.common.dao.CommonMybatisDao;
 import com.whomade.kycarrots.framework.common.object.DataMap;
-import com.whomade.kycarrots.repository.mybatis.payment.PaymentRepository;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PaymentMgtServiceImpl implements PaymentMgtService {
 
-    private final PaymentRepository paymentRepository;
+    @Resource(name = "commonMybatisDao")
+    private CommonMybatisDao commonMybatisDao;
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${toss.payments.secret-key:test_sk_z60G06bY86xlMG9OnW0VW3W47jyp}")
@@ -31,20 +34,20 @@ public class PaymentMgtServiceImpl implements PaymentMgtService {
 
     @Override
     public DataMap getDashboardStats(DataMap param) {
-        return paymentRepository.selectPaymentStats(param);
+        return commonMybatisDao.selectOne("mgt.payment.selectPaymentStats", param);
     }
 
     @Override
     public List<DataMap> getPaymentList(DataMap param) {
-        return paymentRepository.selectRecentPaymentList(param);
+        return commonMybatisDao.selectList("mgt.payment.selectRecentPaymentList", param);
     }
 
     @Override
     public DataMap getPaymentDetail(DataMap param) {
-        DataMap detail = paymentRepository.selectPaymentDetail(param);
+        DataMap detail = commonMybatisDao.selectOne("mgt.payment.selectPaymentDetail", param);
         if (detail != null) {
             Long orderId = detail.getLong("ORDER_ID");
-            List<OrderItemVo> items = paymentRepository.selectOrderItemsByOrderId(orderId);
+            List<OrderItemVo> items = commonMybatisDao.selectList("mgt.payment.selectOrderItemsByOrderId", orderId);
             detail.put("orderItems", items);
         }
         return detail;
@@ -65,9 +68,7 @@ public class PaymentMgtServiceImpl implements PaymentMgtService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", "Basic " + authorizations);
 
-            Map<String, Object> body = Map.of(
-                    "cancelReason", cancelReason);
-
+            Map<String, Object> body = Map.of("cancelReason", cancelReason);
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
             ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
@@ -76,19 +77,21 @@ public class PaymentMgtServiceImpl implements PaymentMgtService {
                     entity,
                     new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {
                     });
+
             if (response.getStatusCode() == HttpStatus.OK) {
                 PaymentVo paymentVo = new PaymentVo();
                 paymentVo.setPgTid(paymentKey);
                 paymentVo.setPaymentStatus("CANCELLED");
-                paymentRepository.updatePaymentStatus(paymentVo);
+                commonMybatisDao.update("mgt.payment.updatePaymentStatus", paymentVo);
 
-                PaymentVo fullPaymentVo = paymentRepository.selectPaymentByMerchantUid(param.getString("merchantUid"));
+                PaymentVo fullPaymentVo = commonMybatisDao.selectOne("mgt.payment.selectPaymentByMerchantUid",
+                        param.getString("merchantUid"));
                 if (fullPaymentVo != null) {
                     OrderVo orderVo = new OrderVo();
                     orderVo.setOrderId(fullPaymentVo.getOrderId());
                     orderVo.setOrderStatus("CANCEL");
                     orderVo.setPaymentStatus("CANCELLED");
-                    paymentRepository.updateOrderStatus(orderVo);
+                    commonMybatisDao.update("mgt.payment.updateOrderStatus", orderVo);
                 }
 
                 result.put("success", true);

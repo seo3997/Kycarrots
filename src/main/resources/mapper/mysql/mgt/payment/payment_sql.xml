@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mgt.payment">
+
+    <select id="selectPaymentStats" parameterType="dataMap" resultType="dataMap">
+        SELECT
+            IFNULL(SUM(CASE WHEN PAYMENT_STATUS = 'PAID' AND DATE(REGIST_DT) = CURDATE() THEN AMOUNT_TOTAL ELSE 0 END), 0) as todayTotalAmount,
+            COUNT(CASE WHEN PAYMENT_STATUS = 'PAID' AND DATE(REGIST_DT) = CURDATE() THEN 1 END) as todayPaidCount,
+            COUNT(CASE WHEN PAYMENT_STATUS = 'CANCELLED' AND DATE(REGIST_DT) = CURDATE() THEN 1 END) as todayCancelledCount
+        FROM tb_payments
+    </select>
+
+    <select id="selectRecentPaymentList" parameterType="dataMap" resultType="dataMap">
+        SELECT
+            P.PAYMENT_ID,
+            P.ORDER_ID,
+            P.PAYMENT_STATUS,
+            P.PAYMENT_METHOD,
+            P.PG_TID,
+            P.MERCHANT_UID,
+            P.AMOUNT_TOTAL,
+            P.PAID_AT,
+            O.ORDER_NO,
+            O.RECEIVER_NAME,
+            (SELECT GROUP_CONCAT(PRODUCT_NAME) FROM tb_order_items WHERE ORDER_ID = P.ORDER_ID) as productNames
+        FROM tb_payments P
+        JOIN tb_orders O ON P.ORDER_ID = O.ORDER_ID
+        <where>
+            <if test="paymentStatus != null and paymentStatus != ''">
+                AND P.PAYMENT_STATUS = #{paymentStatus}
+            </if>
+            <if test="paymentMethod != null and paymentMethod != ''">
+                AND P.PAYMENT_METHOD = #{paymentMethod}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND P.REGIST_DT &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND P.REGIST_DT &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY P.REGIST_DT DESC
+        LIMIT 100
+    </select>
+
+    <select id="selectPaymentDetail" parameterType="dataMap" resultType="dataMap">
+        SELECT
+            P.*,
+            O.ORDER_NO,
+            O.RECEIVER_NAME,
+            O.RECEIVER_PHONE,
+            O.ZIP_CODE,
+            O.ADDRESS1,
+            O.ADDRESS2
+        FROM tb_payments P
+        JOIN tb_orders O ON P.ORDER_ID = O.ORDER_ID
+        WHERE P.PAYMENT_ID = #{paymentId}
+    </select>
+
+    <select id="selectOrderItemsByOrderId" parameterType="long" resultType="com.whomade.kycarrots.entity.payment.OrderItemVo">
+        SELECT * FROM tb_order_items WHERE ORDER_ID = #{orderId}
+    </select>
+
+    <update id="updatePaymentStatus" parameterType="com.whomade.kycarrots.entity.payment.PaymentVo">
+        UPDATE tb_payments
+        SET PAYMENT_STATUS = #{paymentStatus},
+            CANCELLED_AT = CASE WHEN #{paymentStatus} = 'CANCELLED' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            FAIL_CODE = #{failCode},
+            FAIL_MESSAGE = #{failMessage},
+            UPDUSR_NO = #{updusrNo},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE PG_TID = #{pgTid} OR MERCHANT_UID = #{merchantUid}
+    </update>
+
+    <update id="updateOrderStatus" parameterType="com.whomade.kycarrots.entity.payment.OrderVo">
+        UPDATE tb_orders
+        SET ORDER_STATUS = #{orderStatus},
+            PAYMENT_STATUS = #{paymentStatus},
+            PAID_AT = CASE WHEN #{orderStatus} = 'PAID' THEN CURRENT_TIMESTAMP ELSE PAID_AT END,
+            CANCELLED_AT = CASE WHEN #{orderStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            UPDUSR_NO = #{updusrNo},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE ORDER_ID = #{orderId}
+    </update>
+
+    <select id="selectPaymentByMerchantUid" parameterType="string" resultType="com.whomade.kycarrots.entity.payment.PaymentVo">
+        SELECT * FROM tb_payments WHERE MERCHANT_UID = #{merchantUid}
+    </select>
+
+</mapper>
