@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whomade.kycarrots.repository.mybatis.order.OrderMapper">
+
+    <select id="selectPageListOrder" parameterType="dataMap" resultType="dataMap">
+        SELECT 
+            O.ORDER_ID, O.ORDER_NO, O.USER_NO, O.ORDER_STATUS, O.PAYMENT_STATUS,
+            O.TOTAL_ITEM_AMOUNT, O.DELIVERY_FEE, O.DISCOUNT_AMOUNT, O.TOTAL_PAY_AMOUNT,
+            O.ORDERED_AT, O.PAID_AT,
+            I.PRODUCT_NAME, I.UNIT_PRICE, I.QUANTITY
+        FROM tb_orders O
+        LEFT JOIN tb_order_items I ON O.ORDER_ID = I.ORDER_ID
+        WHERE O.USER_NO = #{userNo}
+        ORDER BY O.REGIST_DT DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="selectOrderCount" parameterType="dataMap" resultType="int">
+        SELECT COUNT(*) FROM tb_orders WHERE USER_NO = #{userNo}
+    </select>
+
+    <select id="selectOrderByNo" parameterType="string" resultType="com.whomade.kycarrots.entity.payment.OrderVo">
+        SELECT * FROM tb_orders WHERE ORDER_NO = #{orderNo}
+    </select>
+
+    <select id="selectOrderItemsByOrderId" parameterType="long" resultType="com.whomade.kycarrots.entity.payment.OrderItemVo">
+        SELECT * FROM tb_order_items WHERE ORDER_ID = #{orderId}
+    </select>
+
+    <update id="updateOrderStatus" parameterType="com.whomade.kycarrots.entity.payment.OrderVo">
+        UPDATE tb_orders
+        SET ORDER_STATUS = #{orderStatus},
+            PAYMENT_STATUS = #{paymentStatus},
+            CANCELLED_AT = CASE WHEN #{orderStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            UPDUSR_NO = #{updusrNo},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE ORDER_ID = #{orderId}
+    </update>
+
+</mapper>
