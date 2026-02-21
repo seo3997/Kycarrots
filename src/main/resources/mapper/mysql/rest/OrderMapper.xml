@@ -4,9 +4,23 @@
 <mapper namespace="com.whomade.kycarrots.repository.mybatis.order.OrderMapper">
 
     <select id="selectPageListOrder" parameterType="dataMap" resultType="dataMap">
-        SELECT 
+        SELECT
             A.PRODUCT_ID,
+            A.USER_NO,
             A.TITLE,
+            A.DESCRIPTION,
+            A.PRICE,
+            A.CATEGORY_GROUP,
+            A.CATEGORY_MID,
+            A.CATEGORY_SCLS,
+            A.AREA_GROUP,
+            A.AREA_MID,
+            A.AREA_SCLS,
+            A.QUANTITY,
+            A.UNIT_GROUP,
+            A.UNIT_CODE,
+            A.DESIRED_SHIPPING_DATE,
+            A.SALE_STATUS,
             (SELECT IMAGE_URL FROM tb_product_image WHERE PRODUCT_ID = A.PRODUCT_ID AND REPRESENT = 1 LIMIT 1) AS IMAGE_URL,
             O.ORDER_ID, O.ORDER_NO, O.USER_NO, O.ORDER_STATUS, O.PAYMENT_STATUS,
             O.TOTAL_ITEM_AMOUNT, O.DELIVERY_FEE, O.DISCOUNT_AMOUNT, O.TOTAL_PAY_AMOUNT,
