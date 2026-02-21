@@ -19,4 +19,12 @@ public class OrderItemVo {
     private String registDt;
     private Integer updusrNo;
     private String updtDt;
+
+    // Joined fields from tb_product and tb_product_image
+    private String imageUrl;
+    private String description;
+    private String title;
+    private String categoryGroup;
+    private String categoryMid;
+    private String categoryScls;
 }

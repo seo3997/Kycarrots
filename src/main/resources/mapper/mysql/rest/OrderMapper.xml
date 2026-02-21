@@ -50,8 +50,19 @@
     </select>
 
     <select id="selectOrderItemsByOrderId" parameterType="long" resultType="com.whomade.kycarrots.entity.payment.OrderItemVo">
-        SELECT * FROM tb_order_items WHERE ORDER_ID = #{orderId}
+        SELECT
+            I.*,
+            P.TITLE,
+            P.DESCRIPTION,
+            P.CATEGORY_GROUP,
+            P.CATEGORY_MID,
+            P.CATEGORY_SCLS,
+            (SELECT IMAGE_URL FROM tb_product_image WHERE PRODUCT_ID = I.PRODUCT_ID AND REPRESENT = 1 LIMIT 1) AS IMAGE_URL
+        FROM tb_order_items I
+        LEFT JOIN tb_product P ON I.PRODUCT_ID = P.PRODUCT_ID
+        WHERE I.ORDER_ID = #{orderId}
     </select>
+
 
     <update id="updateOrderStatus" parameterType="com.whomade.kycarrots.entity.payment.OrderVo">
         UPDATE tb_orders
