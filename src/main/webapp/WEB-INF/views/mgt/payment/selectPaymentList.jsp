@@ -54,7 +54,7 @@
                                         <option value="">전체</option>
                                         <option value="READY" ${param.paymentStatus == 'READY' ? 'selected' : ''}>준비</option>
                                         <option value="PAID" ${param.paymentStatus == 'PAID' ? 'selected' : ''}>결제완료</option>
-                                        <option value="CANCELLED" ${param.paymentStatus == 'CANCELLED' ? 'selected' : ''}>취소됨</option>
+                                        <option value="CANCEL" ${param.paymentStatus == 'CANCEL' ? 'selected' : ''}>취소됨</option>
                                         <option value="FAILED" ${param.paymentStatus == 'FAILED' ? 'selected' : ''}>실패</option>
                                     </select>
                                 </div>
@@ -112,7 +112,7 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="${item.PAYMENT_STATUS == 'PAID'}"><span class="label label-success">결제완료</span></c:when>
-                                            <c:when test="${item.PAYMENT_STATUS == 'CANCELLED'}"><span class="label label-danger">취소됨</span></c:when>
+                                            <c:when test="${item.PAYMENT_STATUS == 'CANCEL'}"><span class="label label-danger">취소됨</span></c:when>
                                             <c:otherwise><span class="label label-default">${item.PAYMENT_STATUS}</span></c:otherwise>
                                         </c:choose>
                                     </td>

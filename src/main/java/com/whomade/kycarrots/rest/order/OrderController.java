@@ -13,8 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,23 +58,4 @@ public class OrderController {
         return ResponseEntity.ok(res);
     }
 
-    @Operation(summary = "주문 취소", description = "주문번호와 취소 사유를 입력받아 주문을 전액 취소 처리합니다.", responses = {
-            @ApiResponse(responseCode = "200", description = "취소 성공", content = @Content(schema = @Schema(type = "object", example = "{\"success\": true, \"message\": \"취소되었습니다.\"}"))),
-            @ApiResponse(responseCode = "400", description = "취소 실패 (이미 취소됨, 혹은 잘못된 요청)")
-    })
-    @PostMapping(value = "/cancel", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, Object>> cancelOrder(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "취소 정보", content = @Content(schema = @Schema(type = "object", example = "{\"orderNo\": \"ORDER-123\", \"cancelReason\": \"고객 변심\", \"userNo\": 1}"))) @RequestBody Map<String, Object> param) {
-        String orderNo = (String) param.get("orderNo");
-        String cancelReason = (String) param.get("cancelReason");
-        Integer userNo = (Integer) param.get("userNo");
-
-        DataMap result = orderService.cancelOrder(orderNo, cancelReason, userNo);
-
-        if (result.getBoolean("success")) {
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-        }
-    }
 }

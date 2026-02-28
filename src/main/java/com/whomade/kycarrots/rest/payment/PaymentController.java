@@ -48,4 +48,17 @@ public class PaymentController {
                         @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "토스 웹훅 데이터 (가상계좌 입금 등)", content = @Content(schema = @Schema(type = "object", example = "{\"eventType\": \"PAYMENT_STATUS_CHANGED\", \"data\": {\"paymentKey\": \"tgen_2024...\", \"status\": \"DONE\", \"orderId\": \"ORDER-1708348400000\", \"totalAmount\": 53000}}"))) @RequestBody DataMap param) {
                 paymentService.handleWebhook(param);
         }
+
+        @Operation(summary = "결제 취소", description = "주문 번호와 취소 사유를 받아 결제를 취소합니다.", responses = {
+                        @ApiResponse(responseCode = "200", description = "취소 결과", content = @Content(schema = @Schema(type = "object", example = "{ \"success\": true, \"message\": \"주문이 정상적으로 취소되었습니다.\" }")))
+        })
+        @PostMapping("/cancel")
+        public DataMap cancelPayment(
+                        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "취소 데이터 (In)", content = @Content(schema = @Schema(type = "object", example = "{\"orderNo\": \"ORDER-1708348400000\", \"cancelReason\": \"고객 변심\", \"userNo\": 1}"))) @RequestBody DataMap param) {
+                String orderNo = param.getString("orderNo");
+                String cancelReason = param.getString("cancelReason");
+                Integer userNo = param.getInt("userNo");
+
+                return paymentService.cancelPayment(orderNo, cancelReason, userNo);
+        }
 }

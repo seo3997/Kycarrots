@@ -9,6 +9,7 @@ import com.whomade.kycarrots.framework.common.util.RequestUtil;
 import com.whomade.kycarrots.framework.common.util.SessionUtil;
 import com.whomade.kycarrots.mgt.order.service.MgtOrderService;
 import com.whomade.kycarrots.service.order.OrderService;
+import com.whomade.kycarrots.service.payment.PaymentService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ public class MgtOrderController {
     private MgtOrderService mgtOrderService;
 
     private final OrderService orderService;
+    private final PaymentService paymentService;
 
     @RequestMapping(value = "/mgt/order/selectPageListOrder.do")
     public String selectPageListOrder(HttpServletRequest request, HttpServletResponse response, ModelMap model)
@@ -67,7 +69,7 @@ public class MgtOrderController {
 
         UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 
-        DataMap result = orderService.cancelOrder(orderNo, cancelReason,
+        DataMap result = paymentService.cancelPayment(orderNo, cancelReason,
                 Integer.parseInt(String.valueOf(userInfoVo.getUserNo())));
 
         if (result.getBoolean("success")) {

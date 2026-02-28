@@ -15,8 +15,6 @@ public interface OrderService {
 
     List<OrderItemVo> selectOrderItemsByOrderId(Long orderId);
 
-    DataMap cancelOrder(String orderNo, String cancelReason, Integer userNo);
-
     // Admin methods
     List<DataMap> selectPageListOrderMgt(DataMap param);
 }
