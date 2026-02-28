@@ -290,6 +290,7 @@ public class PaymentServiceImpl implements PaymentService {
                 // DB Update
                 orderVo.setOrderStatus("CANCEL");
                 orderVo.setPaymentStatus("CANCEL");
+                orderVo.setCancelReason(cancelReason);
                 orderVo.setUpdusrNo(userNo);
                 paymentRepository.updateOrderStatus(orderVo);
 

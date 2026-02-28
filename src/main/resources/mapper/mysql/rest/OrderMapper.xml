@@ -25,7 +25,7 @@
             O.ORDER_ID, O.ORDER_NO, O.USER_NO, O.ORDER_STATUS, O.PAYMENT_STATUS,
             O.TOTAL_ITEM_AMOUNT, O.DELIVERY_FEE, O.DISCOUNT_AMOUNT, O.TOTAL_PAY_AMOUNT,
             DATE_FORMAT(O.ORDERED_AT, '%Y.%m.%d %H:%i') AS ORDERED_AT,
-            O.PAID_AT,
+            O.PAID_AT, O.CANCELLED_AT, O.CANCEL_REASON,
             I.PRODUCT_NAME, I.UNIT_PRICE, I.QUANTITY
         FROM tb_product A
         INNER JOIN tb_order_items I ON A.PRODUCT_ID = I.PRODUCT_ID
@@ -69,6 +69,7 @@
         SET ORDER_STATUS = #{orderStatus},
             PAYMENT_STATUS = #{paymentStatus},
             CANCELLED_AT = CASE WHEN #{orderStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            CANCEL_REASON = CASE WHEN #{orderStatus} = 'CANCEL' THEN #{cancelReason} ELSE CANCEL_REASON END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE ORDER_ID = #{orderId}

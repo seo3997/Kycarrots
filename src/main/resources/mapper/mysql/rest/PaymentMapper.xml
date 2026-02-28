@@ -36,6 +36,7 @@
             PAYMENT_STATUS = #{paymentStatus},
             PAID_AT = CASE WHEN #{orderStatus} = 'PAID' THEN CURRENT_TIMESTAMP ELSE PAID_AT END,
             CANCELLED_AT = CASE WHEN #{orderStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            CANCEL_REASON = CASE WHEN #{orderStatus} = 'CANCEL' THEN #{cancelReason} ELSE CANCEL_REASON END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE ORDER_ID = #{orderId}

@@ -26,6 +26,7 @@ public class OrderVo {
     private String orderedAt;
     private String paidAt;
     private String cancelledAt;
+    private String cancelReason;
     private Integer registerNo;
     private String registDt;
     private Integer updusrNo;
