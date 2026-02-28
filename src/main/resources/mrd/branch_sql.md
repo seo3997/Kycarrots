@@ -1,0 +1,65 @@
+1. 지점 테이블 생성
+   CREATE TABLE `tb_branches` (
+   `BRANCH_ID` bigint NOT NULL AUTO_INCREMENT COMMENT '지점 PK',
+   `BRANCH_CODE` varchar(20) UNIQUE NOT NULL COMMENT '지점 고유 코드 (예: BR_001)',
+   `BRANCH_NAME` varchar(100) NOT NULL COMMENT '지점명 (쇼핑몰 상단 노출)',
+   `DOMAIN_URL` varchar(255) COMMENT '지점 접속 주소',
+   `LOGO_IMAGE_URL` varchar(500) COMMENT '지점별 커스텀 로고 URL',
+   `BRANCH_STATUS` varchar(20) DEFAULT 'RUNNING' COMMENT '운영 상태 (RUNNING, STOPPED, TERMINATED)',
+   `COMPANY_NAME` varchar(100) COMMENT '상호명',
+   `REPRESENTATIVE_NAME` varchar(50) COMMENT '대표자 성명',
+   `BUSINESS_NUMBER` varchar(20) COMMENT '사업자 등록 번호',
+   `TONGSIN_NUMBER` varchar(50) COMMENT '통신판매업 신고 번호',
+   `CS_PHONE` varchar(30) COMMENT '고객센터 전화번호',
+   `ADDRESS` varchar(500) COMMENT '사업장 소재지',
+   `TOSS_CLIENT_KEY` varchar(255) COMMENT '토스 프론트엔드 SDK용 키',
+   `TOSS_SECRET_KEY` varchar(255) COMMENT '토스 백엔드 승인 API용 키',
+   `TOSS_MID` varchar(50) COMMENT '지점별 상점 아이디(MID)',
+   `BILLING_CYCLE` varchar(50) COMMENT '역정산 주기 (예: MONTHLY_1, WEEKLY_MON)',
+   `IS_USE_CUSTOM_PRICE` boolean DEFAULT false COMMENT '지점별 판매가 수정 가능 여부',
+   `SHIPPING_FEE_POLICY` json COMMENT '배송비 정책 (기본료, 무료배송 기준액 등)',
+   `IS_ACTIVE` boolean DEFAULT true COMMENT '사이트 활성화 여부 (점검 시 false)',
+   `REGISTER_NO` int DEFAULT NULL,
+   `REGIST_DT` datetime DEFAULT CURRENT_TIMESTAMP,
+   `UPDUSR_NO` int DEFAULT NULL,
+   `UPDT_DT` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   PRIMARY KEY (`BRANCH_ID`)
+   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='지점 마스터 테이블';
+
+2. 사용자 테이블에 지점 컬럼 추가
+   ALTER TABLE `op_user`
+   ADD COLUMN `BRANCH_ID` bigint COMMENT '소속 지점 PK' AFTER `USER_NO`,
+   ADD COLUMN `JOIN_APP_PACKAGE` varchar(100) DEFAULT NULL COMMENT '가입 앱 패키지명';
+
+3. 주문테이블에 지점 컬럼 추가
+   ALTER TABLE `tb_orders`
+   ADD COLUMN `BRANCH_ID` bigint NOT NULL COMMENT '지점 PK' AFTER `ORDER_NO`,
+   ADD COLUMN `SUPPLY_PRICE_SUM` int NOT NULL DEFAULT '0' COMMENT '본사 공급가 합계' AFTER `TOTAL_ITEM_AMOUNT`,
+   ADD COLUMN `BRANCH_DEPOSIT_STATUS` varchar(20) DEFAULT 'WAITING' COMMENT '지점의 본사 입금상태' AFTER `PAYMENT_STATUS`,
+   ADD COLUMN `BRANCH_DEPOSIT_CONFIRMED_AT` datetime DEFAULT NULL COMMENT '본사 입금 확인 일시' AFTER `PAID_AT`,
+   ADD COLUMN `DELIVERY_COMPANY_CODE` varchar(20) DEFAULT NULL COMMENT '택배사 코드' AFTER `ADDRESS2`,
+   ADD COLUMN `TRACKING_NO` varchar(50) DEFAULT NULL COMMENT '운송장 번호' AFTER `DELIVERY_COMPANY_CODE`,
+   ADD COLUMN `SHIPPED_AT` datetime DEFAULT NULL COMMENT '출고 일시' AFTER `ORDERED_AT`;
+
+4. 주문상세테이블에 지점 컬럼 추가
+   ALTER TABLE `tb_order_items`
+   ADD COLUMN `BRANCH_ID` bigint NOT NULL COMMENT '지점 PK' AFTER `ORDER_ID`,
+   ADD COLUMN `SUPPLY_PRICE` int NOT NULL DEFAULT '0' COMMENT '본사 공급 원가(개당)' AFTER `PRODUCT_ID`,
+   ADD COLUMN `SALE_PRICE` int NOT NULL DEFAULT '0' COMMENT '지점 실제 판매가(개당)' AFTER `SUPPLY_PRICE`;
+
+5. 결제테이블에 지점 컬럼 추가
+   ALTER TABLE `tb_payments`
+   ADD COLUMN `BRANCH_ID` bigint NOT NULL COMMENT '지점 PK' AFTER `ORDER_ID`,
+   ADD COLUMN `TOSS_PAYMENT_KEY` varchar(255) DEFAULT NULL COMMENT '토스 결제 고유 키' AFTER `PG_TID`,
+   ADD COLUMN `TOSS_MID` varchar(50) DEFAULT NULL COMMENT '토스 상점 MID' AFTER `TOSS_PAYMENT_KEY`;
+
+6. op_user 의 MEMBER_CODE 회원구분코드 정의
+   ROLE_ADMIN: 시스템 전체 인프라 및 마스터 데이터를 관리하는 시스템 어드민
+   ROLE_SELL: 입금 확인, 배송 처리, 물류를 담당하는 본사 운영 관리자
+   ROLE_PROJ: 독립 결제창을 운영하며 본사에 원가를 송금하는 지점 판매자
+   ROLE_PUB: 지점 앱을 통해 물건을 구매하는 일반 사용자
+7. op_author 의 ROLE_CODE 권한코드 정의
+   ROLE_ADMIN: 시스템 전체 인프라 및 마스터 데이터를 관리하는 시스템 어드민
+   ROLE_SELL: 입금 확인, 배송 처리, 물류를 담당하는 본사 운영 관리자
+   ROLE_PROJ: 독립 결제창을 운영하며 본사에 원가를 송금하는 지점 판매자
+   ROLE_PUB: 지점 앱을 통해 물건을 구매하는 일반 사용자
