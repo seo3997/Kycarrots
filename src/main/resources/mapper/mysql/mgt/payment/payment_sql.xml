@@ -4,10 +4,10 @@
 
     <select id="selectPaymentStats" parameterType="dataMap" resultType="dataMap">
         SELECT
-            IFNULL(SUM(CASE WHEN PAYMENT_STATUS IN ('PAID', 'CANCEL') AND DATE(REGIST_DT) = CURDATE() THEN AMOUNT_TOTAL ELSE 0 END), 0) as todayTotalAmount,
-            IFNULL(SUM(CASE WHEN PAYMENT_STATUS = 'CANCEL' AND DATE(CANCELLED_AT) = CURDATE() THEN AMOUNT_TOTAL ELSE 0 END), 0) as todayCancelledAmount,
-            COUNT(CASE WHEN PAYMENT_STATUS IN ('PAID', 'CANCEL') AND DATE(REGIST_DT) = CURDATE() THEN 1 END) as todayPaidCount,
-            COUNT(CASE WHEN PAYMENT_STATUS = 'CANCEL' AND DATE(CANCELLED_AT) = CURDATE() THEN 1 END) as todayCancelledCount
+            IFNULL(SUM(CASE WHEN PAYMENT_STATUS IN ('PAID', 'CANCEL') AND DATE_FORMAT(REGIST_DT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN AMOUNT_TOTAL ELSE 0 END), 0) as todayTotalAmount,
+            IFNULL(SUM(CASE WHEN PAYMENT_STATUS = 'CANCEL' AND DATE_FORMAT(CANCELLED_AT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN AMOUNT_TOTAL ELSE 0 END), 0) as todayCancelledAmount,
+            COUNT(CASE WHEN PAYMENT_STATUS IN ('PAID', 'CANCEL') AND DATE_FORMAT(REGIST_DT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN 1 END) as todayPaidCount,
+            COUNT(CASE WHEN PAYMENT_STATUS = 'CANCEL' AND DATE_FORMAT(CANCELLED_AT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN 1 END) as todayCancelledCount
         FROM tb_payments
     </select>
 
