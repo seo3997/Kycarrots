@@ -27,112 +27,146 @@ import java.io.Serializable;
  * </PRE>
  */
 
-public class UserInfoVo implements Serializable{
-	
+public class UserInfoVo implements Serializable {
+
 	private static final long serialVersionUID = 100L;
 
-	private String userNo;					// 사용자 번호
-	private String id;						// 사용자 id
-	private String userNm;					// 성명
-	private String cttpcSeCode;				// 연락처구분코드
-	private String cttpc;					// 연락처
-	private String email;					// 이메일
-	private String areaCode;				// 지역코드
-	private String authorId;				// 권한아이디
-	private String userSttusCode;			// 유저상태코드
-	private String password;				// 패스워드
+	private String userNo; // 사용자 번호
+	private String id; // 사용자 id
+	private String userNm; // 성명
+	private String cttpcSeCode; // 연락처구분코드
+	private String cttpc; // 연락처
+	private String email; // 이메일
+	private String areaCode; // 지역코드
+	private String authorId; // 권한아이디
+	private String userSttusCode; // 유저상태코드
+	private String password; // 패스워드
 
-	private String areaCodeL;				// 지역대분류 
-	private String areaCodeS;				// 지역소분류 
-	private String areaCodeD;				// 지역세분류 
-	private String areaName;				// 지역명 
-	
+	private String areaCodeL; // 지역대분류
+	private String areaCodeS; // 지역소분류
+	private String areaCodeD; // 지역세분류
+	private String areaName; // 지역명
+
 	public String getUserNo() {
 		return userNo;
 	}
+
 	public void setUserNo(String userNo) {
 		this.userNo = userNo;
 	}
+
 	public String getId() {
 		return id;
 	}
+
 	public void setId(String id) {
 		this.id = id;
 	}
+
 	public String getUserNm() {
 		return userNm;
 	}
+
 	public void setUserNm(String userNm) {
 		this.userNm = userNm;
 	}
+
 	public String getCttpcSeCode() {
 		return cttpcSeCode;
 	}
+
 	public void setCttpcSeCode(String cttpcSeCode) {
 		this.cttpcSeCode = cttpcSeCode;
 	}
+
 	public String getCttpc() {
 		return cttpc;
 	}
+
 	public void setCttpc(String cttpc) {
 		this.cttpc = cttpc;
 	}
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getAreaCode() {
 		return areaCode;
 	}
+
 	public void setAreaCode(String areaCode) {
 		this.areaCode = areaCode;
 	}
+
 	public String getAuthorId() {
 		return authorId;
 	}
+
 	public void setAuthorId(String authorId) {
 		this.authorId = authorId;
 	}
+
 	public String getUserSttusCode() {
 		return userSttusCode;
 	}
+
 	public void setUserSttusCode(String userSttusCode) {
 		this.userSttusCode = userSttusCode;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 	public String getAreaCodeL() {
 		return areaCodeL;
 	}
+
 	public void setAreaCodeL(String areaCodeL) {
 		this.areaCodeL = areaCodeL;
 	}
+
 	public String getAreaCodeS() {
 		return areaCodeS;
 	}
+
 	public void setAreaCodeS(String areaCodeS) {
 		this.areaCodeS = areaCodeS;
 	}
+
 	public String getAreaCodeD() {
 		return areaCodeD;
 	}
+
 	public void setAreaCodeD(String areaCodeD) {
 		this.areaCodeD = areaCodeD;
 	}
+
 	public String getAreaName() {
 		return areaName;
 	}
+
 	public void setAreaName(String areaName) {
 		this.areaName = areaName;
 	}
 
-	
-	
-	
+	private String memberCode;
+
+	public String getMemberCode() {
+		return memberCode;
+	}
+
+	public void setMemberCode(String memberCode) {
+		this.memberCode = memberCode;
+	}
+
 }

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mgt.branch">
+
+    <insert id="insertBranch" parameterType="com.whomade.kycarrots.entity.branch.TbBranchVo" useGeneratedKeys="true" keyProperty="branchId">
+        INSERT INTO tb_branches (
+            BRANCH_CODE, BRANCH_NAME, DOMAIN_URL, LOGO_IMAGE_URL,
+            BRANCH_STATUS, COMPANY_NAME, REPRESENTATIVE_NAME, BUSINESS_NUMBER,
+            TONGSIN_NUMBER, CS_PHONE, ADDRESS, TOSS_CLIENT_KEY,
+            TOSS_SECRET_KEY, TOSS_MID, BILLING_CYCLE, IS_USE_CUSTOM_PRICE,
+            SHIPPING_FEE_POLICY, IS_ACTIVE, REGISTER_NO, REGIST_DT,
+            UPDUSR_NO, UPDT_DT
+        ) VALUES (
+            #{branchCode}, #{branchName}, #{domainUrl}, #{logoImageUrl},
+            'RUNNING', #{companyName}, #{representativeName}, #{businessNumber},
+            #{tongsinNumber}, #{csPhone}, #{address}, #{tossClientKey},
+            #{tossSecretKey}, #{tossMid}, #{billingCycle}, #{isUseCustomPrice},
+            #{shippingFeePolicy}, #{isActive}, #{registerNo}, CURRENT_TIMESTAMP,
+            #{updusrNo}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <insert id="insertBranchSeller" parameterType="com.whomade.kycarrots.entity.member.OpUserVO">
+        INSERT INTO op_user (
+            USER_ID, PASSWORD, USER_NM, EMAIL,
+            MEMBER_CODE, BRANCH_ID, USER_STTUS_CODE,
+            REGIST_DT, REGISTER_NO, UPDT_DT, UPDUSR_NO
+        ) VALUES (
+            #{userId}, #{password}, #{userNm}, #{email},
+            'ROLE_PROJ', #{branchId}, '10',
+            CURRENT_TIMESTAMP, #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}
+        )
+    </insert>
+    
+    <select id="selectPageListBranch" parameterType="dataMap" resultType="dataMap">
+        SELECT * FROM tb_branches
+        <where>
+            <if test="sch_text != null and sch_text != ''">
+                AND (BRANCH_NAME LIKE CONCAT('%', #{sch_text}, '%') OR BRANCH_CODE LIKE CONCAT('%', #{sch_text}, '%'))
+            </if>
+        </where>
+        ORDER BY REGIST_DT DESC
+        LIMIT #{limitStart}, #{limitEnd}
+    </select>
+    
+    <select id="selectBranchCount" parameterType="dataMap" resultType="int">
+        SELECT COUNT(*) FROM tb_branches
+        <where>
+            <if test="sch_text != null and sch_text != ''">
+                AND (BRANCH_NAME LIKE CONCAT('%', #{sch_text}, '%') OR BRANCH_CODE LIKE CONCAT('%', #{sch_text}, '%'))
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectBranch" parameterType="dataMap" resultType="dataMap">
+        SELECT * FROM tb_branches
+        WHERE BRANCH_ID = #{branchId}
+    </select>
+
+    <update id="updateBranch" parameterType="com.whomade.kycarrots.entity.branch.TbBranchVo">
+        UPDATE tb_branches
+        SET BRANCH_CODE = #{branchCode},
+            BRANCH_NAME = #{branchName},
+            DOMAIN_URL = #{domainUrl},
+            LOGO_IMAGE_URL = #{logoImageUrl},
+            COMPANY_NAME = #{companyName},
+            REPRESENTATIVE_NAME = #{representativeName},
+            BUSINESS_NUMBER = #{businessNumber},
+            TONGSIN_NUMBER = #{tongsinNumber},
+            CS_PHONE = #{csPhone},
+            ADDRESS = #{address},
+            TOSS_CLIENT_KEY = #{tossClientKey},
+            TOSS_SECRET_KEY = #{tossSecretKey},
+            TOSS_MID = #{tossMid},
+            BILLING_CYCLE = #{billingCycle},
+            IS_USE_CUSTOM_PRICE = #{isUseCustomPrice},
+            UPDUSR_NO = #{updusrNo},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE BRANCH_ID = #{branchId}
+    </update>
+
+    <delete id="deleteBranch" parameterType="dataMap">
+        DELETE FROM tb_branches
+        WHERE BRANCH_ID = #{branchId}
+    </delete>
+
+</mapper>

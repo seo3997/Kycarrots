@@ -1,0 +1,115 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn"     uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ page import="com.whomade.kycarrots.framework.common.object.DataMap" %>
+
+<jsp:useBean id="resultMap" class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
+<jsp:useBean id="param" class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
+
+<%@ include file="/common/inc/common.jspf" %>
+<%@ include file="/common/inc/docType.jspf" %>
+
+<html>
+<head>
+	<%@ include file="/common/inc/meta.jspf" %>
+	<title>지점 수정 - <%=headTitle%></title>
+	<%@ include file="/common/inc/cssScript.jspf" %>
+    
+	<script type="text/javascript">
+		function fnGoList(){
+			$('#aform').attr({ action : '/mgt/branch/selectPageListBranch.do', method : 'get' }).submit();
+		}
+        
+        function fnGoBack(){
+            $('#aform').attr({ action : '/mgt/branch/selectBranch.do', method : 'get' }).submit();
+        }
+		
+		function fnGoUpdate(){
+			if($('[name=branchName]').val() == ''){
+				alert('지점명을 입력해 주세요.');
+				$('[name=branchName]').focus();
+				return false;
+			}
+			
+			if(confirm('수정하시겠습니까?')){
+				$('#aform').attr({ action : '/mgt/branch/updateBranch.do', method : 'post' }).submit();
+			}
+		}
+	</script>
+</head>
+<body class="hold-transition skin-green-light sidebar-mini">
+<div class="wrapper">
+	<c:import url="/common/inc/header.do" charEncoding="utf-8" />
+	<c:import url="/common/inc/menu.do" charEncoding="utf-8" />
+	
+	<div class="content-wrapper">
+		<section class="content-header">
+		    <div id="navi"><i class="fa fa-home f12 color-lgray"></i><span class="blind">home</span> > 지점관리 > <span class="text">지점 수정</span></div>
+    	    <div id="pagetitle"><h1>지점 정보 수정</h1></div>
+		</section>
+
+		<section class="content container-fluid vw-page">
+			<form role="form" id="aform" method="post" action="/mgt/branch/updateBranch.do" class="form-horizontal">
+				<input type="hidden" name="branchId" value="${resultMap.BRANCH_ID}" />
+
+			<div class="card">
+				<h4 class="cardTitle"><i class="fa fa-caret-square-right"></i> 지점 정보</h4>
+				<div class="card-body viewForm">
+					<div class="form-group row">
+						<label class="control-label col-sm-2" for="branchName">지점명</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="branchName" id="branchName" value="${resultMap.BRANCH_NAME}" maxlength="100" />
+						</div>
+						<label class="control-label col-sm-2" for="branchCode">지점코드</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="branchCode" id="branchCode" value="${resultMap.BRANCH_CODE}" maxlength="20" />
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-sm-2" for="companyName">상호명</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="companyName" id="companyName" value="${resultMap.COMPANY_NAME}" />
+						</div>
+						<label class="control-label col-sm-2" for="representativeName">대표자명</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="representativeName" id="representativeName" value="${resultMap.REPRESENTATIVE_NAME}" />
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-sm-2" for="businessNumber">사업자번호</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="businessNumber" id="businessNumber" value="${resultMap.BUSINESS_NUMBER}" />
+						</div>
+						<label class="control-label col-sm-2" for="domainUrl">도메인 URL</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="domainUrl" id="domainUrl" value="${resultMap.DOMAIN_URL}" />
+						</div>
+					</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="tossId">Toss Mid</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="tossMid" id="tossMid" value="${resultMap.TOSS_MID}" />
+						</div>
+						<label class="control-label col-sm-2" for="billingCycle">정산주기</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="billingCycle" id="billingCycle" value="${resultMap.BILLING_CYCLE}" />
+						</div>
+					</div>
+				</div>
+
+				<div class="box-footer">
+					<div class="text-center">
+						<button type="button" class="btn btn-list" onclick="fnGoBack(); return false;"><i class="fa fa-reply"></i> 취소</button>
+						<button type="button" class="btn btn-write" onclick="fnGoUpdate(); return false;"><i class="fa fa-pen"></i> 수정</button>
+					</div>
+				</div>
+			</div>
+			</form>
+		</section>
+	</div>
+	<%@ include file="/common/inc/footer.jspf" %>
+</div>
+</body>
+</html>
+<%@ include file="/common/inc/msg.jspf" %>
