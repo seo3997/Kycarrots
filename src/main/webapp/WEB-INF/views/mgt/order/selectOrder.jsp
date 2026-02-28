@@ -59,9 +59,16 @@
 									<th>주문상태</th>
 									<td>
 										<c:choose>
+											<c:when test="${resultVo.orderStatus == 'READY'}"><span class="label label-default">결제 대기</span></c:when>
+											<c:when test="${resultVo.orderStatus == 'FAILED'}"><span class="label label-warning">결제 실패</span></c:when>
 											<c:when test="${resultVo.orderStatus == 'PAID'}"><span class="label label-success">결제완료</span></c:when>
-											<c:when test="${resultVo.orderStatus == 'CANCEL'}"><span class="label label-danger">취소</span></c:when>
-											<c:otherwise>${resultVo.orderStatus}</c:otherwise>
+											<c:when test="${resultVo.orderStatus == 'CANCEL'}"><span class="label label-danger">주문취소</span></c:when>
+											<c:when test="${resultVo.orderStatus == 'PREPARING'}"><span class="label label-primary">배송준비중</span></c:when>
+											<c:when test="${resultVo.orderStatus == 'SHIPPING'}"><span class="label label-info">배송중</span></c:when>
+											<c:when test="${resultVo.orderStatus == 'DELIVERED'}"><span class="label label-success" style="background-color: #00a65a !important;">배송완료</span></c:when>
+											<c:when test="${resultVo.orderStatus == 'RETURN_REQUESTED'}"><span class="label label-warning">반품요청</span></c:when>
+											<c:when test="${resultVo.orderStatus == 'EXCHANGED'}"><span class="label label-info">교환완료</span></c:when>
+											<c:otherwise><span class="label label-default">${resultVo.orderStatus}</span></c:otherwise>
 										</c:choose>
 									</td>
 								</tr>

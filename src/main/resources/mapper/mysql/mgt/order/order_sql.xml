@@ -16,7 +16,7 @@
         INNER JOIN tb_order_items I ON A.PRODUCT_ID = I.PRODUCT_ID
         INNER JOIN tb_orders O ON I.ORDER_ID = O.ORDER_ID
         <where>
-            O.ORDER_STATUS != 'READY'
+            1=1
             <if test="userNo != null and userNo != ''">
                 AND O.USER_NO = #{userNo}
             </if>
@@ -37,7 +37,7 @@
         INNER JOIN tb_order_items I ON A.PRODUCT_ID = I.PRODUCT_ID
         INNER JOIN tb_orders O ON I.ORDER_ID = O.ORDER_ID
         <where>
-            O.ORDER_STATUS != 'READY'
+            1=1
             <if test="userNo != null and userNo != ''">
                 AND O.USER_NO = #{userNo}
             </if>

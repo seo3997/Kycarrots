@@ -57,9 +57,15 @@
 									<div class="col-md-9 px-0">
 										<select name="sch_order_status" class="form-control w-100">
 											<option value="">전체</option>
-											<option value="READY" ${param.sch_order_status == 'READY' ? 'selected' : ''}>대기</option>
+											<option value="READY" ${param.sch_order_status == 'READY' ? 'selected' : ''}>결제 대기</option>
+											<option value="FAILED" ${param.sch_order_status == 'FAILED' ? 'selected' : ''}>결제 실패</option>
 											<option value="PAID" ${param.sch_order_status == 'PAID' ? 'selected' : ''}>결제완료</option>
-											<option value="CANCEL" ${param.sch_order_status == 'CANCEL' ? 'selected' : ''}>취소</option>
+											<option value="CANCEL" ${param.sch_order_status == 'CANCEL' ? 'selected' : ''}>주문취소</option>
+											<option value="PREPARING" ${param.sch_order_status == 'PREPARING' ? 'selected' : ''}>배송준비중</option>
+											<option value="SHIPPING" ${param.sch_order_status == 'SHIPPING' ? 'selected' : ''}>배송중</option>
+											<option value="DELIVERED" ${param.sch_order_status == 'DELIVERED' ? 'selected' : ''}>배송완료</option>
+											<option value="RETURN_REQUESTED" ${param.sch_order_status == 'RETURN_REQUESTED' ? 'selected' : ''}>반품요청</option>
+											<option value="EXCHANGED" ${param.sch_order_status == 'EXCHANGED' ? 'selected' : ''}>교환완료</option>
 										</select>
 									</div>
 								</div>
@@ -89,12 +95,27 @@
 											<td class="text-right">${item.TOTAL_PAY_AMOUNT}원</td>
 											<td>
 												<c:choose>
+													<c:when test="${item.ORDER_STATUS == 'READY'}"><span class="label label-default">결제 대기</span></c:when>
+													<c:when test="${item.ORDER_STATUS == 'FAILED'}"><span class="label label-warning">결제 실패</span></c:when>
 													<c:when test="${item.ORDER_STATUS == 'PAID'}"><span class="label label-success">결제완료</span></c:when>
-													<c:when test="${item.ORDER_STATUS == 'CANCEL'}"><span class="label label-danger">취소</span></c:when>
-													<c:otherwise>${item.ORDER_STATUS}</c:otherwise>
+													<c:when test="${item.ORDER_STATUS == 'CANCEL'}"><span class="label label-danger">주문취소</span></c:when>
+													<c:when test="${item.ORDER_STATUS == 'PREPARING'}"><span class="label label-primary">배송준비중</span></c:when>
+													<c:when test="${item.ORDER_STATUS == 'SHIPPING'}"><span class="label label-info">배송중</span></c:when>
+													<c:when test="${item.ORDER_STATUS == 'DELIVERED'}"><span class="label label-success" style="background-color: #00a65a !important;">배송완료</span></c:when>
+													<c:when test="${item.ORDER_STATUS == 'RETURN_REQUESTED'}"><span class="label label-warning">반품요청</span></c:when>
+													<c:when test="${item.ORDER_STATUS == 'EXCHANGED'}"><span class="label label-info">교환완료</span></c:when>
+													<c:otherwise><span class="label label-default">${item.ORDER_STATUS}</span></c:otherwise>
 												</c:choose>
 											</td>
-											<td>${item.PAYMENT_STATUS}</td>
+											<td>
+												<c:choose>
+													<c:when test="${item.PAYMENT_STATUS == 'READY'}"><span class="badge badge-default">대기</span></c:when>
+													<c:when test="${item.PAYMENT_STATUS == 'PAID'}"><span class="badge badge-success">결제완료</span></c:when>
+													<c:when test="${item.PAYMENT_STATUS == 'CANCEL'}"><span class="badge badge-danger">결제취소</span></c:when>
+													<c:when test="${item.PAYMENT_STATUS == 'FAILED'}"><span class="badge badge-warning">결제실패</span></c:when>
+													<c:otherwise>${item.PAYMENT_STATUS}</c:otherwise>
+												</c:choose>
+											</td>
 											<td>${item.ORDERED_AT}</td>
 										</tr>
 									</c:forEach>
