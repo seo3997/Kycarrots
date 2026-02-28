@@ -27,6 +27,8 @@ public class OrderVo {
     private String paidAt;
     private String cancelledAt;
     private String cancelReason;
+    private Long paymentId;
+    private String pgTid;
     private Integer registerNo;
     private String registDt;
     private Integer updusrNo;

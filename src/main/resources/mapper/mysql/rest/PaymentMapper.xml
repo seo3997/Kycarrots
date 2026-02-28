@@ -52,11 +52,23 @@
     </update>
 
     <select id="selectOrderByNo" parameterType="string" resultType="com.whomade.kycarrots.entity.payment.OrderVo">
-        SELECT * FROM tb_orders WHERE ORDER_NO = #{orderNo}
+        SELECT
+            O.*,
+            P.PAYMENT_ID,
+            P.PG_TID
+        FROM tb_orders O
+        LEFT JOIN tb_payments P ON O.ORDER_ID = P.ORDER_ID
+        WHERE O.ORDER_NO = #{orderNo}
     </select>
 
     <select id="selectOrderById" parameterType="long" resultType="com.whomade.kycarrots.entity.payment.OrderVo">
-        SELECT * FROM tb_orders WHERE ORDER_ID = #{orderId}
+        SELECT
+            O.*,
+            P.PAYMENT_ID,
+            P.PG_TID
+        FROM tb_orders O
+        LEFT JOIN tb_payments P ON O.ORDER_ID = P.ORDER_ID
+        WHERE O.ORDER_ID = #{orderId}
     </select>
 
     <select id="selectOrderItemsByOrderId" parameterType="long" resultType="com.whomade.kycarrots.entity.payment.OrderItemVo">
