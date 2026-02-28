@@ -39,14 +39,16 @@ public class OrderController {
         return orderService.selectPageListOrder(param, PageRequest.of(page, size));
     }
 
-    @Operation(summary = "주문 상세 조회 (앱 구매내역 상세)", description = "주문 번호를 기준으로 주문 마스터 정보와 포함된 상품들의 상세 정보(상품명, 이미지 등)를 조회합니다. 앱의 구매내역 상세 페이지에서 사용됩니다.", responses = {
-            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(type = "object", example = "{\"order\": {\"orderId\": 1, \"orderNo\": \"ORDER-20240222...\", \"totalPayAmount\": 50000, ...}, \"items\": [{\"productId\": 1, \"productName\": \"유기농 당근\", \"title\": \"산지직송 유기농 당근 1kg\", \"imageUrl\": \"https://.../image.jpg\", \"unitPrice\": 15000, \"quantity\": 2}]}"))),
+    @Operation(summary = "주문 상세 조회 (앱 구매내역 상세)", description = "주문 번호를 기준으로 주문 마스터 정보와 포함된 상품들의 상세 정보(상품명, 이미지 등)를 조회합니다. 결제 취소 기능을 위해 paymentId, pgTid 정보가 포함됩니다.", responses = {
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(type = "object", example = "{\"order\": {\"orderId\": 1, \"orderNo\": \"ORDER-20240222...\", \"totalPayAmount\": 50000, \"paymentId\": 123, \"pgTid\": \"toss_tid_123\", ...}, \"items\": [{\"productId\": 1, \"productName\": \"유기농 당근\", \"title\": \"산지직송 유기농 당근 1kg\", \"imageUrl\": \"https://.../image.jpg\", \"unitPrice\": 15000, \"quantity\": 2}]}"))),
             @ApiResponse(responseCode = "404", description = "주문을 찾을 수 없음")
     })
     @GetMapping("/{orderNo}")
     public ResponseEntity<Map<String, Object>> getOrderDetail(
             @Parameter(description = "주문번호 (예: ORDER-20240219...)") @PathVariable String orderNo) {
         Map<String, Object> res = new HashMap<>();
+
+        // 결제 취소(환불) 기능을 위해 paymentId, pgTid 정보를 포함하여 주문 상세를 조회합니다.
         OrderVo orderVo = orderService.selectOrderByNo(orderNo);
         if (orderVo == null) {
             return ResponseEntity.notFound().build();
