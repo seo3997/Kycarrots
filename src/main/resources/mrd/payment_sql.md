@@ -56,6 +56,10 @@ CREATE TABLE `tb_orders` (
 PRIMARY KEY (`ORDER_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='주문 헤더 테이블';
 
+ALTER TABLE tb_orders 
+ADD COLUMN CANCEL_REASON VARCHAR(500) NULL COMMENT '취소 사유' 
+AFTER CANCELLED_AT;
+
 -- kycarrotsdb.tb_order_items definition
 CREATE TABLE `tb_order_items` (
 `ORDER_ITEM_ID` bigint NOT NULL AUTO_INCREMENT COMMENT '주문상품 PK',
