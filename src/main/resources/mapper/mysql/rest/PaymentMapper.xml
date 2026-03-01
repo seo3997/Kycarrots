@@ -7,12 +7,12 @@
     <insert id="insertOrder" parameterType="com.whomade.kycarrots.entity.payment.OrderVo" useGeneratedKeys="true" keyProperty="orderId">
         INSERT INTO tb_orders (
             ORDER_NO, USER_NO, BRANCH_ID, ORDER_STATUS, PAYMENT_STATUS,
-            TOTAL_ITEM_AMOUNT, DELIVERY_FEE, DISCOUNT_AMOUNT, TOTAL_PAY_AMOUNT,
+            TOTAL_ITEM_AMOUNT, SUPPLY_PRICE_SUM, DELIVERY_FEE, DISCOUNT_AMOUNT, TOTAL_PAY_AMOUNT,
             RECEIVER_NAME, RECEIVER_PHONE, ZIP_CODE, ADDRESS1, ADDRESS2,
             ORDER_MEMO, ORDERED_AT, REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
         ) VALUES (
             #{orderNo}, #{userNo}, #{branchId}, #{orderStatus}, #{paymentStatus},
-            #{totalItemAmount}, #{deliveryFee}, #{discountAmount}, #{totalPayAmount},
+            #{totalItemAmount}, #{supplyPriceSum}, #{deliveryFee}, #{discountAmount}, #{totalPayAmount},
             #{receiverName}, #{receiverPhone}, #{zipCode}, #{address1}, #{address2},
             #{orderMemo}, CURRENT_TIMESTAMP, #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP
         )
@@ -21,11 +21,11 @@
     <insert id="insertOrderItem" parameterType="com.whomade.kycarrots.entity.payment.OrderItemVo">
         INSERT INTO tb_order_items (
             ORDER_ID, BRANCH_ID, PRODUCT_ID, PRODUCT_NAME, OPTION_NAME,
-            UNIT_PRICE, QUANTITY,
+            UNIT_PRICE, SUPPLY_PRICE, SALE_PRICE, QUANTITY,
             REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
         ) VALUES (
             #{orderId}, #{branchId}, #{productId}, #{productName}, #{optionName},
-            #{unitPrice}, #{quantity},
+            #{unitPrice}, #{supplyPrice}, #{salePrice}, #{quantity},
             #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP
         )
     </insert>
@@ -45,6 +45,7 @@
     <update id="updateOrderAmount" parameterType="com.whomade.kycarrots.entity.payment.OrderVo">
         UPDATE tb_orders
         SET TOTAL_ITEM_AMOUNT = #{totalItemAmount},
+            SUPPLY_PRICE_SUM = #{supplyPriceSum},
             TOTAL_PAY_AMOUNT = #{totalPayAmount},
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP

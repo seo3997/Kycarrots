@@ -13,6 +13,8 @@ public class TnProductVo {
     private String title;
     private String description;
     private String price;
+    private String supplyPrice; // 본사 공급 원가
+    private String taxType; // 과세 구분 (TAX/FREE)
     private String categoryGroup;
     private String categoryMid;
     private String categoryScls;
@@ -24,23 +26,21 @@ public class TnProductVo {
     private String imageUrl;
     private String userId;
 
+    private String areaGroup; // 도시 대분류 코드
+    private String areaMid; // 도시 중분류 코드
+    private String areaScls; // 도시 소분류 코드
 
-    private String areaGroup;        // 도시 대분류 코드
-    private String areaMid;          // 도시 중분류 코드
-    private String areaScls;         // 도시 소분류 코드
-
-
-    private String quantity;         // 남은 수량
-    private String unitGroup;        // 단위 코드
-    private String unitCode;         // 단위 코드
+    private String quantity; // 남은 수량
+    private String unitGroup; // 단위 코드
+    private String unitCode; // 단위 코드
 
     private String desiredShippingDate; // 희망 출하일 (yyyy-MM-dd)
     // --- 이름(NM) 필드 추가 ---
-    private String categoryMidNm;    // 중분류 명
-    private String categorySclsNm;   // 소분류 명
+    private String categoryMidNm; // 중분류 명
+    private String categorySclsNm; // 소분류 명
 
-    private String areaMidNm;        // 도시 중분류 명
-    private String areaSclsNm;       // 도시 소분류 명
+    private String areaMidNm; // 도시 중분류 명
+    private String areaSclsNm; // 도시 소분류 명
 
     private String unitCodeNm;
 

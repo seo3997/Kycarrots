@@ -194,6 +194,12 @@
 				return false;
 			}
 			$('[name=price]').val(removeComma($('[name=price]').val()));
+			if($('[name=supplyPrice]').val() == ''){
+				alert('본사 공급가격을 입력해 주세요.');
+				$('[name=supplyPrice]').focus();
+				return false;
+			}
+			$('[name=supplyPrice]').val(removeComma($('[name=supplyPrice]').val()));
 			if($('[name=desiredShippingDate]').val() == ''){
 				alert('희망 출하일을 입력해 주세요.');
 				$('[name=desiredShippingDate]').focus();
@@ -348,7 +354,21 @@
                     <div class="form-group row">
 						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품가격</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
-							<input type="text" class="form-control numeric w-25" name="price" id="price" placeholder="상품가격" value="<%=param.getString("price")%>" maxlength="10" />
+							<input type="text" class="form-control numeric w-25" name="price" id="price" placeholder="상품판매가" value="<%=param.getString("price")%>" maxlength="10" />
+						</div>
+                        <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">본사공급원가</label>
+						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+							<input type="text" class="form-control numeric w-25" name="supplyPrice" id="supplyPrice" placeholder="본사공급가격" value="<%=param.getString("supplyPrice")%>" maxlength="10" />
+						</div>
+					</div>
+
+                    <div class="form-group row">
+                        <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">과세구분</label>
+						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+    						<select id="taxType" name="taxType" class="form-control input-sm w-25" >
+								<option value="TAX" <%= "TAX".equals(param.getString("taxType")) ? "selected" : "" %>>과세</option>
+								<option value="FREE" <%= "FREE".equals(param.getString("taxType")) ? "selected" : "" %>>면세</option>
+							</select>
 						</div>
                         <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">희망 출하일</label>
                         <div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
@@ -482,6 +502,10 @@
 	});
 
     $('#price').on('change', function(e) {
+        this.value=setComma(this.value);
+    });
+
+    $('#supplyPrice').on('change', function(e) {
         this.value=setComma(this.value);
     });
 

@@ -15,6 +15,8 @@ public class OrderItemVo {
     private String productName;
     private String optionName;
     private Integer unitPrice;
+    private Integer supplyPrice; // 본사 공급 원가
+    private Integer salePrice; // 지점 실제 판매가
     private Integer quantity;
     private Integer registerNo;
     private String registDt;

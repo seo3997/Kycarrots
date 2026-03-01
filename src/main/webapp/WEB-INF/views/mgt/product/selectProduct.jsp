@@ -183,6 +183,17 @@
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
 							<%=StringUtil.setComma(resultMap.getString("PRICE")) %>원
 						</div>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">본사공급가격</label>
+						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+							<%=StringUtil.setComma(resultMap.getString("SUPPLY_PRICE")) %>원
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">과세구분</label>
+						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
+							<%= "TAX".equals(resultMap.getString("TAX_TYPE")) ? "과세" : "면세" %>
+						</div>
 						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">수량</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
 							<%=StringUtil.setComma(resultMap.getString("QUANTITY")) %>  <%=resultMap.getString("UNIT_CODE_NM") %>

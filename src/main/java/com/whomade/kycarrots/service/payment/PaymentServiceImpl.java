@@ -50,6 +50,7 @@ public class PaymentServiceImpl implements PaymentService {
         String orderNo = "ORDER_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString().substring(0, 8);
 
         int totalItemAmount = 0;
+        int supplyPriceSum = 0;
 
         OrderVo orderVo = new OrderVo();
         orderVo.setOrderNo(orderNo);
@@ -64,6 +65,7 @@ public class PaymentServiceImpl implements PaymentService {
         orderVo.setOrderMemo(param.getString("orderMemo"));
         orderVo.setDeliveryFee(param.get("deliveryFee") == null ? 0 : param.getInt("deliveryFee"));
         orderVo.setTotalItemAmount(totalItemAmount);
+        orderVo.setSupplyPriceSum(supplyPriceSum);
         orderVo.setTotalPayAmount(totalItemAmount);
         orderVo.setRegisterNo(Integer.parseInt(userNo));
         orderVo.setUpdusrNo(Integer.parseInt(userNo));
@@ -87,8 +89,16 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             int unitPrice = (int) Double.parseDouble(productVo.getPrice());
+            int supplyPrice = 0;
+            if (productVo.getSupplyPrice() != null && !productVo.getSupplyPrice().isEmpty()) {
+                supplyPrice = (int) Double.parseDouble(productVo.getSupplyPrice());
+            }
+
             int itemTotalAmount = unitPrice * quantity;
+            int itemSupplyTotal = supplyPrice * quantity;
+
             totalItemAmount += itemTotalAmount;
+            supplyPriceSum += itemSupplyTotal;
 
             OrderItemVo orderItemVo = new OrderItemVo();
             orderItemVo.setOrderId(orderId);
@@ -97,6 +107,8 @@ public class PaymentServiceImpl implements PaymentService {
             orderItemVo.setProductName(productVo.getTitle());
             orderItemVo.setOptionName((String) item.get("optionName"));
             orderItemVo.setUnitPrice(unitPrice);
+            orderItemVo.setSupplyPrice(supplyPrice);
+            orderItemVo.setSalePrice(unitPrice); // 기본 판매가를 실제 판매가로 기록
             orderItemVo.setQuantity(quantity);
             orderItemVo.setRegisterNo(Integer.parseInt(userNo));
             orderItemVo.setUpdusrNo(Integer.parseInt(userNo));
@@ -105,6 +117,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         orderVo.setTotalItemAmount(totalItemAmount);
+        orderVo.setSupplyPriceSum(supplyPriceSum);
         orderVo.setTotalPayAmount(totalItemAmount + orderVo.getDeliveryFee() - orderVo.getDiscountAmount());
         paymentRepository.updateOrderAmount(orderVo);
 

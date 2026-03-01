@@ -15,6 +15,7 @@ public class OrderVo {
     private String orderStatus; // READY/FAILED/PAID/CANCEL/PREPARING/SHIPPING/DELIVERED/RETURN_REQUESTED/EXCHANGED
     private String paymentStatus; // READY/PAID/CANCEL/FAILED
     private Integer totalItemAmount;
+    private Integer supplyPriceSum; // 본사 공급가 합계
     private Integer deliveryFee;
     private Integer discountAmount;
     private Integer totalPayAmount;
