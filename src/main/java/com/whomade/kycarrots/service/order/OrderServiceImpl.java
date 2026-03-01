@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Slf4j
-@Service
+@Service("orderService")
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 

@@ -95,13 +95,23 @@
             </div>
             
             <div class="order-box">
+                <div class="quantity-info" style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                    구매 가능 수량: <span id="max-quantity" style="color: var(--primary); font-weight: 600;">${productInfo.AVAILABLE_QUANTITY}</span>개
+                </div>
                 <div class="quantity-selector">
                     <span>수량</span>
                     <button class="btn-qty" id="btn-minus"><i class="fas fa-minus"></i></button>
                     <span id="quantity-val" style="font-weight: 600;">1</span>
                     <button class="btn-qty" id="btn-plus"><i class="fas fa-plus"></i></button>
                 </div>
-                <button class="btn-order" onclick="goToCheckout()">구매하기</button>
+                <c:choose>
+                    <c:when test="${productInfo.AVAILABLE_QUANTITY > 0}">
+                        <button class="btn-order" onclick="goToCheckout()">구매하기</button>
+                    </c:when>
+                    <c:otherwise>
+                        <button class="btn-order" style="background: #cbd5e1; cursor: not-allowed;" disabled>품절</button>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
     </div>
@@ -109,8 +119,14 @@
 
 <script>
     let quantity = 1;
+    const maxQty = parseInt('${productInfo.AVAILABLE_QUANTITY}') || 0;
     const quantityVal = document.getElementById('quantity-val');
     
+    if (maxQty <= 0) {
+        quantity = 0;
+        quantityVal.innerText = 0;
+    }
+
     document.getElementById('btn-minus').addEventListener('click', () => {
         if (quantity > 1) {
             quantity--;
@@ -119,14 +135,28 @@
     });
     
     document.getElementById('btn-plus').addEventListener('click', () => {
-        quantity++;
-        quantityVal.innerText = quantity;
+        if (quantity < maxQty) {
+            quantity++;
+            quantityVal.innerText = quantity;
+        } else {
+            alert('구매 가능한 최대 수량은 ' + maxQty + '개입니다.');
+        }
     });
     
     function goToCheckout() {
         const productId = '${productInfo.PRODUCT_ID}';
-        const quantity = document.getElementById('quantity-val').innerText;
+        const currentQty = parseInt(document.getElementById('quantity-val').innerText);
         
+        if (currentQty <= 0) {
+            alert('수량을 선택해주세요.');
+            return;
+        }
+
+        if (currentQty > maxQty) {
+            alert('구매 가능한 수량을 초과했습니다.');
+            return;
+        }
+
         <c:choose>
             <c:when test="${empty userInfoVo}">
                 if(confirm("구매를 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")) {
@@ -135,7 +165,7 @@
                 }
             </c:when>
             <c:otherwise>
-                location.href = "/shop/checkout.do?productId=" + productId + "&quantity=" + quantity;
+                location.href = "/shop/checkout.do?productId=" + productId + "&quantity=" + currentQty;
             </c:otherwise>
         </c:choose>
     }

@@ -24,6 +24,9 @@ public class ShopController {
     @Resource(name = "procuctService")
     private com.whomade.kycarrots.mgt.product.service.ProductService productService;
 
+    @Resource(name = "orderService")
+    private com.whomade.kycarrots.service.order.OrderService orderService;
+
     @RequestMapping(value = "/shop/list.do")
     public String selectListShop(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {
@@ -107,5 +110,29 @@ public class ShopController {
         model.addAttribute("resultList", resultList);
         model.addAttribute("param", param);
         return "front/shop/order_list";
+    }
+
+    @RequestMapping(value = "/shop/orderDetail.do")
+    public String selectOrderDetailShop(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+            throws Exception {
+        DataMap param = RequestUtil.getDataMap(request);
+        String orderNo = param.getString("orderNo");
+
+        if (orderNo == null || orderNo.isEmpty()) {
+            return "redirect:/shop/orderList.do";
+        }
+
+        com.whomade.kycarrots.entity.payment.OrderVo resultVo = orderService.selectOrderByNo(orderNo);
+        if (resultVo == null) {
+            return "redirect:/shop/orderList.do";
+        }
+
+        List<com.whomade.kycarrots.entity.payment.OrderItemVo> itemList = orderService
+                .selectOrderItemsByOrderId(resultVo.getOrderId());
+
+        model.addAttribute("resultVo", resultVo);
+        model.addAttribute("itemList", itemList);
+        model.addAttribute("param", param);
+        return "front/shop/order_detail";
     }
 }

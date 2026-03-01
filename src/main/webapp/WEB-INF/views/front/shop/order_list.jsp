@@ -79,8 +79,8 @@
         <c:when test="${not empty resultList}">
             <c:forEach var="item" items="${resultList}">
                 <div class="order-card">
-                    <div class="order-header">
-                        <span class="order-id">주문번호: ${item.ORDER_NO}</span>
+                    <div class="order-header" style="cursor: pointer;" onclick="location.href='/shop/orderDetail.do?orderNo=${item.ORDER_NO}'">
+                        <span class="order-id" style="color: var(--primary); text-decoration: underline;">주문번호: ${item.ORDER_NO}</span>
                         <span class="order-date">${item.ORDERED_AT}</span>
                     </div>
                     <div class="order-item">
@@ -96,9 +96,15 @@
                                 <c:choose>
                                     <c:when test="${item.ORDER_STATUS == 'PAID'}">결제완료</c:when>
                                     <c:when test="${item.ORDER_STATUS == 'CANCEL'}">주문취소</c:when>
+                                    <c:when test="${item.ORDER_STATUS == 'SHIPPING'}">배송중</c:when>
                                     <c:otherwise>${item.ORDER_STATUS}</c:otherwise>
                                 </c:choose>
                             </span>
+                            <c:if test="${item.ORDER_STATUS == 'SHIPPING'}">
+                                <div style="margin-top: 0.5rem; font-size: 0.85rem; text-align: right; color: var(--text-muted);">
+                                    택배사: ${item.DELIVERY_COMPANY_NM} | 송장번호: ${item.TRACKING_NO}
+                                </div>
+                            </c:if>
                             <c:if test="${item.ORDER_STATUS == 'PAID'}">
                                 <button type="button" class="btn-cancel" id="btn-cancel-${item.ORDER_NO}"
                                         onclick="handleCancel('${item.ORDER_NO}', '${item.ORDERED_AT}')">주문취소</button>

@@ -130,6 +130,10 @@
             <label for="address2">상세 주소</label>
             <input type="text" id="address2" class="form-control" placeholder="나머지 상세 주소를 입력해주세요">
         </div>
+        <div class="form-group">
+            <label for="orderMemo">배송 메모</label>
+            <textarea id="orderMemo" class="form-control" rows="3" placeholder="배송 시 요청사항을 입력해주세요 (예: 문 앞에 놓아주세요)"></textarea>
+        </div>
 
         <div class="section-title">결제 수단</div>
         <div style="padding: 1rem; background: #f8fafc; border-radius: 12px; margin-bottom: 2rem;">
@@ -222,6 +226,7 @@
         const zipCode = document.getElementById("zipCode").value;
         const address1 = document.getElementById("address1").value;
         const address2 = document.getElementById("address2").value;
+        const orderMemo = document.getElementById("orderMemo").value;
 
         if(!receiverName.trim()) {
             alert("받는 분 성함을 입력해주세요.");
@@ -267,6 +272,7 @@
                     zipCode: zipCode,
                     address1: address1,
                     address2: address2,
+                    orderMemo: orderMemo,
                     items: [
                         {
                             productId: "${productInfo.PRODUCT_ID}",
