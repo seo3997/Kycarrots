@@ -67,31 +67,66 @@
         </c:choose>
         <span>${branchInfo.BRANCH_NAME}</span>
     </a>
+    <nav class="nav-links" style="display: flex; gap: 1.5rem; align-items: center;">
+        <a href="/shop/list.do" style="text-decoration: none; color: var(--text); font-weight: 500;">상품목록</a>
+        <a href="/shop/orderList.do" style="text-decoration: none; color: var(--text); font-weight: 500;">주문현황</a>
+        <c:choose>
+            <c:when test="${empty userInfoVo}">
+                <a href="/front/registForm.do" style="text-decoration: none; color: var(--text); font-weight: 500;">회원가입</a>
+                <a href="/front/login.do" style="text-decoration: none; color: white; background: var(--primary); padding: 0.5rem 1.25rem; border-radius: var(--radius); font-weight: 500;">로그인</a>
+            </c:when>
+            <c:otherwise>
+                <span style="font-weight: 500;">${userInfoVo.userNm}님</span>
+                <a href="/front/logout.do" style="text-decoration: none; color: var(--text); font-weight: 500;">로그아웃</a>
+            </c:otherwise>
+        </c:choose>
+    </nav>
 </header>
 
 <main class="container">
     <div class="detail-wrapper">
-        <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60')"></div>
+        <div class="product-img" style="background-image: url('${productInfo.IMAGE_URL}')"></div>
         <div class="product-info">
-            <h1>프리미엄 무선 헤드폰</h1>
-            <p class="price-tag">129,000원</p>
+            <h1>${productInfo.TITLE}</h1>
+            <p class="price-tag">${productInfo.PRICE}원</p>
             <div class="description">
-                최고의 음질과 노이즈 캔슬링 기능을 제공하는 프리미엄 무선 헤드폰입니다. 
-                최대 40시간의 배터리 수명과 인체공학적 디자인으로 하루 종일 편안한 착용감을 선사합니다.
+                ${productInfo.DESCRIPTION}
             </div>
             
             <div class="order-box">
                 <div class="quantity-selector">
                     <span>수량</span>
-                    <button class="btn-qty"><i class="fas fa-minus"></i></button>
-                    <span style="font-weight: 600;">1</span>
-                    <button class="btn-qty"><i class="fas fa-plus"></i></button>
+                    <button class="btn-qty" id="btn-minus"><i class="fas fa-minus"></i></button>
+                    <span id="quantity-val" style="font-weight: 600;">1</span>
+                    <button class="btn-qty" id="btn-plus"><i class="fas fa-plus"></i></button>
                 </div>
-                <button class="btn-order" onclick="location.href='/shop/checkout.do'">구매하기</button>
+                <button class="btn-order" onclick="goToCheckout()">구매하기</button>
             </div>
         </div>
     </div>
 </main>
+
+<script>
+    let quantity = 1;
+    const quantityVal = document.getElementById('quantity-val');
+    
+    document.getElementById('btn-minus').addEventListener('click', () => {
+        if (quantity > 1) {
+            quantity--;
+            quantityVal.innerText = quantity;
+        }
+    });
+    
+    document.getElementById('btn-plus').addEventListener('click', () => {
+        quantity++;
+        quantityVal.innerText = quantity;
+    });
+    
+    function goToCheckout() {
+        const productId = '${productInfo.PRODUCT_ID}';
+        location.href = `/shop/checkout.do?productId=${productId}&quantity=${quantity}`;
+    }
+</script>
 
 </body>
 </html>

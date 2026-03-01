@@ -10,7 +10,6 @@ import com.whomade.kycarrots.framework.common.util.EgovFileScrty;
 import com.whomade.kycarrots.framework.common.util.EgovMessageSource;
 import com.whomade.kycarrots.framework.common.util.RequestUtil;
 import com.whomade.kycarrots.framework.common.util.SessionUtil;
-import com.whomade.kycarrots.front.main.service.FrontMainService;
 import com.whomade.kycarrots.front.member.service.MemberService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,13 +18,10 @@ import jakarta.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 @Controller
@@ -38,9 +34,6 @@ public class MemberController {
 
 	@Resource(name = "memberService")
 	private MemberService memberService;
-
-	@Resource(name = "frontMainService")
-	private FrontMainService frontMainService;
 
 	/** CommonCodeService */
 	@Resource(name = "commonCodeService")
@@ -218,35 +211,6 @@ public class MemberController {
 		}
 	}
 
-	/**
-	 * <PRE>
-	 * 1. MethodName 	: myProfit
-	 * 2. ClassName  	: MemberController
-	 * 3. Comment   	: 수익성목록
-	 * 4. 작성자    		: SooHyun.Seo
-	 * 5. 작성일    		: 2021. 08. 07. 오후 4:09:06
-	 * </PRE>
-	 * 
-	 * @return String
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/front/myProfit.do")
-	public String myProfit(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
-		DataMap param = RequestUtil.getDataMap(request);
-		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
-		param.put("USER_NO", userInfoVo.getUserNo()); // 사용자NO
-
-		// 수익분석리스트
-		List<DataMap> resultList = frontMainService.selectPlanFList(param);
-
-		model.addAttribute("resultList", resultList);
-		model.addAttribute("param", param);
-		return "front/myProfit";
-	}
 
 	/**
 	 * <PRE>

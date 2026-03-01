@@ -195,12 +195,12 @@
         <a href="/shop/orderList.do">주문현황</a>
         <c:choose>
             <c:when test="${empty userInfoVo}">
-                <a href="/member/registForm.do">회원가입</a>
-                <a href="/login/loginForm.do" class="btn-login">로그인</a>
+                <a href="/front/registForm.do">회원가입</a>
+                <a href="/front/login.do" class="btn-login">로그인</a>
             </c:when>
             <c:otherwise>
                 <span>${userInfoVo.userNm}님</span>
-                <a href="/login/logout.do">로그아웃</a>
+                <a href="/front/logout.do">로그아웃</a>
             </c:otherwise>
         </c:choose>
     </nav>
@@ -214,28 +214,25 @@
 <main class="container">
     <h2 class="section-title"><i class="fas fa-th-large text-primary"></i> 오늘의 추천 상품</h2>
     <div class="product-grid">
-        <!-- Temporary Product Display -->
-        <a href="/shop/detail.do" class="product-card">
-            <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60')"></div>
-            <div class="product-info">
-                <div class="product-name">프리미엄 무선 헤드폰</div>
-                <div class="product-price">129,000원</div>
-            </div>
-        </a>
-        <a href="/shop/detail.do" class="product-card">
-            <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60')"></div>
-            <div class="product-info">
-                <div class="product-name">스마트 터치 워치</div>
-                <div class="product-price">89,000원</div>
-            </div>
-        </a>
-        <a href="/shop/detail.do" class="product-card">
-            <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1526170315873-3a98658c7a6b?w=500&auto=format&fit=crop&q=60')"></div>
-            <div class="product-info">
-                <div class="product-name">빈티지 필름 카메라</div>
-                <div class="product-price">155,000원</div>
-            </div>
-        </a>
+        <c:choose>
+            <c:when test="${not empty resultList}">
+                <c:forEach var="item" items="${resultList}">
+                    <a href="/shop/detail.do?productId=${item.PRODUCT_ID}" class="product-card">
+                        <div class="product-img" style="background-image: url('${item.IMAGE_URL}')"></div>
+                        <div class="product-info">
+                            <div class="product-name">${item.TITLE}</div>
+                            <div class="product-price">${item.PRICE}원</div>
+                        </div>
+                    </a>
+                </c:forEach>
+            </c:when>
+            <c:otherwise>
+                <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">
+                    <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                    등록된 상품이 없습니다.
+                </div>
+            </c:otherwise>
+        </c:choose>
     </div>
 </main>
 

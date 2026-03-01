@@ -118,6 +118,7 @@
 			A.REGIST_DT,
 			A.UPDUSR_NO,
 			A.UPDT_DT,
+			(SELECT IMAGE_URL FROM tb_product_image WHERE PRODUCT_ID = A.PRODUCT_ID AND REPRESENT = 1 LIMIT 1) AS IMAGE_URL,
 			(SELECT COUNT(PRODUCT_ID) FROM tb_product_interest WHERE PRODUCT_ID = #{productId} AND USER_NO =#{userNo}) AS FAV
 		FROM tb_product A
 		WHERE A.PRODUCT_ID = #{productId}

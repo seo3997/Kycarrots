@@ -21,20 +21,27 @@ public class ShopController {
     @Resource(name = "mgtOrderService")
     private com.whomade.kycarrots.mgt.order.service.MgtOrderService mgtOrderService;
 
+    @Resource(name = "procuctService")
+    private com.whomade.kycarrots.mgt.product.service.ProductService productService;
+
     @RequestMapping(value = "/shop/list.do")
     public String selectListShop(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
         HttpSession session = request.getSession();
 
-        // BRANCH_ID is set by BranchInterceptor
         Long branchId = (Long) session.getAttribute("BRANCH_ID");
         if (branchId == null) {
-            // Handle case where domain is not recognized
-            // For now, redirect to error or show a message
             return "common/error_branch";
         }
 
+        // Fetch products for the shop
+        // Assuming branchId matches WHOLESALER_NO for filtering products
+        param.put("wholesalerNo", branchId);
+        param.put("rowCount", param.getString("rowCount", "20"));
+        List<DataMap> productList = productService.selectPageListProcuct(model, param);
+
+        model.addAttribute("resultList", productList);
         model.addAttribute("param", param);
         return "front/shop/list";
     }
@@ -43,6 +50,9 @@ public class ShopController {
     public String selectDetailShop(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
+
+        DataMap productInfo = productService.selectProduct(param);
+        model.addAttribute("productInfo", productInfo);
         model.addAttribute("param", param);
         return "front/shop/detail";
     }

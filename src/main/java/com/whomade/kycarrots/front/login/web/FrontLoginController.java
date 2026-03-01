@@ -51,6 +51,13 @@ public class FrontLoginController {
 	@Resource(name = "commonCodeService")
 	private CommonCodeService commonCodeService;
 
+	@RequestMapping(value = "/front/login.do")
+	public String loginForm(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+		DataMap param = RequestUtil.getDataMap(request);
+		model.addAttribute("param", param);
+		return "front/login";
+	}
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: Login
