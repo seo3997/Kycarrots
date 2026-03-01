@@ -89,7 +89,6 @@ public class MemberController {
 
 		String endPassword = EgovFileScrty.encryptSHA512(param.getString("password"));
 		param.put("email", param.getString("user_id"));
-		param.put("user_nm", param.getString("user_id"));
 		param.put("enPwd", endPassword);
 
 		// 지점 ID 세팅 (BranchInterceptor에서 세션에 저장됨)

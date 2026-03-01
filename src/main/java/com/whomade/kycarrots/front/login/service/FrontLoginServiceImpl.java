@@ -27,15 +27,15 @@ import org.springframework.stereotype.Service;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 
 @Service("frontLoginService")
-public class FrontLoginServiceImpl extends EgovAbstractServiceImpl implements FrontLoginService{
-	
+public class FrontLoginServiceImpl extends EgovAbstractServiceImpl implements FrontLoginService {
+
 	/** commonDao */
-	@Resource(name="commonMybatisDao")
+	@Resource(name = "commonMybatisDao")
 	private CommonMybatisDao commonMybatisDao;
-	
+
 	@Resource(name = "egovMessageSource")
 	private EgovMessageSource egovMessageSource;
-	
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: selectUserInfo
@@ -44,17 +44,17 @@ public class FrontLoginServiceImpl extends EgovAbstractServiceImpl implements Fr
 	 * 4. 작성자    		: SooHyun.Seo
 	 * 5. 작성일    		: 2021. 08. 07. 오후 7:00:48
 	 * </PRE>
-	 *   @param param
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @param param
+	 * @return
+	 * @throws Exception
 	 */
 	public UserInfoVo selectUserInfo(DataMap param) throws Exception {
 		// 사용자 조회
-		UserInfoVo userInfoVo = (UserInfoVo) commonMybatisDao.selectOne("front.login.selectUserInfo", param);
+		UserInfoVo userInfoVo = (UserInfoVo) commonMybatisDao.selectOne("login.selectUserInfo", param);
 		return userInfoVo;
 	}
 
-	
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: selectListUserauth
@@ -63,14 +63,15 @@ public class FrontLoginServiceImpl extends EgovAbstractServiceImpl implements Fr
 	 * 4. 작성자    		: SooHyun.Seo
 	 * 5. 작성일    		: 2021. 08. 07. 오후 7:00:48
 	 * </PRE>
-	 *   @param model
-	 *   @param param
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @param model
+	 * @param param
+	 * @return
+	 * @throws Exception
 	 */
-	public List<DataMap> selectListUserauth(String pUserId)throws Exception {
+	public List<DataMap> selectListUserauth(String pUserId) throws Exception {
 		List<DataMap> resultList = new ArrayList<DataMap>();
-		resultList = commonMybatisDao.selectList("front.login.selectListAuthor", pUserId);
+		resultList = commonMybatisDao.selectList("login.selectListAuthor", pUserId);
 		return resultList;
 	}
 
@@ -82,13 +83,14 @@ public class FrontLoginServiceImpl extends EgovAbstractServiceImpl implements Fr
 	 * 4. 작성자    		: SooHyun.Seo
 	 * 5. 작성일    		: 2021. 08. 07. 오후 7:00:48
 	 * </PRE>
-	 *   @param model
-	 *   @param param
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @param model
+	 * @param param
+	 * @return
+	 * @throws Exception
 	 */
-	public void updateUserLoginDt(String pUserNo)throws Exception {
-		 commonMybatisDao.update("front.login.updateUserLoginDt", pUserNo);
+	public void updateUserLoginDt(String pUserNo) throws Exception {
+		commonMybatisDao.update("login.updateUserLoginDt", pUserNo);
 	}
-	
+
 }

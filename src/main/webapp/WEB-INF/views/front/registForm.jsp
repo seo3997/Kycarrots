@@ -73,6 +73,11 @@
         </div>
 
         <div class="form-group">
+            <label for="user_nm">이름</label>
+            <input type="text" name="user_nm" id="user_nm" class="form-control" placeholder="이름을 입력하세요" required maxlength="50">
+        </div>
+
+        <div class="form-group">
             <label for="cttpc">전화번호</label>
             <input type="tel" name="cttpc" id="cttpc" class="form-control" placeholder="010-0000-0000" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}" required maxlength="20">
         </div>
@@ -153,6 +158,13 @@
             return;
         }
 
+        const userNm = $("#user_nm").val();
+        if(userNm == ""){
+            alert("이름을 입력해주세요.");
+            $("#user_nm").focus();
+            return;
+        }
+
         const cttpc = $("#cttpc").val();
         if(cttpc == ""){
             alert("전화번호를 입력해주세요.");
@@ -183,6 +195,22 @@
             });
         }
     }
+
+    // 전화번호 자동 하이픈 추가
+    $('#cttpc').on('input', function() {
+        let val = $(this).val().replace(/[^0-9]/g, '');
+        if (val.length > 3 && val.length <= 7) {
+            val = val.substring(0, 3) + '-' + val.substring(3);
+        } else if (val.length > 7) {
+            // 중간 번호가 3자리인지 4자리인지에 따라 하이픈 위치 조정
+            if (val.length === 10) {
+                 val = val.substring(0, 3) + '-' + val.substring(3, 6) + '-' + val.substring(6, 10);
+            } else {
+                 val = val.substring(0, 3) + '-' + val.substring(3, 7) + '-' + val.substring(7, 11);
+            }
+        }
+        $(this).val(val);
+    });
 
     $('#btn_idcheck').on('click', fnCheckId);
     $('#btn_save').on('click', fnGoInsert);

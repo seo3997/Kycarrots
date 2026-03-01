@@ -16,13 +16,12 @@ import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 
 @Service("memberService")
 public class MemberServiceImpl extends EgovAbstractServiceImpl implements MemberService {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(MemberServiceImpl.class);
 
 	/** commonDao */
-	@Resource(name="commonMybatisDao")
+	@Resource(name = "commonMybatisDao")
 	private CommonMybatisDao commonMybatisDao;
-
 
 	/**
 	 * <PRE>
@@ -32,13 +31,15 @@ public class MemberServiceImpl extends EgovAbstractServiceImpl implements Member
 	 * 4. 작성자    		: 서수현
 	 * 5. 작성일    		: 2020.08.06. 오후 3:34:28
 	 * </PRE>
-	 *   @param param
-	 *   @throws Exception
+	 * 
+	 * @param param
+	 * @throws Exception
 	 */
-	@Transactional 
+	@Transactional
 	public void insertUser(DataMap param) throws Exception {
 		commonMybatisDao.insert("front.user.insertUser", param);
 	}
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: updateSetPass
@@ -47,8 +48,9 @@ public class MemberServiceImpl extends EgovAbstractServiceImpl implements Member
 	 * 4. 작성자    		: 서수현
 	 * 5. 작성일    		: 2020.08.06. 오후 3:34:28
 	 * </PRE>
-	 *   @param param
-	 *   @throws Exception
+	 * 
+	 * @param param
+	 * @throws Exception
 	 */
 	public void updateSetPass(DataMap param) throws Exception {
 		commonMybatisDao.update("front.user.updateSetPass", param);
@@ -62,14 +64,15 @@ public class MemberServiceImpl extends EgovAbstractServiceImpl implements Member
 	 * 4. 작성자    		: 서수현
 	 * 5. 작성일    		: 2020.08.06. 오후 3:34:28
 	 * </PRE>
-	 *   @param param
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @param param
+	 * @return
+	 * @throws Exception
 	 */
 	public int selecMaxUserNo() throws Exception {
 		return (Integer) commonMybatisDao.selectOne("front.user.selecMaxUserNo");
 	}
-	
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: selectIdExistYn
@@ -78,13 +81,13 @@ public class MemberServiceImpl extends EgovAbstractServiceImpl implements Member
 	 * 4. 작성자    		: 서수현
 	 * 5. 작성일    		: 2020.08.06. 오후 3:34:28
 	 * </PRE>
-	 *   @param param
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @param param
+	 * @return
+	 * @throws Exception
 	 */
 	public String selectIdExistYn(DataMap param) throws Exception {
-    	return (String) commonMybatisDao.selectOne("front.user.selectIdExistYn", param);
-    }
-	
-	
+		return (String) commonMybatisDao.selectOne("front.user.selectIdExistYn", param);
+	}
+
 }

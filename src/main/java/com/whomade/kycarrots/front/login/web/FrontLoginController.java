@@ -75,7 +75,7 @@ public class FrontLoginController {
 	 * @throws Exception
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/front/loginAjax.do")
+	@RequestMapping(value = "/front/loginAjax.do", method = org.springframework.web.bind.annotation.RequestMethod.POST)
 	public void Login(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
 		model.addAttribute("param", param);

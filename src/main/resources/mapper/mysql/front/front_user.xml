@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="front.user">
+
+	<select id="selecMaxUserNo"  resultType="int">
+		SELECT IFNULL(MAX(USER_NO),0)+1 AS userNO 
+		FROM  op_user
+	</select>
+
+	<insert id="insertUser" parameterType="dataMap">
+	/* front.user.insertUser */
+	<![CDATA[
+	INSERT INTO op_user (
+		USER_NO
+		, USER_ID
+		, PASSWORD
+		, AREA_CODE
+		, AREA_SE_CODE_S
+		, AREA_SE_CODE_D
+		, USER_NM
+		, CTTPC_SE_CODE
+		, CTTPC
+		, EMAIL
+		, USER_STTUS_CODE
+		, MEMBER_CODE
+		, BRANCH_ID
+		, REGISTER_NO
+		, REGIST_DT
+	) VALUES (
+		  #{user_no}
+		, #{user_id}
+		, #{enPwd}
+		, #{area_se_code_m}
+		, #{area_se_code_s}
+		, #{area_se_code_d}
+		, #{user_nm}
+		, #{cttpc_se_code}
+		, #{cttpc}
+		, #{email}
+		, #{user_sttus_code}
+		, #{author_id}
+		, #{branch_id}
+		, #{ss_user_no}
+		, CURRENT_TIMESTAMP
+	)
+	]]>
+	</insert>
+
+	<select id="selectIdExistYn" parameterType="dataMap" resultType="string">
+	/* front.user.selectIdExistYn */
+	SELECT
+		CASE WHEN COUNT(*) <![CDATA[ > ]]> 0
+			THEN 'Y'
+			ELSE 'N'
+		END EXIST_YN
+	FROM op_user A
+	WHERE A.USER_ID = #{user_id}
+	</select>
+
+</mapper>
