@@ -2,6 +2,7 @@
 <%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"     uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="fmt"    uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -88,7 +89,7 @@
         <div class="product-img" style="background-image: url('${productInfo.IMAGE_URL}')"></div>
         <div class="product-info">
             <h1>${productInfo.TITLE}</h1>
-            <p class="price-tag">${productInfo.PRICE}원</p>
+            <p class="price-tag"><fmt:formatNumber value="${productInfo.PRICE}" type="number" maxFractionDigits="0"/>원</p>
             <div class="description">
                 ${productInfo.DESCRIPTION}
             </div>
@@ -124,7 +125,19 @@
     
     function goToCheckout() {
         const productId = '${productInfo.PRODUCT_ID}';
-        location.href = `/shop/checkout.do?productId=${productId}&quantity=${quantity}`;
+        const quantity = document.getElementById('quantity-val').innerText;
+        
+        <c:choose>
+            <c:when test="${empty userInfoVo}">
+                if(confirm("구매를 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")) {
+                    const currentUrl = encodeURIComponent(window.location.pathname + window.location.search);
+                    location.href = `/front/login.do?redirectUrl=${currentUrl}`;
+                }
+            </c:when>
+            <c:otherwise>
+                location.href = "/shop/checkout.do?productId=" + productId + "&quantity=" + quantity;
+            </c:otherwise>
+        </c:choose>
     }
 </script>
 

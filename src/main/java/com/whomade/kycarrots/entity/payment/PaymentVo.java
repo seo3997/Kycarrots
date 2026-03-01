@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class PaymentVo {
     private Long paymentId;
     private Long orderId;
+    private Long branchId;
     private Long userNo;
     private String paymentStatus; // READY/PAID/CANCEL/FAILED
     private String paymentMethod; // CARD/VBANK/BANK/MOBILE
@@ -24,6 +25,8 @@ public class PaymentVo {
     private String cardNumberMasked;
     private Integer cardInstallmentMonth;
     private String receiptUrl;
+    private String tossPaymentKey;
+    private String tossMid;
     private String paidAt;
     private String cancelledAt;
     private String failCode;

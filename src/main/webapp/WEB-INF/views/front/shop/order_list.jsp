@@ -2,6 +2,7 @@
 <%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"     uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="fmt"    uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -59,7 +60,7 @@
                         <div class="item-img" style="background-image: url('${item.IMAGE_URL}')"></div>
                         <div class="item-info">
                             <div class="item-name">${item.TITLE}</div>
-                            <div class="item-meta">수량: ${item.QUANTITY}개 | 결제금액: ${item.TOTAL_PAY_AMOUNT}원</div>
+                            <div class="item-meta">수량: ${item.QUANTITY}개 | 결제금액: <fmt:formatNumber value="${item.TOTAL_PAY_AMOUNT}" type="number" maxFractionDigits="0"/>원</div>
                         </div>
                         <div class="order-status">
                             <span class="badge badge-success">

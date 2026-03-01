@@ -1,7 +1,7 @@
 1. 지점 테이블 생성
    CREATE TABLE `tb_branches` (
    `BRANCH_ID` bigint NOT NULL AUTO_INCREMENT COMMENT '지점 PK',
-   `BRANCH_CODE` varchar(20) UNIQUE NOT NULL COMMENT '지점 고유 코드 (예: BR_001)',
+   `BRANCH_CODE` varchar(20) UNIQUE NOT NULL COMMENT '지점 고유 코드 (예: BR_0001)',
    `BRANCH_NAME` varchar(100) NOT NULL COMMENT '지점명 (쇼핑몰 상단 노출)',
    `DOMAIN_URL` varchar(255) COMMENT '지점 접속 주소',
    `LOGO_IMAGE_URL` varchar(500) COMMENT '지점별 커스텀 로고 URL',
@@ -52,14 +52,3 @@
    ADD COLUMN `BRANCH_ID` bigint NOT NULL COMMENT '지점 PK' AFTER `ORDER_ID`,
    ADD COLUMN `TOSS_PAYMENT_KEY` varchar(255) DEFAULT NULL COMMENT '토스 결제 고유 키' AFTER `PG_TID`,
    ADD COLUMN `TOSS_MID` varchar(50) DEFAULT NULL COMMENT '토스 상점 MID' AFTER `TOSS_PAYMENT_KEY`;
-
-6. op_user 의 MEMBER_CODE 회원구분코드 정의
-   ROLE_ADMIN: 시스템 전체 인프라 및 마스터 데이터를 관리하는 시스템 어드민
-   ROLE_SELL: 입금 확인, 배송 처리, 물류를 담당하는 본사 운영 관리자
-   ROLE_PROJ: 독립 결제창을 운영하며 본사에 원가를 송금하는 지점 판매자
-   ROLE_PUB: 지점 앱을 통해 물건을 구매하는 일반 사용자
-7. op_author 의 ROLE_CODE 권한코드 정의
-   ROLE_ADMIN: 시스템 전체 인프라 및 마스터 데이터를 관리하는 시스템 어드민
-   ROLE_SELL: 입금 확인, 배송 처리, 물류를 담당하는 본사 운영 관리자
-   ROLE_PROJ: 독립 결제창을 운영하며 본사에 원가를 송금하는 지점 판매자
-   ROLE_PUB: 지점 앱을 통해 물건을 구매하는 일반 사용자

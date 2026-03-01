@@ -6,12 +6,12 @@
     <!-- Order Inserts -->
     <insert id="insertOrder" parameterType="com.whomade.kycarrots.entity.payment.OrderVo" useGeneratedKeys="true" keyProperty="orderId">
         INSERT INTO tb_orders (
-            ORDER_NO, USER_NO, ORDER_STATUS, PAYMENT_STATUS,
+            ORDER_NO, USER_NO, BRANCH_ID, ORDER_STATUS, PAYMENT_STATUS,
             TOTAL_ITEM_AMOUNT, DELIVERY_FEE, DISCOUNT_AMOUNT, TOTAL_PAY_AMOUNT,
             RECEIVER_NAME, RECEIVER_PHONE, ZIP_CODE, ADDRESS1, ADDRESS2,
             ORDER_MEMO, ORDERED_AT, REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
         ) VALUES (
-            #{orderNo}, #{userNo}, #{orderStatus}, #{paymentStatus},
+            #{orderNo}, #{userNo}, #{branchId}, #{orderStatus}, #{paymentStatus},
             #{totalItemAmount}, #{deliveryFee}, #{discountAmount}, #{totalPayAmount},
             #{receiverName}, #{receiverPhone}, #{zipCode}, #{address1}, #{address2},
             #{orderMemo}, CURRENT_TIMESTAMP, #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP
@@ -20,11 +20,11 @@
 
     <insert id="insertOrderItem" parameterType="com.whomade.kycarrots.entity.payment.OrderItemVo">
         INSERT INTO tb_order_items (
-            ORDER_ID, PRODUCT_ID, PRODUCT_NAME, OPTION_NAME,
+            ORDER_ID, BRANCH_ID, PRODUCT_ID, PRODUCT_NAME, OPTION_NAME,
             UNIT_PRICE, QUANTITY,
             REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
         ) VALUES (
-            #{orderId}, #{productId}, #{productName}, #{optionName},
+            #{orderId}, #{branchId}, #{productId}, #{productName}, #{optionName},
             #{unitPrice}, #{quantity},
             #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP
         )
@@ -78,14 +78,14 @@
     <!-- Payment Inserts -->
     <insert id="insertPayment" parameterType="com.whomade.kycarrots.entity.payment.PaymentVo" useGeneratedKeys="true" keyProperty="paymentId">
         INSERT INTO tb_payments (
-            ORDER_ID, USER_NO, PAYMENT_STATUS, PAYMENT_METHOD,
-            PG_PROVIDER, PG_TID, MERCHANT_UID, AMOUNT_TOTAL,
+            ORDER_ID, BRANCH_ID, USER_NO, PAYMENT_STATUS, PAYMENT_METHOD,
+            PG_PROVIDER, PG_TID, TOSS_PAYMENT_KEY, TOSS_MID, MERCHANT_UID, AMOUNT_TOTAL,
             AMOUNT_TAX_FREE, AMOUNT_VAT, CURRENCY, CARD_COMPANY,
             CARD_NUMBER_MASKED, CARD_INSTALLMENT_MONTH, RECEIPT_URL,
             PAID_AT, REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
         ) VALUES (
-            #{orderId}, #{userNo}, #{paymentStatus}, #{paymentMethod},
-            #{pgProvider}, #{pgTid}, #{merchantUid}, #{amountTotal},
+            #{orderId}, #{branchId}, #{userNo}, #{paymentStatus}, #{paymentMethod},
+            #{pgProvider}, #{pgTid}, #{tossPaymentKey}, #{tossMid}, #{merchantUid}, #{amountTotal},
             #{amountTaxFree}, #{amountVat}, #{currency}, #{cardCompany},
             #{cardNumberMasked}, #{cardInstallmentMonth}, #{receiptUrl},
             CURRENT_TIMESTAMP, #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP

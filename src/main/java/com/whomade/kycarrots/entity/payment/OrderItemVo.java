@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class OrderItemVo {
     private Long orderItemId;
     private Long orderId;
+    private Long branchId;
     private Long productId;
     private String productName;
     private String optionName;

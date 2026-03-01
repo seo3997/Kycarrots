@@ -2,6 +2,7 @@
 <%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"     uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="fmt"    uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -221,7 +222,7 @@
                         <div class="product-img" style="background-image: url('${item.IMAGE_URL}')"></div>
                         <div class="product-info">
                             <div class="product-name">${item.TITLE}</div>
-                            <div class="product-price">${item.PRICE}원</div>
+                            <div class="product-price"><fmt:formatNumber value="${item.PRICE}" type="number" maxFractionDigits="0"/>원</div>
                         </div>
                     </a>
                 </c:forEach>

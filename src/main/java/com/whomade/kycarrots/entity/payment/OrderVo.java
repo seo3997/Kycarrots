@@ -11,6 +11,7 @@ public class OrderVo {
     private Long orderId;
     private String orderNo;
     private Long userNo;
+    private Long branchId;
     private String orderStatus; // READY/FAILED/PAID/CANCEL/PREPARING/SHIPPING/DELIVERED/RETURN_REQUESTED/EXCHANGED
     private String paymentStatus; // READY/PAID/CANCEL/FAILED
     private Integer totalItemAmount;

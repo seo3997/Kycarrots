@@ -14,6 +14,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import jakarta.annotation.Resource;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.nio.charset.StandardCharsets;
@@ -32,8 +33,10 @@ public class PaymentServiceImpl implements PaymentService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${toss.payments.secret-key:test_sk_vZnjEJeQVxawBOMzxKXZrPmOoBN0}")
+    private String defaultSecretKey;
 
-    private String secretKey;
+    @Resource(name = "mgtBranchService")
+    private com.whomade.kycarrots.mgt.branch.service.MgtBranchService mgtBranchService;
 
     @Override
     @Transactional
@@ -65,9 +68,11 @@ public class PaymentServiceImpl implements PaymentService {
         orderVo.setRegisterNo(Integer.parseInt(userNo));
         orderVo.setUpdusrNo(Integer.parseInt(userNo));
         orderVo.setDiscountAmount(param.get("discountAmount") == null ? 0 : param.getInt("discountAmount"));
+        orderVo.setBranchId(param.getLong("branchId"));
 
         paymentRepository.insertOrder(orderVo);
         Long orderId = orderVo.getOrderId();
+        Long branchId = orderVo.getBranchId();
 
         for (Map<String, Object> item : items) {
             String productId = String.valueOf(item.get("productId"));
@@ -87,6 +92,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             OrderItemVo orderItemVo = new OrderItemVo();
             orderItemVo.setOrderId(orderId);
+            orderItemVo.setBranchId(branchId);
             orderItemVo.setProductId(Long.parseLong(productId));
             orderItemVo.setProductName(productVo.getTitle());
             orderItemVo.setOptionName((String) item.get("optionName"));
@@ -134,6 +140,26 @@ public class PaymentServiceImpl implements PaymentService {
 
         // 2. Toss Payments Confirm API Call
         try {
+            // Fetch Branch Secret Key
+            String secretKey = defaultSecretKey;
+            if (orderVo.getBranchId() != null) {
+                DataMap branchParam = new DataMap();
+                branchParam.put("branchId", orderVo.getBranchId());
+                DataMap branchInfo = mgtBranchService.selectBranch(branchParam);
+                if (branchInfo != null && branchInfo.getString("TOSS_SECRET_KEY") != null
+                        && !branchInfo.getString("TOSS_SECRET_KEY").isEmpty()) {
+                    secretKey = branchInfo.getString("TOSS_SECRET_KEY").trim();
+                    log.info("Using TOSS_SECRET_KEY from database for branchId: {}", orderVo.getBranchId());
+                } else {
+                    log.warn("TOSS_SECRET_KEY not found in database for branchId: {}. Using default fallback.",
+                            orderVo.getBranchId());
+                }
+            } else {
+                log.info("orderVo.getBranchId() is null. Using default TOSS_SECRET_KEY.");
+            }
+
+            log.info("Final secretKey length: {}", (secretKey != null ? secretKey.length() : 0));
+
             String authorizations = Base64.getEncoder()
                     .encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));
 
@@ -165,8 +191,11 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentVo.setPaymentMethod((String) responseBody.get("method"));
                 paymentVo.setPgProvider("toss");
                 paymentVo.setPgTid((String) responseBody.get("paymentKey"));
+                paymentVo.setTossPaymentKey((String) responseBody.get("paymentKey"));
+                paymentVo.setTossMid((String) responseBody.get("mId"));
                 paymentVo.setMerchantUid(orderId);
                 paymentVo.setAmountTotal(amount);
+                paymentVo.setBranchId(orderVo.getBranchId());
 
                 // Set default values for NOT NULL columns
                 paymentVo.setAmountTaxFree(responseBody.get("taxFreeAmount") != null
@@ -273,6 +302,18 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         try {
+            // Fetch Branch Secret Key
+            String secretKey = defaultSecretKey;
+            if (orderVo.getBranchId() != null) {
+                DataMap branchParam = new DataMap();
+                branchParam.put("branchId", orderVo.getBranchId());
+                DataMap branchInfo = mgtBranchService.selectBranch(branchParam);
+                if (branchInfo != null && branchInfo.getString("TOSS_SECRET_KEY") != null
+                        && !branchInfo.getString("TOSS_SECRET_KEY").isEmpty()) {
+                    secretKey = branchInfo.getString("TOSS_SECRET_KEY");
+                }
+            }
+
             String authorizations = Base64.getEncoder()
                     .encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));
 

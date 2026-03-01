@@ -61,8 +61,33 @@ public class ShopController {
     public String checkoutShop(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
-        model.addAttribute("param", param);
+
+        // Fetch product info if productId is provided
+        if (param.get("productId") != null) {
+            DataMap productInfo = productService.selectProduct(param);
+            model.addAttribute("productInfo", productInfo);
+        }
+
+        model.addAttribute("reqParam", param);
         return "front/shop/checkout";
+    }
+
+    @RequestMapping(value = "/shop/success.do")
+    public String successPayment(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+            throws Exception {
+        DataMap param = RequestUtil.getDataMap(request);
+        model.addAttribute("param", param);
+        // paymentKey, orderId, amount will be in param
+        return "front/shop/success";
+    }
+
+    @RequestMapping(value = "/shop/fail.do")
+    public String failPayment(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+            throws Exception {
+        DataMap param = RequestUtil.getDataMap(request);
+        model.addAttribute("param", param);
+        // code, message will be in param
+        return "front/shop/fail";
     }
 
     @RequestMapping(value = "/shop/orderList.do")
