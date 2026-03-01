@@ -68,17 +68,23 @@
             <c:forEach var="item" items="${resultList}">
                 <div class="order-card">
                     <div class="order-header">
-                        <span class="order-id">주문번호: ${item.ORDER_ID}</span>
-                        <span class="order-date">${item.REGIST_DT}</span>
+                        <span class="order-id">주문번호: ${item.ORDER_NO}</span>
+                        <span class="order-date">${item.ORDERED_AT}</span>
                     </div>
                     <div class="order-item">
-                        <div class="item-img" style="background-image: url('${item.PRODUCT_IMG_URL}')"></div>
+                        <div class="item-img" style="background-image: url('${item.IMAGE_URL}')"></div>
                         <div class="item-info">
-                            <div class="item-name">${item.PRODUCT_NAME}</div>
-                            <div class="item-meta">수량: ${item.QTY}개 | 결제금액: ${item.PAY_AMOUNT}원</div>
+                            <div class="item-name">${item.TITLE}</div>
+                            <div class="item-meta">수량: ${item.QUANTITY}개 | 결제금액: ${item.TOTAL_PAY_AMOUNT}원</div>
                         </div>
                         <div class="order-status">
-                            <span class="badge badge-success">결제완료</span>
+                            <span class="badge badge-success">
+                                <c:choose>
+                                    <c:when test="${item.ORDER_STATUS == 'PAID'}">결제완료</c:when>
+                                    <c:when test="${item.ORDER_STATUS == 'CANCEL'}">주문취소</c:when>
+                                    <c:otherwise>${item.ORDER_STATUS}</c:otherwise>
+                                </c:choose>
+                            </span>
                         </div>
                     </div>
                 </div>
