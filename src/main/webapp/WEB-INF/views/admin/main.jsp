@@ -322,7 +322,6 @@
                     <div class="content-card">
                         <div class="card-title-row">
                             <h2 class="card-title">📦 지점 입금 및 배송 관리</h2>
-                            <a href="#" class="excel-btn"><i class="fas fa-file-excel"></i> 일괄 배송 처리 (Excel)</a>
                         </div>
                         <div class="table-responsive">
                             <table class="table-custom">

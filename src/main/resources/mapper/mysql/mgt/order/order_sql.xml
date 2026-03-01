@@ -82,7 +82,7 @@
             COUNT(CASE WHEN ORDER_STATUS = 'PAID' AND MONTH(PAID_AT) = MONTH(CURDATE()) AND YEAR(PAID_AT) = YEAR(CURDATE()) THEN 1 END) AS completedOrders
         FROM tb_orders
         WHERE BRANCH_ID = #{branchId}
-          AND ORDER_STATUS != 'READY'
+          AND ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')
     </select>
 
     <select id="selectDashboardStatsProj" parameterType="dataMap" resultType="dataMap">
@@ -92,15 +92,15 @@
             COUNT(CASE WHEN ORDER_STATUS = 'PAID' AND SHIPPED_AT IS NULL THEN 1 END) AS shipmentPending,
             COUNT(CASE WHEN ORDER_STATUS = 'SHIPPING' THEN 1 END) AS inTransit
         FROM tb_orders
-        WHERE ORDER_STATUS != 'READY'
+        WHERE ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')
     </select>
 
     <select id="selectDashboardStatsAdmin" parameterType="dataMap" resultType="dataMap">
         SELECT 
             (SELECT COUNT(*) FROM op_user) AS totalUsers,
             (SELECT COUNT(*) FROM tb_branches) AS totalBranches,
-            (SELECT COUNT(*) FROM tb_orders WHERE ORDER_STATUS != 'READY') AS totalOrders,
-            (SELECT IFNULL(SUM(TOTAL_PAY_AMOUNT), 0) FROM tb_orders WHERE ORDER_STATUS != 'READY') AS totalRevenue
+            (SELECT COUNT(*) FROM tb_orders WHERE ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')) AS totalOrders,
+            (SELECT IFNULL(SUM(TOTAL_PAY_AMOUNT), 0) FROM tb_orders WHERE ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')) AS totalRevenue
         FROM DUAL
     </select>
 
@@ -115,7 +115,7 @@
             O.ORDER_STATUS
         FROM tb_orders O
         WHERE O.BRANCH_ID = #{branchId}
-          AND O.ORDER_STATUS != 'READY'
+          AND O.ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')
         ORDER BY O.ORDERED_AT DESC
         LIMIT 5
     </select>
@@ -131,7 +131,7 @@
             O.ORDER_STATUS
         FROM tb_orders O
         JOIN tb_branches B ON O.BRANCH_ID = B.BRANCH_ID
-        WHERE O.ORDER_STATUS != 'READY'
+        WHERE O.ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')
         ORDER BY O.ORDERED_AT DESC
         LIMIT 5
     </select>
