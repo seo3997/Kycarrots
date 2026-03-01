@@ -182,8 +182,8 @@ public class MemberController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/front/memberIdCheckAjax.do")
-	public @ResponseBody void selectSCodeListAjax(HttpServletRequest request, HttpServletResponse response,
+	@RequestMapping(value = "/front/memberIdCheckAjax.do", method = org.springframework.web.bind.annotation.RequestMethod.POST)
+	public @ResponseBody void memberIdCheckAjax(HttpServletRequest request, HttpServletResponse response,
 			ModelMap model) throws Exception {
 
 		DataMap param = RequestUtil.getDataMap(request);
@@ -210,7 +210,6 @@ public class MemberController {
 			log.error(e);
 		}
 	}
-
 
 	/**
 	 * <PRE>

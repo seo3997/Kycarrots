@@ -7,156 +7,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입 - Kycarrots</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/common/front/lib/font-awesome/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --radius: 12px;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--text); }
-
-        .header { background: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
-        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--text); font-weight: 700; font-size: 1.25rem; }
-
-        .main-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: calc(100vh - 80px);
-            padding: 2rem;
-        }
-
-        .regist-card {
-            background: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            width: 100%;
-            max-width: 450px;
-        }
-
-        .regist-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .logo {
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            margin: 0 auto 1rem;
-        }
-
-        .regist-header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e3a8a;
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            font-size: 0.875rem;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .btn-check {
-            padding: 0.75rem 1rem;
-            background: #f1f5f9;
-            color: var(--text);
-            border: 1px solid #e2e8f0;
-            border-radius: var(--radius);
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s;
-        }
-
-        .btn-check:hover {
-            background: #e2e8f0;
-        }
-
-        .btn-regist {
-            width: 100%;
-            padding: 0.875rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 1rem;
-        }
-
-        .btn-regist:hover {
-            background: var(--primary-hover);
-        }
-
-        .regist-footer {
-            margin-top: 1.5rem;
-            text-align: center;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-        }
-
-        .regist-footer a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .alert-box {
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-            padding: 0.75rem;
-            border-radius: 8px;
-            display: none;
-        }
-        .alert-error { background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; }
-        .alert-success { background: #f0fdf4; color: #22c55e; border: 1px solid #dcfce7; }
-    </style>
+    <link rel="stylesheet" href="/common/front/css/front_common.css">
 </head>
 <body>
 
@@ -235,7 +88,8 @@
 </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/common/front/lib/jquery-3.6.0.min.js"></script>
+<script src="/common/front/js/front_common.js"></script>
 <script type="text/javascript" src="/common/js/common.js?version=6.6"></script>
 <script>
     function fnCheckId(){
