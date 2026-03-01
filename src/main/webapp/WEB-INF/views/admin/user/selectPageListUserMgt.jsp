@@ -323,6 +323,7 @@
 									<th>사용자No</th>
 									<th>사용자ID</th>
 									<th>이름</th>
+									<th>지점명</th>
 									<th>권한명</th>
 									<th>휴대폰번호</th>
 									<th>가입일</th>
@@ -343,6 +344,7 @@
 									<td><%=dataMap.getString("USER_NO") %></td>
 									<td class="text-left"><%=dataMap.getString("USER_ID") %></td>
 									<td><%=dataMap.getString("USER_NM") %></td>
+									<td><%=dataMap.getString("BRANCH_NAME") %></td>
 									<td><%=dataMap.getString("AUTHOR_NM") %></td>
 									<td><%=dataMap.getString("CTTPC") %></td>
 									<td><%=dataMap.getString("REGIST_YMD") %></td>

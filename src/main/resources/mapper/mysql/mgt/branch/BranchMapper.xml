@@ -12,7 +12,7 @@
             UPDUSR_NO, UPDT_DT
         ) VALUES (
             #{branchCode}, #{branchName}, #{domainUrl}, #{logoImageUrl},
-            'RUNNING', #{companyName}, #{representativeName}, #{businessNumber},
+            #{branchStatus}, #{companyName}, #{representativeName}, #{businessNumber},
             #{tongsinNumber}, #{csPhone}, #{address}, #{tossClientKey},
             #{tossSecretKey}, #{tossMid}, #{billingCycle}, #{isUseCustomPrice},
             #{shippingFeePolicy}, #{isActive}, #{registerNo}, CURRENT_TIMESTAMP,
@@ -83,5 +83,15 @@
         DELETE FROM tb_branches
         WHERE BRANCH_ID = #{branchId}
     </delete>
+
+    <select id="selectListBranch" parameterType="dataMap" resultType="dataMap">
+        SELECT * FROM tb_branches
+        ORDER BY BRANCH_NAME ASC
+    </select>
+
+    <select id="selectNextBranchCode" resultType="string">
+        SELECT CONCAT('BR_', LPAD(IFNULL(MAX(CAST(SUBSTRING(BRANCH_CODE, 4) AS UNSIGNED)), 0) + 1, 4, '0')) 
+        FROM tb_branches
+    </select>
 
 </mapper>

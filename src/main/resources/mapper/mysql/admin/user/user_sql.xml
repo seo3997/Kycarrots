@@ -47,10 +47,13 @@
 			, C.CODE_NM AS USER_STTUS_NM
 		    , A.MEMBER_CODE AS AUTHOR_ID
 		    , (SELECT AUTHOR_NM FROM op_author WHERE AUTHOR_ID = A.MEMBER_CODE) AS AUTHOR_NM
+			, A.BRANCH_ID
+			, E.BRANCH_NAME
 		FROM op_user A
 		LEFT OUTER JOIN op_user B ON A.REGISTER_NO = B.USER_NO
 		LEFT OUTER JOIN op_code C ON A.USER_STTUS_CODE = C.CODE AND C.GROUP_ID = 'R010050'
 		LEFT OUTER JOIN op_code D ON A.AREA_CODE = D.CODE AND D.GROUP_ID = 'R010070'
+		LEFT OUTER JOIN tb_branches E ON A.BRANCH_ID = E.BRANCH_ID
 		WHERE 1 = 1
 	</sql>
 
@@ -102,6 +105,7 @@
 		, EMAIL
 		, USER_STTUS_CODE
 		, MEMBER_CODE
+		, BRANCH_ID
 		, REGISTER_NO
 		, REGIST_DT
 	) VALUES (
@@ -117,6 +121,7 @@
 		, #{email}
 		, #{user_sttus_code}
 		, #{author_id}
+		, #{branch_id}
 		, #{ss_user_no}
 		, CURRENT_TIMESTAMP
 	)
@@ -204,6 +209,8 @@
 		, B.CODE_NM AS USER_STTUS_NM
 		, A.REGISTER_NO
 		, DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_YMD 
+		, A.BRANCH_ID
+		, E.BRANCH_NAME
 		, '' AS FRMHS_SEQ
 		, '' AS HSMP_SEQ
 		, '' AS APC_SEQ
@@ -216,6 +223,7 @@
 	LEFT OUTER JOIN op_code B ON A.USER_STTUS_CODE 	= B.CODE AND B.GROUP_ID = 'R010050'
 	LEFT OUTER JOIN op_code C ON A.CTTPC_SE_CODE	= C.CODE AND C.GROUP_ID = 'R010040'
 	LEFT OUTER JOIN op_code D ON A.AREA_CODE = D.CODE AND D.GROUP_ID = 'R010070'
+	LEFT OUTER JOIN tb_branches E ON A.BRANCH_ID = E.BRANCH_ID
 	WHERE A.USER_NO = #{user_no}
 	</select>
 
@@ -230,6 +238,7 @@
 		, AREA_CODE = #{area_se_code_m}
 		, AREA_SE_CODE_S = #{area_se_code_s}
 		, AREA_SE_CODE_D = #{area_se_code_d}
+		, BRANCH_ID = #{branch_id}
 		<if test="enPwd != null and enPwd != ''">
 		, PASSWORD = #{enPwd}
 		</if>

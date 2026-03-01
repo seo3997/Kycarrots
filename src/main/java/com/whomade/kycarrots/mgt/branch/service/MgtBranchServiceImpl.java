@@ -39,7 +39,7 @@ public class MgtBranchServiceImpl implements MgtBranchService {
 
     @Override
     @Transactional
-    public DataMap registerBranchAndSeller(DataMap param) throws Exception {
+    public DataMap insertBranch(DataMap param) throws Exception {
         DataMap result = new DataMap();
 
         try {
@@ -49,6 +49,7 @@ public class MgtBranchServiceImpl implements MgtBranchService {
             branchVo.setBranchName(param.getString("branchName"));
             branchVo.setDomainUrl(param.getString("domainUrl"));
             branchVo.setLogoImageUrl(param.getString("logoImageUrl"));
+            branchVo.setBranchStatus(param.getString("branchStatus"));
             branchVo.setCompanyName(param.getString("companyName"));
             branchVo.setRepresentativeName(param.getString("representativeName"));
             branchVo.setBusinessNumber(param.getString("businessNumber"));
@@ -60,35 +61,24 @@ public class MgtBranchServiceImpl implements MgtBranchService {
             branchVo.setTossMid(param.getString("tossMid"));
             branchVo.setBillingCycle(param.getString("billingCycle"));
             branchVo.setIsUseCustomPrice("Y".equals(param.getString("isUseCustomPrice")));
-            branchVo.setIsActive(true);
+
+            String shippingFeePolicy = param.getString("shippingFeePolicy");
+            if (shippingFeePolicy == null || shippingFeePolicy.trim().isEmpty()) {
+                branchVo.setShippingFeePolicy(null);
+            } else {
+                branchVo.setShippingFeePolicy(shippingFeePolicy);
+            }
+
+            branchVo.setIsActive("Y".equals(param.getString("isActive")));
             branchVo.setRegisterNo(param.getInt("ss_user_no"));
             branchVo.setUpdusrNo(param.getInt("ss_user_no"));
 
             commonMybatisDao.insert("mgt.branch.insertBranch", branchVo);
             Long branchId = branchVo.getBranchId();
 
-            // 2. Register Seller Account (ROLE_PROJ)
-            OpUserVO userVo = new OpUserVO();
-            userVo.setUserId(param.getString("sellerId"));
-
-            // Password Encryption
-            String rawPassword = param.getString("sellerPassword");
-            String encryptedPassword = EgovFileScrty.encryptSHA512(rawPassword);
-            userVo.setPassword(encryptedPassword);
-
-            userVo.setUserNm(param.getString("sellerName"));
-            userVo.setEmail(param.getString("sellerEmail"));
-            userVo.setMemberCode("ROLE_PROJ");
-            userVo.setBranchId(String.valueOf(branchId));
-            userVo.setUserSttusCode("10"); // Active
-            userVo.setRegisterNo(String.valueOf(param.getInt("ss_user_no")));
-            userVo.setUpdusrNo(String.valueOf(param.getInt("ss_user_no")));
-
-            commonMybatisDao.insert("mgt.branch.insertBranchSeller", userVo);
-
             result.put("success", true);
             result.put("branchId", branchId);
-            result.put("message", "지점 및 판매자 등록이 완료되었습니다.");
+            result.put("message", "지점 등록이 완료되었습니다.");
 
         } catch (Exception e) {
             log.error("Branch registration failed", e);
@@ -108,6 +98,7 @@ public class MgtBranchServiceImpl implements MgtBranchService {
         branchVo.setBranchName(param.getString("branchName"));
         branchVo.setDomainUrl(param.getString("domainUrl"));
         branchVo.setLogoImageUrl(param.getString("logoImageUrl"));
+        branchVo.setBranchStatus(param.getString("branchStatus"));
         branchVo.setCompanyName(param.getString("companyName"));
         branchVo.setRepresentativeName(param.getString("representativeName"));
         branchVo.setBusinessNumber(param.getString("businessNumber"));
@@ -119,6 +110,15 @@ public class MgtBranchServiceImpl implements MgtBranchService {
         branchVo.setTossMid(param.getString("tossMid"));
         branchVo.setBillingCycle(param.getString("billingCycle"));
         branchVo.setIsUseCustomPrice("Y".equals(param.getString("isUseCustomPrice")));
+
+        String shippingFeePolicy = param.getString("shippingFeePolicy");
+        if (shippingFeePolicy == null || shippingFeePolicy.trim().isEmpty()) {
+            branchVo.setShippingFeePolicy(null);
+        } else {
+            branchVo.setShippingFeePolicy(shippingFeePolicy);
+        }
+
+        branchVo.setIsActive("Y".equals(param.getString("isActive")));
         branchVo.setUpdusrNo(param.getInt("ss_user_no"));
 
         commonMybatisDao.update("mgt.branch.updateBranch", branchVo);
@@ -127,5 +127,15 @@ public class MgtBranchServiceImpl implements MgtBranchService {
     @Override
     public void deleteBranch(DataMap param) throws Exception {
         commonMybatisDao.delete("mgt.branch.deleteBranch", param);
+    }
+
+    @Override
+    public List<DataMap> selectListBranch(DataMap param) throws Exception {
+        return commonMybatisDao.selectList("mgt.branch.selectListBranch", param);
+    }
+
+    @Override
+    public String selectNextBranchCode() throws Exception {
+        return commonMybatisDao.selectOne("mgt.branch.selectNextBranchCode");
     }
 }

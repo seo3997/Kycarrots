@@ -31,16 +31,6 @@
 				$('[name=branchCode]').focus();
 				return false;
 			}
-            if($('[name=sellerId]').val() == ''){
-				alert('판매자 아이디를 입력해 주세요.');
-				$('[name=sellerId]').focus();
-				return false;
-			}
-            if($('[name=sellerPassword]').val() == ''){
-				alert('판매자 비밀번호를 입력해 주세요.');
-				$('[name=sellerPassword]').focus();
-				return false;
-			}
 			
 			if(confirm('등록하시겠습니까?')){
 				$('#aform').attr({ action : '/mgt/branch/insertBranch.do', method : 'post' }).submit();
@@ -56,7 +46,7 @@
 	<div class="content-wrapper">
 		<section class="content-header">
 		    <div id="navi"><i class="fa fa-home f12 color-lgray"></i><span class="blind">home</span> > 지점관리 > <span class="text">지점 등록</span></div>
-    	    <div id="pagetitle"><h1>지점 및 판매자 등록</h1></div>
+    	    <div id="pagetitle"><h1>지점 등록</h1></div>
 		</section>
 
 		<section class="content container-fluid vw-page">
@@ -71,7 +61,7 @@
 						</div>
 						<label class="control-label col-sm-2" for="branchCode">지점코드</label>
 						<div class="col-sm-4">
-							<input type="text" class="form-control" name="branchCode" id="branchCode" maxlength="20" />
+							<input type="text" class="form-control" name="branchCode" id="branchCode" maxlength="20" value="${nextBranchCode}" readonly="readonly" />
 						</div>
 					</div>
 					<div class="form-group row">
@@ -89,46 +79,85 @@
 						<div class="col-sm-4">
 							<input type="text" class="form-control" name="businessNumber" id="businessNumber" />
 						</div>
+						<label class="control-label col-sm-2" for="tongsinNumber">통신판매번호</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="tongsinNumber" id="tongsinNumber" />
+						</div>
+					</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="csPhone">고객센터 전화번호</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="csPhone" id="csPhone" />
+						</div>
 						<label class="control-label col-sm-2" for="domainUrl">도메인 URL</label>
 						<div class="col-sm-4">
 							<input type="text" class="form-control" name="domainUrl" id="domainUrl" />
 						</div>
 					</div>
                     <div class="form-group row">
-						<label class="control-label col-sm-2" for="tossClientKey">Toss Client Key</label>
+						<label class="control-label col-sm-2" for="address">사업장 주소</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="address" id="address" />
+						</div>
+					</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="logoImageUrl">로고 이미지 URL</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="logoImageUrl" id="logoImageUrl" />
+						</div>
+						<label class="control-label col-sm-2" for="branchStatus">운영 상태</label>
+						<div class="col-sm-4">
+							<select class="form-control" name="branchStatus" id="branchStatus">
+                                <option value="RUNNING">운영중</option>
+                                <option value="STOPPED">정지</option>
+                                <option value="TERMINATED">해지</option>
+                            </select>
+						</div>
+					</div>
+                    <h4 class="cardTitle"><i class="fa fa-caret-square-right"></i> 결제 및 정책 정보</h4>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="tossMid">토스 MID</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="tossMid" id="tossMid" />
+						</div>
+						<label class="control-label col-sm-2" for="billingCycle">정산 주기</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="billingCycle" id="billingCycle" placeholder="예: MONTHLY_1" />
+						</div>
+					</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="tossClientKey">토스 클라이언트 키</label>
 						<div class="col-sm-4">
 							<input type="text" class="form-control" name="tossClientKey" id="tossClientKey" />
 						</div>
-						<label class="control-label col-sm-2" for="tossSecretKey">Toss Secret Key</label>
+						<label class="control-label col-sm-2" for="tossSecretKey">토스 시크릿 키</label>
 						<div class="col-sm-4">
 							<input type="text" class="form-control" name="tossSecretKey" id="tossSecretKey" />
 						</div>
 					</div>
-				</div>
-
-				<h4 class="cardTitle mt-4"><i class="fa fa-user"></i> 판매자 계정 정보</h4>
-				<div class="card-body viewForm">
-					<div class="form-group row">
-						<label class="control-label col-sm-2" for="sellerId">판매자 ID</label>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="isUseCustomPrice">판매가 수정 가능</label>
 						<div class="col-sm-4">
-							<input type="text" class="form-control" name="sellerId" id="sellerId" />
+							<select class="form-control" name="isUseCustomPrice" id="isUseCustomPrice">
+                                <option value="N">불가</option>
+                                <option value="Y">가능</option>
+                            </select>
 						</div>
-						<label class="control-label col-sm-2" for="sellerPassword">비밀번호</label>
+						<label class="control-label col-sm-2" for="isActive">사이트 활성화</label>
 						<div class="col-sm-4">
-							<input type="password" class="form-control" name="sellerPassword" id="sellerPassword" />
-						</div>
-					</div>
-					<div class="form-group row">
-						<label class="control-label col-sm-2" for="sellerName">판매자명</label>
-						<div class="col-sm-4">
-							<input type="text" class="form-control" name="sellerName" id="sellerName" />
-						</div>
-						<label class="control-label col-sm-2" for="sellerEmail">이메일</label>
-						<div class="col-sm-4">
-							<input type="email" class="form-control" name="sellerEmail" id="sellerEmail" />
+							<select class="form-control" name="isActive" id="isActive">
+                                <option value="Y">활성</option>
+                                <option value="N">비활성</option>
+                            </select>
 						</div>
 					</div>
-				</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="shippingFeePolicy">배송비 정책 (JSON)</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" name="shippingFeePolicy" id="shippingFeePolicy" rows="3"></textarea>
+						</div>
+					</div>
+                </div>
 
 				<div class="box-footer">
 					<div class="text-center">

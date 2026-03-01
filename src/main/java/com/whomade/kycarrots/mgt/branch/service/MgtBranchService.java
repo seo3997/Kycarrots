@@ -9,9 +9,13 @@ public interface MgtBranchService {
 
     DataMap selectBranch(DataMap param) throws Exception;
 
-    DataMap registerBranchAndSeller(DataMap param) throws Exception;
+    DataMap insertBranch(DataMap param) throws Exception;
 
     void updateBranch(DataMap param) throws Exception;
 
     void deleteBranch(DataMap param) throws Exception;
+
+    List<DataMap> selectListBranch(DataMap param) throws Exception;
+
+    String selectNextBranchCode() throws Exception;
 }

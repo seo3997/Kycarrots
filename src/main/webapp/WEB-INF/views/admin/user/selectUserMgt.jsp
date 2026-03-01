@@ -73,35 +73,35 @@
 
 
 					<div class="form-group row">
-						<label for="" class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">사용자ID</label>
+						<label for="" class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">지점</label>
+						<div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
+							<%=resultMap.getString("BRANCH_NAME") %>
+						</div>
+						<div class="form-hidden-line w-100 d-sm-block d-md-none d-lg-none" style="height: 1px; background-color: #ebebeb;"></div>
+						<label for="" class="control-label col-xs-12 col-sm-3 col-md-2 col-lg-2">사용자ID</label>
 						<div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
 							<%=resultMap.getString("USER_ID") %>
 						</div>
-						<div class="form-hidden-line w-100 d-sm-block d-md-none d-lg-none" style="height: 1px; background-color: #ebebeb;"></div>
-						<label for="" class="control-label col-xs-12 col-sm-3 col-md-2 col-lg-2">이름</label>
-						<div class="col-xs-12 col-sm-9 col-md-4 col-lg-4">
+					</div>
+					<div class="form-group row">
+						<label for="" class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">이름</label>
+						<div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
 							<%=resultMap.getString("USER_NM") %>
 						</div>
-					</div>
-
-					<div class="form-group row">
-						<label for="" class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">휴대폰번호</label>
-						<div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
-							<%=resultMap.getString("CTTPC") %>
-							<!--  
-							(<%=resultMap.getString("CTTPC_SE_NM") %>) <%=resultMap.getString("CTTPC") %>
-							-->
-						</div>
 						<div class="form-hidden-line w-100 d-sm-block d-md-none d-lg-none" style="height: 1px; background-color: #ebebeb;"></div>
-						<label for="" class="control-label col-xs-12 col-sm-3 col-md-2 col-lg-2">이메일</label>
+						<label for="" class="control-label col-xs-12 col-sm-3 col-md-2 col-lg-2">휴대폰번호</label>
 						<div class="col-xs-12 col-sm-9 col-md-4 col-lg-4">
+							<%=resultMap.getString("CTTPC") %>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="" class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">이메일</label>
+						<div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
 							<%=resultMap.getString("EMAIL") %>
 						</div>
-					</div>
-
-					<div class="form-group row">
-						<label for="" class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">사용자 권한</label>
-						<div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
+						<div class="form-hidden-line w-100 d-sm-block d-md-none d-lg-none" style="height: 1px; background-color: #ebebeb;"></div>
+						<label for="" class="control-label col-xs-12 col-sm-3 col-md-2 col-lg-2">사용자 권한</label>
+						<div class="col-xs-12 col-sm-9 col-md-4 col-lg-4">
 							<%
 								String sUrerAuthorId = "";
 								if(authList != null){
@@ -116,6 +116,7 @@
 								}
 							%>
 						</div>
+					</div>
 						<div class="form-hidden-line w-100 d-sm-block d-md-none d-lg-none" style="height: 1px; background-color: #ebebeb;"></div>
 						<label for="" class="control-label col-xs-12 col-sm-3 col-md-2 col-lg-2">사용자 상태</label>
 						<div class="col-xs-12 col-sm-9 col-md-4 col-lg-4">

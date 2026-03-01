@@ -63,7 +63,7 @@
 						</div>
 						<label class="control-label col-sm-2" for="branchCode">지점코드</label>
 						<div class="col-sm-4">
-							<input type="text" class="form-control" name="branchCode" id="branchCode" value="${resultMap.BRANCH_CODE}" maxlength="20" />
+							<input type="text" class="form-control" name="branchCode" id="branchCode" value="${resultMap.BRANCH_CODE}" maxlength="20" readonly="readonly" />
 						</div>
 					</div>
 					<div class="form-group row">
@@ -81,19 +81,82 @@
 						<div class="col-sm-4">
 							<input type="text" class="form-control" name="businessNumber" id="businessNumber" value="${resultMap.BUSINESS_NUMBER}" />
 						</div>
+						<label class="control-label col-sm-2" for="tongsinNumber">통신판매번호</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="tongsinNumber" id="tongsinNumber" value="${resultMap.TONGSIN_NUMBER}" />
+						</div>
+					</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="csPhone">고객센터 전화번호</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="csPhone" id="csPhone" value="${resultMap.CS_PHONE}" />
+						</div>
 						<label class="control-label col-sm-2" for="domainUrl">도메인 URL</label>
 						<div class="col-sm-4">
 							<input type="text" class="form-control" name="domainUrl" id="domainUrl" value="${resultMap.DOMAIN_URL}" />
 						</div>
 					</div>
                     <div class="form-group row">
-						<label class="control-label col-sm-2" for="tossId">Toss Mid</label>
+						<label class="control-label col-sm-2" for="address">사업장 주소</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="address" id="address" value="${resultMap.ADDRESS}" />
+						</div>
+					</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="logoImageUrl">로고 이미지 URL</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="logoImageUrl" id="logoImageUrl" value="${resultMap.LOGO_IMAGE_URL}" />
+						</div>
+						<label class="control-label col-sm-2" for="branchStatus">운영 상태</label>
+						<div class="col-sm-4">
+							<select class="form-control" name="branchStatus" id="branchStatus">
+                                <option value="RUNNING" ${resultMap.BRANCH_STATUS == 'RUNNING' ? 'selected' : ''}>운영중</option>
+                                <option value="STOPPED" ${resultMap.BRANCH_STATUS == 'STOPPED' ? 'selected' : ''}>정지</option>
+                                <option value="TERMINATED" ${resultMap.BRANCH_STATUS == 'TERMINATED' ? 'selected' : ''}>해지</option>
+                            </select>
+						</div>
+					</div>
+                    <h4 class="cardTitle"><i class="fa fa-caret-square-right"></i> 결제 및 정책 정보</h4>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="tossMid">토스 MID</label>
 						<div class="col-sm-4">
 							<input type="text" class="form-control" name="tossMid" id="tossMid" value="${resultMap.TOSS_MID}" />
 						</div>
-						<label class="control-label col-sm-2" for="billingCycle">정산주기</label>
+						<label class="control-label col-sm-2" for="billingCycle">정산 주기</label>
 						<div class="col-sm-4">
-							<input type="text" class="form-control" name="billingCycle" id="billingCycle" value="${resultMap.BILLING_CYCLE}" />
+							<input type="text" class="form-control" name="billingCycle" id="billingCycle" value="${resultMap.BILLING_CYCLE}" placeholder="예: MONTHLY_1" />
+						</div>
+					</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="tossClientKey">토스 클라이언트 키</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="tossClientKey" id="tossClientKey" value="${resultMap.TOSS_CLIENT_KEY}" />
+						</div>
+						<label class="control-label col-sm-2" for="tossSecretKey">토스 시크릿 키</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="tossSecretKey" id="tossSecretKey" value="${resultMap.TOSS_SECRET_KEY}" />
+						</div>
+					</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="isUseCustomPrice">판매가 수정 가능</label>
+						<div class="col-sm-4">
+							<select class="form-control" name="isUseCustomPrice" id="isUseCustomPrice">
+                                <option value="N" ${resultMap.IS_USE_CUSTOM_PRICE == '0' ? 'selected' : ''}>불가</option>
+                                <option value="Y" ${resultMap.IS_USE_CUSTOM_PRICE == '1' ? 'selected' : ''}>가능</option>
+                            </select>
+						</div>
+						<label class="control-label col-sm-2" for="isActive">사이트 활성화</label>
+						<div class="col-sm-4">
+							<select class="form-control" name="isActive" id="isActive">
+                                <option value="Y" ${resultMap.IS_ACTIVE == '1' ? 'selected' : ''}>활성</option>
+                                <option value="N" ${resultMap.IS_ACTIVE == '0' ? 'selected' : ''}>비활성</option>
+                            </select>
+						</div>
+					</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="shippingFeePolicy">배송비 정책 (JSON)</label>
+						<div class="col-sm-10">
+							<textarea class="form-control" name="shippingFeePolicy" id="shippingFeePolicy" rows="3">${resultMap.SHIPPING_FEE_POLICY}</textarea>
 						</div>
 					</div>
 				</div>

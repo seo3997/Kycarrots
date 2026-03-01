@@ -201,29 +201,26 @@
 										</div>
 							  </div>
 							<div class="form-group row">
+								<label class="control-label col-sm-1" for="branch_id">지점</label>
+								<div class="col-sm-5">
+									<select class="form-control" name="branch_id" id="branch_id">
+										<option value="">선택하세요</option>
+										<c:forEach var="branch" items="${branchList}">
+											<option value="${branch.BRANCH_ID}">${branch.BRANCH_NAME}</option>
+										</c:forEach>
+									</select>
+								</div>
 								<label class="control-label col-sm-1" for="area_se_code_m">지역</label>
-					    		<div class="col-sm-2">
+								<div class="col-sm-2">
 										<select class="form-control" name="area_se_code_m" id="area_se_code_m">
 											<%=CommboUtil.getComboStr(areaCodeComboStr, "CODE", "CODE_NM", "", "C")%>
 										</select>
 								</div>
-					    		<div class="col-sm-2">
+								<div class="col-sm-3">
 									<select class="form-control"  name="area_se_code_s"  id="area_se_code_s" >
 										<option value="">선택하세요</option>
 									</select>
 								</div>
-					    		<div class="col-sm-1">
-								</div>				<!--
-					    		<div class="col-sm-2">
-									<select class="form-control"  name="area_se_code_d"  id="area_se_code_d" >
-										<option value="">선택하세요</option>
-									</select>
-								</div>
-								-->
-								<label class="control-label col-sm-1" for="user_sttus_code"></label>
-							    <div class="col-sm-5">
-								</div>
-
 					    	</div>
 						</div>
 

@@ -51,6 +51,9 @@ public class MgtBranchController {
     public String insertFormBranch(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
+        String nextBranchCode = mgtBranchService.selectNextBranchCode();
+
+        model.addAttribute("nextBranchCode", nextBranchCode);
         model.addAttribute("param", param);
         return "mgt/branch/insertFormBranch";
     }
@@ -61,7 +64,7 @@ public class MgtBranchController {
         UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
         param.put("ss_user_no", userInfoVo.getUserNo());
 
-        mgtBranchService.registerBranchAndSeller(param);
+        mgtBranchService.insertBranch(param);
         return "redirect:/mgt/branch/selectPageListBranch.do";
     }
 
@@ -110,6 +113,6 @@ public class MgtBranchController {
         }
 
         param.put("ss_user_no", userInfoVo.getUserNo());
-        return mgtBranchService.registerBranchAndSeller(param);
+        return mgtBranchService.insertBranch(param);
     }
 }
