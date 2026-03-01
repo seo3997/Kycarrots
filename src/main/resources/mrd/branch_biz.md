@@ -8,7 +8,7 @@
    1.2 op_user의 MEMBER_CODE에 회원구분코드를 사용자 권한을 부여한다.
 
 2. 지점 및 지점 판매자 등록 프로세스 추가
-   테티블은 mrd/branch_sql.md 참조
+   테이블은 mrd/branch_sql.md 참조
    기술스펙은 mrd/branch_tech.md 참조
    BRANCH_ID 추가됨 로그인, 회원가입 ,결제시 BRANCH_ID를 파악할수 있도록 해야한다.  
    2.1 테이블 변경

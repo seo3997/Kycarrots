@@ -24,4 +24,7 @@ Action: \* tb_payments에 PG사 응답 데이터(카드사, TID, 영수증 URL �
 
 tb_orders의 ORDER_STATUS 및 PAYMENT_STATUS를 PAID로 업데이트.
 
-Step 5: 지점 및 지점 판매자 등록 프로세스 추가
+Step 5: 지점 판매에따른 결제프로세스 수정
+토스 페이먼츠 연동시 지점별 토스 클라이언트 키, 시크릿 키, MID를 사용해야함.
+mrd/branch_sql.md 참조
+tb_branches 의 TOSS_CLIENT_KEY, TOSS_SECRET_KEY, TOSS_MID 를 사용해야함.
