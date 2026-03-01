@@ -31,6 +31,10 @@ public class OrderVo {
     private String cancelReason;
     private Long paymentId;
     private String pgTid;
+    private String deliveryCompanyCode;
+    private String deliveryCompanyNm;
+    private String trackingNo;
+    private String shippedAt;
     private Integer registerNo;
     private String registDt;
     private Integer updusrNo;

@@ -3,6 +3,8 @@
 <%@ taglib prefix="fn"     uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page import="com.whomade.kycarrots.framework.common.object.DataMap" %>
+<%@ page import="com.whomade.kycarrots.framework.common.util.CommboUtil" %>
+<%@ page import="java.util.List" %>
 
 <%@ include file="/common/inc/common.jspf" %>
 <%@ include file="/common/inc/docType.jspf" %>
@@ -23,6 +25,23 @@
 				if(reason != null){
 					location.href = "/mgt/order/cancelOrder.do?orderNo=${resultVo.orderNo}&cancelReason=" + encodeURIComponent(reason);
 				}
+			}
+		}
+		function fnUpdateShipping(){
+			var deliveryCompanyCode = $("#deliveryCompanyCode").val();
+			var trackingNo = $("#trackingNo").val();
+			
+			if(!deliveryCompanyCode){
+				alert("택배사를 선택해주세요.");
+				return;
+			}
+			if(!trackingNo){
+				alert("운송장 번호를 입력해주세요.");
+				return;
+			}
+			
+			if(confirm("배송 정보를 업데이트하시겠습니까?")){
+				location.href = "/mgt/order/updateOrderShippingInfo.do?orderNo=${resultVo.orderNo}&deliveryCompanyCode=" + deliveryCompanyCode + "&trackingNo=" + trackingNo;
 			}
 		}
 	</script>
@@ -87,6 +106,19 @@
 								<tr>
 									<th>배송메모</th>
 									<td colspan="3">${resultVo.orderMemo}</td>
+								</tr>
+								<tr>
+									<th>택배사</th>
+									<td>
+										<select id="deliveryCompanyCode" class="form-control input-sm" style="width: 150px; display: inline-block;">
+											<%=CommboUtil.getComboStr((List)request.getAttribute("deliveryCompanyList"), "CODE", "CODE_NM", (String)((com.whomade.kycarrots.entity.payment.OrderVo)request.getAttribute("resultVo")).getDeliveryCompanyCode() , "C")%>
+										</select>
+									</td>
+									<th>운송장번호</th>
+									<td>
+										<input type="text" id="trackingNo" class="form-control input-sm" style="width: 200px; display: inline-block;" value="${resultVo.trackingNo}">
+										<button type="button" class="btn btn-sm btn-primary" onclick="fnUpdateShipping();" style="margin-left: 5px;">업데이트</button>
+									</td>
 								</tr>
 							</table>
 						</div>

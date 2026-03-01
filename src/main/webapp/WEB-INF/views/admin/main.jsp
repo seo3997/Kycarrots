@@ -1,5 +1,6 @@
 <%@page import="com.whomade.kycarrots.framework.common.util.DateUtil"%>
 <%@ page import="com.whomade.kycarrots.framework.common.object.DataMap" %>
+<%@ page import="com.whomade.kycarrots.framework.common.util.CommboUtil" %>
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"     uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -10,7 +11,7 @@
 <jsp:useBean id="prductCntMap" 		class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
 <jsp:useBean id="dashboardStats" 	class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
 <jsp:useBean id="dashboardOrderList" class="java.util.ArrayList"  								  scope="request" type="java.util.List"/>
-<jsp:useBean id="resultBoardList" 	class="java.util.ArrayList"  								  scope="request" type="java.util.List"/>
+<jsp:useBean id="deliveryCompanyList" class="java.util.ArrayList"  								  scope="request" type="java.util.List"/>
 
 <%@ include file="/common/inc/common.jspf" %>
 <%@ include file="/common/inc/docType.jspf" %>
@@ -327,7 +328,6 @@
                             <table class="table-custom">
                                 <thead>
                                     <tr>
-                                        <th style="width: 40px;"><input type="checkbox"></th>
                                         <th>지점명</th>
                                         <th>주문번호</th>
                                         <th>입금액 (공급가)</th>
@@ -340,7 +340,6 @@
                                 <tbody>
                                     <c:forEach var="order" items="${dashboardOrderList}">
                                         <tr>
-                                            <td><input type="checkbox"></td>
                                             <td>${order.BRANCH_NAME}</td>
                                             <td>${order.ORDER_NO}</td>
                                             <td>₩<fmt:formatNumber value="${order.SUPPLY_PRICE_SUM}" /></td>
@@ -350,23 +349,22 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <select class="form-control input-sm" style="width: 120px;">
-                                                    <option>택배사 선택</option>
-                                                    <option ${order.DELIVERY_COMPANY_CODE == 'CJ' ? 'selected' : ''}>CJ대한통운</option>
-                                                    <option ${order.DELIVERY_COMPANY_CODE == 'POST' ? 'selected' : ''}>우체국택배</option>
+                                                <select name="deliveryCompanyCode" class="form-control input-sm" style="width: 120px;">
+                                                    <c:set var="currentSelected" value="${order.DELIVERY_COMPANY_CODE}" />
+                                                    <%=CommboUtil.getComboStr(deliveryCompanyList, "CODE", "CODE_NM", "" , "C")%>
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control input-sm" placeholder="${order.BRANCH_DEPOSIT_STATUS == 'WAITING' ? '입금 확인 후 입력 가능' : '송장번호 입력'}" 
+                                                <input type="text" name="trackingNo" class="form-control input-sm" placeholder="${order.BRANCH_DEPOSIT_STATUS == 'WAITING' ? '입금 확인 후 입력 가능' : '송장번호 입력'}" 
                                                        value="${order.TRACKING_NO}">
                                             </td>
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${order.BRANCH_DEPOSIT_STATUS == 'WAITING'}">
-                                                        <button class="btn-action primary">입금확인</button>
+                                                        <button type="button" class="btn-action primary" onclick="fnConfirmDeposit('${order.ORDER_NO}', this)">입금확인</button>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <button class="btn-action secondary">배송처리</button>
+                                                        <button type="button" class="btn-action secondary" onclick="fnUpdateShipping('${order.ORDER_NO}', this)">배송처리</button>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
@@ -484,5 +482,64 @@
 </div>
 
 <%@ include file="/common/inc/msg.jspf" %>
+<script type="text/javascript">
+    function fnConfirmDeposit(orderNo, btn) {
+        var $tr = $(btn).closest('tr');
+        var $select = $tr.find('[name=deliveryCompanyCode]');
+        var deliveryCompanyCode = $select.val();
+        var deliveryCompanyName = $select.find('option:selected').text();
+        var trackingNo = $tr.find('[name=trackingNo]').val();
+
+        if (!deliveryCompanyCode) {
+            alert('택배사를 선택해주세요.');
+            $select.focus();
+            return;
+        }
+        if (!trackingNo) {
+            alert('운송장 번호를 입력해주세요.');
+            $tr.find('[name=trackingNo]').focus();
+            return;
+        }
+
+        var msg = "해당 주문의 지점 입금을 확인하고 배송 처리를 진행하시겠습니까?\n\n" +
+                  "택배사: " + deliveryCompanyName + "\n" +
+                  "운송장번호: " + trackingNo;
+
+        if (confirm(msg)) {
+            location.href = '/mgt/order/confirmBranchDeposit.do?orderNo=' + orderNo + 
+                          '&deliveryCompanyCode=' + deliveryCompanyCode + 
+                          '&trackingNo=' + trackingNo;
+        }
+    }
+
+    function fnUpdateShipping(orderNo, btn) {
+        var $tr = $(btn).closest('tr');
+        var $select = $tr.find('[name=deliveryCompanyCode]');
+        var deliveryCompanyCode = $select.val();
+        var deliveryCompanyName = $select.find('option:selected').text();
+        var trackingNo = $tr.find('[name=trackingNo]').val();
+
+        if (!deliveryCompanyCode) {
+            alert('택배사를 선택해주세요.');
+            $select.focus();
+            return;
+        }
+        if (!trackingNo) {
+            alert('운송장 번호를 입력해주세요.');
+            $tr.find('[name=trackingNo]').focus();
+            return;
+        }
+
+        var msg = "배송 정보를 업데이트하시겠습니까?\n\n" +
+                  "택배사: " + deliveryCompanyName + "\n" +
+                  "운송장번호: " + trackingNo;
+
+        if (confirm(msg)) {
+            location.href = '/mgt/order/updateOrderShippingInfo.do?orderNo=' + orderNo + 
+                          '&deliveryCompanyCode=' + deliveryCompanyCode + 
+                          '&trackingNo=' + trackingNo;
+        }
+    }
+</script>
 </body>
 </html>

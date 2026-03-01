@@ -58,4 +58,23 @@ public class MgtOrderServiceImpl implements MgtOrderService {
             return commonMybatisDao.selectList("mgt.order.selectDashboardOrderListSell", param);
         }
     }
+
+    @Override
+    public void confirmBranchDeposit(DataMap param) throws Exception {
+        param.put("branchDepositStatus", "CONFIRMED");
+        commonMybatisDao.update("mgt.order.updateBranchDepositStatus", param);
+
+        // At the same time, if shipping info is provided, update it.
+        if (param.getString("deliveryCompanyCode") != null && !param.getString("deliveryCompanyCode").isEmpty()
+                && param.getString("trackingNo") != null && !param.getString("trackingNo").isEmpty()) {
+            param.put("orderStatus", "SHIPPING");
+            commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
+        }
+    }
+
+    @Override
+    public void updateOrderShippingInfo(DataMap param) throws Exception {
+        param.put("orderStatus", "SHIPPING");
+        commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
+    }
 }

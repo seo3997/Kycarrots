@@ -10,10 +10,11 @@ import com.whomade.kycarrots.framework.common.util.SessionUtil;
 import com.whomade.kycarrots.mgt.order.service.MgtOrderService;
 import com.whomade.kycarrots.service.order.OrderService;
 import com.whomade.kycarrots.service.payment.PaymentService;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import com.whomade.kycarrots.common.service.CommonCodeService;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,7 @@ public class MgtOrderController {
 
     private final OrderService orderService;
     private final PaymentService paymentService;
+    private final CommonCodeService commonCodeService;
 
     @RequestMapping(value = "/mgt/order/selectPageListOrder.do")
     public String selectPageListOrder(HttpServletRequest request, HttpServletResponse response, ModelMap model)
@@ -54,6 +56,12 @@ public class MgtOrderController {
             List<OrderItemVo> itemList = orderService.selectOrderItemsByOrderId(resultVo.getOrderId());
             model.addAttribute("resultVo", resultVo);
             model.addAttribute("itemList", itemList);
+
+            // 택배사 코드 조회 (R010660)
+            DataMap codeParam = new DataMap();
+            codeParam.put("group_id", "R010660");
+            List deliveryCompanyList = commonCodeService.selectCodeList(codeParam);
+            model.addAttribute("deliveryCompanyList", deliveryCompanyList);
         }
 
         model.addAttribute("param", param);
@@ -79,5 +87,31 @@ public class MgtOrderController {
         }
 
         return "redirect:/mgt/order/selectOrder.do?orderNo=" + orderNo;
+    }
+
+    @RequestMapping(value = "/mgt/order/confirmBranchDeposit.do")
+    public String confirmBranchDeposit(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+            throws Exception {
+        DataMap param = RequestUtil.getDataMap(request);
+        UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+        param.put("updusrNo", userInfoVo.getUserNo());
+
+        mgtOrderService.confirmBranchDeposit(param);
+
+        MessageUtil.setMessage(request, "입금 확인 처리되었습니다.");
+        return "redirect:/mgt/main/dashBoard.do";
+    }
+
+    @RequestMapping(value = "/mgt/order/updateOrderShippingInfo.do")
+    public String updateOrderShippingInfo(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+            throws Exception {
+        DataMap param = RequestUtil.getDataMap(request);
+        UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+        param.put("updusrNo", userInfoVo.getUserNo());
+
+        mgtOrderService.updateOrderShippingInfo(param);
+
+        MessageUtil.setMessage(request, "배송 정보가 업데이트되었습니다.");
+        return "redirect:/mgt/main/dashBoard.do";
     }
 }

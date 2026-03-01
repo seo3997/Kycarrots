@@ -11,7 +11,9 @@ import com.whomade.kycarrots.service.product.TnProductService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import com.whomade.kycarrots.common.service.CommonCodeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,7 @@ public class MainController {
 	private com.whomade.kycarrots.mgt.order.service.MgtOrderService mgtOrderService;
 
 	private final TnProductService tnProductService;
+	private final CommonCodeService commonCodeService;
 
 	/**
 	 * Simply selects the home view to render by returning its name.
@@ -60,11 +63,12 @@ public class MainController {
 		DataMap dashboardStats = mgtOrderService.selectDashboardStats(param);
 		List<DataMap> dashboardOrderList = mgtOrderService.selectDashboardOrderList(param);
 
-		// 공지사항 리스트 조회
-		param.put("sch_bbs_se_code", "10"); // 공지사항
-		List<DataMap> resultBoardList = boardService.selectListBoard(param);
+		// 택배사 코드 조회 (R010660)
+		DataMap codeParam = new DataMap();
+		codeParam.put("group_id", "R010660");
+		List deliveryCompanyList = commonCodeService.selectCodeList(codeParam);
 
-		model.addAttribute("resultBoardList", resultBoardList);
+		model.addAttribute("deliveryCompanyList", deliveryCompanyList);
 		model.addAttribute("paramin", param);
 		model.addAttribute("prductCntMap", prductCntMap);
 		model.addAttribute("dashboardStats", dashboardStats);

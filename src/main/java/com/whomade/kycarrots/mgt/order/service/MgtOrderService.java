@@ -11,4 +11,8 @@ public interface MgtOrderService {
     DataMap selectDashboardStats(DataMap param) throws Exception;
 
     List<DataMap> selectDashboardOrderList(DataMap param) throws Exception;
+
+    void confirmBranchDeposit(DataMap param) throws Exception;
+
+    void updateOrderShippingInfo(DataMap param) throws Exception;
 }

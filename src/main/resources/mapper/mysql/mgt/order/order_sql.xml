@@ -74,6 +74,25 @@
         WHERE ORDER_ID = #{orderId}
     </update>
 
+    <update id="updateBranchDepositStatus" parameterType="dataMap">
+        UPDATE tb_orders
+        SET BRANCH_DEPOSIT_STATUS = #{branchDepositStatus},
+            UPDUSR_NO = #{updusrNo},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE ORDER_NO = #{orderNo}
+    </update>
+
+    <update id="updateOrderShippingInfo" parameterType="dataMap">
+        UPDATE tb_orders
+        SET DELIVERY_COMPANY_CODE = #{deliveryCompanyCode},
+            TRACKING_NO = #{trackingNo},
+            ORDER_STATUS = #{orderStatus},
+            SHIPPED_AT = CASE WHEN #{orderStatus} = 'SHIPPING' AND SHIPPED_AT IS NULL THEN CURRENT_TIMESTAMP ELSE SHIPPED_AT END,
+            UPDUSR_NO = #{updusrNo},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE ORDER_NO = #{orderNo}
+    </update>
+
     <select id="selectDashboardStatsSell" parameterType="dataMap" resultType="dataMap">
         SELECT 
             IFNULL(SUM(CASE WHEN DATE(PAID_AT) = CURDATE() THEN TOTAL_PAY_AMOUNT ELSE 0 END), 0) AS todayTotalSales,
@@ -127,6 +146,7 @@
             O.SUPPLY_PRICE_SUM,
             O.BRANCH_DEPOSIT_STATUS,
             O.DELIVERY_COMPANY_CODE,
+            (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010660' AND CODE = O.DELIVERY_COMPANY_CODE) AS DELIVERY_COMPANY_NM,
             O.TRACKING_NO,
             O.ORDER_STATUS
         FROM tb_orders O
