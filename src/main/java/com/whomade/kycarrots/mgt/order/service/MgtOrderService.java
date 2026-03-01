@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface MgtOrderService {
     List<DataMap> selectPageListOrder(ModelMap model, DataMap param) throws Exception;
+
+    DataMap selectDashboardStats(DataMap param) throws Exception;
+
+    List<DataMap> selectDashboardOrderList(DataMap param) throws Exception;
 }

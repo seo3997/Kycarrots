@@ -26,6 +26,9 @@
             <if test="sch_order_status != null and sch_order_status != ''">
                 AND O.ORDER_STATUS = #{sch_order_status}
             </if>
+            <if test="sch_not_order_status != null and sch_not_order_status != ''">
+                AND O.ORDER_STATUS != #{sch_not_order_status}
+            </if>
         </where>
         ORDER BY O.ORDERED_AT DESC
         LIMIT #{limit} OFFSET #{offset}
@@ -47,6 +50,9 @@
             <if test="sch_order_status != null and sch_order_status != ''">
                 AND O.ORDER_STATUS = #{sch_order_status}
             </if>
+            <if test="sch_not_order_status != null and sch_not_order_status != ''">
+                AND O.ORDER_STATUS != #{sch_not_order_status}
+            </if>
         </where>
     </select>
 
@@ -67,5 +73,67 @@
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE ORDER_ID = #{orderId}
     </update>
+
+    <select id="selectDashboardStatsSell" parameterType="dataMap" resultType="dataMap">
+        SELECT 
+            IFNULL(SUM(CASE WHEN DATE(PAID_AT) = CURDATE() THEN TOTAL_PAY_AMOUNT ELSE 0 END), 0) AS todayTotalSales,
+            IFNULL(SUM(CASE WHEN DATE(PAID_AT) = CURDATE() THEN TOTAL_PAY_AMOUNT - SUPPLY_PRICE_SUM ELSE 0 END), 0) AS estimatedProfit,
+            COUNT(CASE WHEN PAYMENT_STATUS = 'PAID' AND BRANCH_DEPOSIT_STATUS = 'WAITING' THEN 1 END) AS remittancePending,
+            COUNT(CASE WHEN ORDER_STATUS = 'PAID' AND MONTH(PAID_AT) = MONTH(CURDATE()) AND YEAR(PAID_AT) = YEAR(CURDATE()) THEN 1 END) AS completedOrders
+        FROM tb_orders
+        WHERE BRANCH_ID = #{branchId}
+          AND ORDER_STATUS != 'READY'
+    </select>
+
+    <select id="selectDashboardStatsProj" parameterType="dataMap" resultType="dataMap">
+        SELECT 
+            COUNT(CASE WHEN ORDER_STATUS IN ('PAID', 'PREPARING') THEN 1 END) AS unprocessedOrders,
+            IFNULL(SUM(CASE WHEN BRANCH_DEPOSIT_STATUS = 'WAITING' THEN SUPPLY_PRICE_SUM ELSE 0 END), 0) AS branchPendingAmount,
+            COUNT(CASE WHEN ORDER_STATUS = 'PAID' AND SHIPPED_AT IS NULL THEN 1 END) AS shipmentPending,
+            COUNT(CASE WHEN ORDER_STATUS = 'SHIPPING' THEN 1 END) AS inTransit
+        FROM tb_orders
+        WHERE ORDER_STATUS != 'READY'
+    </select>
+
+    <select id="selectDashboardStatsAdmin" parameterType="dataMap" resultType="dataMap">
+        SELECT 
+            (SELECT COUNT(*) FROM op_user) AS totalUsers,
+            (SELECT COUNT(*) FROM tb_branches) AS totalBranches,
+            (SELECT COUNT(*) FROM tb_orders WHERE ORDER_STATUS != 'READY') AS totalOrders,
+            (SELECT IFNULL(SUM(TOTAL_PAY_AMOUNT), 0) FROM tb_orders WHERE ORDER_STATUS != 'READY') AS totalRevenue
+        FROM DUAL
+    </select>
+
+    <select id="selectDashboardOrderListSell" parameterType="dataMap" resultType="dataMap">
+        SELECT 
+            DATE_FORMAT(O.ORDERED_AT, '%Y.%m.%d %H:%i') AS ORDERED_AT,
+            O.ORDER_NO,
+            O.TOTAL_PAY_AMOUNT,
+            O.SUPPLY_PRICE_SUM,
+            (O.TOTAL_PAY_AMOUNT - O.SUPPLY_PRICE_SUM) AS MY_PROFIT,
+            O.BRANCH_DEPOSIT_STATUS,
+            O.ORDER_STATUS
+        FROM tb_orders O
+        WHERE O.BRANCH_ID = #{branchId}
+          AND O.ORDER_STATUS != 'READY'
+        ORDER BY O.ORDERED_AT DESC
+        LIMIT 5
+    </select>
+
+    <select id="selectDashboardOrderListProj" parameterType="dataMap" resultType="dataMap">
+        SELECT 
+            B.BRANCH_NAME,
+            O.ORDER_NO,
+            O.SUPPLY_PRICE_SUM,
+            O.BRANCH_DEPOSIT_STATUS,
+            O.DELIVERY_COMPANY_CODE,
+            O.TRACKING_NO,
+            O.ORDER_STATUS
+        FROM tb_orders O
+        JOIN tb_branches B ON O.BRANCH_ID = B.BRANCH_ID
+        WHERE O.ORDER_STATUS != 'READY'
+        ORDER BY O.ORDERED_AT DESC
+        LIMIT 5
+    </select>
 
 </mapper>

@@ -19,22 +19,23 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
 /**
  * Handles requests for the application home page.
  */
 @Controller
 @RequiredArgsConstructor
 public class MainController {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
-	
 
 	@Resource(name = "userMgtService")
 	private UserMgtService userMgtService;
-	
+
 	@Resource(name = "microBizBoardService")
 	private MicroBizBoardService boardService;
+
+	@Resource(name = "mgtOrderService")
+	private com.whomade.kycarrots.mgt.order.service.MgtOrderService mgtOrderService;
 
 	private final TnProductService tnProductService;
 
@@ -46,24 +47,31 @@ public class MainController {
 
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		DataMap param = RequestUtil.getDataMap(request);
-		
+
 		param.put("ss_user_no", userInfoVo.getUserNo());
 
-		DataMap userParam = new DataMap();
 		param.put("userNo", userInfoVo.getUserNo());
-		param.put("memberCode", userInfoVo.getAuthorId());
+		param.put("branchId", userInfoVo.getBranchId());
+
+		String memberCode = userInfoVo.getAuthorId();
+		param.put("memberCode", memberCode);
 
 		DataMap prductCntMap = tnProductService.getProductStatusCounts(param);
+		DataMap dashboardStats = mgtOrderService.selectDashboardStats(param);
+		List<DataMap> dashboardOrderList = mgtOrderService.selectDashboardOrderList(param);
 
-		//공지사항 리스트 조회
-		param.put("sch_bbs_se_code", 	 "10");		//공지사항 
+		// 공지사항 리스트 조회
+		param.put("sch_bbs_se_code", "10"); // 공지사항
 		List<DataMap> resultBoardList = boardService.selectListBoard(param);
 
 		model.addAttribute("resultBoardList", resultBoardList);
-		model.addAttribute("paramin",param);
-		model.addAttribute("prductCntMap",prductCntMap);
+		model.addAttribute("paramin", param);
+		model.addAttribute("prductCntMap", prductCntMap);
+		model.addAttribute("dashboardStats", dashboardStats);
+		model.addAttribute("dashboardOrderList", dashboardOrderList);
+		model.addAttribute("memberCode", memberCode);
 
 		return "admin/main";
 	}
-	
+
 }

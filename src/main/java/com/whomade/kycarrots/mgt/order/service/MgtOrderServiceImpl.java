@@ -29,4 +29,33 @@ public class MgtOrderServiceImpl implements MgtOrderService {
 
         return resultList;
     }
+
+    @Override
+    public DataMap selectDashboardStats(DataMap param) throws Exception {
+        String memberCode = param.getString("memberCode");
+        if ("ROLE_ADMIN".equals(memberCode)) {
+            // ROLE_ADMIN is System Admin dashboard
+            return commonMybatisDao.selectOne("mgt.order.selectDashboardStatsAdmin", param);
+        } else if ("ROLE_SELL".equals(memberCode)) {
+            // ROLE_SELL is HQ dashboard (Image 2)
+            return commonMybatisDao.selectOne("mgt.order.selectDashboardStatsProj", param);
+        } else {
+            // ROLE_PROJ is Branch dashboard (Image 1)
+            return commonMybatisDao.selectOne("mgt.order.selectDashboardStatsSell", param);
+        }
+    }
+
+    @Override
+    public List<DataMap> selectDashboardOrderList(DataMap param) throws Exception {
+        String memberCode = param.getString("memberCode");
+        if ("ROLE_ADMIN".equals(memberCode)) {
+            // Admin doesn't necessarily need a specific order list here, or could use HQ
+            // one
+            return commonMybatisDao.selectList("mgt.order.selectDashboardOrderListProj", param);
+        } else if ("ROLE_SELL".equals(memberCode)) {
+            return commonMybatisDao.selectList("mgt.order.selectDashboardOrderListProj", param);
+        } else {
+            return commonMybatisDao.selectList("mgt.order.selectDashboardOrderListSell", param);
+        }
+    }
 }

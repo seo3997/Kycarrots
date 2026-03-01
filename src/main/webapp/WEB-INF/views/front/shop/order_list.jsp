@@ -12,6 +12,33 @@
     <link rel="stylesheet" href="/common/front/lib/font-awesome/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/common/front/css/front_common.css">
+    <style>
+        .btn-cancel {
+            margin-top: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            background: white;
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-cancel:hover {
+            background: #fef2f2;
+        }
+        .order-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .badge-cancel {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+    </style>
 </head>
 <body>
 
@@ -57,19 +84,25 @@
                         <span class="order-date">${item.ORDERED_AT}</span>
                     </div>
                     <div class="order-item">
-                        <div class="item-img" style="background-image: url('${item.IMAGE_URL}')"></div>
-                        <div class="item-info">
-                            <div class="item-name">${item.TITLE}</div>
-                            <div class="item-meta">수량: ${item.QUANTITY}개 | 결제금액: <fmt:formatNumber value="${item.TOTAL_PAY_AMOUNT}" type="number" maxFractionDigits="0"/>원</div>
-                        </div>
+                        <a href="/shop/detail.do?productId=${item.PRODUCT_ID}" style="text-decoration: none; display: flex; align-items: center; gap: 1rem; flex: 1;">
+                            <div class="item-img" style="background-image: url('${item.IMAGE_URL}')"></div>
+                            <div class="item-info">
+                                <div class="item-name" style="color: var(--text);">${item.TITLE}</div>
+                                <div class="item-meta">수량: ${item.QUANTITY}개 | 결제금액: <fmt:formatNumber value="${item.TOTAL_PAY_AMOUNT}" type="number" maxFractionDigits="0"/>원</div>
+                            </div>
+                        </a>
                         <div class="order-status">
-                            <span class="badge badge-success">
+                            <span class="badge ${item.ORDER_STATUS == 'CANCEL' ? 'badge-cancel' : 'badge-success'}">
                                 <c:choose>
                                     <c:when test="${item.ORDER_STATUS == 'PAID'}">결제완료</c:when>
                                     <c:when test="${item.ORDER_STATUS == 'CANCEL'}">주문취소</c:when>
                                     <c:otherwise>${item.ORDER_STATUS}</c:otherwise>
                                 </c:choose>
                             </span>
+                            <c:if test="${item.ORDER_STATUS == 'PAID'}">
+                                <button type="button" class="btn-cancel" id="btn-cancel-${item.ORDER_NO}"
+                                        onclick="handleCancel('${item.ORDER_NO}', '${item.ORDERED_AT}')">주문취소</button>
+                            </c:if>
                         </div>
                     </div>
                 </div>
@@ -84,6 +117,58 @@
         </c:otherwise>
     </c:choose>
 </main>
+
+<script>
+    async function handleCancel(orderNo, orderedAt) {
+        // Date check: orderedAt is "YYYY.MM.DD HH:mm"
+        const orderDate = new Date(orderedAt.replace(/\./g, '/'));
+        const now = new Date();
+        const diffDays = (now - orderDate) / (1000 * 60 * 60 * 24);
+
+        if (diffDays > 7) {
+            alert("결제 후 7일이 경과하여 직접 취소가 불가능합니다. 고객센터로 문의해주세요.");
+            return;
+        }
+
+        if (!confirm("정말로 주문을 취소하시겠습니까?")) {
+            return;
+        }
+
+        const cancelReason = prompt("취소 사유를 입력해주세요.", "고객 변심");
+        if (cancelReason === null) return; // User cancelled prompt
+
+        const btn = document.getElementById('btn-cancel-' + orderNo);
+        btn.disabled = true;
+        btn.innerText = "취소 중...";
+
+        try {
+            const response = await fetch("/api/payment/cancel", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    orderNo: orderNo,
+                    cancelReason: cancelReason,
+                    userNo: "${userInfoVo.userNo}"
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert("주문이 정상적으로 취소되었습니다.");
+                location.reload();
+            } else {
+                alert("취소 실패: " + result.message);
+                btn.disabled = false;
+                btn.innerText = "주문취소";
+            }
+        } catch (error) {
+            console.error(error);
+            alert("처리 중 오류가 발생했습니다.");
+            btn.disabled = false;
+            btn.innerText = "주문취소";
+        }
+    }
+</script>
 
 </body>
 </html>

@@ -179,4 +179,14 @@ public class UserInfoVo implements Serializable {
 		this.branchId = branchId;
 	}
 
+	private String branchName;
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
+
 }
