@@ -169,4 +169,14 @@ public class UserInfoVo implements Serializable {
 		this.memberCode = memberCode;
 	}
 
+	private String branchId;
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+
 }

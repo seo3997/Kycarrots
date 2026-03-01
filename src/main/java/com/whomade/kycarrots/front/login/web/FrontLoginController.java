@@ -33,7 +33,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
 import net.sf.json.JSONObject;
 
 @Controller
@@ -47,12 +46,11 @@ public class FrontLoginController {
 	/** adminLoginService */
 	@Resource(name = "frontLoginService")
 	private FrontLoginService frontLoginService;
-	
+
 	/** CommonCodeService */
 	@Resource(name = "commonCodeService")
 	private CommonCodeService commonCodeService;
-	
-	
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: Login
@@ -61,12 +59,13 @@ public class FrontLoginController {
 	 * 4. 작성자    		: SooHyun.Seo
 	 * 5. 작성일    		: 2021. 08. 07. 오후 4:09:06
 	 * </PRE>
-	 *   @return String
-	 *   @param request
-	 *   @param response
-	 *   @param model
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @return String
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/front/loginAjax.do")
@@ -81,30 +80,30 @@ public class FrontLoginController {
 
 		String autoLoginId = CookieUtil.getCookieValue(request, "autoLoginId");
 		String autoLoginPw = CookieUtil.getCookieValue(request, "autoLoginPw");
-		
-		if(!autoLoginId.equals("") && !autoLoginPw.equals("")){
+
+		if (!autoLoginId.equals("") && !autoLoginPw.equals("")) {
 			param.put("id", autoLoginId);
 			param.put("pwd", SeedScrtyUtil.decryptText(autoLoginPw));
-		}else {
+		} else {
 			param.put("id", param.getString("user_id"));
-			param.put("pwd",param.getString("user_pw"));
+			param.put("pwd", param.getString("user_pw"));
 		}
-		System.out.println("Id:"+param.getString("id"));
-		System.out.println("Pw:"+param.getString("pwd"));
-		
-		if(!param.getString("id").equals("") && !param.getString("pwd").equals("")){
+		System.out.println("Id:" + param.getString("id"));
+		System.out.println("Pw:" + param.getString("pwd"));
+
+		if (!param.getString("id").equals("") && !param.getString("pwd").equals("")) {
 			String endPassword = EgovFileScrty.encryptSHA512(param.getString("pwd"));
-			//String endPassword = param.getString("pwd");
+			// String endPassword = param.getString("pwd");
 			// 암호화된 비밀번호
 			param.put("enPwd", endPassword);
 			UserInfoVo userInfoVo = frontLoginService.selectUserInfo(param);
-			
-			if(userInfoVo != null){
-				log.debug("##userInfoVo.getId:"+userInfoVo.getId());
-				if(!userInfoVo.getPassword().equals(endPassword)){										//패스워드 불일치
-					returnMsg ="패스워드를 확인하세요";
+
+			if (userInfoVo != null) {
+				log.debug("##userInfoVo.getId:" + userInfoVo.getId());
+				if (!userInfoVo.getPassword().equals(endPassword)) { // 패스워드 불일치
+					returnMsg = "패스워드를 확인하세요";
 					resultStats.put("resultCode", "error");
-					resultStats.put("resultMsg",  returnMsg);
+					resultStats.put("resultMsg", returnMsg);
 					resultJSON.put("resultStats", resultStats);
 					try {
 						response.getWriter().write(resultJSON.toString());
@@ -113,34 +112,67 @@ public class FrontLoginController {
 					}
 					return;
 				}
-				
-				if(userInfoVo.getUserSttusCode().equals("10")){											//활동상태일경우만 섹션을 만들어줌
-					
-					
-					//권한을 가져오자
+
+				if (userInfoVo.getUserSttusCode().equals("10")) { // 활동상태일경우만 섹션을 만들어줌
+
+					// 지점 체크 추가
+					Long currentBranchId = (Long) request.getSession().getAttribute("BRANCH_ID");
+					if (currentBranchId != null && userInfoVo.getBranchId() != null) {
+						if (!currentBranchId.toString().equals(userInfoVo.getBranchId())) {
+							// ROLE_PUB 권한을 가진 경우 다른 지점 로그인을 막음
+							List authList = frontLoginService.selectListUserauth(userInfoVo.getUserNo());
+							boolean isPub = false;
+							for (int i = 0; i < authList.size(); i++) {
+								DataMap authMap = (DataMap) authList.get(i);
+								if ("ROLE_PUB".equals(authMap.getString("AUTHOR_ID"))) {
+									isPub = true;
+									break;
+								}
+							}
+
+							if (isPub) {
+								returnMsg = "가입하신 지점에서만 로그인이 가능합니다.";
+								resultStats.put("resultCode", "error");
+								resultStats.put("resultMsg", returnMsg);
+								resultJSON.put("resultStats", resultStats);
+								try {
+									response.getWriter().write(resultJSON.toString());
+								} catch (IOException e) {
+									log.error(e);
+								}
+								return;
+							}
+						}
+					}
+
+					// 권한을 가져오자
 					List resultList = frontLoginService.selectListUserauth(userInfoVo.getUserNo());
-					String sAuthorId="";
-					for(int i = 0; i < resultList.size(); i++){
+					String sAuthorId = "";
+					for (int i = 0; i < resultList.size(); i++) {
 						DataMap dataMap = (DataMap) resultList.get(i);
-						if(i==0)	sAuthorId=dataMap.getString("AUTHOR_ID");
-						else sAuthorId=sAuthorId+","+dataMap.getString("AUTHOR_ID");
-					}		
-					
+						if (i == 0)
+							sAuthorId = dataMap.getString("AUTHOR_ID");
+						else
+							sAuthorId = sAuthorId + "," + dataMap.getString("AUTHOR_ID");
+					}
+
 					userInfoVo.setAuthorId(sAuthorId);
 					request.getSession().setAttribute("userInfoVo", userInfoVo);
-					
-					//login DateTime Update 
+
+					// login DateTime Update
 					frontLoginService.updateUserLoginDt(userInfoVo.getUserNo());
-					
-					if(param.getString("checkAutoLogin").equals("on")){
-						CookieUtil.addCookie(request, response, 60 * 60 * 24 * 365, "autoLoginId", param.getString("id"));
-						CookieUtil.addCookie(request, response, 60 * 60 * 24 * 365, "autoLoginPw", SeedScrtyUtil.encryptText(param.getString("pwd")));
+
+					if (param.getString("checkAutoLogin").equals("on")) {
+						CookieUtil.addCookie(request, response, 60 * 60 * 24 * 365, "autoLoginId",
+								param.getString("id"));
+						CookieUtil.addCookie(request, response, 60 * 60 * 24 * 365, "autoLoginPw",
+								SeedScrtyUtil.encryptText(param.getString("pwd")));
 					}
-					returnMsg ="로그인성공";
-				}else {
-					returnMsg ="활동상태 아닙니다.";
+					returnMsg = "로그인성공";
+				} else {
+					returnMsg = "활동상태 아닙니다.";
 					resultStats.put("resultCode", "error");
-					resultStats.put("resultMsg",  returnMsg);
+					resultStats.put("resultMsg", returnMsg);
 					resultJSON.put("resultStats", resultStats);
 					try {
 						response.getWriter().write(resultJSON.toString());
@@ -149,11 +181,11 @@ public class FrontLoginController {
 					}
 					return;
 				}
-				
-			} else {																																			//아이디가 없는경우
-				returnMsg ="존재하지 않는 아이디입니다.";
+
+			} else { // 아이디가 없는경우
+				returnMsg = "존재하지 않는 아이디입니다.";
 				resultStats.put("resultCode", "error");
-				resultStats.put("resultMsg",  returnMsg);
+				resultStats.put("resultMsg", returnMsg);
 				resultJSON.put("resultStats", resultStats);
 				try {
 					response.getWriter().write(resultJSON.toString());
@@ -163,9 +195,9 @@ public class FrontLoginController {
 				return;
 			}
 		} else {
-			returnMsg ="아이디, 패스워드를 확인 하세요";
+			returnMsg = "아이디, 패스워드를 확인 하세요";
 			resultStats.put("resultCode", "error");
-			resultStats.put("resultMsg",  returnMsg);
+			resultStats.put("resultMsg", returnMsg);
 			resultJSON.put("resultStats", resultStats);
 			try {
 				response.getWriter().write(resultJSON.toString());
@@ -174,19 +206,18 @@ public class FrontLoginController {
 			}
 			return;
 		}
-		
-		//return 상태
+
+		// return 상태
 		resultStats.put("resultCode", "ok");
-		resultStats.put("resultMsg",  returnMsg);
+		resultStats.put("resultMsg", returnMsg);
 		resultJSON.put("resultStats", resultStats);
 		try {
 			response.getWriter().write(resultJSON.toString());
 		} catch (IOException e) {
 			log.error(e);
 		}
-		
-	}	
-	
+
+	}
 
 	@RequestMapping(value = "/front/logout.do")
 	public String logout(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {

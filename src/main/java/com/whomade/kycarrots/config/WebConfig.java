@@ -21,4 +21,16 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/common/img/board/**")
                 .addResourceLocations(boardResourcePath);
     }
+
+    @org.springframework.context.annotation.Bean
+    public com.whomade.kycarrots.framework.interceptor.BranchInterceptor branchInterceptor() {
+        return new com.whomade.kycarrots.framework.interceptor.BranchInterceptor();
+    }
+
+    @Override
+    public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {
+        registry.addInterceptor(branchInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/admin/**", "/common/**", "/css/**", "/js/**", "/img/**");
+    }
 }

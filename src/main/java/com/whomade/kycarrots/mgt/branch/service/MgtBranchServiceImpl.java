@@ -38,6 +38,11 @@ public class MgtBranchServiceImpl implements MgtBranchService {
     }
 
     @Override
+    public DataMap selectBranchByDomain(DataMap param) throws Exception {
+        return commonMybatisDao.selectOne("mgt.branch.selectBranchByDomain", param);
+    }
+
+    @Override
     @Transactional
     public DataMap insertBranch(DataMap param) throws Exception {
         DataMap result = new DataMap();

@@ -32,7 +32,9 @@
             A.REGISTER_NO,
             A.REGIST_DT,
             A.UPDUSR_NO,
-            A.UPDT_DT
+            A.UPDT_DT,
+            A.BRANCH_ID,
+            A.JOIN_APP_PACKAGE
         FROM op_user A
         LEFT JOIN op_code C ON C.GROUP_ID='R010070'    AND C.CODE=A.AREA_CODE
         LEFT JOIN op_sclas_code D ON D.GROUP_ID='R010070' AND D.CODE=A.AREA_CODE AND D.SCLAS_CODE= A.AREA_SE_CODE_S
@@ -55,6 +57,8 @@
             MEMBER_CODE,
             USER_STTUS_CODE,
             REFERRER_ID,
+            BRANCH_ID,
+            JOIN_APP_PACKAGE,
             REGIST_DT
         ) VALUES (
                      #{userId},
@@ -71,6 +75,8 @@
                      #{memberCode},
                      #{userSttusCode},
                      #{referrerId},
+                     #{branchId},
+                     #{joinAppPackage},
                      NOW()
                  )
     </insert>
@@ -221,7 +227,9 @@
             A.REGISTER_NO,
             A.REGIST_DT,
             A.UPDUSR_NO,
-            A.UPDT_DT
+            A.UPDT_DT,
+            A.BRANCH_ID,
+            A.JOIN_APP_PACKAGE
         FROM op_user A
                  JOIN tb_social_account S
                       ON S.USER_NO = A.USER_NO

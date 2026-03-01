@@ -57,6 +57,13 @@
         WHERE BRANCH_ID = #{branchId}
     </select>
 
+    <select id="selectBranchByDomain" parameterType="dataMap" resultType="dataMap">
+        SELECT * FROM tb_branches
+        WHERE DOMAIN_URL = #{domainUrl}
+        AND IS_ACTIVE = '1'
+        AND BRANCH_STATUS = 'RUNNING'
+    </select>
+
     <update id="updateBranch" parameterType="com.whomade.kycarrots.entity.branch.TbBranchVo">
         UPDATE tb_branches
         SET BRANCH_CODE = #{branchCode},
