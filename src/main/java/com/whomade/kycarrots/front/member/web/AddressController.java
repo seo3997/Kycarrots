@@ -39,8 +39,8 @@ public class AddressController {
         return "front/member/addressList";
     }
 
-    @RequestMapping(value = "/front/member/addressListPopup.do")
-    public String addressListPopup(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+    @RequestMapping(value = "/front/member/addressListAjax.do")
+    public String addressListAjax(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
         UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
@@ -53,7 +53,7 @@ public class AddressController {
         List<DataMap> addressList = addressBookService.selectAddressList(param);
 
         model.addAttribute("addressList", addressList);
-        return "front/member/addressListPopup";
+        return "front/member/addressListAjax";
     }
 
     @RequestMapping(value = "/front/member/saveAddressAjax.do")

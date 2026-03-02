@@ -190,6 +190,17 @@
     <div id="address-embed" style="width:100%; height:400px; position:relative;"></div>
 </div>
 
+<!-- Address Book Modal -->
+<div id="address-book-layer-bg" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; backdrop-filter:blur(4px);" onclick="closeAddressPopup()"></div>
+<div id="address-book-layer" style="display:none; position:fixed; z-index:2001; background:white; border-radius:16px; overflow:hidden; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);">
+    <div style="padding: 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
+        <span style="font-weight: 600;">저장된 배송지</span>
+        <i class="fas fa-times" style="cursor: pointer; padding: 0.5rem;" onclick="closeAddressPopup()"></i>
+    </div>
+    <div id="address-book-content" style="width:100%; height:400px; overflow-y:auto; padding: 1rem; background: #f8fafc;">
+    </div>
+</div>
+
 <script>
     const clientKey = "${branchInfo.TOSS_CLIENT_KEY}"; 
     const customerKey = "${not empty userInfoVo.userNo ? 'USER_' : ''}${not empty userInfoVo.userNo ? userInfoVo.userNo : 'ANONYMOUS'}";
@@ -254,24 +265,40 @@
         element_layer.style.top = ((window.innerHeight - height) / 2) + 'px';
     }
 
-    function formatPhone(phone) {
-        if (!phone) return "";
-        const digits = phone.replace(/\D/g, "");
-        if (digits.length === 11) {
-            return digits.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
-        } else if (digits.length === 10) {
-            return digits.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
-        }
-        return digits;
+    const addrBookLayer = document.getElementById('address-book-layer');
+    const addrBookBg = document.getElementById('address-book-layer-bg');
+
+    function closeAddressPopup() {
+        addrBookLayer.style.display = 'none';
+        addrBookBg.style.display = 'none';
     }
 
-    function openAddressPopup() {
-        const width = 500;
-        const height = 600;
-        const left = (window.screen.width / 2) - (width / 2);
-        const top = (window.screen.height / 2) - (height / 2);
-        window.open('/front/member/addressListPopup.do', 'addressPopup', 
-            `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`);
+    async function openAddressPopup() {
+        const width = Math.min(window.innerWidth - 40, 500);
+        const height = Math.min(window.innerHeight - 80, 600);
+        
+        addrBookLayer.style.width = width + 'px';
+        addrBookLayer.style.height = height + 'px';
+        addrBookLayer.style.left = ((window.innerWidth - width) / 2) + 'px';
+        addrBookLayer.style.top = ((window.innerHeight - height) / 2) + 'px';
+        
+        const contentDiv = document.getElementById('address-book-content');
+        contentDiv.innerHTML = '<div style="text-align:center; padding:2rem; color:#64748b;"><i class="fas fa-spinner fa-spin"></i> 불러오는 중...</div>';
+        
+        addrBookLayer.style.display = 'block';
+        addrBookBg.style.display = 'block';
+
+        try {
+            const res = await fetch('/front/member/addressListAjax.do');
+            if (res.ok) {
+                const html = await res.text();
+                contentDiv.innerHTML = html;
+            } else {
+                contentDiv.innerHTML = '<div style="text-align:center; padding:2rem; color:#ef4444;">데이터를 불러오는데 실패했습니다.</div>';
+            }
+        } catch (e) {
+            contentDiv.innerHTML = '<div style="text-align:center; padding:2rem; color:#ef4444;">에러가 발생했습니다.</div>';
+        }
     }
 
     function updateMemo(select) {
@@ -297,13 +324,15 @@
         
         let found = false;
         for(let i=0; i<memoSelect.options.length; i++){
-            if(memoSelect.options[i].value === address.memo){
+            if(memoSelect.options[i].value === (address.memo || '')){
                 memoSelect.selectedIndex = i;
                 found = true;
                 break;
             }
         }
         if(!found) memoSelect.selectedIndex = 0;
+        
+        closeAddressPopup();
     }
 
     document.getElementById("payment-button").addEventListener("click", async function () {

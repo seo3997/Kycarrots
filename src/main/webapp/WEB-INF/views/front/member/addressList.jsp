@@ -63,11 +63,12 @@
     </a>
 
     <c:forEach var="item" items="${addressList}">
-        <div class="addr-card ${item.IS_DEFAULT == 1 ? 'default' : ''}">
+        <c:set var="isDefaultStr">${item.IS_DEFAULT}</c:set>
+        <div class="addr-card ${isDefaultStr eq 'true' or isDefaultStr eq '1' ? 'default' : ''}">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div>
                     <span style="font-weight: 700; font-size: 1.1rem;">${item.ADDRESS_NAME}</span>
-                    <c:if test="${item.IS_DEFAULT == 1}"><span class="tag-default">기본</span></c:if>
+                    <c:if test="${isDefaultStr eq 'true' or isDefaultStr eq '1'}"><span class="tag-default">기본</span></c:if>
                     <div style="margin-top: 0.5rem; font-weight: 500;">${item.RECIPIENT_NAME} | ${item.RECIPIENT_PHONE}</div>
                     <div style="margin-top: 0.3rem; color: #64748b; font-size: 0.95rem;">
                         [${item.ZIP_CODE}] ${item.ADDRESS_MAIN}<br>${item.ADDRESS_DETAIL}
@@ -78,9 +79,9 @@
                 </div>
             </div>
             <div class="addr-actions">
-                <button class="btn-sm" onclick="editAddress(${item.ADDRESS_ID}, '${item.ADDRESS_NAME}', '${item.RECIPIENT_NAME}', '${item.RECIPIENT_PHONE}', '${item.ZIP_CODE}', '${item.ADDRESS_MAIN}', '${item.ADDRESS_DETAIL}', '${item.MEMO}', ${item.IS_DEFAULT})">수정</button>
+                <button class="btn-sm" onclick="editAddress(${item.ADDRESS_ID}, '${item.ADDRESS_NAME}', '${item.RECIPIENT_NAME}', '${item.RECIPIENT_PHONE}', '${item.ZIP_CODE}', '${item.ADDRESS_MAIN}', '${item.ADDRESS_DETAIL}', '${item.MEMO}', ${isDefaultStr eq 'true' or isDefaultStr eq '1' ? 1 : 0})">수정</button>
                 <button class="btn-sm" onclick="deleteAddress(${item.ADDRESS_ID})" style="color: #ef4444;">삭제</button>
-                <c:if test="${item.IS_DEFAULT == 0}">
+                <c:if test="${not (isDefaultStr eq 'true' or isDefaultStr eq '1')}">
                     <button class="btn-sm" onclick="setDefault(${item.ADDRESS_ID})">기본 배송지로 설정</button>
                 </c:if>
             </div>

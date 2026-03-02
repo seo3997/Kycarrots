@@ -121,3 +121,21 @@ PRIMARY KEY (`PRODUCT_ID`),
 KEY `idx_user_no` (`USER_NO`),
 CONSTRAINT `fk_product_user` FOREIGN KEY (`USER_NO`) REFERENCES `op_user` (`USER_NO`)
 ) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 배송지 관리 테이블
+CREATE TABLE `tb_address_book` (
+`ADDRESS_ID` bigint NOT NULL AUTO_INCREMENT COMMENT '배송지 PK',
+`USER_NO` int NOT NULL COMMENT '회원 번호 (op_user 참조)',
+`ADDRESS_NAME` varchar(50) NOT NULL DEFAULT '기본배송지' COMMENT '배송지 별칭 (예: 집, 회사)',
+`RECIPIENT_NAME` varchar(50) NOT NULL COMMENT '수령인 성명',
+`RECIPIENT_PHONE` varchar(30) NOT NULL COMMENT '수령인 연락처',
+`ZIP_CODE` varchar(10) NOT NULL COMMENT '우편번호',
+`ADDRESS_MAIN` varchar(255) NOT NULL COMMENT '기본 주소',
+`ADDRESS_DETAIL` varchar(255) DEFAULT NULL COMMENT '상세 주소',
+`IS_DEFAULT` tinyint(1) DEFAULT '0' COMMENT '기본 배송지 여부 (1: 기본, 0: 일반)',
+`MEMO` varchar(500) DEFAULT NULL COMMENT '배송 요청사항 (예: 문 앞에 놓아주세요)',
+`REGIST_DT` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '등록 일시',
+`UPDT_DT` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정 일시',
+PRIMARY KEY (`ADDRESS_ID`),
+KEY `IDX_USER_ADDRESS` (`USER_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='회원 배송지 관리 테이블';
