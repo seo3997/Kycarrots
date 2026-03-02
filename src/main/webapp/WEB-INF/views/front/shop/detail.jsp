@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>상품 상세 - ${branchInfo.BRANCH_NAME}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/common/front/css/front_common.css">
     <style>
         :root {
             --primary: #2563eb;
@@ -29,8 +29,20 @@
         body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--text); }
 
         .header { background: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
-        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--text); font-weight: 700; font-size: 1.25rem; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--text); font-weight: 700; font-size: 1.25rem; white-space: nowrap; }
         .logo img { height: 40px; border-radius: 8px; }
+
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; flex-shrink: 0; }
+        .nav-links a { text-decoration: none; color: var(--text); font-weight: 500; font-size: 0.95rem; white-space: nowrap; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--primary); }
+        
+        .btn-login { 
+            background: var(--primary); 
+            color: white !important; 
+            padding: 0.5rem 1.25rem; 
+            border-radius: var(--radius); 
+            font-weight: 600;
+        }
 
         .container { max-width: 800px; margin: 2rem auto; padding: 1rem; }
         .detail-wrapper { display: flex; flex-direction: column; gap: 2rem; background: white; padding: 2rem; border-radius: 20px; box-shadow: var(--shadow); }
@@ -63,6 +75,10 @@
 
         @media (max-width: 768px) {
             .detail-wrapper { grid-template-columns: 1fr; }
+            .header { padding: 0.75rem 1rem; }
+            .nav-links { gap: 0.75rem; }
+            .nav-links a { font-size: 0.85rem; }
+            .logo span { display: none; }
         }
     </style>
 </head>
@@ -95,8 +111,6 @@
         </c:choose>
     </nav>
 </header>
-
-<link rel="stylesheet" href="/common/front/css/front_common.css">
 
 <main class="container">
     <div class="detail-wrapper">
