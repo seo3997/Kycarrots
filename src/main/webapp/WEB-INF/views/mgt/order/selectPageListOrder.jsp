@@ -83,7 +83,6 @@
 										<th>상품명</th>
 										<th>결제금액</th>
 										<th>주문상태</th>
-										<th>결제상태</th>
 										<th>주문일시</th>
 									</tr>
 								</thead>
@@ -107,21 +106,12 @@
 													<c:otherwise><span class="label label-default">${item.ORDER_STATUS}</span></c:otherwise>
 												</c:choose>
 											</td>
-											<td>
-												<c:choose>
-													<c:when test="${item.PAYMENT_STATUS == 'READY'}"><span class="badge badge-default">대기</span></c:when>
-													<c:when test="${item.PAYMENT_STATUS == 'PAID'}"><span class="badge badge-success">결제완료</span></c:when>
-													<c:when test="${item.PAYMENT_STATUS == 'CANCEL'}"><span class="badge badge-danger">결제취소</span></c:when>
-													<c:when test="${item.PAYMENT_STATUS == 'FAILED'}"><span class="badge badge-warning">결제실패</span></c:when>
-													<c:otherwise>${item.PAYMENT_STATUS}</c:otherwise>
-												</c:choose>
-											</td>
 											<td>${item.ORDERED_AT}</td>
 										</tr>
 									</c:forEach>
 									<c:if test="${empty resultList}">
 										<tr>
-											<td colspan="6" class="text-center">데이터가 없습니다.</td>
+											<td colspan="5" class="text-center">데이터가 없습니다.</td>
 										</tr>
 									</c:if>
 								</tbody>

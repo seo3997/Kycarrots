@@ -6,12 +6,12 @@
     <!-- Order Inserts -->
     <insert id="insertOrder" parameterType="com.whomade.kycarrots.entity.payment.OrderVo" useGeneratedKeys="true" keyProperty="orderId">
         INSERT INTO tb_orders (
-            ORDER_NO, USER_NO, BRANCH_ID, ORDER_STATUS, PAYMENT_STATUS,
+            ORDER_NO, USER_NO, BRANCH_ID, ORDER_STATUS,
             TOTAL_ITEM_AMOUNT, SUPPLY_PRICE_SUM, DELIVERY_FEE, DISCOUNT_AMOUNT, TOTAL_PAY_AMOUNT,
             RECEIVER_NAME, RECEIVER_PHONE, ZIP_CODE, ADDRESS1, ADDRESS2,
             ORDER_MEMO, ORDERED_AT, REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
         ) VALUES (
-            #{orderNo}, #{userNo}, #{branchId}, #{orderStatus}, #{paymentStatus},
+            #{orderNo}, #{userNo}, #{branchId}, #{orderStatus},
             #{totalItemAmount}, #{supplyPriceSum}, #{deliveryFee}, #{discountAmount}, #{totalPayAmount},
             #{receiverName}, #{receiverPhone}, #{zipCode}, #{address1}, #{address2},
             #{orderMemo}, CURRENT_TIMESTAMP, #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP
@@ -33,7 +33,6 @@
     <update id="updateOrderStatus" parameterType="com.whomade.kycarrots.entity.payment.OrderVo">
         UPDATE tb_orders
         SET ORDER_STATUS = #{orderStatus},
-            PAYMENT_STATUS = #{paymentStatus},
             PAID_AT = CASE WHEN #{orderStatus} = 'PAID' THEN CURRENT_TIMESTAMP ELSE PAID_AT END,
             CANCELLED_AT = CASE WHEN #{orderStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
             CANCEL_REASON = CASE WHEN #{orderStatus} = 'CANCEL' THEN #{cancelReason} ELSE CANCEL_REASON END,

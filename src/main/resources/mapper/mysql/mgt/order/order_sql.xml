@@ -7,7 +7,7 @@
             A.PRODUCT_ID,
             A.TITLE,
             (SELECT IMAGE_URL FROM tb_product_image WHERE PRODUCT_ID = A.PRODUCT_ID AND REPRESENT = 1 LIMIT 1) AS IMAGE_URL,
-            O.ORDER_ID, O.ORDER_NO, O.USER_NO, O.ORDER_STATUS, O.PAYMENT_STATUS,
+            O.ORDER_ID, O.ORDER_NO, O.USER_NO, O.ORDER_STATUS,
             O.TOTAL_ITEM_AMOUNT, O.DELIVERY_FEE, O.DISCOUNT_AMOUNT, O.TOTAL_PAY_AMOUNT,
             DATE_FORMAT(O.ORDERED_AT, '%Y.%m.%d %H:%i') AS ORDERED_AT,
             O.PAID_AT,
@@ -70,7 +70,6 @@
     <update id="updateOrderStatus" parameterType="dataMap">
         UPDATE tb_orders
         SET ORDER_STATUS = #{orderStatus},
-            PAYMENT_STATUS = #{paymentStatus},
             CANCELLED_AT = CASE WHEN #{orderStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
@@ -100,7 +99,7 @@
         SELECT 
             IFNULL(SUM(CASE WHEN DATE(PAID_AT) = CURDATE() THEN TOTAL_PAY_AMOUNT ELSE 0 END), 0) AS todayTotalSales,
             IFNULL(SUM(CASE WHEN DATE(PAID_AT) = CURDATE() THEN TOTAL_PAY_AMOUNT - SUPPLY_PRICE_SUM ELSE 0 END), 0) AS estimatedProfit,
-            COUNT(CASE WHEN PAYMENT_STATUS = 'PAID' AND BRANCH_DEPOSIT_STATUS = 'WAITING' THEN 1 END) AS remittancePending,
+            COUNT(CASE WHEN ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED') AND BRANCH_DEPOSIT_STATUS = 'WAITING' THEN 1 END) AS remittancePending,
             COUNT(CASE WHEN ORDER_STATUS = 'PAID' AND MONTH(PAID_AT) = MONTH(CURDATE()) AND YEAR(PAID_AT) = YEAR(CURDATE()) THEN 1 END) AS completedOrders
         FROM tb_orders
         WHERE BRANCH_ID = #{branchId}

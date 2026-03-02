@@ -56,7 +56,6 @@ public class PaymentServiceImpl implements PaymentService {
         orderVo.setOrderNo(orderNo);
         orderVo.setUserNo(Long.parseLong(userNo));
         orderVo.setOrderStatus("READY");
-        orderVo.setPaymentStatus("READY");
         orderVo.setReceiverName(param.getString("receiverName"));
         orderVo.setReceiverPhone(param.getString("receiverPhone"));
         orderVo.setZipCode(param.getString("zipCode"));
@@ -241,7 +240,6 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentRepository.insertPayment(paymentVo);
 
                 orderVo.setOrderStatus("PAID");
-                orderVo.setPaymentStatus("PAID");
                 paymentRepository.updateOrderStatus(orderVo);
 
                 result.put("success", true);
@@ -276,7 +274,6 @@ public class PaymentServiceImpl implements PaymentService {
                 OrderVo orderVo = paymentRepository.selectOrderByNo(orderId);
                 if (orderVo != null) {
                     orderVo.setOrderStatus("CANCEL");
-                    orderVo.setPaymentStatus("CANCEL");
                     paymentRepository.updateOrderStatus(orderVo);
 
                     PaymentVo paymentVo = new PaymentVo();
@@ -343,7 +340,6 @@ public class PaymentServiceImpl implements PaymentService {
             if (response.getStatusCode() == HttpStatus.OK) {
                 // DB Update
                 orderVo.setOrderStatus("CANCEL");
-                orderVo.setPaymentStatus("CANCEL");
                 orderVo.setCancelReason(cancelReason);
                 orderVo.setUpdusrNo(userNo);
                 paymentRepository.updateOrderStatus(orderVo);

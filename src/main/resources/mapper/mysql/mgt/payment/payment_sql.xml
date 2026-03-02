@@ -76,7 +76,6 @@
     <update id="updateOrderStatus" parameterType="com.whomade.kycarrots.entity.payment.OrderVo">
         UPDATE tb_orders
         SET ORDER_STATUS = #{orderStatus},
-            PAYMENT_STATUS = #{paymentStatus},
             PAID_AT = CASE WHEN #{orderStatus} = 'PAID' THEN CURRENT_TIMESTAMP ELSE PAID_AT END,
             CANCELLED_AT = CASE WHEN #{orderStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
             UPDUSR_NO = #{updusrNo},
