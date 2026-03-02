@@ -349,10 +349,9 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <select name="deliveryCompanyCode" class="form-control input-sm" style="width: 120px;">
-                                                    <c:set var="currentSelected" value="${order.DELIVERY_COMPANY_CODE}" />
-                                                    <%=CommboUtil.getComboStr(deliveryCompanyList, "CODE", "CODE_NM", "" , "C")%>
-                                                </select>
+                                                 <select name="deliveryCompanyCode" class="form-control input-sm" style="width: 120px;">
+                                                     <%=CommboUtil.getComboStr(deliveryCompanyList, "CODE", "CODE_NM", ((DataMap)pageContext.getAttribute("order")).getString("DELIVERY_COMPANY_CODE") , "C")%>
+                                                 </select>
                                             </td>
                                             <td>
                                                 <input type="text" name="trackingNo" class="form-control input-sm" placeholder="${order.BRANCH_DEPOSIT_STATUS == 'WAITING' ? '입금 확인 후 입력 가능' : '송장번호 입력'}" 

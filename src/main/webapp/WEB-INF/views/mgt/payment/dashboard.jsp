@@ -22,9 +22,8 @@
             $('#aform').attr({ action : '/mgt/payment/dashboard.do', method : 'get' }).submit();
         }
         
-        function fnDetail(paymentId) {
-            var url = "/mgt/payment/selectPaymentDetail.do?paymentId=" + paymentId;
-            window.open(url, "paymentDetail", "width=800,height=700,scrollbars=yes");
+        function fnOrder(orderNo) {
+            location.href = "/mgt/order/selectOrder.do?orderNo=" + orderNo;
         }
         
         function fnCancel(paymentId, merchantUid, paymentKey) {
@@ -170,11 +169,11 @@
                         <tbody>
                             <c:forEach var="item" items="${resultList}">
                                 <tr>
-                                    <td><a href="javascript:fnDetail('${item.PAYMENT_ID}')">${item.ORDER_NO}</a></td>
+                                    <td><a href="javascript:fnOrder('${item.ORDER_NO}')">${item.ORDER_NO}</a></td>
                                     <td>${item.RECEIVER_NAME}</td>
                                     <td>${item.productNames}</td>
                                     <td class="text-right">${StringUtil.setComma(item.AMOUNT_TOTAL)}원</td>
-                                    <td>
+                                    <td style="cursor: pointer;" onclick="fnOrder('${item.ORDER_NO}')">
                                         <c:choose>
                                             <c:when test="${item.PAYMENT_STATUS == 'PAID'}"><span class="label label-success">결제완료</span></c:when>
                                             <c:when test="${item.PAYMENT_STATUS == 'CANCEL'}"><span class="label label-danger">취소됨</span></c:when>
@@ -184,7 +183,6 @@
                                     <td>${item.PAYMENT_METHOD}</td>
                                     <td>${item.PAID_AT}</td>
                                     <td>
-                                        <button type="button" class="btn btn-xs btn-default" onclick="fnDetail('${item.PAYMENT_ID}')">상세</button>
                                         <c:if test="${item.PAYMENT_STATUS == 'PAID'}">
                                             <button type="button" class="btn btn-xs btn-danger" onclick="fnCancel('${item.PAYMENT_ID}', '${item.ORDER_NO}', '${item.PG_TID}')">결제취소</button>
                                         </c:if>

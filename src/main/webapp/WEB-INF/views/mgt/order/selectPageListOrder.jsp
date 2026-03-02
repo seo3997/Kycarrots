@@ -57,7 +57,6 @@
 									<div class="col-md-9 px-0">
 										<select name="sch_order_status" class="form-control w-100">
 											<option value="">전체</option>
-											<option value="READY" ${param.sch_order_status == 'READY' ? 'selected' : ''}>결제 대기</option>
 											<option value="FAILED" ${param.sch_order_status == 'FAILED' ? 'selected' : ''}>결제 실패</option>
 											<option value="PAID" ${param.sch_order_status == 'PAID' ? 'selected' : ''}>결제완료</option>
 											<option value="CANCEL" ${param.sch_order_status == 'CANCEL' ? 'selected' : ''}>주문취소</option>

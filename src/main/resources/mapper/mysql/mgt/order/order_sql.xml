@@ -20,6 +20,7 @@
         INNER JOIN tb_orders O ON I.ORDER_ID = O.ORDER_ID
         <where>
             1=1
+            AND O.ORDER_STATUS != 'READY'
             <if test="userNo != null and userNo != ''">
                 AND O.USER_NO = #{userNo}
             </if>
@@ -44,6 +45,7 @@
         INNER JOIN tb_orders O ON I.ORDER_ID = O.ORDER_ID
         <where>
             1=1
+            AND O.ORDER_STATUS != 'READY'
             <if test="userNo != null and userNo != ''">
                 AND O.USER_NO = #{userNo}
             </if>
