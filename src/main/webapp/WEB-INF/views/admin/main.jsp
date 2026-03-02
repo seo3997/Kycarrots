@@ -278,7 +278,7 @@
                                     <c:forEach var="order" items="${dashboardOrderList}">
                                         <tr>
                                             <td>${order.BRANCH_NAME}</td>
-                                            <td>${order.ORDER_NO}</td>
+                                            <td><a href="/mgt/order/selectOrder.do?orderNo=${order.ORDER_NO}" style="color: var(--primary); font-weight: 600; text-decoration: underline;">${order.ORDER_NO}</a></td>
                                             <td>₩<fmt:formatNumber value="${order.SUPPLY_PRICE_SUM}" /></td>
                                             <td>
                                                 <span class="badge-status ${order.BRANCH_DEPOSIT_STATUS == '10' ? 'badge-waiting' : 'badge-confirmed'}">
@@ -350,7 +350,7 @@
                                     <c:forEach var="order" items="${dashboardOrderList}">
                                         <tr>
                                             <td>${order.BRANCH_NAME}</td>
-                                            <td>${order.ORDER_NO}</td>
+                                            <td><a href="/mgt/order/selectOrder.do?orderNo=${order.ORDER_NO}" style="color: var(--primary); font-weight: 600; text-decoration: underline;">${order.ORDER_NO}</a></td>
                                             <td>₩<fmt:formatNumber value="${order.SUPPLY_PRICE_SUM}" /></td>
                                             <td>
                                                 <span class="badge-status ${order.BRANCH_DEPOSIT_STATUS == '10' ? 'badge-waiting' : 'badge-confirmed'}">
@@ -452,7 +452,7 @@
                                     <c:forEach var="order" items="${dashboardOrderList}">
                                         <tr>
                                             <td>${order.ORDERED_AT}</td>
-                                            <td>${order.ORDER_NO}</td>
+                                            <td><a href="/mgt/order/selectOrder.do?orderNo=${order.ORDER_NO}" style="color: var(--primary); font-weight: 600; text-decoration: underline;">${order.ORDER_NO}</a></td>
                                             <td>₩<fmt:formatNumber value="${order.TOTAL_PAY_AMOUNT}" /></td>
                                             <td style="color: var(--danger); font-weight: 500;">₩<fmt:formatNumber value="${order.SUPPLY_PRICE_SUM}" /></td>
                                              <td>₩<fmt:formatNumber value="${order.MY_PROFIT}" /></td>
@@ -461,15 +461,8 @@
                                                      ${order.BRANCH_DEPOSIT_STATUS == '10' ? '송금필요' : '확인됨'}
                                                  </span>
                                              </td>
-                                             <td>
-                                                 <select name="deliveryCompanyCode" class="form-control input-sm" style="width: 110px;">
-                                                     <%=CommboUtil.getComboStr(deliveryCompanyList, "CODE", "CODE_NM", ((DataMap)pageContext.getAttribute("order")).getString("DELIVERY_COMPANY_CODE") , "C")%>
-                                                 </select>
-                                             </td>
-                                             <td>
-                                                 <input type="text" name="trackingNo" class="form-control input-sm" style="width: 120px;" placeholder="송장번호" 
-                                                        value="${order.TRACKING_NO}">
-                                             </td>
+                                             <td style="font-size: 0.85rem; color: var(--text-muted);">${not empty order.DELIVERY_COMPANY_NM ? order.DELIVERY_COMPANY_NM : '-'}</td>
+                                             <td style="font-size: 0.85rem; color: var(--primary); font-family: monospace;">${not empty order.TRACKING_NO ? order.TRACKING_NO : '-'}</td>
                                              <td>
                                                  <c:choose>
                                                      <c:when test="${order.ORDER_STATUS == '30'}">결제완료</c:when>

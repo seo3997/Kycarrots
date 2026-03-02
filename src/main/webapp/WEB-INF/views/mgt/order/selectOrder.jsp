@@ -110,14 +110,28 @@
 								<tr>
 									<th>택배사</th>
 									<td>
-										<select id="deliveryCompanyCode" class="form-control input-sm" style="width: 150px; display: inline-block;">
-											<%=CommboUtil.getComboStr((List)request.getAttribute("deliveryCompanyList"), "CODE", "CODE_NM", (String)((com.whomade.kycarrots.entity.payment.OrderVo)request.getAttribute("resultVo")).getDeliveryCompanyCode() , "C")%>
-										</select>
+										<c:choose>
+											<c:when test="${ssAuthorId == 'ROLE_PROJ'}">
+												${not empty resultVo.deliveryCompanyNm ? resultVo.deliveryCompanyNm : '-'}
+											</c:when>
+											<c:otherwise>
+												<select id="deliveryCompanyCode" class="form-control input-sm" style="width: 150px; display: inline-block;">
+													<%=CommboUtil.getComboStr((List)request.getAttribute("deliveryCompanyList"), "CODE", "CODE_NM", (String)((com.whomade.kycarrots.entity.payment.OrderVo)request.getAttribute("resultVo")).getDeliveryCompanyCode() , "C")%>
+												</select>
+											</c:otherwise>
+										</c:choose>
 									</td>
 									<th>운송장번호</th>
 									<td>
-										<input type="text" id="trackingNo" class="form-control input-sm" style="width: 200px; display: inline-block;" value="${resultVo.trackingNo}">
-										<button type="button" class="btn btn-sm btn-primary" onclick="fnUpdateShipping();" style="margin-left: 5px;">업데이트</button>
+										<c:choose>
+											<c:when test="${ssAuthorId == 'ROLE_PROJ'}">
+												${not empty resultVo.trackingNo ? resultVo.trackingNo : '-'}
+											</c:when>
+											<c:otherwise>
+												<input type="text" id="trackingNo" class="form-control input-sm" style="width: 200px; display: inline-block;" value="${resultVo.trackingNo}">
+												<button type="button" class="btn btn-sm btn-primary" onclick="fnUpdateShipping();" style="margin-left: 5px;">업데이트</button>
+											</c:otherwise>
+										</c:choose>
 									</td>
 								</tr>
 							</table>

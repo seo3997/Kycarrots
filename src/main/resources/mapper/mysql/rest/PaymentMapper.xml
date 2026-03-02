@@ -54,6 +54,7 @@
     <select id="selectOrderByNo" parameterType="string" resultType="com.whomade.kycarrots.entity.payment.OrderVo">
         SELECT
             O.*,
+            (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010660' AND CODE = O.DELIVERY_COMPANY_CODE) AS DELIVERY_COMPANY_NM,
             P.PAYMENT_ID,
             P.PG_TID
         FROM tb_orders O
@@ -64,6 +65,7 @@
     <select id="selectOrderById" parameterType="long" resultType="com.whomade.kycarrots.entity.payment.OrderVo">
         SELECT
             O.*,
+            (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010660' AND CODE = O.DELIVERY_COMPANY_CODE) AS DELIVERY_COMPANY_NM,
             P.PAYMENT_ID,
             P.PG_TID
         FROM tb_orders O
