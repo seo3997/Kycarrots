@@ -9,6 +9,7 @@
             TONGSIN_NUMBER, CS_PHONE, ADDRESS, TOSS_CLIENT_KEY,
             TOSS_SECRET_KEY, TOSS_MID, BILLING_CYCLE, IS_USE_CUSTOM_PRICE,
             SHIPPING_FEE_POLICY, IS_ACTIVE, BANK_CD, ACCOUNT_NO, ACCOUNT_HOLDER,
+            BASE_SHIPPING_FEE, FREE_SHIPPING_THRESHOLD, EXTRA_SHIPPING_FEE,
             REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
         ) VALUES (
             #{branchCode}, #{branchName}, #{domainUrl}, #{logoImageUrl},
@@ -16,6 +17,7 @@
             #{tongsinNumber}, #{csPhone}, #{address}, #{tossClientKey},
             #{tossSecretKey}, #{tossMid}, #{billingCycle}, #{isUseCustomPrice},
             #{shippingFeePolicy}, #{isActive}, #{bankCd}, #{accountNo}, #{accountHolder},
+            #{baseShippingFee}, #{freeShippingThreshold}, #{extraShippingFee},
             #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP
         )
     </insert>
@@ -92,6 +94,9 @@
             BANK_CD = #{bankCd},
             ACCOUNT_NO = #{accountNo},
             ACCOUNT_HOLDER = #{accountHolder},
+            BASE_SHIPPING_FEE = #{baseShippingFee},
+            FREE_SHIPPING_THRESHOLD = #{freeShippingThreshold},
+            EXTRA_SHIPPING_FEE = #{extraShippingFee},
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE BRANCH_ID = #{branchId}

@@ -30,6 +30,9 @@ public class TbBranchVo {
     private String bankCd;
     private String accountNo;
     private String accountHolder;
+    private Integer baseShippingFee;
+    private Integer freeShippingThreshold;
+    private Integer extraShippingFee;
     private Integer registerNo;
     private String registDt;
     private Integer updusrNo;

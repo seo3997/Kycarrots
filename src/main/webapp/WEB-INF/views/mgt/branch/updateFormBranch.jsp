@@ -174,6 +174,20 @@
 							<input type="text" class="form-control" name="accountNo" id="accountNo" value="${resultMap.ACCOUNT_NO}" />
 						</div>
 					</div>
+					<div class="form-group row">
+						<label class="control-label col-sm-2" for="baseShippingFee">기본 배송비</label>
+						<div class="col-sm-2">
+							<input type="number" class="form-control" name="baseShippingFee" id="baseShippingFee" value="${resultMap.BASE_SHIPPING_FEE}" />
+						</div>
+						<label class="control-label col-sm-2" for="freeShippingThreshold">무료배송 기준 금액</label>
+						<div class="col-sm-2">
+							<input type="number" class="form-control" name="freeShippingThreshold" id="freeShippingThreshold" value="${resultMap.FREE_SHIPPING_THRESHOLD}" />
+						</div>
+						<label class="control-label col-sm-2" for="extraShippingFee">추가 배송비</label>
+						<div class="col-sm-2">
+							<input type="number" class="form-control" name="extraShippingFee" id="extraShippingFee" value="${resultMap.EXTRA_SHIPPING_FEE}" />
+						</div>
+					</div>
                     <div class="form-group row">
 						<label class="control-label col-sm-2" for="shippingFeePolicy">배송비 정책 (JSON)</label>
 						<div class="col-sm-10">

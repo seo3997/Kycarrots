@@ -2,6 +2,7 @@
 <%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"     uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="fmt"    uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="com.whomade.kycarrots.framework.common.object.DataMap" %>
 
 <jsp:useBean id="resultMap" class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
@@ -120,6 +121,14 @@
                     <div class="form-group row">
 						<label class="control-label col-sm-2">입금 계좌번호</label>
 						<div class="col-sm-10 py-2">${resultMap.ACCOUNT_NO}</div>
+					</div>
+					<div class="form-group row">
+						<label class="control-label col-sm-2">기본 배송비</label>
+						<div class="col-sm-2 py-2"><fmt:formatNumber value="${resultMap.BASE_SHIPPING_FEE}" type="number" />원</div>
+						<label class="control-label col-sm-2">무료배송 기준 금액</label>
+						<div class="col-sm-2 py-2"><fmt:formatNumber value="${resultMap.FREE_SHIPPING_THRESHOLD}" type="number" />원</div>
+						<label class="control-label col-sm-2">추가 배송비</label>
+						<div class="col-sm-2 py-2"><fmt:formatNumber value="${resultMap.EXTRA_SHIPPING_FEE}" type="number" />원</div>
 					</div>
                     <div class="form-group row">
 						<label class="control-label col-sm-2">배송비 정책 (JSON)</label>

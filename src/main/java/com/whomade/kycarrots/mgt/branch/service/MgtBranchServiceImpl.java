@@ -74,6 +74,9 @@ public class MgtBranchServiceImpl implements MgtBranchService {
             branchVo.setBankCd(param.getString("bankCd"));
             branchVo.setAccountNo(param.getString("accountNo"));
             branchVo.setAccountHolder(param.getString("accountHolder"));
+            branchVo.setBaseShippingFee(param.getInt("baseShippingFee"));
+            branchVo.setFreeShippingThreshold(param.getInt("freeShippingThreshold"));
+            branchVo.setExtraShippingFee(param.getInt("extraShippingFee"));
 
             String shippingFeePolicy = param.getString("shippingFeePolicy");
             if (shippingFeePolicy == null || shippingFeePolicy.trim().isEmpty()) {
@@ -126,6 +129,9 @@ public class MgtBranchServiceImpl implements MgtBranchService {
         branchVo.setBankCd(param.getString("bankCd"));
         branchVo.setAccountNo(param.getString("accountNo"));
         branchVo.setAccountHolder(param.getString("accountHolder"));
+        branchVo.setBaseShippingFee(param.getInt("baseShippingFee"));
+        branchVo.setFreeShippingThreshold(param.getInt("freeShippingThreshold"));
+        branchVo.setExtraShippingFee(param.getInt("extraShippingFee"));
 
         String shippingFeePolicy = param.getString("shippingFeePolicy");
         if (shippingFeePolicy == null || shippingFeePolicy.trim().isEmpty()) {
