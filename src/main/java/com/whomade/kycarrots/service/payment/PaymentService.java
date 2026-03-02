@@ -10,4 +10,6 @@ public interface PaymentService {
     void handleWebhook(DataMap webhookData);
 
     DataMap cancelPayment(String orderNo, String cancelReason, Integer userNo);
+
+    DataMap requestReturn(String orderNo, String returnReason, Integer userNo);
 }

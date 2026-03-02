@@ -38,6 +38,9 @@ public class OrderVo {
     private String shippedAt;
     private Integer registerNo;
     private String registDt;
+    private String branchDepositStatus; // R010680 (10:WAITING, 20:DEPOSITED, 30:CANCEL)
+    private String branchDepositConfirmedAt;
+    private String deliveredAt;
     private Integer updusrNo;
     private String updtDt;
 }

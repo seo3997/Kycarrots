@@ -7,11 +7,11 @@
             A.PRODUCT_ID,
             A.TITLE,
             (SELECT IMAGE_URL FROM tb_product_image WHERE PRODUCT_ID = A.PRODUCT_ID AND REPRESENT = 1 LIMIT 1) AS IMAGE_URL,
-            O.ORDER_ID, O.ORDER_NO, O.USER_NO, O.ORDER_STATUS,
+            O.ORDER_ID, O.ORDER_NO, O.USER_NO, O.ORDER_STATUS, O.BRANCH_DEPOSIT_STATUS,
             O.TOTAL_ITEM_AMOUNT, O.DELIVERY_FEE, O.DISCOUNT_AMOUNT, O.TOTAL_PAY_AMOUNT,
             DATE_FORMAT(O.ORDERED_AT, '%Y.%m.%d %H:%i') AS ORDERED_AT,
             O.PAID_AT,
-            O.DELIVERY_COMPANY_CODE,
+            O.DELIVERY_COMPANY_CODE, O.DELIVERED_AT,
             (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010660' AND CODE = O.DELIVERY_COMPANY_CODE) AS DELIVERY_COMPANY_NM,
             O.TRACKING_NO,
             I.PRODUCT_NAME, I.UNIT_PRICE, I.QUANTITY
@@ -81,6 +81,7 @@
     <update id="updateBranchDepositStatus" parameterType="dataMap">
         UPDATE tb_orders
         SET BRANCH_DEPOSIT_STATUS = #{branchDepositStatus},
+            BRANCH_DEPOSIT_CONFIRMED_AT = CASE WHEN #{branchDepositStatus} = '20' THEN CURRENT_TIMESTAMP ELSE BRANCH_DEPOSIT_CONFIRMED_AT END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE ORDER_NO = #{orderNo}
@@ -92,6 +93,7 @@
             TRACKING_NO = #{trackingNo},
             ORDER_STATUS = #{orderStatus},
             SHIPPED_AT = CASE WHEN #{orderStatus} = '60' AND SHIPPED_AT IS NULL THEN CURRENT_TIMESTAMP ELSE SHIPPED_AT END,
+            DELIVERED_AT = CASE WHEN #{orderStatus} = '70' AND DELIVERED_AT IS NULL THEN CURRENT_TIMESTAMP ELSE DELIVERED_AT END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE ORDER_NO = #{orderNo}
@@ -101,7 +103,7 @@
         SELECT 
             IFNULL(SUM(CASE WHEN DATE(PAID_AT) = CURDATE() THEN TOTAL_PAY_AMOUNT ELSE 0 END), 0) AS todayTotalSales,
             IFNULL(SUM(CASE WHEN DATE(PAID_AT) = CURDATE() THEN TOTAL_PAY_AMOUNT - SUPPLY_PRICE_SUM ELSE 0 END), 0) AS estimatedProfit,
-            COUNT(CASE WHEN ORDER_STATUS NOT IN ('10', '40', '20') AND BRANCH_DEPOSIT_STATUS = 'WAITING' THEN 1 END) AS remittancePending,
+            COUNT(CASE WHEN ORDER_STATUS NOT IN ('10', '40', '20') AND BRANCH_DEPOSIT_STATUS = '10' THEN 1 END) AS remittancePending,
             COUNT(CASE WHEN ORDER_STATUS = '30' AND MONTH(PAID_AT) = MONTH(CURDATE()) AND YEAR(PAID_AT) = YEAR(CURDATE()) THEN 1 END) AS completedOrders
         FROM tb_orders
         WHERE BRANCH_ID = #{branchId}
@@ -111,7 +113,7 @@
     <select id="selectDashboardStatsProj" parameterType="dataMap" resultType="dataMap">
         SELECT 
             COUNT(CASE WHEN ORDER_STATUS IN ('30', '50') THEN 1 END) AS unprocessedOrders,
-            IFNULL(SUM(CASE WHEN BRANCH_DEPOSIT_STATUS = 'WAITING' THEN SUPPLY_PRICE_SUM ELSE 0 END), 0) AS branchPendingAmount,
+            IFNULL(SUM(CASE WHEN BRANCH_DEPOSIT_STATUS = '10' THEN SUPPLY_PRICE_SUM ELSE 0 END), 0) AS branchPendingAmount,
             COUNT(CASE WHEN ORDER_STATUS = '30' AND SHIPPED_AT IS NULL THEN 1 END) AS shipmentPending,
             COUNT(CASE WHEN ORDER_STATUS = '60' THEN 1 END) AS inTransit
         FROM tb_orders
@@ -135,7 +137,8 @@
             O.SUPPLY_PRICE_SUM,
             (O.TOTAL_PAY_AMOUNT - O.SUPPLY_PRICE_SUM) AS MY_PROFIT,
             O.BRANCH_DEPOSIT_STATUS,
-            O.ORDER_STATUS
+            O.ORDER_STATUS,
+            O.DELIVERED_AT
         FROM tb_orders O
         WHERE O.BRANCH_ID = #{branchId}
           AND O.ORDER_STATUS NOT IN ('10', '40', '20')
@@ -152,7 +155,8 @@
             O.DELIVERY_COMPANY_CODE,
             (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010660' AND CODE = O.DELIVERY_COMPANY_CODE) AS DELIVERY_COMPANY_NM,
             O.TRACKING_NO,
-            O.ORDER_STATUS
+            O.ORDER_STATUS,
+            O.DELIVERED_AT
         FROM tb_orders O
         JOIN tb_branches B ON O.BRANCH_ID = B.BRANCH_ID
         WHERE O.ORDER_STATUS NOT IN ('10', '40', '20')

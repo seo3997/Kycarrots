@@ -61,7 +61,7 @@ public class MgtOrderServiceImpl implements MgtOrderService {
 
     @Override
     public void confirmBranchDeposit(DataMap param) throws Exception {
-        param.put("branchDepositStatus", "CONFIRMED");
+        param.put("branchDepositStatus", "20");
         commonMybatisDao.update("mgt.order.updateBranchDepositStatus", param);
 
         // At the same time, if shipping info is provided, update it.
@@ -74,7 +74,16 @@ public class MgtOrderServiceImpl implements MgtOrderService {
 
     @Override
     public void updateOrderShippingInfo(DataMap param) throws Exception {
-        param.put("orderStatus", "60");
+        // If orderStatus is not provided, default to 60 (SHIPPING)
+        if (param.getString("orderStatus") == null || param.getString("orderStatus").isEmpty()) {
+            param.put("orderStatus", "60");
+        }
+        commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
+    }
+
+    @Override
+    public void confirmOrder(DataMap param) throws Exception {
+        param.put("orderStatus", "99"); // 주문확정
         commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
     }
 }

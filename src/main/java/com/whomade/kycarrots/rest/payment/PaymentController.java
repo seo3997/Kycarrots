@@ -61,4 +61,17 @@ public class PaymentController {
 
                 return paymentService.cancelPayment(orderNo, cancelReason, userNo);
         }
+
+        @Operation(summary = "반품 요청", description = "배송 중 또는 배송 완료 상태에서 반품을 요청합니다.", responses = {
+                        @ApiResponse(responseCode = "200", description = "반품 결과", content = @Content(schema = @Schema(type = "object", example = "{ \"success\": true, \"message\": \"반품 요청이 정상적으로 접수되었습니다.\" }")))
+        })
+        @PostMapping("/return")
+        public DataMap requestReturn(
+                        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "반품 데이터 (In)", content = @Content(schema = @Schema(type = "object", example = "{\"orderNo\": \"ORDER-1708348400000\", \"returnReason\": \"단순 변심\", \"userNo\": 1}"))) @RequestBody DataMap param) {
+                String orderNo = param.getString("orderNo");
+                String returnReason = param.getString("returnReason");
+                Integer userNo = param.getInt("userNo");
+
+                return paymentService.requestReturn(orderNo, returnReason, userNo);
+        }
 }

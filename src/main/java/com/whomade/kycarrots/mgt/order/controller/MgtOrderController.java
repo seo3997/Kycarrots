@@ -114,4 +114,17 @@ public class MgtOrderController {
         MessageUtil.setMessage(request, "배송 정보가 업데이트되었습니다.");
         return "redirect:/mgt/main/dashBoard.do";
     }
+
+    @RequestMapping(value = "/mgt/order/confirmOrder.do")
+    public String confirmOrder(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+            throws Exception {
+        DataMap param = RequestUtil.getDataMap(request);
+        UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+        param.put("updusrNo", userInfoVo.getUserNo());
+
+        mgtOrderService.confirmOrder(param);
+
+        MessageUtil.setMessage(request, "주문이 확정되었습니다.");
+        return "redirect:/mgt/main/dashBoard.do";
+    }
 }

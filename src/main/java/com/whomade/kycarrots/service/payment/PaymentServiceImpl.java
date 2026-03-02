@@ -57,6 +57,7 @@ public class PaymentServiceImpl implements PaymentService {
         orderVo.setUserNo(Long.parseLong(userNo));
         orderVo.setOrderStatus("10");
         orderVo.setPaymentStatus("10");
+        orderVo.setBranchDepositStatus("10");
         orderVo.setReceiverName(param.getString("receiverName"));
         orderVo.setReceiverPhone(param.getString("receiverPhone"));
         orderVo.setZipCode(param.getString("zipCode"));
@@ -303,8 +304,9 @@ public class PaymentServiceImpl implements PaymentService {
             return result;
         }
 
-        // PAID 상태일 때만 취소 가능 (또는 준비 상태 등 비즈니스 규칙에 따라)
-        if (!"30".equals(orderVo.getOrderStatus())) {
+        // PAID(30), SHIPPING(60), DELIVERED(70), RETURN_REQUESTED(80) 상태일 때 취소 가능
+        List<String> cancellableStatus = List.of("30", "60", "70", "80");
+        if (!cancellableStatus.contains(orderVo.getOrderStatus())) {
             result.put("success", false);
             result.put("message", "취소 가능한 상태가 아닙니다. (현재 상태: " + orderVo.getOrderStatus() + ")");
             return result;
@@ -345,7 +347,12 @@ public class PaymentServiceImpl implements PaymentService {
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 // DB Update
-                orderVo.setOrderStatus("40");
+                String nextStatus = "40"; // Default: 주문취소
+                if ("80".equals(orderVo.getOrderStatus())) {
+                    nextStatus = "89"; // 반품완료
+                }
+
+                orderVo.setOrderStatus(nextStatus);
                 orderVo.setPaymentStatus("40");
                 orderVo.setCancelReason(cancelReason);
                 orderVo.setUpdusrNo(userNo);
@@ -369,6 +376,36 @@ public class PaymentServiceImpl implements PaymentService {
             result.put("message", "취소 처리 중 오류가 발생했습니다: " + e.getMessage());
         }
 
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public DataMap requestReturn(String orderNo, String returnReason, Integer userNo) {
+        DataMap result = new DataMap();
+        OrderVo orderVo = paymentRepository.selectOrderByNo(orderNo);
+
+        if (orderVo == null) {
+            result.put("success", false);
+            result.put("message", "주문 정보를 찾을 수 없습니다.");
+            return result;
+        }
+
+        // SHIPPING(60), DELIVERED(70) 상태일 때만 반품요청 가능
+        List<String> returnableStatus = List.of("60", "70");
+        if (!returnableStatus.contains(orderVo.getOrderStatus())) {
+            result.put("success", false);
+            result.put("message", "반품 요청이 가능한 상태가 아닙니다. (현재 상태: " + orderVo.getOrderStatus() + ")");
+            return result;
+        }
+
+        orderVo.setOrderStatus("80"); // RETURN_REQUESTED
+        orderVo.setCancelReason(returnReason); // Use cancelReason field for return reason
+        orderVo.setUpdusrNo(userNo);
+        paymentRepository.updateOrderStatus(orderVo);
+
+        result.put("success", true);
+        result.put("message", "반품 요청이 정상적으로 접수되었습니다.");
         return result;
     }
 }

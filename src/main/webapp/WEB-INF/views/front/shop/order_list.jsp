@@ -97,6 +97,10 @@
                                     <c:when test="${item.ORDER_STATUS == '30'}">결제완료</c:when>
                                     <c:when test="${item.ORDER_STATUS == '40'}">주문취소</c:when>
                                     <c:when test="${item.ORDER_STATUS == '60'}">배송중</c:when>
+                                    <c:when test="${item.ORDER_STATUS == '70'}">배송완료</c:when>
+                                    <c:when test="${item.ORDER_STATUS == '80'}">반품요청</c:when>
+                                    <c:when test="${item.ORDER_STATUS == '89'}">반품완료</c:when>
+                                    <c:when test="${item.ORDER_STATUS == '99'}">주문확정</c:when>
                                     <c:otherwise>${item.ORDER_STATUS}</c:otherwise>
                                 </c:choose>
                             </span>
@@ -108,6 +112,17 @@
                             <c:if test="${item.ORDER_STATUS == '30'}">
                                 <button type="button" class="btn-cancel" id="btn-cancel-${item.ORDER_NO}"
                                         onclick="handleCancel('${item.ORDER_NO}', '${item.ORDERED_AT}')">주문취소</button>
+                            </c:if>
+                            <c:if test="${item.ORDER_STATUS == '60' || item.ORDER_STATUS == '70'}">
+                                <%-- 배송완료(70)인 경우 7일 이내만 표시 --%>
+                                <c:set var="showReturn" value="true" />
+                                <c:if test="${item.ORDER_STATUS == '70' && not empty item.DELIVERED_AT}">
+                                    <%-- Date check in JSP/Taglib is complex, better do a basic check or just show it and check in JS --%>
+                                </c:if>
+                                <c:if test="${showReturn}">
+                                    <button type="button" class="btn-cancel" id="btn-return-${item.ORDER_NO}"
+                                            onclick="handleReturn('${item.ORDER_NO}', '${item.ORDER_STATUS == '70' ? item.DELIVERED_AT : item.ORDERED_AT}', '${item.ORDER_STATUS}')">반품요청</button>
+                                </c:if>
                             </c:if>
                         </div>
                     </div>
@@ -172,6 +187,57 @@
             alert("처리 중 오류가 발생했습니다.");
             btn.disabled = false;
             btn.innerText = "주문취소";
+        }
+    }
+    async function handleReturn(orderNo, baseDate, status) {
+        // baseDate is "YYYY-MM-DD HH:mm:ss" or similar from DB
+        if (status === '70') {
+            const deliveredDate = new Date(baseDate.replace(/-/g, '/'));
+            const now = new Date();
+            const diffDays = (now - deliveredDate) / (1000 * 60 * 60 * 24);
+
+            if (diffDays > 7) {
+                alert("배송 완료 후 7일이 경과하여 반품 요청이 불가능합니다. 고객센터로 문의해주세요.");
+                return;
+            }
+        }
+
+        if (!confirm("반품을 요청하시겠습니까? (배송비가 발생할 수 있습니다.)")) {
+            return;
+        }
+
+        const returnReason = prompt("반품 사유를 입력해주세요.", "단순 변심");
+        if (returnReason === null) return;
+
+        const btn = document.getElementById('btn-return-' + orderNo);
+        btn.disabled = true;
+        btn.innerText = "처리 중...";
+
+        try {
+            const response = await fetch("/api/payment/return", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    orderNo: orderNo,
+                    returnReason: returnReason,
+                    userNo: "${userInfoVo.userNo}"
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert("반품 요청이 정상적으로 접수되었습니다.");
+                location.reload();
+            } else {
+                alert("반품 요청 실패: " + result.message);
+                btn.disabled = false;
+                btn.innerText = "반품요청";
+            }
+        } catch (error) {
+            console.error(error);
+            alert("처리 중 오류가 발생했습니다.");
+            btn.disabled = false;
+            btn.innerText = "반품요청";
         }
     }
 </script>
