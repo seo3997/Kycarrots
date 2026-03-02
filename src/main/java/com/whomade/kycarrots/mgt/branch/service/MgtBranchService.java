@@ -11,6 +11,8 @@ public interface MgtBranchService {
 
     DataMap selectBranchByDomain(DataMap param) throws Exception;
 
+    DataMap selectBranchByCode(DataMap param) throws Exception;
+
     DataMap insertBranch(DataMap param) throws Exception;
 
     void updateBranch(DataMap param) throws Exception;

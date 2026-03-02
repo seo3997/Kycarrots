@@ -112,6 +112,16 @@
 						<div class="col-sm-4 py-2">${resultMap.IS_ACTIVE == '1' ? '활성' : '비활성'}</div>
 					</div>
                     <div class="form-group row">
+						<label class="control-label col-sm-2">입금 은행</label>
+						<div class="col-sm-4 py-2">${resultMap.BANK_NM}</div>
+                        <label class="control-label col-sm-2">예금주 성명</label>
+						<div class="col-sm-4 py-2">${resultMap.ACCOUNT_HOLDER}</div>
+					</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2">입금 계좌번호</label>
+						<div class="col-sm-10 py-2">${resultMap.ACCOUNT_NO}</div>
+					</div>
+                    <div class="form-group row">
 						<label class="control-label col-sm-2">배송비 정책 (JSON)</label>
 						<div class="col-sm-10 py-2"><pre style="background:none; border:none; padding:0;">${resultMap.SHIPPING_FEE_POLICY}</pre></div>
 					</div>

@@ -27,6 +27,9 @@ public class TbBranchVo {
     private Boolean isUseCustomPrice;
     private String shippingFeePolicy; // Using String for JSON
     private Boolean isActive;
+    private String bankCd;
+    private String accountNo;
+    private String accountHolder;
     private Integer registerNo;
     private String registDt;
     private Integer updusrNo;

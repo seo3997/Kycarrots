@@ -43,6 +43,11 @@ public class MgtBranchServiceImpl implements MgtBranchService {
     }
 
     @Override
+    public DataMap selectBranchByCode(DataMap param) throws Exception {
+        return commonMybatisDao.selectOne("mgt.branch.selectBranchByCode", param);
+    }
+
+    @Override
     @Transactional
     public DataMap insertBranch(DataMap param) throws Exception {
         DataMap result = new DataMap();
@@ -66,6 +71,9 @@ public class MgtBranchServiceImpl implements MgtBranchService {
             branchVo.setTossMid(param.getString("tossMid"));
             branchVo.setBillingCycle(param.getString("billingCycle"));
             branchVo.setIsUseCustomPrice("Y".equals(param.getString("isUseCustomPrice")));
+            branchVo.setBankCd(param.getString("bankCd"));
+            branchVo.setAccountNo(param.getString("accountNo"));
+            branchVo.setAccountHolder(param.getString("accountHolder"));
 
             String shippingFeePolicy = param.getString("shippingFeePolicy");
             if (shippingFeePolicy == null || shippingFeePolicy.trim().isEmpty()) {
@@ -115,6 +123,9 @@ public class MgtBranchServiceImpl implements MgtBranchService {
         branchVo.setTossMid(param.getString("tossMid"));
         branchVo.setBillingCycle(param.getString("billingCycle"));
         branchVo.setIsUseCustomPrice("Y".equals(param.getString("isUseCustomPrice")));
+        branchVo.setBankCd(param.getString("bankCd"));
+        branchVo.setAccountNo(param.getString("accountNo"));
+        branchVo.setAccountHolder(param.getString("accountHolder"));
 
         String shippingFeePolicy = param.getString("shippingFeePolicy");
         if (shippingFeePolicy == null || shippingFeePolicy.trim().isEmpty()) {

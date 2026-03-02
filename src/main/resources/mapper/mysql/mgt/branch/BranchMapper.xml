@@ -8,15 +8,15 @@
             BRANCH_STATUS, COMPANY_NAME, REPRESENTATIVE_NAME, BUSINESS_NUMBER,
             TONGSIN_NUMBER, CS_PHONE, ADDRESS, TOSS_CLIENT_KEY,
             TOSS_SECRET_KEY, TOSS_MID, BILLING_CYCLE, IS_USE_CUSTOM_PRICE,
-            SHIPPING_FEE_POLICY, IS_ACTIVE, REGISTER_NO, REGIST_DT,
-            UPDUSR_NO, UPDT_DT
+            SHIPPING_FEE_POLICY, IS_ACTIVE, BANK_CD, ACCOUNT_NO, ACCOUNT_HOLDER,
+            REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
         ) VALUES (
             #{branchCode}, #{branchName}, #{domainUrl}, #{logoImageUrl},
             #{branchStatus}, #{companyName}, #{representativeName}, #{businessNumber},
             #{tongsinNumber}, #{csPhone}, #{address}, #{tossClientKey},
             #{tossSecretKey}, #{tossMid}, #{billingCycle}, #{isUseCustomPrice},
-            #{shippingFeePolicy}, #{isActive}, #{registerNo}, CURRENT_TIMESTAMP,
-            #{updusrNo}, CURRENT_TIMESTAMP
+            #{shippingFeePolicy}, #{isActive}, #{bankCd}, #{accountNo}, #{accountHolder},
+            #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP
         )
     </insert>
 
@@ -33,7 +33,8 @@
     </insert>
     
     <select id="selectPageListBranch" parameterType="dataMap" resultType="dataMap">
-        SELECT * FROM tb_branches
+        SELECT *, (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010690' AND CODE = BANK_CD) AS BANK_NM 
+        FROM tb_branches
         <where>
             <if test="sch_text != null and sch_text != ''">
                 AND (BRANCH_NAME LIKE CONCAT('%', #{sch_text}, '%') OR BRANCH_CODE LIKE CONCAT('%', #{sch_text}, '%'))
@@ -53,8 +54,15 @@
     </select>
     
     <select id="selectBranch" parameterType="dataMap" resultType="dataMap">
-        SELECT * FROM tb_branches
+        SELECT *, (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010690' AND CODE = BANK_CD) AS BANK_NM 
+        FROM tb_branches
         WHERE BRANCH_ID = #{branchId}
+    </select>
+
+    <select id="selectBranchByCode" parameterType="dataMap" resultType="dataMap">
+        SELECT *, (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010690' AND CODE = BANK_CD) AS BANK_NM 
+        FROM tb_branches
+        WHERE BRANCH_CODE = #{branchCode}
     </select>
 
     <select id="selectBranchByDomain" parameterType="dataMap" resultType="dataMap">
@@ -81,6 +89,9 @@
             TOSS_MID = #{tossMid},
             BILLING_CYCLE = #{billingCycle},
             IS_USE_CUSTOM_PRICE = #{isUseCustomPrice},
+            BANK_CD = #{bankCd},
+            ACCOUNT_NO = #{accountNo},
+            ACCOUNT_HOLDER = #{accountHolder},
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE BRANCH_ID = #{branchId}

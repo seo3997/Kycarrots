@@ -23,6 +23,9 @@ public class MgtBranchController {
     @Resource(name = "mgtBranchService")
     private MgtBranchService mgtBranchService;
 
+    @Resource(name = "commonCodeService")
+    private com.whomade.kycarrots.common.service.CommonCodeService commonCodeService;
+
     @RequestMapping(value = "/mgt/branch/selectPageListBranch.do")
     public String selectPageListBranch(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {
@@ -53,7 +56,12 @@ public class MgtBranchController {
         DataMap param = RequestUtil.getDataMap(request);
         String nextBranchCode = mgtBranchService.selectNextBranchCode();
 
+        DataMap codeParam = new DataMap();
+        codeParam.put("group_id", "R010690");
+        List bankList = commonCodeService.selectCodeList(codeParam);
+
         model.addAttribute("nextBranchCode", nextBranchCode);
+        model.addAttribute("bankList", bankList);
         model.addAttribute("param", param);
         return "mgt/branch/insertFormBranch";
     }
@@ -74,6 +82,11 @@ public class MgtBranchController {
         DataMap param = RequestUtil.getDataMap(request);
         DataMap resultMap = mgtBranchService.selectBranch(param);
 
+        DataMap codeParam = new DataMap();
+        codeParam.put("group_id", "R010690");
+        List bankList = commonCodeService.selectCodeList(codeParam);
+
+        model.addAttribute("bankList", bankList);
         model.addAttribute("resultMap", resultMap);
         model.addAttribute("param", param);
 

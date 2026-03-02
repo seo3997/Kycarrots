@@ -12,6 +12,7 @@
 <jsp:useBean id="dashboardStats" 	class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
 <jsp:useBean id="dashboardOrderList" class="java.util.ArrayList"  								  scope="request" type="java.util.List"/>
 <jsp:useBean id="deliveryCompanyList" class="java.util.ArrayList"  								  scope="request" type="java.util.List"/>
+<jsp:useBean id="headQuarterBranch"   class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
 
 <%@ include file="/common/inc/common.jspf" %>
 <%@ include file="/common/inc/docType.jspf" %>
@@ -425,7 +426,7 @@
                     <div class="notice-banner">
                         <i class="fas fa-bullhorn" style="color: var(--text-muted);"></i>
                         <span>
-                            <strong>본사 입금 안내:</strong> 본사 계좌(신한은행 123-456-789012 / 예금주: (주)본사명)로 <strong>공급가액을 입금하셔야 배송이 시작됩니다.</strong>
+                            <strong>본사 입금 안내:</strong> 본사 계좌(${headQuarterBranch.BANK_NM} ${headQuarterBranch.ACCOUNT_NO} / 예금주: ${headQuarterBranch.ACCOUNT_HOLDER})로 <strong>공급가액을 입금하셔야 배송이 시작됩니다.</strong>
                             입금 시 반드시 <strong>[주문번호 뒷 4자리 + 지점명]</strong>으로 입금자명을 설정해 주세요.
                         </span>
                     </div>

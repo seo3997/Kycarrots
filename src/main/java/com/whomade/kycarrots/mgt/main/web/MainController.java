@@ -42,6 +42,9 @@ public class MainController {
 	private final TnProductService tnProductService;
 	private final CommonCodeService commonCodeService;
 
+	@Resource(name = "mgtBranchService")
+	private com.whomade.kycarrots.mgt.branch.service.MgtBranchService mgtBranchService;
+
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
@@ -63,6 +66,11 @@ public class MainController {
 		DataMap dashboardStats = mgtOrderService.selectDashboardStats(param);
 		List<DataMap> dashboardOrderList = mgtOrderService.selectDashboardOrderList(param);
 
+		// 본사 정보 조회 (BR_0002)
+		DataMap headQuarterParam = new DataMap();
+		headQuarterParam.put("branchCode", "BR_0002");
+		DataMap headQuarterBranch = mgtBranchService.selectBranchByCode(headQuarterParam);
+
 		// 택배사 코드 조회 (R010660)
 		DataMap codeParam = new DataMap();
 		codeParam.put("group_id", "R010660");
@@ -74,6 +82,7 @@ public class MainController {
 		model.addAttribute("dashboardStats", dashboardStats);
 		model.addAttribute("dashboardOrderList", dashboardOrderList);
 		model.addAttribute("memberCode", memberCode);
+		model.addAttribute("headQuarterBranch", headQuarterBranch);
 
 		return "admin/main";
 	}

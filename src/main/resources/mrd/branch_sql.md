@@ -1,30 +1,36 @@
 1. 지점 테이블 생성
-   CREATE TABLE `tb_branches` (
-   `BRANCH_ID` bigint NOT NULL AUTO_INCREMENT COMMENT '지점 PK',
-   `BRANCH_CODE` varchar(20) UNIQUE NOT NULL COMMENT '지점 고유 코드 (예: BR_0001)',
-   `BRANCH_NAME` varchar(100) NOT NULL COMMENT '지점명 (쇼핑몰 상단 노출)',
-   `DOMAIN_URL` varchar(255) COMMENT '지점 접속 주소',
-   `LOGO_IMAGE_URL` varchar(500) COMMENT '지점별 커스텀 로고 URL',
-   `BRANCH_STATUS` varchar(20) DEFAULT 'RUNNING' COMMENT '운영 상태 (RUNNING, STOPPED, TERMINATED)',
-   `COMPANY_NAME` varchar(100) COMMENT '상호명',
-   `REPRESENTATIVE_NAME` varchar(50) COMMENT '대표자 성명',
-   `BUSINESS_NUMBER` varchar(20) COMMENT '사업자 등록 번호',
-   `TONGSIN_NUMBER` varchar(50) COMMENT '통신판매업 신고 번호',
-   `CS_PHONE` varchar(30) COMMENT '고객센터 전화번호',
-   `ADDRESS` varchar(500) COMMENT '사업장 소재지',
-   `TOSS_CLIENT_KEY` varchar(255) COMMENT '토스 프론트엔드 SDK용 키',
-   `TOSS_SECRET_KEY` varchar(255) COMMENT '토스 백엔드 승인 API용 키',
-   `TOSS_MID` varchar(50) COMMENT '지점별 상점 아이디(MID)',
-   `BILLING_CYCLE` varchar(50) COMMENT '역정산 주기 (예: MONTHLY_1, WEEKLY_MON)',
-   `IS_USE_CUSTOM_PRICE` boolean DEFAULT false COMMENT '지점별 판매가 수정 가능 여부',
-   `SHIPPING_FEE_POLICY` json COMMENT '배송비 정책 (기본료, 무료배송 기준액 등)',
-   `IS_ACTIVE` boolean DEFAULT true COMMENT '사이트 활성화 여부 (점검 시 false)',
-   `REGISTER_NO` int DEFAULT NULL,
-   `REGIST_DT` datetime DEFAULT CURRENT_TIMESTAMP,
-   `UPDUSR_NO` int DEFAULT NULL,
-   `UPDT_DT` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-   PRIMARY KEY (`BRANCH_ID`)
-   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='지점 마스터 테이블';
+   -- asagongdb.tb_branches definition
+
+CREATE TABLE `tb_branches` (
+`BRANCH_ID` bigint NOT NULL AUTO_INCREMENT COMMENT '지점 PK',
+`BRANCH_CODE` varchar(20) NOT NULL COMMENT '지점 고유 코드 (예: BR_001)',
+`BRANCH_NAME` varchar(100) NOT NULL COMMENT '지점명 (쇼핑몰 상단 노출)',
+`DOMAIN_URL` varchar(255) DEFAULT NULL COMMENT '지점 접속 주소',
+`LOGO_IMAGE_URL` varchar(500) DEFAULT NULL COMMENT '지점별 커스텀 로고 URL',
+`BRANCH_STATUS` varchar(20) DEFAULT 'RUNNING' COMMENT '운영 상태 (RUNNING, STOPPED, TERMINATED)',
+`COMPANY_NAME` varchar(100) DEFAULT NULL COMMENT '상호명',
+`REPRESENTATIVE_NAME` varchar(50) DEFAULT NULL COMMENT '대표자 성명',
+`BUSINESS_NUMBER` varchar(20) DEFAULT NULL COMMENT '사업자 등록 번호',
+`TONGSIN_NUMBER` varchar(50) DEFAULT NULL COMMENT '통신판매업 신고 번호',
+`CS_PHONE` varchar(30) DEFAULT NULL COMMENT '고객센터 전화번호',
+`ADDRESS` varchar(500) DEFAULT NULL COMMENT '사업장 소재지',
+`TOSS_CLIENT_KEY` varchar(255) DEFAULT NULL COMMENT '토스 프론트엔드 SDK용 키',
+`TOSS_SECRET_KEY` varchar(255) DEFAULT NULL COMMENT '토스 백엔드 승인 API용 키',
+`TOSS_MID` varchar(50) DEFAULT NULL COMMENT '지점별 상점 아이디(MID)',
+`BILLING_CYCLE` varchar(50) DEFAULT NULL COMMENT '역정산 주기 (예: MONTHLY_1, WEEKLY_MON)',
+`IS_USE_CUSTOM_PRICE` tinyint(1) DEFAULT '0' COMMENT '지점별 판매가 수정 가능 여부',
+`SHIPPING_FEE_POLICY` json DEFAULT NULL COMMENT '배송비 정책 (기본료, 무료배송 기준액 등)',
+`IS_ACTIVE` tinyint(1) DEFAULT '1' COMMENT '사이트 활성화 여부 (점검 시 false)',
+`BANK_CD` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '입금 은행코드',
+`ACCOUNT_NO` varchar(50) DEFAULT NULL COMMENT '입금 계좌번호',
+`ACCOUNT_HOLDER` varchar(50) DEFAULT NULL COMMENT '예금주 성명',
+`REGISTER_NO` int DEFAULT NULL,
+`REGIST_DT` datetime DEFAULT CURRENT_TIMESTAMP,
+`UPDUSR_NO` int DEFAULT NULL,
+`UPDT_DT` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+PRIMARY KEY (`BRANCH_ID`),
+UNIQUE KEY `BRANCH_CODE` (`BRANCH_CODE`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='지점 마스터 테이블';
 
 2. 사용자 테이블에 지점 컬럼 추가
    ALTER TABLE `op_user`

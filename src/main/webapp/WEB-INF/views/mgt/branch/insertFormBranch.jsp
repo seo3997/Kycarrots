@@ -152,6 +152,27 @@
 						</div>
 					</div>
                     <div class="form-group row">
+						<label class="control-label col-sm-2" for="bankCd">입금 은행</label>
+						<div class="col-sm-4">
+							<select class="form-control" name="bankCd" id="bankCd">
+                                <option value="">선택하세요</option>
+                                <c:forEach var="item" items="${bankList}">
+                                    <option value="${item.CODE}">${item.CODE_NM}</option>
+                                </c:forEach>
+                            </select>
+						</div>
+                        <label class="control-label col-sm-2" for="accountHolder">예금주 성명</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="accountHolder" id="accountHolder" />
+						</div>
+					</div>
+                    <div class="form-group row">
+						<label class="control-label col-sm-2" for="accountNo">입금 계좌번호</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="accountNo" id="accountNo" />
+						</div>
+					</div>
+                    <div class="form-group row">
 						<label class="control-label col-sm-2" for="shippingFeePolicy">배송비 정책 (JSON)</label>
 						<div class="col-sm-10">
 							<textarea class="form-control" name="shippingFeePolicy" id="shippingFeePolicy" rows="3"></textarea>
