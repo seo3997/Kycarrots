@@ -74,7 +74,6 @@
 <body>
 
 <header class="header">
-    <c:set var="deliveryFee" value="0" />
     <a href="/shop/list.do" class="logo">
         <div style="width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
             <i class="fas fa-shopping-bag" style="font-size: 0.9rem;"></i>
@@ -92,6 +91,8 @@
             <c:set var="quantity" value="${not empty reqParam.quantity ? reqParam.quantity : 1}" />
             <c:set var="itemPrice" value="${not empty productInfo.PRICE ? productInfo.PRICE : 0}" />
             <c:set var="totalAmount" value="${itemPrice * quantity}" />
+            <c:set var="deliveryFee" value="${totalAmount >= branchInfo.FREE_SHIPPING_THRESHOLD ? 0 : branchInfo.BASE_SHIPPING_FEE}" />
+            
             <div class="summary-row" style="font-weight: 600; margin-bottom: 1rem;">
                 <span style="flex: 1;">${productInfo.TITLE}</span>
                 <span style="color: var(--text-muted); font-weight: 400; margin-right: 1rem;">${quantity}개</span>
@@ -99,7 +100,12 @@
             </div>
             <div class="summary-row" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-muted);">
                 <span>배송비</span>
-                <span><fmt:formatNumber value="${deliveryFee}" type="number" maxFractionDigits="0"/>원</span>
+                <span>
+                    <c:choose>
+                        <c:when test="${deliveryFee == 0}">무료</c:when>
+                        <c:otherwise><fmt:formatNumber value="${deliveryFee}" type="number" maxFractionDigits="0"/>원</c:otherwise>
+                    </c:choose>
+                </span>
             </div>
             <div class="total-row" style="margin-top: 1rem; padding-top: 1rem; border-top: 1.5px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 1rem; color: var(--text);">최종 결제 금액</span>

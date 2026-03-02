@@ -116,6 +116,17 @@
             </div>
             <p class="price-tag"><fmt:formatNumber value="${productInfo.PRICE}" type="number" maxFractionDigits="0"/>원</p>
             
+            <div class="shipping-info" style="margin-bottom: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; color: var(--text);">
+                    <i class="fas fa-truck" style="color: var(--primary);"></i>
+                    <span style="font-weight: 600;">배송비: </span>
+                    <span><fmt:formatNumber value="${branchInfo.BASE_SHIPPING_FEE}" type="number" maxFractionDigits="0"/>원</span>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-left: 1.7rem; margin-top: 0.25rem;">
+                    (<fmt:formatNumber value="${branchInfo.FREE_SHIPPING_THRESHOLD}" type="number" maxFractionDigits="0"/>원 이상 구매 시 무료)
+                </div>
+            </div>
+            
             <div class="order-box">
                 <div class="quantity-info" style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted);">
                     구매 가능 수량: <span id="max-quantity" style="color: var(--primary); font-weight: 600;">${productInfo.AVAILABLE_QUANTITY}</span>개
