@@ -110,6 +110,9 @@ public class PaymentServiceImpl implements PaymentService {
             orderItemVo.setSupplyPrice(supplyPrice);
             orderItemVo.setSalePrice(unitPrice); // 기본 판매가를 실제 판매가로 기록
             orderItemVo.setQuantity(quantity);
+            orderItemVo.setTotalPrice(unitPrice * quantity);
+            orderItemVo.setDiscountAmount(0);
+            orderItemVo.setFinalPrice(unitPrice * quantity);
             orderItemVo.setRegisterNo(Integer.parseInt(userNo));
             orderItemVo.setUpdusrNo(Integer.parseInt(userNo));
 

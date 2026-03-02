@@ -18,6 +18,9 @@ public class OrderItemVo {
     private Integer supplyPrice; // 본사 공급 원가
     private Integer salePrice; // 지점 실제 판매가
     private Integer quantity;
+    private Integer totalPrice; // UNIT_PRICE * QUANTITY
+    private Integer discountAmount; // 아이템 할인금액
+    private Integer finalPrice; // TOTAL_PRICE - DISCOUNT_AMOUNT
     private Integer registerNo;
     private String registDt;
     private Integer updusrNo;
