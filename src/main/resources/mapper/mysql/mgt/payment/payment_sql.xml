@@ -4,10 +4,10 @@
 
     <select id="selectPaymentStats" parameterType="dataMap" resultType="dataMap">
         SELECT
-            IFNULL(SUM(CASE WHEN PAYMENT_STATUS IN ('PAID', 'CANCEL') AND DATE_FORMAT(REGIST_DT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN AMOUNT_TOTAL ELSE 0 END), 0) as todayTotalAmount,
-            IFNULL(SUM(CASE WHEN PAYMENT_STATUS = 'CANCEL' AND DATE_FORMAT(CANCELLED_AT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN AMOUNT_TOTAL ELSE 0 END), 0) as todayCancelledAmount,
-            COUNT(CASE WHEN PAYMENT_STATUS IN ('PAID', 'CANCEL') AND DATE_FORMAT(REGIST_DT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN 1 END) as todayPaidCount,
-            COUNT(CASE WHEN PAYMENT_STATUS = 'CANCEL' AND DATE_FORMAT(CANCELLED_AT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN 1 END) as todayCancelledCount
+            IFNULL(SUM(CASE WHEN PAYMENT_STATUS IN ('30', '40') AND DATE_FORMAT(REGIST_DT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN AMOUNT_TOTAL ELSE 0 END), 0) as todayTotalAmount,
+            IFNULL(SUM(CASE WHEN PAYMENT_STATUS = '40' AND DATE_FORMAT(CANCELLED_AT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN AMOUNT_TOTAL ELSE 0 END), 0) as todayCancelledAmount,
+            COUNT(CASE WHEN PAYMENT_STATUS IN ('30', '40') AND DATE_FORMAT(REGIST_DT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN 1 END) as todayPaidCount,
+            COUNT(CASE WHEN PAYMENT_STATUS = '40' AND DATE_FORMAT(CANCELLED_AT, '%Y%m%d') = DATE_FORMAT(NOW(), '%Y%m%d') THEN 1 END) as todayCancelledCount
         FROM tb_payments
     </select>
 
@@ -65,7 +65,7 @@
     <update id="updatePaymentStatus" parameterType="com.whomade.kycarrots.entity.payment.PaymentVo">
         UPDATE tb_payments
         SET PAYMENT_STATUS = #{paymentStatus},
-            CANCELLED_AT = CASE WHEN #{paymentStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            CANCELLED_AT = CASE WHEN #{paymentStatus} = '40' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
             FAIL_CODE = #{failCode},
             FAIL_MESSAGE = #{failMessage},
             UPDUSR_NO = #{updusrNo},
@@ -76,8 +76,8 @@
     <update id="updateOrderStatus" parameterType="com.whomade.kycarrots.entity.payment.OrderVo">
         UPDATE tb_orders
         SET ORDER_STATUS = #{orderStatus},
-            PAID_AT = CASE WHEN #{orderStatus} = 'PAID' THEN CURRENT_TIMESTAMP ELSE PAID_AT END,
-            CANCELLED_AT = CASE WHEN #{orderStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            PAID_AT = CASE WHEN #{orderStatus} = '30' THEN CURRENT_TIMESTAMP ELSE PAID_AT END,
+            CANCELLED_AT = CASE WHEN #{orderStatus} = '40' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE ORDER_ID = #{orderId}

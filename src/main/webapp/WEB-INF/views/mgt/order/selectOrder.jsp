@@ -78,15 +78,15 @@
 									<th>주문상태</th>
 									<td>
 										<c:choose>
-											<c:when test="${resultVo.orderStatus == 'READY'}"><span class="label label-default">결제 대기</span></c:when>
-											<c:when test="${resultVo.orderStatus == 'FAILED'}"><span class="label label-warning">결제 실패</span></c:when>
-											<c:when test="${resultVo.orderStatus == 'PAID'}"><span class="label label-success">결제완료</span></c:when>
-											<c:when test="${resultVo.orderStatus == 'CANCEL'}"><span class="label label-danger">주문취소</span></c:when>
-											<c:when test="${resultVo.orderStatus == 'PREPARING'}"><span class="label label-primary">배송준비중</span></c:when>
-											<c:when test="${resultVo.orderStatus == 'SHIPPING'}"><span class="label label-info">배송중</span></c:when>
-											<c:when test="${resultVo.orderStatus == 'DELIVERED'}"><span class="label label-success" style="background-color: #00a65a !important;">배송완료</span></c:when>
-											<c:when test="${resultVo.orderStatus == 'RETURN_REQUESTED'}"><span class="label label-warning">반품요청</span></c:when>
-											<c:when test="${resultVo.orderStatus == 'EXCHANGED'}"><span class="label label-info">교환완료</span></c:when>
+											<c:when test="${resultVo.orderStatus == '10'}"><span class="label label-default">결제 대기</span></c:when>
+											<c:when test="${resultVo.orderStatus == '20'}"><span class="label label-warning">결제 실패</span></c:when>
+											<c:when test="${resultVo.orderStatus == '30'}"><span class="label label-success">결제완료</span></c:when>
+											<c:when test="${resultVo.orderStatus == '40'}"><span class="label label-danger">주문취소</span></c:when>
+											<c:when test="${resultVo.orderStatus == '50'}"><span class="label label-primary">배송준비중</span></c:when>
+											<c:when test="${resultVo.orderStatus == '60'}"><span class="label label-info">배송중</span></c:when>
+											<c:when test="${resultVo.orderStatus == '70'}"><span class="label label-success" style="background-color: #00a65a !important;">배송완료</span></c:when>
+											<c:when test="${resultVo.orderStatus == '80'}"><span class="label label-warning">반품요청</span></c:when>
+											<c:when test="${resultVo.orderStatus == '90'}"><span class="label label-info">교환완료</span></c:when>
 											<c:otherwise><span class="label label-default">${resultVo.orderStatus}</span></c:otherwise>
 										</c:choose>
 									</td>
@@ -152,7 +152,7 @@
 						</div>
 
 						<div class="box-footer text-right">
-							<c:if test="${resultVo.orderStatus == 'PAID'}">
+							<c:if test="${resultVo.orderStatus == '30'}">
 								<button type="button" class="btn btn-danger" onclick="fnCancel();">주문 취소</button>
 							</c:if>
 							<button type="button" class="btn btn-default" onclick="fnList();">목록으로</button>

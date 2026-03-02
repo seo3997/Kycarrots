@@ -92,20 +92,20 @@
                             </div>
                         </a>
                         <div class="order-status">
-                            <span class="badge ${item.ORDER_STATUS == 'CANCEL' ? 'badge-cancel' : 'badge-success'}">
+                            <span class="badge ${item.ORDER_STATUS == '40' ? 'badge-cancel' : 'badge-success'}">
                                 <c:choose>
-                                    <c:when test="${item.ORDER_STATUS == 'PAID'}">결제완료</c:when>
-                                    <c:when test="${item.ORDER_STATUS == 'CANCEL'}">주문취소</c:when>
-                                    <c:when test="${item.ORDER_STATUS == 'SHIPPING'}">배송중</c:when>
+                                    <c:when test="${item.ORDER_STATUS == '30'}">결제완료</c:when>
+                                    <c:when test="${item.ORDER_STATUS == '40'}">주문취소</c:when>
+                                    <c:when test="${item.ORDER_STATUS == '60'}">배송중</c:when>
                                     <c:otherwise>${item.ORDER_STATUS}</c:otherwise>
                                 </c:choose>
                             </span>
-                            <c:if test="${item.ORDER_STATUS == 'SHIPPING'}">
+                            <c:if test="${item.ORDER_STATUS == '60'}">
                                 <div style="margin-top: 0.5rem; font-size: 0.85rem; text-align: right; color: var(--text-muted);">
                                     택배사: ${item.DELIVERY_COMPANY_NM} | 송장번호: ${item.TRACKING_NO}
                                 </div>
                             </c:if>
-                            <c:if test="${item.ORDER_STATUS == 'PAID'}">
+                            <c:if test="${item.ORDER_STATUS == '30'}">
                                 <button type="button" class="btn-cancel" id="btn-cancel-${item.ORDER_NO}"
                                         onclick="handleCancel('${item.ORDER_NO}', '${item.ORDERED_AT}')">주문취소</button>
                             </c:if>

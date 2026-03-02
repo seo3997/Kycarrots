@@ -440,15 +440,15 @@
                                                     ${order.BRANCH_DEPOSIT_STATUS == 'WAITING' ? '본사송금필요' : '입금확인됨'}
                                                 </span>
                                             </td>
-                                            <td>
-                                                <span class="badge-status ${order.ORDER_STATUS == 'PAID' ? 'badge-confirmed' : 'badge-shipping'}">
-                                                    <c:choose>
-                                                        <c:when test="${order.ORDER_STATUS == 'PAID'}">출고대기</c:when>
-                                                        <c:when test="${order.ORDER_STATUS == 'SHIPPING'}">배송중</c:when>
-                                                        <c:otherwise>${order.ORDER_STATUS}</c:otherwise>
-                                                    </c:choose>
-                                                </span>
-                                            </td>
+                                             <td>
+                                                 <span class="badge-status ${order.ORDER_STATUS == '30' ? 'badge-confirmed' : 'badge-shipping'}">
+                                                     <c:choose>
+                                                         <c:when test="${order.ORDER_STATUS == '30'}">출고대기</c:when>
+                                                         <c:when test="${order.ORDER_STATUS == '60'}">배송중</c:when>
+                                                         <c:otherwise>${order.ORDER_STATUS}</c:otherwise>
+                                                     </c:choose>
+                                                 </span>
+                                             </td>
                                         </tr>
                                     </c:forEach>
                                     <c:if test="${empty dashboardOrderList}">

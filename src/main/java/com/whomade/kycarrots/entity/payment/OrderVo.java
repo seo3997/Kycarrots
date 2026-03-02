@@ -12,7 +12,9 @@ public class OrderVo {
     private String orderNo;
     private Long userNo;
     private Long branchId;
-    private String orderStatus; // READY/FAILED/PAID/CANCEL/PREPARING/SHIPPING/DELIVERED/RETURN_REQUESTED/EXCHANGED
+    private String orderStatus; // 10:READY, 20:FAILED, 30:PAID, 40:CANCEL, 50:PREPARING, 60:SHIPPING,
+                                // 70:DELIVERED, 80:RETURN_REQUESTED, 90:EXCHANGED
+    private String paymentStatus; // 10:READY, 20:FAILED, 30:PAID, 40:CANCEL
     private Integer totalItemAmount;
     private Integer supplyPriceSum; // 본사 공급가 합계
     private Integer deliveryFee;

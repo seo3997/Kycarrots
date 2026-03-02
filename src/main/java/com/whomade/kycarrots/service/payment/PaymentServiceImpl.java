@@ -55,7 +55,8 @@ public class PaymentServiceImpl implements PaymentService {
         OrderVo orderVo = new OrderVo();
         orderVo.setOrderNo(orderNo);
         orderVo.setUserNo(Long.parseLong(userNo));
-        orderVo.setOrderStatus("READY");
+        orderVo.setOrderStatus("10");
+        orderVo.setPaymentStatus("10");
         orderVo.setReceiverName(param.getString("receiverName"));
         orderVo.setReceiverPhone(param.getString("receiverPhone"));
         orderVo.setZipCode(param.getString("zipCode"));
@@ -199,7 +200,7 @@ public class PaymentServiceImpl implements PaymentService {
                 PaymentVo paymentVo = new PaymentVo();
                 paymentVo.setOrderId(orderVo.getOrderId());
                 paymentVo.setUserNo(orderVo.getUserNo());
-                paymentVo.setPaymentStatus("PAID");
+                paymentVo.setPaymentStatus("30");
                 paymentVo.setPaymentMethod((String) responseBody.get("method"));
                 paymentVo.setPgProvider("toss");
                 paymentVo.setPgTid((String) responseBody.get("paymentKey"));
@@ -239,7 +240,8 @@ public class PaymentServiceImpl implements PaymentService {
 
                 paymentRepository.insertPayment(paymentVo);
 
-                orderVo.setOrderStatus("PAID");
+                orderVo.setOrderStatus("30");
+                orderVo.setPaymentStatus("30");
                 paymentRepository.updateOrderStatus(orderVo);
 
                 result.put("success", true);
@@ -273,12 +275,13 @@ public class PaymentServiceImpl implements PaymentService {
             } else if ("CANCELED".equals(status)) {
                 OrderVo orderVo = paymentRepository.selectOrderByNo(orderId);
                 if (orderVo != null) {
-                    orderVo.setOrderStatus("CANCEL");
+                    orderVo.setOrderStatus("40");
+                    orderVo.setPaymentStatus("40");
                     paymentRepository.updateOrderStatus(orderVo);
 
                     PaymentVo paymentVo = new PaymentVo();
                     paymentVo.setMerchantUid(orderId);
-                    paymentVo.setPaymentStatus("CANCEL");
+                    paymentVo.setPaymentStatus("40");
                     paymentRepository.updatePaymentStatus(paymentVo);
                 }
             }
@@ -298,7 +301,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         // PAID 상태일 때만 취소 가능 (또는 준비 상태 등 비즈니스 규칙에 따라)
-        if (!"PAID".equals(orderVo.getOrderStatus())) {
+        if (!"30".equals(orderVo.getOrderStatus())) {
             result.put("success", false);
             result.put("message", "취소 가능한 상태가 아닙니다. (현재 상태: " + orderVo.getOrderStatus() + ")");
             return result;
@@ -339,14 +342,15 @@ public class PaymentServiceImpl implements PaymentService {
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 // DB Update
-                orderVo.setOrderStatus("CANCEL");
+                orderVo.setOrderStatus("40");
+                orderVo.setPaymentStatus("40");
                 orderVo.setCancelReason(cancelReason);
                 orderVo.setUpdusrNo(userNo);
                 paymentRepository.updateOrderStatus(orderVo);
 
                 PaymentVo updatePayment = new PaymentVo();
                 updatePayment.setPgTid(paymentVo.getPgTid());
-                updatePayment.setPaymentStatus("CANCEL");
+                updatePayment.setPaymentStatus("40");
                 updatePayment.setUpdusrNo(userNo);
                 paymentRepository.updatePaymentStatus(updatePayment);
 

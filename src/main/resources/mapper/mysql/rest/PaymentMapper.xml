@@ -33,9 +33,9 @@
     <update id="updateOrderStatus" parameterType="com.whomade.kycarrots.entity.payment.OrderVo">
         UPDATE tb_orders
         SET ORDER_STATUS = #{orderStatus},
-            PAID_AT = CASE WHEN #{orderStatus} = 'PAID' THEN CURRENT_TIMESTAMP ELSE PAID_AT END,
-            CANCELLED_AT = CASE WHEN #{orderStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
-            CANCEL_REASON = CASE WHEN #{orderStatus} = 'CANCEL' THEN #{cancelReason} ELSE CANCEL_REASON END,
+            PAID_AT = CASE WHEN #{orderStatus} = '30' THEN CURRENT_TIMESTAMP ELSE PAID_AT END,
+            CANCELLED_AT = CASE WHEN #{orderStatus} = '40' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            CANCEL_REASON = CASE WHEN #{orderStatus} = '40' THEN #{cancelReason} ELSE CANCEL_REASON END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE ORDER_ID = #{orderId}
@@ -95,7 +95,7 @@
     <update id="updatePaymentStatus" parameterType="com.whomade.kycarrots.entity.payment.PaymentVo">
         UPDATE tb_payments
         SET PAYMENT_STATUS = #{paymentStatus},
-            CANCELLED_AT = CASE WHEN #{paymentStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            CANCELLED_AT = CASE WHEN #{paymentStatus} = '40' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
             FAIL_CODE = #{failCode},
             FAIL_MESSAGE = #{failMessage},
             UPDUSR_NO = #{updusrNo},

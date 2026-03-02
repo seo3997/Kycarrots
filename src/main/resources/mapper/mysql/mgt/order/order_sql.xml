@@ -20,7 +20,7 @@
         INNER JOIN tb_orders O ON I.ORDER_ID = O.ORDER_ID
         <where>
             1=1
-            AND O.ORDER_STATUS != 'READY'
+            AND O.ORDER_STATUS != '10'
             <if test="userNo != null and userNo != ''">
                 AND O.USER_NO = #{userNo}
             </if>
@@ -45,7 +45,7 @@
         INNER JOIN tb_orders O ON I.ORDER_ID = O.ORDER_ID
         <where>
             1=1
-            AND O.ORDER_STATUS != 'READY'
+            AND O.ORDER_STATUS != '10'
             <if test="userNo != null and userNo != ''">
                 AND O.USER_NO = #{userNo}
             </if>
@@ -72,7 +72,7 @@
     <update id="updateOrderStatus" parameterType="dataMap">
         UPDATE tb_orders
         SET ORDER_STATUS = #{orderStatus},
-            CANCELLED_AT = CASE WHEN #{orderStatus} = 'CANCEL' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            CANCELLED_AT = CASE WHEN #{orderStatus} = '40' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE ORDER_ID = #{orderId}
@@ -91,7 +91,7 @@
         SET DELIVERY_COMPANY_CODE = #{deliveryCompanyCode},
             TRACKING_NO = #{trackingNo},
             ORDER_STATUS = #{orderStatus},
-            SHIPPED_AT = CASE WHEN #{orderStatus} = 'SHIPPING' AND SHIPPED_AT IS NULL THEN CURRENT_TIMESTAMP ELSE SHIPPED_AT END,
+            SHIPPED_AT = CASE WHEN #{orderStatus} = '60' AND SHIPPED_AT IS NULL THEN CURRENT_TIMESTAMP ELSE SHIPPED_AT END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE ORDER_NO = #{orderNo}
@@ -101,29 +101,29 @@
         SELECT 
             IFNULL(SUM(CASE WHEN DATE(PAID_AT) = CURDATE() THEN TOTAL_PAY_AMOUNT ELSE 0 END), 0) AS todayTotalSales,
             IFNULL(SUM(CASE WHEN DATE(PAID_AT) = CURDATE() THEN TOTAL_PAY_AMOUNT - SUPPLY_PRICE_SUM ELSE 0 END), 0) AS estimatedProfit,
-            COUNT(CASE WHEN ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED') AND BRANCH_DEPOSIT_STATUS = 'WAITING' THEN 1 END) AS remittancePending,
-            COUNT(CASE WHEN ORDER_STATUS = 'PAID' AND MONTH(PAID_AT) = MONTH(CURDATE()) AND YEAR(PAID_AT) = YEAR(CURDATE()) THEN 1 END) AS completedOrders
+            COUNT(CASE WHEN ORDER_STATUS NOT IN ('10', '40', '20') AND BRANCH_DEPOSIT_STATUS = 'WAITING' THEN 1 END) AS remittancePending,
+            COUNT(CASE WHEN ORDER_STATUS = '30' AND MONTH(PAID_AT) = MONTH(CURDATE()) AND YEAR(PAID_AT) = YEAR(CURDATE()) THEN 1 END) AS completedOrders
         FROM tb_orders
         WHERE BRANCH_ID = #{branchId}
-          AND ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')
+          AND ORDER_STATUS NOT IN ('10', '40', '20')
     </select>
 
     <select id="selectDashboardStatsProj" parameterType="dataMap" resultType="dataMap">
         SELECT 
-            COUNT(CASE WHEN ORDER_STATUS IN ('PAID', 'PREPARING') THEN 1 END) AS unprocessedOrders,
+            COUNT(CASE WHEN ORDER_STATUS IN ('30', '50') THEN 1 END) AS unprocessedOrders,
             IFNULL(SUM(CASE WHEN BRANCH_DEPOSIT_STATUS = 'WAITING' THEN SUPPLY_PRICE_SUM ELSE 0 END), 0) AS branchPendingAmount,
-            COUNT(CASE WHEN ORDER_STATUS = 'PAID' AND SHIPPED_AT IS NULL THEN 1 END) AS shipmentPending,
-            COUNT(CASE WHEN ORDER_STATUS = 'SHIPPING' THEN 1 END) AS inTransit
+            COUNT(CASE WHEN ORDER_STATUS = '30' AND SHIPPED_AT IS NULL THEN 1 END) AS shipmentPending,
+            COUNT(CASE WHEN ORDER_STATUS = '60' THEN 1 END) AS inTransit
         FROM tb_orders
-        WHERE ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')
+        WHERE ORDER_STATUS NOT IN ('10', '40', '20')
     </select>
 
     <select id="selectDashboardStatsAdmin" parameterType="dataMap" resultType="dataMap">
         SELECT 
             (SELECT COUNT(*) FROM op_user) AS totalUsers,
             (SELECT COUNT(*) FROM tb_branches) AS totalBranches,
-            (SELECT COUNT(*) FROM tb_orders WHERE ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')) AS totalOrders,
-            (SELECT IFNULL(SUM(TOTAL_PAY_AMOUNT), 0) FROM tb_orders WHERE ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')) AS totalRevenue
+            (SELECT COUNT(*) FROM tb_orders WHERE ORDER_STATUS NOT IN ('10', '40', '20')) AS totalOrders,
+            (SELECT IFNULL(SUM(TOTAL_PAY_AMOUNT), 0) FROM tb_orders WHERE ORDER_STATUS NOT IN ('10', '40', '20')) AS totalRevenue
         FROM DUAL
     </select>
 
@@ -138,7 +138,7 @@
             O.ORDER_STATUS
         FROM tb_orders O
         WHERE O.BRANCH_ID = #{branchId}
-          AND O.ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')
+          AND O.ORDER_STATUS NOT IN ('10', '40', '20')
         ORDER BY O.ORDERED_AT DESC
         LIMIT 5
     </select>
@@ -155,7 +155,7 @@
             O.ORDER_STATUS
         FROM tb_orders O
         JOIN tb_branches B ON O.BRANCH_ID = B.BRANCH_ID
-        WHERE O.ORDER_STATUS NOT IN ('READY', 'CANCEL', 'FAILED')
+        WHERE O.ORDER_STATUS NOT IN ('10', '40', '20')
         ORDER BY O.ORDERED_AT DESC
         LIMIT 5
     </select>
