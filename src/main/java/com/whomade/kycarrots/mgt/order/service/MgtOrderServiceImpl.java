@@ -64,12 +64,9 @@ public class MgtOrderServiceImpl implements MgtOrderService {
         param.put("branchDepositStatus", "20");
         commonMybatisDao.update("mgt.order.updateBranchDepositStatus", param);
 
-        // At the same time, if shipping info is provided, update it.
-        if (param.getString("deliveryCompanyCode") != null && !param.getString("deliveryCompanyCode").isEmpty()
-                && param.getString("trackingNo") != null && !param.getString("trackingNo").isEmpty()) {
-            param.put("orderStatus", "60");
-            commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
-        }
+        // Always set status to 60 (SHIPPING) as requested: "입금확인이 되면 60"
+        param.put("orderStatus", "60");
+        commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
     }
 
     @Override

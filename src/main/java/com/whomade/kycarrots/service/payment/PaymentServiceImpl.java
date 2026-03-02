@@ -244,7 +244,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                 paymentRepository.insertPayment(paymentVo);
 
-                orderVo.setOrderStatus("30");
+                orderVo.setOrderStatus("50");
                 orderVo.setPaymentStatus("30");
                 paymentRepository.updateOrderStatus(orderVo);
 
@@ -304,8 +304,9 @@ public class PaymentServiceImpl implements PaymentService {
             return result;
         }
 
-        // PAID(30), SHIPPING(60), DELIVERED(70), RETURN_REQUESTED(80) 상태일 때 취소 가능
-        List<String> cancellableStatus = List.of("30", "60", "70", "80");
+        // PAID(30), PREPARING(50), SHIPPING(60), DELIVERED(70), RETURN_REQUESTED(80)
+        // 상태일 때 취소 가능
+        List<String> cancellableStatus = List.of("30", "50", "60", "70", "80");
         if (!cancellableStatus.contains(orderVo.getOrderStatus())) {
             result.put("success", false);
             result.put("message", "취소 가능한 상태가 아닙니다. (현재 상태: " + orderVo.getOrderStatus() + ")");

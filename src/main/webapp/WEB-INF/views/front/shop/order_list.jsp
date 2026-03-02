@@ -96,6 +96,7 @@
                                 <c:choose>
                                     <c:when test="${item.ORDER_STATUS == '30'}">결제완료</c:when>
                                     <c:when test="${item.ORDER_STATUS == '40'}">주문취소</c:when>
+                                    <c:when test="${item.ORDER_STATUS == '50'}">배송준비중</c:when>
                                     <c:when test="${item.ORDER_STATUS == '60'}">배송중</c:when>
                                     <c:when test="${item.ORDER_STATUS == '70'}">배송완료</c:when>
                                     <c:when test="${item.ORDER_STATUS == '80'}">반품요청</c:when>

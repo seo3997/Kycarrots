@@ -372,7 +372,16 @@
                                                         <button type="button" class="btn-action primary" onclick="fnConfirmDeposit('${order.ORDER_NO}', this)">입금확인</button>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <button type="button" class="btn-action secondary" onclick="fnUpdateShipping('${order.ORDER_NO}', this)">배송처리</button>
+                                                        <c:choose>
+                                                            <c:when test="${order.ORDER_STATUS == '50'}">
+                                                                <button type="button" class="btn-action secondary" onclick="fnUpdateShipping('${order.ORDER_NO}', this)">배송처리</button>
+                                                            </c:when>
+                                                            <c:when test="${order.ORDER_STATUS == '60'}">
+                                                                <button type="button" class="btn-action secondary" style="margin-bottom: 4px;" onclick="fnUpdateShipping('${order.ORDER_NO}', this)">정보수정</button>
+                                                                <button type="button" class="btn-action primary" onclick="fnDeliveryComplete('${order.ORDER_NO}', this)">배송완료</button>
+                                                            </c:when>
+                                                            <c:otherwise>-</c:otherwise>
+                                                        </c:choose>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
@@ -429,11 +438,13 @@
                                     <tr>
                                         <th>주문일시</th>
                                         <th>주문번호</th>
-                                        <th>판매가(고객결제)</th>
-                                        <th>공급가(본사입금액)</th>
+                                        <th>판매가</th>
+                                        <th>공급가</th>
                                         <th>나의 수익</th>
-                                        <th>정산상태</th>
-                                        <th>배송상태</th>
+                                        <th>정산</th>
+                                        <th>택배사</th>
+                                        <th>운송장번호</th>
+                                        <th>상태</th>
                                         <th>관리</th>
                                     </tr>
                                 </thead>
@@ -444,15 +455,25 @@
                                             <td>${order.ORDER_NO}</td>
                                             <td>₩<fmt:formatNumber value="${order.TOTAL_PAY_AMOUNT}" /></td>
                                             <td style="color: var(--danger); font-weight: 500;">₩<fmt:formatNumber value="${order.SUPPLY_PRICE_SUM}" /></td>
-                                            <td style="font-weight: 600;">₩<fmt:formatNumber value="${order.MY_PROFIT}" /></td>
-                                            <td>
-                                                <span class="badge-status ${order.BRANCH_DEPOSIT_STATUS == '10' ? 'badge-waiting' : 'badge-confirmed'}">
-                                                    ${order.BRANCH_DEPOSIT_STATUS == '10' ? '본사송금필요' : '입금확인됨'}
-                                                </span>
-                                            </td>
+                                             <td>₩<fmt:formatNumber value="${order.MY_PROFIT}" /></td>
+                                             <td>
+                                                 <span class="badge-status ${order.BRANCH_DEPOSIT_STATUS == '10' ? 'badge-waiting' : 'badge-confirmed'}">
+                                                     ${order.BRANCH_DEPOSIT_STATUS == '10' ? '송금필요' : '확인됨'}
+                                                 </span>
+                                             </td>
+                                             <td>
+                                                 <select name="deliveryCompanyCode" class="form-control input-sm" style="width: 110px;">
+                                                     <%=CommboUtil.getComboStr(deliveryCompanyList, "CODE", "CODE_NM", ((DataMap)pageContext.getAttribute("order")).getString("DELIVERY_COMPANY_CODE") , "C")%>
+                                                 </select>
+                                             </td>
+                                             <td>
+                                                 <input type="text" name="trackingNo" class="form-control input-sm" style="width: 120px;" placeholder="송장번호" 
+                                                        value="${order.TRACKING_NO}">
+                                             </td>
                                              <td>
                                                  <c:choose>
-                                                     <c:when test="${order.ORDER_STATUS == '30'}">출고대기</c:when>
+                                                     <c:when test="${order.ORDER_STATUS == '30'}">결제완료</c:when>
+                                                     <c:when test="${order.ORDER_STATUS == '50'}">배송준비중</c:when>
                                                      <c:when test="${order.ORDER_STATUS == '60'}">배송중</c:when>
                                                      <c:when test="${order.ORDER_STATUS == '70'}">배송완료</c:when>
                                                      <c:when test="${order.ORDER_STATUS == '80'}">반품요청</c:when>
@@ -462,19 +483,21 @@
                                                  </c:choose>
                                              </td>
                                              <td>
-                                                 <c:if test="${order.ORDER_STATUS == '30' || order.ORDER_STATUS == '60' || order.ORDER_STATUS == '70' || order.ORDER_STATUS == '80'}">
-                                                     <button type="button" class="btn-action danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-right: 2px;" onclick="fnCancelByBranch('${order.ORDER_NO}', '${order.ORDER_STATUS}')">
-                                                         ${order.ORDER_STATUS == '80' ? '반품승인(환불)' : '결제취소'}
-                                                     </button>
-                                                 </c:if>
-                                                 <c:if test="${order.ORDER_STATUS == '70'}">
-                                                     <button type="button" class="btn-action primary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="fnConfirmOrderByBranch('${order.ORDER_NO}')">주문확정</button>
-                                                 </c:if>
+                                                 <div style="display: flex; flex-direction: column; gap: 4px;">
+                                                     <c:if test="${order.ORDER_STATUS == '70'}">
+                                                         <button type="button" class="btn-action primary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="fnConfirmOrderByBranch('${order.ORDER_NO}')">주문확정</button>
+                                                     </c:if>
+                                                     <c:if test="${order.ORDER_STATUS == '30' || order.ORDER_STATUS == '50' || order.ORDER_STATUS == '60' || order.ORDER_STATUS == '70' || order.ORDER_STATUS == '80'}">
+                                                         <button type="button" class="btn-action danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="fnCancelByBranch('${order.ORDER_NO}', '${order.ORDER_STATUS}')">
+                                                             ${order.ORDER_STATUS == '80' ? '반품승인(환불)' : '결제취소'}
+                                                         </button>
+                                                     </c:if>
+                                                 </div>
                                              </td>
                                         </tr>
                                     </c:forEach>
                                     <c:if test="${empty dashboardOrderList}">
-                                        <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">최근 주문 내역이 없습니다.</td></tr>
+                                        <tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 3rem;">최근 주문 내역이 없습니다.</td></tr>
                                     </c:if>
                                 </tbody>
                             </table>
@@ -558,7 +581,8 @@
         if (confirm(msg)) {
             location.href = '/mgt/order/updateOrderShippingInfo.do?orderNo=' + orderNo + 
                           '&deliveryCompanyCode=' + deliveryCompanyCode + 
-                          '&trackingNo=' + trackingNo;
+                          '&trackingNo=' + trackingNo +
+                          '&orderStatus=60';
         }
     }
     function fnCancelByBranch(orderNo, status) {
@@ -574,6 +598,36 @@
     function fnConfirmOrderByBranch(orderNo) {
         if (confirm('해당 주문을 확정 처리하시겠습니까?\n확정 후에는 취소/반품이 불가능합니다.')) {
             location.href = '/mgt/order/confirmOrder.do?orderNo=' + orderNo;
+        }
+    }
+
+    function fnDeliveryComplete(orderNo, btn) {
+        var $tr = $(btn).closest('tr');
+        var $select = $tr.find('[name=deliveryCompanyCode]');
+        var deliveryCompanyCode = $select.val();
+        var deliveryCompanyName = $select.find('option:selected').text();
+        var trackingNo = $tr.find('[name=trackingNo]').val();
+
+        if (!deliveryCompanyCode) {
+            alert('택배사를 선택해주세요.');
+            $select.focus();
+            return;
+        }
+        if (!trackingNo) {
+            alert('운송장 번호를 입력해주세요.');
+            $tr.find('[name=trackingNo]').focus();
+            return;
+        }
+
+        var msg = "배송 완료 처리를 진행하시겠습니까?\n\n" +
+                  "택배사: " + deliveryCompanyName + "\n" +
+                  "운송장번호: " + trackingNo;
+
+        if (confirm(msg)) {
+            location.href = '/mgt/order/updateOrderShippingInfo.do?orderNo=' + orderNo + 
+                          '&deliveryCompanyCode=' + deliveryCompanyCode + 
+                          '&trackingNo=' + trackingNo +
+                          '&orderStatus=70';
         }
     }
 </script>
