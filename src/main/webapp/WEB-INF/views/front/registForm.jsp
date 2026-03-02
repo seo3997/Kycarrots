@@ -17,7 +17,7 @@
     <a href="/shop/list.do" class="logo">
         <c:choose>
             <c:when test="${not empty branchInfo.LOGO_IMAGE_URL}">
-                <img src="${branchInfo.LOGO_IMAGE_URL}" alt="Logo" style="height: 40px; border-radius: 8px;">
+                <img src="${branchInfo.LOGO_IMAGE_URL}" alt="Logo">
             </c:when>
             <c:otherwise>
                 <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
@@ -27,71 +27,72 @@
         </c:choose>
         <span>${branchInfo.BRANCH_NAME}</span>
     </a>
-    <nav class="nav-links" style="display: flex; gap: 1.5rem; align-items: center;">
-        <a href="/shop/list.do" style="text-decoration: none; color: var(--text); font-weight: 500;">상품목록</a>
-        <a href="/shop/orderList.do" style="text-decoration: none; color: var(--text); font-weight: 500;">주문현황</a>
+    <nav class="nav-links">
+        <a href="/shop/list.do">상품목록</a>
+        <a href="/shop/orderList.do">주문현황</a>
         <c:choose>
             <c:when test="${empty userInfoVo}">
-                <a href="/front/registForm.do" style="text-decoration: none; color: var(--text); font-weight: 500;">회원가입</a>
-                <a href="/front/login.do" style="text-decoration: none; color: white; background: var(--primary); padding: 0.5rem 1.25rem; border-radius: var(--radius); font-weight: 500;">로그인</a>
+                <a href="/front/registForm.do">회원가입</a>
+                <a href="/front/login.do" class="btn-login">로그인</a>
             </c:when>
             <c:otherwise>
-                <span style="font-weight: 500;">${userInfoVo.userNm}님</span>
-                <a href="/front/logout.do" style="text-decoration: none; color: var(--text); font-weight: 500;">로그아웃</a>
+                <span>${userInfoVo.userNm}님</span>
+                <a href="/front/logout.do">로그아웃</a>
             </c:otherwise>
         </c:choose>
     </nav>
 </header>
 
-<div class="main-content">
-<div class="regist-card">
-    <div class="regist-header">
-        <div class="logo"><i class="fas fa-user-plus"></i></div>
-        <h1>Kycarrots 회원가입</h1>
-    </div>
-    
-    <form id="aform" method="post">
-        <input type="hidden" id="idcheck" name="idcheck" value="N"/>
+<main class="main-content">
+    <div class="regist-card">
+        <div class="regist-header text-center">
+            <div class="logo"><i class="fas fa-user-plus"></i></div>
+            <h1 style="font-size: 1.75rem; font-weight: 700;">Kycarrots 회원가입</h1>
+            <p class="text-muted mt-2">필요한 정보를 입력하여 계정을 만들어주세요.</p>
+        </div>
         
-        <div class="form-group">
-            <label for="user_id">아이디 (이메일)</label>
-            <div class="input-group">
-                <input type="email" name="user_id" id="user_id" class="form-control" placeholder="example@email.com" required maxlength="50">
-                <button type="button" class="btn-check" id="btn_idcheck">중복확인</button>
+        <form id="aform" method="post">
+            <input type="hidden" id="idcheck" name="idcheck" value="N"/>
+            
+            <div class="form-group">
+                <label for="user_id">아이디 (이메일)</label>
+                <div class="input-group">
+                    <input type="email" name="user_id" id="user_id" class="form-control" placeholder="example@email.com" required maxlength="50">
+                    <button type="button" class="btn-check" id="btn_idcheck" style="height: auto; min-width: 80px;">중복확인</button>
+                </div>
+                <div id="check-alert" class="alert-box" style="display:none; margin-top:0.5rem;"></div>
             </div>
-            <div id="check-alert" class="alert-box"></div>
+
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password" name="password" id="password" class="form-control" placeholder="비밀번호를 입력하세요" required maxlength="50">
+            </div>
+
+            <div class="form-group">
+                <label for="password_con">비밀번호 확인</label>
+                <input type="password" name="password_con" id="password_con" class="form-control" placeholder="비밀번호를 한번 더 입력하세요" required maxlength="50">
+            </div>
+
+            <div class="form-group">
+                <label for="user_nm">이름</label>
+                <input type="text" name="user_nm" id="user_nm" class="form-control" placeholder="이름을 입력하세요" required maxlength="50">
+            </div>
+
+            <div class="form-group">
+                <label for="cttpc">전화번호</label>
+                <input type="tel" name="cttpc" id="cttpc" class="form-control" placeholder="010-0000-0000" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}" required maxlength="20">
+            </div>
+
+            <div id="regist-alert" class="alert-box" style="display:none; margin-top:1rem;"></div>
+
+            <button type="button" class="btn-regist" id="btn_save" style="width:100%; height:50px; font-size:1.1rem; margin-top:1rem;">가입하기</button>
+        </form>
+
+        <div class="regist-footer text-center">
+            이미 회원이신가요? <a href="/front/login.do">로그인</a>
         </div>
-
-        <div class="form-group">
-            <label for="password">비밀번호</label>
-            <input type="password" name="password" id="password" class="form-control" placeholder="비밀번호를 입력하세요" required maxlength="50">
-        </div>
-
-        <div class="form-group">
-            <label for="password_con">비밀번호 확인</label>
-            <input type="password" name="password_con" id="password_con" class="form-control" placeholder="비밀번호를 한번 더 입력하세요" required maxlength="50">
-        </div>
-
-        <div class="form-group">
-            <label for="user_nm">이름</label>
-            <input type="text" name="user_nm" id="user_nm" class="form-control" placeholder="이름을 입력하세요" required maxlength="50">
-        </div>
-
-        <div class="form-group">
-            <label for="cttpc">전화번호</label>
-            <input type="tel" name="cttpc" id="cttpc" class="form-control" placeholder="010-0000-0000" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}" required maxlength="20">
-        </div>
-
-        <div id="regist-alert" class="alert-box"></div>
-
-        <button type="button" class="btn-regist" id="btn_save">가입하기</button>
-    </form>
-
-    <div class="regist-footer">
-        이미 회원이신가요? <a href="/front/login.do">로그인</a>
     </div>
-</div>
-</div>
+</main>
 
 <script src="/common/front/lib/jquery-3.6.0.min.js"></script>
 <script src="/common/front/js/front_common.js"></script>

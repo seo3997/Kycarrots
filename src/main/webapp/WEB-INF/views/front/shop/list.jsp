@@ -178,14 +178,14 @@
 <body>
 
 <header class="header">
-    <a href="#" class="logo">
+    <a href="/shop/list.do" class="logo">
         <c:choose>
             <c:when test="${not empty branchInfo.LOGO_IMAGE_URL}">
                 <img src="${branchInfo.LOGO_IMAGE_URL}" alt="Logo">
             </c:when>
             <c:otherwise>
-                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-                    <i class="fas fa-shopping-bag"></i>
+                <div style="width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="fas fa-shopping-bag" style="font-size: 0.9rem;"></i>
                 </div>
             </c:otherwise>
         </c:choose>
@@ -196,21 +196,42 @@
         <a href="/shop/orderList.do">주문현황</a>
         <c:choose>
             <c:when test="${empty userInfoVo}">
-                <a href="/front/registForm.do">회원가입</a>
                 <a href="/front/login.do" class="btn-login">로그인</a>
             </c:when>
             <c:otherwise>
-                <span>${userInfoVo.userNm}님</span>
                 <a href="/front/logout.do">로그아웃</a>
             </c:otherwise>
         </c:choose>
     </nav>
 </header>
 
-<section class="hero">
-    <h1>${branchInfo.BRANCH_NAME}에 오신 것을 환영합니다</h1>
-    <p>${branchInfo.COMPANY_NAME}이 운영하는 ${branchInfo.BRANCH_NAME} 회원분들만을 위한 특별한 혜택을 만나보세요.</p>
+<section class="hero" style="padding: 3rem 1.5rem; background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <h1 style="font-size: 2rem; color: #0c4a6e; line-height: 1.2;">${branchInfo.BRANCH_NAME}</h1>
+        <p class="text-muted mt-3" style="font-size: 1rem;">${branchInfo.COMPANY_NAME} 회원 전용 쇼핑몰입니다.</p>
+    </div>
 </section>
+
+<style>
+    /* Grid optimization: 2 columns on small screens, more on large */
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+    }
+    
+    @media (min-width: 768px) {
+        .product-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+    }
+
+    .product-img {
+        aspect-ratio: 1; /* Force square images for consistency */
+        height: auto;
+    }
+</style>
 
 <main class="container">
     <h2 class="section-title"><i class="fas fa-th-large text-primary"></i> 오늘의 추천 상품</h2>

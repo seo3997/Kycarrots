@@ -76,72 +76,75 @@
 <header class="header">
     <c:set var="deliveryFee" value="0" />
     <a href="/shop/list.do" class="logo">
-        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-            <i class="fas fa-shopping-bag"></i>
+        <div style="width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+            <i class="fas fa-shopping-bag" style="font-size: 0.9rem;"></i>
         </div>
         <span>${branchInfo.BRANCH_NAME}</span>
     </a>
 </header>
 
-<main class="container">
-    <div class="checkout-card">
-        <h1>주문서 작성</h1>
+<main class="container" style="max-width: 700px; padding: 1.5rem 1rem;">
+    <div class="checkout-card" style="padding: 1.5rem; border-radius: var(--radius-lg);">
+        <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; color: var(--text);">주문/결제</h1>
         
-        <div class="section-title">주문 상품</div>
-        <div class="order-summary">
+        <div class="section-title">주문 상품 정보</div>
+        <div class="order-summary" style="background: #f1f5f9; padding: 1.25rem; border-radius: var(--radius); margin-bottom: 2rem;">
             <c:set var="quantity" value="${not empty reqParam.quantity ? reqParam.quantity : 1}" />
             <c:set var="itemPrice" value="${not empty productInfo.PRICE ? productInfo.PRICE : 0}" />
             <c:set var="totalAmount" value="${itemPrice * quantity}" />
-            <div class="summary-row">
-                <span>${productInfo.TITLE} x ${quantity}</span>
+            <div class="summary-row" style="font-weight: 600; margin-bottom: 1rem;">
+                <span style="flex: 1;">${productInfo.TITLE}</span>
+                <span style="color: var(--text-muted); font-weight: 400; margin-right: 1rem;">${quantity}개</span>
                 <span><fmt:formatNumber value="${totalAmount}" type="number" maxFractionDigits="0"/>원</span>
             </div>
-            <div class="summary-row">
+            <div class="summary-row" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-muted);">
                 <span>배송비</span>
                 <span><fmt:formatNumber value="${deliveryFee}" type="number" maxFractionDigits="0"/>원</span>
             </div>
-            <div class="total-row">
-                <span>최종 결제 금액</span>
-                <span><fmt:formatNumber value="${totalAmount + deliveryFee}" type="number" maxFractionDigits="0"/>원</span>
+            <div class="total-row" style="margin-top: 1rem; padding-top: 1rem; border-top: 1.5px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 1rem; color: var(--text);">최종 결제 금액</span>
+                <span style="font-size: 1.5rem; font-weight: 800; color: var(--primary);"><fmt:formatNumber value="${totalAmount + deliveryFee}" type="number" maxFractionDigits="0"/>원</span>
             </div>
         </div>
 
-        <div class="section-title">배송 정보</div>
+        <div class="section-title">배송 정보 입력</div>
         <div class="form-group">
-            <label for="receiverName">받는 분</label>
-            <input type="text" id="receiverName" class="form-control" value="${userInfoVo.userNm}">
+            <label for="receiverName">받는 사람</label>
+            <input type="text" id="receiverName" class="form-control" value="${userInfoVo.userNm}" placeholder="이름을 입력하세요">
         </div>
         <div class="form-group">
             <label for="receiverPhone">연락처</label>
-            <input type="tel" id="receiverPhone" class="form-control" value="${userInfoVo.cttpc}">
+            <input type="tel" id="receiverPhone" class="form-control" value="${userInfoVo.cttpc}" placeholder="'-' 제외하고 입력">
         </div>
         <div class="form-group">
             <label for="zipCode">우편번호</label>
-            <div style="display: flex; gap: 0.5rem;">
-                <input type="text" id="zipCode" class="form-control" style="width: 120px;" readonly>
-                <button type="button" class="form-control" style="width: auto; background: #e2e8f0; cursor: pointer;" onclick="execDaumPostcode()">주소 찾기</button>
+            <div class="input-group">
+                <input type="text" id="zipCode" class="form-control" placeholder="우편번호" readonly>
+                <button type="button" class="btn-check" onclick="execDaumPostcode()" style="min-width: 100px;">주소 검색</button>
             </div>
         </div>
         <div class="form-group">
-            <label for="address1">도로명 주소</label>
-            <input type="text" id="address1" class="form-control" readonly>
+            <label for="address1">주소</label>
+            <input type="text" id="address1" class="form-control" placeholder="기본 주소" readonly style="background: #f8fafc;">
         </div>
         <div class="form-group">
             <label for="address2">상세 주소</label>
-            <input type="text" id="address2" class="form-control" placeholder="나머지 상세 주소를 입력해주세요">
+            <input type="text" id="address2" class="form-control" placeholder="나머지 상세 주소를 입력하세요">
         </div>
         <div class="form-group">
-            <label for="orderMemo">배송 메모</label>
-            <textarea id="orderMemo" class="form-control" rows="3" placeholder="배송 시 요청사항을 입력해주세요 (예: 문 앞에 놓아주세요)"></textarea>
+            <label for="orderMemo">배송 메시지 (선택)</label>
+            <textarea id="orderMemo" class="form-control" rows="2" placeholder="배송 시 요청사항이 있다면 입력해주세요"></textarea>
         </div>
 
-        <div class="section-title">결제 수단</div>
-        <div style="padding: 1rem; background: #f8fafc; border-radius: 12px; margin-bottom: 2rem;">
-            <p><i class="fas fa-info-circle"></i> 결제하기 버튼을 누르면 결제창이 열립니다.</p>
+        <div class="section-title">결제 방법</div>
+        <div style="padding: 1.25rem; background: #eff6ff; border-radius: var(--radius); border: 1px solid #dbeafe; margin-bottom: 2.5rem;">
+            <p style="font-size: 0.9rem; color: #1e40af; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-shield-alt"></i> 안전한 결제를 위해 보안 연결(SSL)을 사용합니다.
+            </p>
         </div>
 
-        <button class="btn-pay" id="payment-button">
-            <fmt:formatNumber value="${totalAmount + deliveryFee}" type="number" maxFractionDigits="0"/>원 결제하기
+        <button class="btn-pay" id="payment-button" style="width: 100%; padding: 1.25rem; font-size: 1.25rem; border-radius: var(--radius);">
+            총 <fmt:formatNumber value="${totalAmount + deliveryFee}" type="number" maxFractionDigits="0"/>원 결제하기
         </button>
     </div>
 </main>
@@ -258,15 +261,18 @@
 
         try {
             // 1. Create Order in Backend
+            const totalAmountVal = parseInt("${not empty totalAmount ? totalAmount : 0}");
+            const deliveryFeeVal = parseInt("${not empty deliveryFee ? deliveryFee : 0}");
+
             const orderResponse = await fetch("/api/payment/order/create", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     userNo: "${userInfoVo.userNo}",
                     branchId: "${branchInfo.BRANCH_ID}",
-                    totalItemAmount: ${totalAmount},
-                    deliveryFee: ${deliveryFee},
-                    totalPayAmount: ${totalAmount + deliveryFee},
+                    totalItemAmount: totalAmountVal,
+                    deliveryFee: deliveryFeeVal,
+                    totalPayAmount: totalAmountVal + deliveryFeeVal,
                     receiverName: receiverName,
                     receiverPhone: receiverPhone,
                     zipCode: zipCode,
@@ -276,7 +282,7 @@
                     items: [
                         {
                             productId: "${productInfo.PRODUCT_ID}",
-                            quantity: "${quantity}",
+                            quantity: "${not empty quantity ? quantity : 1}",
                             productName: "${productInfo.TITLE}"
                         }
                     ]
@@ -288,9 +294,9 @@
             if (orderData.success) {
                 // 2. Request Payment via Toss (Direct Implementation)
                 await tossPayments.requestPayment('카드', {
-                    amount: ${totalAmount + deliveryFee},
+                    amount: totalAmountVal + deliveryFeeVal,
                     orderId: orderData.orderNo,
-                    orderName: "${productInfo.TITLE}" + (parseInt("${quantity}") > 1 ? " 외" : ""),
+                    orderName: "${productInfo.TITLE}" + (parseInt("${not empty quantity ? quantity : 1}") > 1 ? " 외" : ""),
                     successUrl: window.location.origin + "/shop/success.do",
                     failUrl: window.location.origin + "/shop/fail.do",
                     customerName: "${userInfoVo.userNm}"

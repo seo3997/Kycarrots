@@ -75,28 +75,28 @@
                 <img src="${branchInfo.LOGO_IMAGE_URL}" alt="Logo">
             </c:when>
             <c:otherwise>
-                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-                    <i class="fas fa-shopping-bag"></i>
+                <div style="width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="fas fa-shopping-bag" style="font-size: 0.9rem;"></i>
                 </div>
             </c:otherwise>
         </c:choose>
         <span>${branchInfo.BRANCH_NAME}</span>
     </a>
-    <nav class="nav-links" style="display: flex; gap: 1.5rem; align-items: center;">
-        <a href="/shop/list.do" style="text-decoration: none; color: var(--text); font-weight: 500;">상품목록</a>
-        <a href="/shop/orderList.do" style="text-decoration: none; color: var(--text); font-weight: 500;">주문현황</a>
+    <nav class="nav-links">
+        <a href="/shop/list.do">상품목록</a>
+        <a href="/shop/orderList.do">주문현황</a>
         <c:choose>
             <c:when test="${empty userInfoVo}">
-                <a href="/front/registForm.do" style="text-decoration: none; color: var(--text); font-weight: 500;">회원가입</a>
-                <a href="/front/login.do" style="text-decoration: none; color: white; background: var(--primary); padding: 0.5rem 1.25rem; border-radius: var(--radius); font-weight: 500;">로그인</a>
+                <a href="/front/login.do" class="btn-login">로그인</a>
             </c:when>
             <c:otherwise>
-                <span style="font-weight: 500;">${userInfoVo.userNm}님</span>
-                <a href="/front/logout.do" style="text-decoration: none; color: var(--text); font-weight: 500;">로그아웃</a>
+                <a href="/front/logout.do">로그아웃</a>
             </c:otherwise>
         </c:choose>
     </nav>
 </header>
+
+<link rel="stylesheet" href="/common/front/css/front_common.css">
 
 <main class="container">
     <div class="detail-wrapper">
@@ -204,8 +204,9 @@
         <c:choose>
             <c:when test="${empty userInfoVo}">
                 if(confirm("구매를 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")) {
-                    const currentUrl = encodeURIComponent(window.location.pathname + window.location.search);
-                    location.href = `/front/login.do?redirectUrl=${currentUrl}`;
+                    const currentPath = window.location.pathname + window.location.search;
+                    const redirectUrl = encodeURIComponent(currentPath);
+                    location.href = "/front/login.do?redirectUrl=" + redirectUrl;
                 }
             </c:when>
             <c:otherwise>

@@ -16,7 +16,7 @@
     <a href="/shop/list.do" class="logo">
         <c:choose>
             <c:when test="${not empty branchInfo.LOGO_IMAGE_URL}">
-                <img src="${branchInfo.LOGO_IMAGE_URL}" alt="Logo" style="height: 40px; border-radius: 8px;">
+                <img src="${branchInfo.LOGO_IMAGE_URL}" alt="Logo">
             </c:when>
             <c:otherwise>
                 <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
@@ -26,49 +26,50 @@
         </c:choose>
         <span>${branchInfo.BRANCH_NAME}</span>
     </a>
-    <nav class="nav-links" style="display: flex; gap: 1.5rem; align-items: center;">
-        <a href="/shop/list.do" style="text-decoration: none; color: var(--text); font-weight: 500;">상품목록</a>
-        <a href="/shop/orderList.do" style="text-decoration: none; color: var(--text); font-weight: 500;">주문현황</a>
+    <nav class="nav-links">
+        <a href="/shop/list.do">상품목록</a>
+        <a href="/shop/orderList.do">주문현황</a>
         <c:choose>
             <c:when test="${empty userInfoVo}">
-                <a href="/front/registForm.do" style="text-decoration: none; color: var(--text); font-weight: 500;">회원가입</a>
-                <a href="/front/login.do" style="text-decoration: none; color: white; background: var(--primary); padding: 0.5rem 1.25rem; border-radius: var(--radius); font-weight: 500;">로그인</a>
+                <a href="/front/registForm.do">회원가입</a>
+                <a href="/front/login.do" class="btn-login">로그인</a>
             </c:when>
             <c:otherwise>
-                <span style="font-weight: 500;">${userInfoVo.userNm}님</span>
-                <a href="/front/logout.do" style="text-decoration: none; color: var(--text); font-weight: 500;">로그아웃</a>
+                <span>${userInfoVo.userNm}님</span>
+                <a href="/front/logout.do">로그아웃</a>
             </c:otherwise>
         </c:choose>
     </nav>
 </header>
 
-<div class="main-content">
-<div class="login-card">
-    <div class="login-header">
-        <div class="logo"><i class="fas fa-shopping-bag"></i></div>
-        <h1>Kycarrots 로그인</h1>
-    </div>
-    
-    <form id="loginForm">
-        <div class="form-group">
-            <label for="user_id">아이디</label>
-            <input type="text" id="user_id" name="user_id" class="form-control" placeholder="아이디를 입력하세요" required>
-        </div>
-        <div class="form-group">
-            <label for="user_pw">비밀번호</label>
-            <input type="password" id="user_pw" name="user_pw" class="form-control" placeholder="비밀번호를 입력하세요" required>
+<main class="main-content">
+    <div class="login-card">
+        <div class="login-header text-center">
+            <div class="logo"><i class="fas fa-sign-in-alt"></i></div>
+            <h1 style="font-size: 1.75rem; font-weight: 700;">Kycarrots 로그인</h1>
+            <p class="text-muted mt-2">서비스 이용을 위해 로그인해 주세요.</p>
         </div>
         
-        <div id="error-box" class="error-msg"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="user_id">아이디</label>
+                <input type="text" id="user_id" name="user_id" class="form-control" placeholder="아이디를 입력하세요" required>
+            </div>
+            <div class="form-group">
+                <label for="user_pw">비밀번호</label>
+                <input type="password" id="user_pw" name="user_pw" class="form-control" placeholder="비밀번호를 입력하세요" required>
+            </div>
+            
+            <div id="error-box" class="error-msg" style="display:none;"></div>
 
-        <button type="submit" class="btn-login">로그인</button>
-    </form>
+            <button type="submit" class="btn-login" style="width:100%; height:50px; font-size:1.1rem; margin-top:1rem;">로그인</button>
+        </form>
 
-    <div class="login-footer">
-        아직 회원이 아니신가요? <a href="/front/registForm.do">회원가입</a>
+        <div class="login-footer text-center">
+            아직 회원이 아니신가요? <a href="/front/registForm.do">회원가입</a>
+        </div>
     </div>
-</div>
-</div>
+</main>
 
 <script src="/common/front/lib/jquery-3.6.0.min.js"></script>
 <script src="/common/front/js/front_common.js"></script>
