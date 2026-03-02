@@ -27,7 +27,7 @@
 		ssAuthorId = StringUtil.nvl(ssUserInfoVo.getAuthorId());
 	}
 
-	String headTitle = "kyCarrots";
+	String headTitle = "asagong";
 	// 각페이지 타이틀 이름
 	String PAGE_TITLE = "";
 	pageContext.setAttribute("ssAuthorId", ssAuthorId);

@@ -153,7 +153,7 @@
 								<!--  
 								<h1 class="login-logo"><a href="/front/main.do"><img alt="Microbiz" src="/common/images/logo_login.png"/></a></h1>
 								-->
-								<h2 class="login-title"><span>kyCarrots 로그인</span></h2>
+								<h2 class="login-title"><span>asagong 로그인</span></h2>
 								<div class="login-box">
 									<span class="login-ic"><i class="item-loc"></i>	</span>
 									<div class="form-group">

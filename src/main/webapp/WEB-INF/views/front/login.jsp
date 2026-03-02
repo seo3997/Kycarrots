@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인 - Kycarrots</title>
+    <title>로그인 - asagong</title>
     <link rel="stylesheet" href="/common/front/lib/font-awesome/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/common/front/css/front_common.css">
@@ -103,7 +103,7 @@
     <div class="login-card">
         <div class="login-header text-center">
             <div class="logo"><i class="fas fa-sign-in-alt"></i></div>
-            <h1 style="font-size: 1.75rem; font-weight: 700;">Kycarrots 로그인</h1>
+            <h1 style="font-size: 1.75rem; font-weight: 700;">asagong 로그인</h1>
             <p class="text-muted mt-2">서비스 이용을 위해 로그인해 주세요.</p>
         </div>
         

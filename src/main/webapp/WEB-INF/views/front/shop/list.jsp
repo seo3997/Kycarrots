@@ -341,7 +341,7 @@
         <p>사업자등록번호: ${branchInfo.BUSINESS_NUMBER} | 통신판매업신고: ${branchInfo.TONGSIN_NUMBER}</p>
         <p>주소: ${branchInfo.ADDRESS}</p>
         <p>고객센터: ${branchInfo.CS_PHONE} | 도메인: ${branchInfo.DOMAIN_URL}</p>
-        <p style="margin-top: 2rem; opacity: 0.6;">&copy; 2024 Kycarrots. All rights reserved.</p>
+        <p style="margin-top: 2rem; opacity: 0.6;">&copy; 2024 asagong. All rights reserved.</p>
     </div>
 </footer>
 

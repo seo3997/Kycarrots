@@ -56,7 +56,7 @@
     <meta http-equiv="Pragma" content="no-cache"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="robots" content="NONE" />
-    <title>kyCarrots | 에러</title>
+    <title>asagong | 에러</title>
 
     <script type="text/javascript" src="/common/js/jquery/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="/common/js/jquery-ui/jquery-ui-1.10.3.custom.min.js"></script>
@@ -134,7 +134,7 @@
     </div>
 
     <footer class="main-footer text-center">
-        <strong>Copyright 2021. <a href="#">kyCarrots</a>.</strong> All rights reserved.
+        <strong>Copyright 2021. <a href="#">asagong</a>.</strong> All rights reserved.
     </footer>
 </div>
 

@@ -237,7 +237,7 @@
                 <%-- SYSTEM ADMIN ROLE: System Status Dashboard --%>
                 <c:when test="${memberCode == 'ROLE_ADMIN'}">
                     <div class="dashboard-header">
-                        <h1 class="dashboard-title">시스템 관리자 모드 <span>[Kycarrots Control]</span></h1>
+                        <h1 class="dashboard-title">시스템 관리자 모드 <span>[asagong Control]</span></h1>
                         <span class="dashboard-date"><%=DateUtil.getToday("yyyy년 MM월 dd일")%> 기준</span>
                     </div>
 
@@ -502,7 +502,7 @@
                 <%-- Default or Other Roles --%>
                 <c:otherwise>
                     <div class="dashboard-header">
-                        <h1 class="dashboard-title">관리 시스템 <span>[ Kycarrots ]</span></h1>
+                        <h1 class="dashboard-title">관리 시스템 <span>[ asagong ]</span></h1>
                     </div>
                     <div class="stats-grid">
                         <div class="stat-card">

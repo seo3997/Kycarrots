@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입 - Kycarrots</title>
+    <title>회원가입 - asagong</title>
     <link rel="stylesheet" href="/common/front/lib/font-awesome/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/common/front/css/front_common.css">
@@ -104,7 +104,7 @@
     <div class="regist-card">
         <div class="regist-header text-center">
             <div class="logo"><i class="fas fa-user-plus"></i></div>
-            <h1 style="font-size: 1.75rem; font-weight: 700;">Kycarrots 회원가입</h1>
+            <h1 style="font-size: 1.75rem; font-weight: 700;">asagong 회원가입</h1>
             <p class="text-muted mt-2">필요한 정보를 입력하여 계정을 만들어주세요.</p>
         </div>
         
