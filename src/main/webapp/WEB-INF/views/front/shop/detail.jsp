@@ -1,4 +1,6 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page import="com.whomade.kycarrots.framework.common.util.StringUtil" %>
+<%@ page import="com.whomade.kycarrots.framework.common.util.SysUtil" %>
 <%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn"     uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -30,15 +32,24 @@
         .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--text); font-weight: 700; font-size: 1.25rem; }
         .logo img { height: 40px; border-radius: 8px; }
 
-        .container { max-width: 1000px; margin: 2rem auto; padding: 2rem; }
-        .detail-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; background: white; padding: 2rem; border-radius: 20px; box-shadow: var(--shadow); }
+        .container { max-width: 800px; margin: 2rem auto; padding: 1rem; }
+        .detail-wrapper { display: flex; flex-direction: column; gap: 2rem; background: white; padding: 2rem; border-radius: 20px; box-shadow: var(--shadow); }
 
-        .product-img { width: 100%; border-radius: 12px; aspect-ratio: 1; background: #f1f5f9; background-size: cover; background-position: center; }
+        .product-img { width: 100%; border-radius: 12px; aspect-ratio: 16/9; background: #f1f5f9; background-size: cover; background-position: center; }
         
-        .product-info h1 { font-size: 2rem; margin-bottom: 1rem; }
-        .price-tag { font-size: 1.75rem; font-weight: 700; color: var(--primary); margin-bottom: 2rem; }
+        .product-info h1 { font-size: 1.75rem; margin-bottom: 0.75rem; }
+        .price-tag { font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 1.5rem; }
         
-        .description { color: var(--text-muted); margin-bottom: 2rem; line-height: 1.8; }
+        .description-card { background: white; border-radius: 20px; padding: 2.5rem; box-shadow: var(--shadow); margin-top: 2rem; }
+        .description-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #f1f5f9; }
+        .description { color: var(--text-muted); line-height: 1.8; font-size: 1.05rem; }
+        .description img { max-width: 100%; height: auto; border-radius: 8px; margin: 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .description table { width: 100% !important; border-collapse: collapse; margin: 1.5rem 0; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .description table th, .description table td { padding: 12px 16px; border: 1px solid #e2e8f0; }
+        .description table th { background: #f8fafc; font-weight: 600; color: var(--text); }
+        .description p { margin-bottom: 1rem; }
+        .description pre, .description code { background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; }
+        .description blockquote { border-left: 4px solid var(--primary); padding-left: 1rem; margin: 1.5rem 0; font-style: italic; color: var(--text); }
 
         .order-box { border-top: 1px solid #e2e8f0; padding-top: 2rem; }
         .quantity-selector { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
@@ -90,9 +101,6 @@
         <div class="product-info">
             <h1>${productInfo.TITLE}</h1>
             <p class="price-tag"><fmt:formatNumber value="${productInfo.PRICE}" type="number" maxFractionDigits="0"/>원</p>
-            <div class="description">
-                ${productInfo.DESCRIPTION}
-            </div>
             
             <div class="order-box">
                 <div class="quantity-info" style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted);">
@@ -113,6 +121,28 @@
                     </c:otherwise>
                 </c:choose>
             </div>
+        </div>
+    </div>
+
+    <div class="description-card">
+        <div class="description-title">상품 상세 설명</div>
+        <div class="description">
+            <c:set var="editorMode" value="${productInfo.EDITOR_MODE}" />
+            <% 
+                com.whomade.kycarrots.framework.common.object.DataMap pInfo = (com.whomade.kycarrots.framework.common.object.DataMap)request.getAttribute("productInfo");
+                String mode = pInfo.getString("EDITOR_MODE");
+                if (mode.equalsIgnoreCase("true")) mode = "1";
+                else if (mode.equalsIgnoreCase("false")) mode = "0";
+
+                String desc = pInfo.getStringOrgn("DESCRIPTION");
+                if (desc.equals("")) desc = pInfo.getStringOrgn("description");
+
+                if ("1".equals(mode) || "2".equals(mode)) {
+            %>
+                <%= desc %>
+            <% } else { %>
+                <%= StringUtil.getHtmlValue(desc) %>
+            <% } %>
         </div>
     </div>
 </main>
