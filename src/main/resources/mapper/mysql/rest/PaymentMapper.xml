@@ -33,9 +33,9 @@
     <update id="updateOrderStatus" parameterType="com.whomade.kycarrots.entity.payment.OrderVo">
         UPDATE tb_orders
         SET ORDER_STATUS = #{orderStatus},
-            PAID_AT = CASE WHEN #{orderStatus} = '30' THEN CURRENT_TIMESTAMP ELSE PAID_AT END,
-            CANCELLED_AT = CASE WHEN #{orderStatus} = '40' THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
-            CANCEL_REASON = CASE WHEN #{orderStatus} = '40' THEN #{cancelReason} ELSE CANCEL_REASON END,
+            PAID_AT = CASE WHEN #{orderStatus} IN ('30', '50') AND PAID_AT IS NULL THEN CURRENT_TIMESTAMP ELSE PAID_AT END,
+            CANCELLED_AT = CASE WHEN #{orderStatus} IN ('40', '89') AND CANCELLED_AT IS NULL THEN CURRENT_TIMESTAMP ELSE CANCELLED_AT END,
+            CANCEL_REASON = CASE WHEN #{orderStatus} IN ('40', '80') THEN #{cancelReason} ELSE CANCEL_REASON END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE ORDER_ID = #{orderId}

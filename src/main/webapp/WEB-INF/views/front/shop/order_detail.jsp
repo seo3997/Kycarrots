@@ -135,10 +135,14 @@
             <span class="info-label">주문상태</span>
             <span class="info-value">
                 <c:choose>
-                    <c:when test="${resultVo.orderStatus == '30'}"><span class="status-badge" style="background: #dcfce7; color: #166534;">결제완료</span></c:when>
+                    <c:when test="${resultVo.orderStatus == '30'}"><span class="status-badge" style="background: #eff6ff; color: #1e40af;">결제완료</span></c:when>
                     <c:when test="${resultVo.orderStatus == '40'}"><span class="status-badge" style="background: #fee2e2; color: #991b1b;">주문취소</span></c:when>
+                    <c:when test="${resultVo.orderStatus == '50'}"><span class="status-badge" style="background: #fff7ed; color: #9a3412;">배송준비중</span></c:when>
                     <c:when test="${resultVo.orderStatus == '60'}"><span class="status-badge" style="background: #dbeafe; color: #1e40af;">배송중</span></c:when>
                     <c:when test="${resultVo.orderStatus == '70'}"><span class="status-badge" style="background: #f0fdf4; color: #166534;">배송완료</span></c:when>
+                    <c:when test="${resultVo.orderStatus == '80'}"><span class="status-badge" style="background: #fff1f2; color: #9f1239;">반품요청</span></c:when>
+                    <c:when test="${resultVo.orderStatus == '89'}"><span class="status-badge" style="background: #f1f5f9; color: #475569;">반품완료</span></c:when>
+                    <c:when test="${resultVo.orderStatus == '99'}"><span class="status-badge" style="background: #f8fafc; color: #0f172a;">주문확정</span></c:when>
                     <c:otherwise><span class="status-badge" style="background: #f1f5f9; color: #475569;">${resultVo.orderStatus}</span></c:otherwise>
                 </c:choose>
             </span>
