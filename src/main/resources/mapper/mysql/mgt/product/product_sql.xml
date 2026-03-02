@@ -73,9 +73,19 @@
 		<if test="memberCode == 'ROLE_PROJ'">
 			AND A.WHOLESALER_NO = #{ss_user_no}
 		</if>
-		<if test="sch_sale_status_code != null and sch_sale_status_code != ''">
-			AND A.SALE_STATUS = #{sch_sale_status_code}
-		</if>
+		<choose>
+			<when test="sch_shop_sale_statuses != null and sch_shop_sale_statuses != ''">
+				AND A.SALE_STATUS IN ('1', '20', '30', '99')
+				<if test="sch_sale_status_code != null and sch_sale_status_code != ''">
+					AND A.SALE_STATUS = #{sch_sale_status_code}
+				</if>
+			</when>
+			<otherwise>
+				<if test="sch_sale_status_code != null and sch_sale_status_code != ''">
+					AND A.SALE_STATUS = #{sch_sale_status_code}
+				</if>
+			</otherwise>
+		</choose>
 		<if test="sch_category_m_code != null and sch_category_m_code != ''">
 			AND A.CATEGORY_GROUP = 'R010610'
 			AND A.CATEGORY_MID = #{sch_category_m_code}

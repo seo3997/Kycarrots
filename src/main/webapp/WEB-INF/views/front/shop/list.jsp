@@ -230,20 +230,97 @@
     .product-img {
         aspect-ratio: 1; /* Force square images for consistency */
         height: auto;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .not-for-sale {
+        opacity: 0.8;
+    }
+
+    .status-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.25rem;
+        backdrop-filter: blur(2px);
+    }
+</style>
+
+<style>
+    .filter-section {
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .filter-btn {
+        padding: 0.5rem 1.25rem;
+        border-radius: 20px;
+        background: #f1f5f9;
+        color: #64748b;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+    .filter-btn:hover {
+        background: #e2e8f0;
+    }
+    .filter-btn.active {
+        background: white;
+        color: var(--primary);
+        border-color: var(--primary);
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
     }
 </style>
 
 <main class="container">
+    <div class="filter-section">
+        <a href="/shop/list.do?sch_sale_status_code=ALL" class="filter-btn ${searchParam.sch_sale_status_code eq 'ALL' or empty searchParam.sch_sale_status_code ? 'active' : ''}">전체</a>
+        <a href="/shop/list.do?sch_sale_status_code=1" class="filter-btn ${searchParam.sch_sale_status_code eq '1' ? 'active' : ''}">판매중</a>
+        <a href="/shop/list.do?sch_sale_status_code=20" class="filter-btn ${searchParam.sch_sale_status_code eq '20' ? 'active' : ''}">품절</a>
+        <a href="/shop/list.do?sch_sale_status_code=30" class="filter-btn ${searchParam.sch_sale_status_code eq '30' ? 'active' : ''}">판매중지</a>
+        <a href="/shop/list.do?sch_sale_status_code=99" class="filter-btn ${searchParam.sch_sale_status_code eq '99' ? 'active' : ''}">판매완료</a>
+    </div>
+
     <h2 class="section-title"><i class="fas fa-th-large text-primary"></i> 오늘의 추천 상품</h2>
     <div class="product-grid">
         <c:choose>
             <c:when test="${not empty resultList}">
                 <c:forEach var="item" items="${resultList}">
-                    <a href="/shop/detail.do?productId=${item.PRODUCT_ID}" class="product-card">
-                        <div class="product-img" style="background-image: url('${item.IMAGE_URL}')"></div>
+                    <a href="/shop/detail.do?productId=${item.PRODUCT_ID}" class="product-card ${item.SALE_STATUS ne '1' ? 'not-for-sale' : ''}">
+                        <div class="product-img" style="background-image: url('${item.IMAGE_URL}')">
+                            <c:choose>
+                                <c:when test="${item.SALE_STATUS eq '0'}"><div class="status-overlay">승인요청</div></c:when>
+                                <c:when test="${item.SALE_STATUS eq '10'}"><div class="status-overlay">예약중</div></c:when>
+                                <c:when test="${item.SALE_STATUS eq '20'}"><div class="status-overlay">품절</div></c:when>
+                                <c:when test="${item.SALE_STATUS eq '30'}"><div class="status-overlay">판매중지</div></c:when>
+                                <c:when test="${item.SALE_STATUS eq '98'}"><div class="status-overlay">반려</div></c:when>
+                                <c:when test="${item.SALE_STATUS eq '99'}"><div class="status-overlay">판매완료</div></c:when>
+                                <c:when test="${item.SALE_STATUS ne '1'}"><div class="status-overlay">준비중</div></c:when>
+                            </c:choose>
+                        </div>
                         <div class="product-info">
                             <div class="product-name">${item.TITLE}</div>
-                            <div class="product-price"><fmt:formatNumber value="${item.PRICE}" type="number" maxFractionDigits="0"/>원</div>
+                            <c:choose>
+                                <c:when test="${item.SALE_STATUS eq '1'}">
+                                    <div class="product-price"><fmt:formatNumber value="${item.PRICE}" type="number" maxFractionDigits="0"/>원</div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="product-price" style="color: #94a3b8; font-size: 0.9rem;">구매불가</div>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </a>
                 </c:forEach>

@@ -102,7 +102,18 @@
     <div class="detail-wrapper">
         <div class="product-img" style="background-image: url('${productInfo.IMAGE_URL}')"></div>
         <div class="product-info">
-            <h1>${productInfo.TITLE}</h1>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                <h1 style="margin-bottom: 0;">${productInfo.TITLE}</h1>
+                <c:choose>
+                    <c:when test="${productInfo.SALE_STATUS eq '0'}"><span class="status-badge" style="background: #f1f5f9; color: #94a3b8;">승인요청</span></c:when>
+                    <c:when test="${productInfo.SALE_STATUS eq '10'}"><span class="status-badge" style="background: #eff6ff; color: #3b82f6;">예약중</span></c:when>
+                    <c:when test="${productInfo.SALE_STATUS eq '20'}"><span class="status-badge" style="background: #fdf2f2; color: #ef4444;">품절</span></c:when>
+                    <c:when test="${productInfo.SALE_STATUS eq '30'}"><span class="status-badge" style="background: #fff7ed; color: #f59e0b;">판매중지</span></c:when>
+                    <c:when test="${productInfo.SALE_STATUS eq '98'}"><span class="status-badge" style="background: #fef2f2; color: #dc2626;">반려</span></c:when>
+                    <c:when test="${productInfo.SALE_STATUS eq '99'}"><span class="status-badge" style="background: #f8fafc; color: #64748b;">판매완료</span></c:when>
+                    <c:when test="${productInfo.SALE_STATUS ne '1'}"><span class="status-badge" style="background: #f1f5f9; color: #94a3b8;">준비중</span></c:when>
+                </c:choose>
+            </div>
             <p class="price-tag"><fmt:formatNumber value="${productInfo.PRICE}" type="number" maxFractionDigits="0"/>원</p>
             
             <div class="order-box">
@@ -116,11 +127,24 @@
                     <button class="btn-qty" id="btn-plus"><i class="fas fa-plus"></i></button>
                 </div>
                 <c:choose>
-                    <c:when test="${productInfo.AVAILABLE_QUANTITY > 0}">
+                    <c:when test="${productInfo.SALE_STATUS eq '1' && productInfo.AVAILABLE_QUANTITY > 0}">
                         <button class="btn-order" onclick="goToCheckout()">구매하기</button>
                     </c:when>
                     <c:otherwise>
-                        <button class="btn-order" style="background: #cbd5e1; cursor: not-allowed;" disabled>품절</button>
+                        <c:choose>
+                            <c:when test="${productInfo.SALE_STATUS eq '20' || productInfo.AVAILABLE_QUANTITY <= 0}">
+                                <button class="btn-order" style="background: #cbd5e1; cursor: not-allowed;" disabled>품절</button>
+                            </c:when>
+                            <c:when test="${productInfo.SALE_STATUS eq '30'}">
+                                <button class="btn-order" style="background: #cbd5e1; cursor: not-allowed;" disabled>판매중지</button>
+                            </c:when>
+                            <c:when test="${productInfo.SALE_STATUS eq '99'}">
+                                <button class="btn-order" style="background: #cbd5e1; cursor: not-allowed;" disabled>판매완료</button>
+                            </c:when>
+                            <c:otherwise>
+                                <button class="btn-order" style="background: #cbd5e1; cursor: not-allowed;" disabled>구매불가</button>
+                            </c:otherwise>
+                        </c:choose>
                     </c:otherwise>
                 </c:choose>
             </div>

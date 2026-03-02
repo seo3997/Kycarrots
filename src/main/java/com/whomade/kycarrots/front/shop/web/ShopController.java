@@ -47,10 +47,21 @@ public class ShopController {
         // Assuming branchId matches WHOLESALER_NO for filtering products
         param.put("wholesalerNo", branchId);
         param.put("rowCount", param.getString("rowCount", "20"));
+
+        // Default sale status to '1' (On Sale) if not provided and not 'ALL'
+        if (param.getString("sch_sale_status_code").isEmpty()) {
+            param.put("sch_sale_status_code", "1");
+        } else if ("ALL".equals(param.getString("sch_sale_status_code"))) {
+            param.put("sch_sale_status_code", "");
+        }
+
+        // Only fetch valid shop statuses (1, 20, 30, 99)
+        param.put("sch_shop_sale_statuses", "Y");
+
         List<DataMap> productList = productService.selectPageListProcuct(model, param);
 
         model.addAttribute("resultList", productList);
-        model.addAttribute("param", param);
+        model.addAttribute("searchParam", param);
         return "front/shop/list";
     }
 

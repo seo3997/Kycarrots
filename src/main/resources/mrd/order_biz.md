@@ -44,7 +44,9 @@
     60:SHIPPING:배송중
     70:DELIVERED:배송완료
     80:RETURN_REQUESTED:반품요청
+    89:반품완료
     90:EXCHANGED:교환완료
+    99:주문확정
 
 2-2.결재 상태 코드
 공통코드그룹:R010670
@@ -64,3 +66,10 @@ tb_product.SALE_STATUS 필드 사용
 30:판매중지
 98:반려
 99:판매완료
+
+2-4 지점의 본사 입금상태코드
+공통코드그룹:R010680
+tb_orders.BRANCH_DEPOSIT_STATUS 필드 사용
+10:WAITING:입금대기
+20:DEPOSITED:입금완료
+30:CANCEL:입금취소
