@@ -113,33 +113,58 @@
             </div>
         </div>
 
-        <div class="section-title">배송 정보 입력</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 1rem;">
+            <div class="section-title" style="margin: 0;">배송 정보 입력</div>
+            <c:if test="${not empty userInfoVo}">
+                <button type="button" onclick="openAddressPopup()" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; border: 1px solid var(--primary); color: var(--primary); background: white; border-radius: 6px; cursor: pointer;">
+                    <i class="fas fa-list"></i> 배송지 목록
+                </button>
+            </c:if>
+        </div>
+
         <div class="form-group">
             <label for="receiverName">받는 사람</label>
-            <input type="text" id="receiverName" class="form-control" value="${userInfoVo.userNm}" placeholder="이름을 입력하세요">
+            <input type="text" id="receiverName" class="form-control" value="${not empty defaultAddress ? defaultAddress.RECIPIENT_NAME : userInfoVo.userNm}" placeholder="이름을 입력하세요">
         </div>
         <div class="form-group">
             <label for="receiverPhone">연락처</label>
-            <input type="tel" id="receiverPhone" class="form-control" value="${userInfoVo.cttpc}" placeholder="'-' 제외하고 입력">
+            <input type="tel" id="receiverPhone" class="form-control" value="${not empty defaultAddress ? defaultAddress.RECIPIENT_PHONE : userInfoVo.cttpc}" placeholder="'-' 제외하고 입력">
         </div>
         <div class="form-group">
             <label for="zipCode">우편번호</label>
-            <div class="input-group">
-                <input type="text" id="zipCode" class="form-control" placeholder="우편번호" readonly>
-                <button type="button" class="btn-check" onclick="execDaumPostcode()" style="min-width: 100px;">주소 검색</button>
+            <div class="input-group" style="display: flex; gap: 0.5rem;">
+                <input type="text" id="zipCode" class="form-control" value="${defaultAddress.ZIP_CODE}" placeholder="우편번호" readonly>
+                <button type="button" onclick="execDaumPostcode()" style="min-width: 100px; padding: 0.75rem; background: #64748b; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">주소 검색</button>
             </div>
         </div>
         <div class="form-group">
             <label for="address1">주소</label>
-            <input type="text" id="address1" class="form-control" placeholder="기본 주소" readonly style="background: #f8fafc;">
+            <input type="text" id="address1" class="form-control" value="${defaultAddress.ADDRESS_MAIN}" placeholder="기본 주소" readonly style="background: #f8fafc;">
         </div>
         <div class="form-group">
             <label for="address2">상세 주소</label>
-            <input type="text" id="address2" class="form-control" placeholder="나머지 상세 주소를 입력하세요">
+            <input type="text" id="address2" class="form-control" value="${defaultAddress.ADDRESS_DETAIL}" placeholder="나머지 상세 주소를 입력하세요">
         </div>
+        
+        <c:if test="${not empty userInfoVo}">
+            <div class="form-group" style="margin-top: 1rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 400; font-size: 0.95rem;">
+                    <input type="checkbox" id="saveAddress" ${empty defaultAddress ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--primary);">
+                    이 배송지를 목록에 저장
+                </label>
+            </div>
+        </c:if>
+
         <div class="form-group">
             <label for="orderMemo">배송 메시지 (선택)</label>
-            <textarea id="orderMemo" class="form-control" rows="2" placeholder="배송 시 요청사항이 있다면 입력해주세요"></textarea>
+            <select id="memoSelect" class="form-control" style="margin-bottom: 0.5rem;" onchange="updateMemo(this)">
+                <option value="">직접 입력</option>
+                <option value="문 앞에 놓아주세요" ${defaultAddress.MEMO == '문 앞에 놓아주세요' ? 'selected' : ''}>문 앞에 놓아주세요</option>
+                <option value="경비실에 맡겨주세요" ${defaultAddress.MEMO == '경비실에 맡겨주세요' ? 'selected' : ''}>경비실에 맡겨주세요</option>
+                <option value="배송 전 연락주세요" ${defaultAddress.MEMO == '배송 전 연락주세요' ? 'selected' : ''}>배송 전 연락주세요</option>
+                <option value="부재 시 전화주세요" ${defaultAddress.MEMO == '부재 시 전화주세요' ? 'selected' : ''}>부재 시 전화주세요</option>
+            </select>
+            <textarea id="orderMemo" class="form-control" rows="2" placeholder="배송 시 요청사항이 있다면 입력해주세요">${defaultAddress.MEMO}</textarea>
         </div>
 
         <div class="section-title">결제 방법</div>
@@ -229,6 +254,58 @@
         element_layer.style.top = ((window.innerHeight - height) / 2) + 'px';
     }
 
+    function formatPhone(phone) {
+        if (!phone) return "";
+        const digits = phone.replace(/\D/g, "");
+        if (digits.length === 11) {
+            return digits.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+        } else if (digits.length === 10) {
+            return digits.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+        }
+        return digits;
+    }
+
+    function openAddressPopup() {
+        const width = 500;
+        const height = 600;
+        const left = (window.screen.width / 2) - (width / 2);
+        const top = (window.screen.height / 2) - (height / 2);
+        window.open('/front/member/addressListPopup.do', 'addressPopup', 
+            `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`);
+    }
+
+    function updateMemo(select) {
+        const memoText = document.getElementById('orderMemo');
+        if (select.value) {
+            memoText.value = select.value;
+        } else {
+            memoText.value = '';
+            memoText.focus();
+        }
+    }
+
+    function selectAddress(address) {
+        document.getElementById('receiverName').value = address.recipientName;
+        document.getElementById('receiverPhone').value = formatPhone(address.recipientPhone);
+        document.getElementById('zipCode').value = address.zipCode;
+        document.getElementById('address1').value = address.addressMain;
+        document.getElementById('address2').value = address.addressDetail;
+        
+        const memoSelect = document.getElementById('memoSelect');
+        const memoText = document.getElementById('orderMemo');
+        memoText.value = address.memo || '';
+        
+        let found = false;
+        for(let i=0; i<memoSelect.options.length; i++){
+            if(memoSelect.options[i].value === address.memo){
+                memoSelect.selectedIndex = i;
+                found = true;
+                break;
+            }
+        }
+        if(!found) memoSelect.selectedIndex = 0;
+    }
+
     document.getElementById("payment-button").addEventListener("click", async function () {
         const receiverName = document.getElementById("receiverName").value;
         const receiverPhone = document.getElementById("receiverPhone").value;
@@ -266,6 +343,27 @@
         this.innerText = "처리 중...";
 
         try {
+            // 0. Save Address to Address Book if requested or if it's the first one
+            const saveAddressChecked = document.getElementById("saveAddress") ? document.getElementById("saveAddress").checked : false;
+            const hasDefaultAddress = "${not empty defaultAddress}";
+            
+            if (("${not empty userInfoVo}" === "true") && (saveAddressChecked || hasDefaultAddress === "false")) {
+                await fetch("/front/member/saveAddressAjax.do", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams({
+                        recipientName: receiverName,
+                        recipientPhone: receiverPhone.replace(/-/g, ''),
+                        zipCode: zipCode,
+                        addressMain: address1,
+                        addressDetail: address2,
+                        memo: orderMemo,
+                        isDefault: hasDefaultAddress === "false" ? "1" : "0",
+                        addressName: "기본배송지"
+                    })
+                });
+            }
+
             // 1. Create Order in Backend
             const totalAmountVal = parseInt("${not empty totalAmount ? totalAmount : 0}");
             const deliveryFeeVal = parseInt("${not empty deliveryFee ? deliveryFee : 0}");

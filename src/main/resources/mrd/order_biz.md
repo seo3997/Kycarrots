@@ -76,7 +76,7 @@ tb_orders.BRANCH_DEPOSIT_STATUS 필드 사용
 
 3.회원 배송지 관리 기능 구현
 3-1 테이블 생성
-tb_address_book 테이블 생성
+tb_address_book 테이블 생성되어 있음
 mrd/payment_sql.md 참조 tb_address_book 참조
 
 DB 구축: tb_address_book 테이블 신설 (회원번호 기준 멀티 주소 지원).

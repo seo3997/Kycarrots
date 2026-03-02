@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whomade.kycarrots.repository.mybatis.member.AddressBookRepository">
+
+    <select id="selectAddressList" parameterType="dataMap" resultType="dataMap">
+        SELECT *
+        FROM tb_address_book
+        WHERE USER_NO = #{userNo}
+        ORDER BY IS_DEFAULT DESC, REGIST_DT DESC
+    </select>
+
+    <select id="selectAddress" parameterType="dataMap" resultType="dataMap">
+        SELECT *
+        FROM tb_address_book
+        WHERE ADDRESS_ID = #{addressId}
+        AND USER_NO = #{userNo}
+    </select>
+
+    <select id="selectDefaultAddress" parameterType="dataMap" resultType="dataMap">
+        SELECT *
+        FROM tb_address_book
+        WHERE USER_NO = #{userNo}
+        AND IS_DEFAULT = 1
+        LIMIT 1
+    </select>
+
+    <insert id="insertAddress" parameterType="com.whomade.kycarrots.entity.member.TbAddressBookVo">
+        INSERT INTO tb_address_book (
+            USER_NO, ADDRESS_NAME, RECIPIENT_NAME, RECIPIENT_PHONE,
+            ZIP_CODE, ADDRESS_MAIN, ADDRESS_DETAIL, IS_DEFAULT, MEMO,
+            REGIST_DT, UPDT_DT
+        ) VALUES (
+            #{userNo}, #{addressName}, #{recipientName}, #{recipientPhone},
+            #{zipCode}, #{addressMain}, #{addressDetail}, #{isDefault}, #{memo},
+            CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <update id="updateAddress" parameterType="com.whomade.kycarrots.entity.member.TbAddressBookVo">
+        UPDATE tb_address_book
+        SET ADDRESS_NAME = #{addressName},
+            RECIPIENT_NAME = #{recipientName},
+            RECIPIENT_PHONE = #{recipientPhone},
+            ZIP_CODE = #{zipCode},
+            ADDRESS_MAIN = #{addressMain},
+            ADDRESS_DETAIL = #{addressDetail},
+            IS_DEFAULT = #{isDefault},
+            MEMO = #{memo},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE ADDRESS_ID = #{addressId}
+        AND USER_NO = #{userNo}
+    </update>
+
+    <delete id="deleteAddress" parameterType="dataMap">
+        DELETE FROM tb_address_book
+        WHERE ADDRESS_ID = #{addressId}
+        AND USER_NO = #{userNo}
+    </delete>
+
+    <update id="updateResetDefault" parameterType="dataMap">
+        UPDATE tb_address_book
+        SET IS_DEFAULT = 0
+        WHERE USER_NO = #{userNo}
+        AND ADDRESS_ID != #{addressId}
+    </update>
+
+    <select id="selectAddressCount" parameterType="dataMap" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_address_book
+        WHERE USER_NO = #{userNo}
+    </select>
+
+</mapper>

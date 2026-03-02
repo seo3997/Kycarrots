@@ -32,6 +32,9 @@ public class ShopController {
     @Resource
     private TnProductRepository tnProductRepository;
 
+    @Resource(name = "addressBookService")
+    private com.whomade.kycarrots.front.member.service.AddressBookService addressBookService;
+
     @RequestMapping(value = "/shop/list.do")
     public String selectListShop(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {
@@ -91,6 +94,14 @@ public class ShopController {
         if (param.get("productId") != null) {
             DataMap productInfo = productService.selectProduct(param);
             model.addAttribute("productInfo", productInfo);
+        }
+        // Fetch default address if user is logged in
+        UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+        if (userInfoVo != null) {
+            DataMap addressParam = new DataMap();
+            addressParam.put("userNo", userInfoVo.getUserNo());
+            DataMap defaultAddress = addressBookService.selectDefaultAddress(addressParam);
+            model.addAttribute("defaultAddress", defaultAddress);
         }
 
         model.addAttribute("reqParam", param);
