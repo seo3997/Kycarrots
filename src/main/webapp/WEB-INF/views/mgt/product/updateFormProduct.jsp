@@ -413,8 +413,12 @@
 						  <%
 							java.util.List<TnProductImageVo> imgs = new java.util.ArrayList<>();
 							if (fileList != null) {
-							  for (int i = 0; i < fileList.size() && i < 4; i++) {
-								imgs.add((TnProductImageVo) fileList.get(i));
+							  for (int i = 0; i < fileList.size(); i++) {
+								TnProductImageVo iv = (TnProductImageVo) fileList.get(i);
+								String code = iv.getImageCd();
+								if (("1".equals(code) || "2".equals(code)) && imgs.size() < 4) {
+								  imgs.add(iv);
+								}
 							  }
 							}
 							if (imgs.isEmpty()) {

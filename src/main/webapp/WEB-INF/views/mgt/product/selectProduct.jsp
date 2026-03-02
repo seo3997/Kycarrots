@@ -118,6 +118,23 @@
 			$('[name=file_id]').val(file_id);
 			$('#aform').attr({ 'action' : '/common/file/FileDown.do' }).submit();
 		}
+		// 미리보기
+		function fnPreview() {
+			var mode = '<%=currentEditorMode%>';
+			var content = $('#hiddenDescription').val();
+			var $previewBody = $('#previewModalBody');
+
+			$previewBody.empty();
+
+			if (mode === '1' || mode === '2') {
+				$previewBody.html(content);
+			} else {
+				var escaped = $('<div>').text(content).html();
+				$previewBody.html(escaped.replace(/\n/g, '<br/>'));
+			}
+			$('#previewModal').modal('show');
+		}
+
 	//]]>
 	</script>
 </head>
@@ -155,6 +172,7 @@
 				<input type="hidden" name="currentPage" value="<%=param.getString("currentPage")%>"/>
 				<input type="hidden" name="rejectReason" id="rejectReason" />
 				<input type="hidden" name="curSaleStatus" id="curSaleStatus" value="<%=resultMap.getString("SALE_STATUS") %>"/>
+				<textarea id="hiddenDescription" style="display:none;"><%=resultMap.getStringOrgn("DESCRIPTION")%></textarea>
 
 			<div class="card">
 				<div class="card-body viewForm">
@@ -235,14 +253,20 @@
 						</div>
 					</div>
 					<div class="form-group row">
-					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품 상세 설명</label>
+					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">
+						상품 상세 설명
+						<button type="button" class="btn btn-info btn-xs ml-2" onclick="fnPreview(); return false;">미리보기</button>
+					  </label>
 					  <div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
 						<% 
+							String description = resultMap.getStringOrgn("DESCRIPTION");
+							if (description.equals("")) description = resultMap.getStringOrgn("description");
+
 							if ("1".equals(currentEditorMode) || "2".equals(currentEditorMode)) { 
 						%>
-							<%= resultMap.getString("DESCRIPTION") %>
+							<%= description %>
 						<% } else { %>
-							<%= StringUtil.getHtmlValue(resultMap.getString("DESCRIPTION")) %>
+							<%= StringUtil.getHtmlValue(description) %>
 						<% } %>
 					  </div>
 					</div>
@@ -253,8 +277,12 @@
 						<%
 						  java.util.List<TnProductImageVo> imgs = new java.util.ArrayList<>();
 						  if (fileList != null) {
-							for (int i = 0; i < fileList.size() && i < 4; i++) {
-							  imgs.add((TnProductImageVo) fileList.get(i));
+							for (int i = 0; i < fileList.size(); i++) {
+							  TnProductImageVo iv = (TnProductImageVo) fileList.get(i);
+							  String code = iv.getImageCd();
+							  if (("1".equals(code) || "2".equals(code)) && imgs.size() < 4) {
+								imgs.add(iv);
+							  }
 							}
 						  }
 						%>
@@ -331,6 +359,26 @@
 		  </div>
 		</div>
 	  </div>
+	</div>
+
+	<!-- Preview Modal -->
+	<div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">상품 상세 설명 미리보기</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="previewModalBody" style="min-height: 300px; max-height: 300px; overflow-y: auto;">
+					<!-- Content injected by JS -->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<!-- footer -->

@@ -371,10 +371,10 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		java.io.File destFile = FileUtil.saveFile(file, baseDir, productIdStr);
 		String imageUrl = publicUrl + "/" + productIdStr + "/" + destFile.getName();
 
-		// DB Insert (ImageCd 2 for Summernote images)
+		// DB Insert (ImageCd 3 for Summernote images)
 		TnProductImageVo toInsert = new TnProductImageVo();
 		toInsert.setProductId(productId);
-		toInsert.setImageCd("2"); // 1: 상품이미지, 2: 에디터이미지
+		toInsert.setImageCd("3"); // 1: 상품이미지, 3: 에디터이미지
 		toInsert.setImageUrl(imageUrl);
 		toInsert.setImageName(destFile.getName());
 		toInsert.setImageSize(file.getSize());
