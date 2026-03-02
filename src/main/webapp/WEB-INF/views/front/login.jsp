@@ -9,6 +9,65 @@
     <link rel="stylesheet" href="/common/front/lib/font-awesome/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/common/front/css/front_common.css">
+    <style>
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+
+        .header .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 700;
+            font-size: 1.25rem;
+            white-space: nowrap;
+        }
+
+        .header .logo img {
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        .nav-links .btn-login {
+            background: var(--primary);
+            color: white !important;
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 <body>
 
@@ -19,8 +78,8 @@
                 <img src="${branchInfo.LOGO_IMAGE_URL}" alt="Logo">
             </c:when>
             <c:otherwise>
-                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-                    <i class="fas fa-shopping-bag"></i>
+                <div style="width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="fas fa-shopping-bag" style="font-size: 0.9rem;"></i>
                 </div>
             </c:otherwise>
         </c:choose>
@@ -31,11 +90,9 @@
         <a href="/shop/orderList.do">주문현황</a>
         <c:choose>
             <c:when test="${empty userInfoVo}">
-                <a href="/front/registForm.do">회원가입</a>
                 <a href="/front/login.do" class="btn-login">로그인</a>
             </c:when>
             <c:otherwise>
-                <span>${userInfoVo.userNm}님</span>
                 <a href="/front/logout.do">로그아웃</a>
             </c:otherwise>
         </c:choose>
