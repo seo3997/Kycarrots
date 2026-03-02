@@ -299,6 +299,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		tnProductVo.setUnitGroup(param.getString("unitGroup"));
 		tnProductVo.setUnitCode(param.getString("unitCode"));
 		tnProductVo.setDesiredShippingDate(param.getString("desiredShippingDate"));
+		tnProductVo.setEditorMode(param.getInt("editorMode"));
 		tnProductVo.setSaleStatus(param.getString("saleStatus"));
 		tnProductVo.setUserNo(param.getString("ss_user_no"));
 		tnProductVo.setUpdusrNo(param.getString("ss_user_no"));
@@ -328,10 +329,109 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		tnProductVo.setUnitGroup(param.getString("unitGroup"));
 		tnProductVo.setUnitCode(param.getString("unitCode"));
 		tnProductVo.setDesiredShippingDate(param.getString("desiredShippingDate"));
+		tnProductVo.setEditorMode(param.getInt("editorMode"));
 		tnProductVo.setSaleStatus(param.getString("saleStatus"));
 		tnProductVo.setUserNo(param.getString("ss_user_no"));
 		tnProductVo.setUpdusrNo(param.getString("ss_user_no"));
 		return tnProductVo;
+	}
+
+	/**
+	 * <PRE>
+	 * 1. MethodName    : uploadSummernoteImage
+	 * 2. ClassName     : ProducterviceImpl
+	 * 3. Comment       : Summernote 이미지 업로드
+	 * 4. 작성자            : SooHyun.Seo
+	 * 5. 작성일            : 2026. 03. 02.
+	 * </PRE>
+	 * 
+	 * @param param
+	 * @param file
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public DataMap uploadSummernoteImage(DataMap param, MultipartFile file) throws Exception {
+		DataMap result = new DataMap();
+		if (file == null || file.isEmpty()) {
+			throw new IllegalArgumentException("업로드할 파일이 없습니다.");
+		}
+
+		String productIdStr = param.getString("productId");
+		if (productIdStr == null || productIdStr.isEmpty()) {
+			productIdStr = "0"; // 신규 등록 시 임시 ID
+		}
+		Long productId = Long.valueOf(productIdStr);
+
+		String userNoStr = param.getString("ss_user_no");
+		int userNo = (userNoStr == null || userNoStr.isEmpty()) ? 0 : Integer.parseInt(userNoStr);
+
+		// 물리 저장
+		String baseDir = fileStorageProperties.getProduct().getUploadDir();
+		java.io.File destFile = FileUtil.saveFile(file, baseDir, productIdStr);
+		String imageUrl = publicUrl + "/" + productIdStr + "/" + destFile.getName();
+
+		// DB Insert (ImageCd 2 for Summernote images)
+		TnProductImageVo toInsert = new TnProductImageVo();
+		toInsert.setProductId(productId);
+		toInsert.setImageCd("2"); // 1: 상품이미지, 2: 에디터이미지
+		toInsert.setImageUrl(imageUrl);
+		toInsert.setImageName(destFile.getName());
+		toInsert.setImageSize(file.getSize());
+		toInsert.setImageType(file.getContentType());
+		toInsert.setRepresent(0);
+		toInsert.setRegisterNo(userNo);
+		toInsert.setUpdusrNo(userNo);
+
+		commonMybatisDao.update("mgt.product.insertProductImage", toInsert);
+
+		result.put("url", imageUrl);
+		result.put("imageId", toInsert.getImageId());
+		return result;
+	}
+
+	/**
+	 * <PRE>
+	 * 1. MethodName    : deleteSummernoteImage
+	 * 2. ClassName     : ProducterviceImpl
+	 * 3. Comment       : Summernote 이미지 삭제
+	 * 4. 작성자            : SooHyun.Seo
+	 * 5. 작성일            : 2026. 03. 02.
+	 * </PRE>
+	 * 
+	 * @param param
+	 * @throws Exception
+	 */
+	@Override
+	public void deleteSummernoteImage(DataMap param) throws Exception {
+		String imageIdStr = param.getString("imageId");
+		String src = param.getString("src");
+
+		if (imageIdStr == null || imageIdStr.isEmpty()) {
+			// imageId가 없는 경우 URL(src)로 조회 시도
+			if (src != null && !src.isEmpty()) {
+				DataMap searchParam = new DataMap();
+				searchParam.put("imageUrl", src);
+				TnProductImageVo img = (TnProductImageVo) commonMybatisDao
+						.selectOne("mgt.product.selectProductImageByUrl", searchParam);
+				if (img != null) {
+					imageIdStr = String.valueOf(img.getImageId());
+				}
+			}
+		}
+
+		if (imageIdStr != null && !imageIdStr.isEmpty()) {
+			Long imageId = Long.valueOf(imageIdStr);
+			TnProductImageVo img = (TnProductImageVo) commonMybatisDao
+					.selectOne("mgt.product.selectProductImageByImageId", imageId);
+			if (img != null) {
+				// 물리 파일 삭제
+				String baseDir = fileStorageProperties.getProduct().getUploadDir();
+				FileUtil.deleteFile(baseDir, String.valueOf(img.getProductId()), img.getImageName());
+				// DB 삭제
+				commonMybatisDao.delete("mgt.product.deleteProductImageByImageId", imageId);
+			}
+		}
 	}
 
 	/**

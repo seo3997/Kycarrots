@@ -31,12 +31,19 @@
 	  }
   }
 
+  // Handle EDITOR_MODE extraction with boolean check
+  String currentEditorMode = resultMap.getString("EDITOR_MODE");
+  if (currentEditorMode.equals("")) currentEditorMode = resultMap.getString("editorMode");
+  if (currentEditorMode.equalsIgnoreCase("true")) currentEditorMode = "1";
+  else if (currentEditorMode.equalsIgnoreCase("false")) currentEditorMode = "0";
 %>
 <html>
 <head>
 	<%@ include file="/common/inc/meta.jspf" %>
 	<title><%=headTitle%></title>
 	<%@ include file="/common/inc/cssScript.jspf" %>
+	<!-- Summernote CSS for display -->
+	<link rel="stylesheet" href="/common/summernote/summernote-bs4.css">
 
    	<style>
    	  .thumb-grid { display:flex; flex-wrap:wrap; }
@@ -211,10 +218,6 @@
 						</div>
 					</div>
 					<div class="form-group row">
-						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">희망출하일</label>
-						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
-							<%=resultMap.getString("DESIRED_SHIPPING_DATE") %>
-						</div>
 						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">등록일시</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
 							<%=resultMap.getString("REGIST_DT") %>
@@ -232,9 +235,15 @@
 						</div>
 					</div>
 					<div class="form-group row">
-					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">긴급사유</label>
+					  <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품 상세 설명</label>
 					  <div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-						<%=resultMap.getHtml("DESCRIPTION") %>
+						<% 
+							if ("1".equals(currentEditorMode) || "2".equals(currentEditorMode)) { 
+						%>
+							<%= resultMap.getString("DESCRIPTION") %>
+						<% } else { %>
+							<%= StringUtil.getHtmlValue(resultMap.getString("DESCRIPTION")) %>
+						<% } %>
 					  </div>
 					</div>
 

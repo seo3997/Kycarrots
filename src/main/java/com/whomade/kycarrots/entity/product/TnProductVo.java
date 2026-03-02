@@ -51,5 +51,6 @@ public class TnProductVo {
     private String rejectReason;
     private String fav;
     private String systemType;
+    private Integer editorMode; // 상세설명 타입 (1: Summernote, 2: Raw HTML, 3: Plain Text)
 
 }

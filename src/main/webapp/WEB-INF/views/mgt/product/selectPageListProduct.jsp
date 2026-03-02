@@ -179,7 +179,7 @@
 		                  <th>상품가격</th>
 		                  <th>카테고리</th>
 		                  <th>지역</th>
-		                  <th>내용</th>
+		                  <th style="width:25%;">상품 상세 설명</th>
 		                  <th>작성일</th>
 		                </tr>
 		                </thead>
@@ -195,7 +195,7 @@
 		                  <td class="text-right"><%=StringUtil.setComma(dataMap.getString("PRICE")) %>원</td>
 		                  <td class="text-left"><%=dataMap.getString("CATEGORY_MID_NM") %> / <%=dataMap.getString("CATEGORY_SCLS_NM") %></td>
 		                  <td class="text-left"><%=dataMap.getString("AREA_MID_NM") %> / <%=dataMap.getString("ASAREA_SCLS_NM") %></td>
-		                  <td class="text-left"><%=StringUtil.getReSize(dataMap.getString("DESCRIPTION"),50) %></td>
+		                  <td class="text-left"><%=StringUtil.getReSize(dataMap.getString("DESCRIPTION").replaceAll("<[^>]*>", ""), 50) %></td>
 		                  <td><%=dataMap.getString("REGIST_DT") %></td>
 		                </tr>
 						<%}%>

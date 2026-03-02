@@ -20,11 +20,15 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
-
 
 @Controller
 @RequiredArgsConstructor
@@ -41,14 +45,15 @@ public class ProdcutController {
 	/** CommonCodeService */
 	@Resource(name = "commonCodeService")
 	private CommonCodeService commonCodeService;
-	
-	@Resource(name="AtFileMngService")
+
+	@Resource(name = "AtFileMngService")
 	private AtFileMngService atFileMngService;
-	
-	@Resource(name="AtFileMngUtil")
+
+	@Resource(name = "AtFileMngUtil")
 	private AtFileMngUtil atFileMngUtil;
 
 	private final TnProductRepository tnProductRepository;
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: selectPageListProduct
@@ -57,15 +62,17 @@ public class ProdcutController {
 	 * 4. 작성자    		: SooHyun.Seo
 	 * 5. 작성일    		: 2025. 09. 19 18:00
 	 * </PRE>
-	 *   @return String
-	 *   @param request
-	 *   @param response
-	 *   @param model
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @return String
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value = "/mgt/product/selectPageListProduct.do")
-	public String selectPageListProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+	public String selectPageListProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+			throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
 		DataMap codeParam = new DataMap();
 
@@ -74,30 +81,29 @@ public class ProdcutController {
 		param.put("memberCode", userInfoVo.getAuthorId());
 
 		// 판매상태 R010630
-		codeParam.put("group_id","R010630");
+		codeParam.put("group_id", "R010630");
 		List saleStatusComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("saleStatusComboStr", saleStatusComboStr);
 
 		// 카테고리 R010610
-		codeParam.put("group_id","R010610");
+		codeParam.put("group_id", "R010610");
 		List cateooryMComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("categoryMComboStr", cateooryMComboStr);
 
 		// 지역 R010070
-		codeParam.put("group_id","R010070");
+		codeParam.put("group_id", "R010070");
 		List areaMComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("areaMComboStr", areaMComboStr);
 
-
-		//리스트 조회
+		// 리스트 조회
 		List<DataMap> resultList = productService.selectPageListProcuct(model, param);
 
 		model.addAttribute("resultList", resultList);
 		model.addAttribute("param", param);
-		
+
 		return "mgt/product/selectPageListProduct";
 	}
-	
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 		: selectProduct
@@ -106,40 +112,43 @@ public class ProdcutController {
 	 * 4. 작성자    			: SooHyun.Seo
 	 * 5. 작성일    			: 2025. 09. 19 18:00
 	 * </PRE>
-	 *   @return String
-	 *   @param request
-	 *   @param response
-	 *   @param model
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @return String
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value = "/mgt/product/selectProduct.do")
-	public String selectProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
-		
+	public String selectProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+			throws Exception {
+
 		DataMap param = RequestUtil.getDataMap(request);
-		
+
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
 
 		DataMap codeParam = new DataMap();
 		// 판매상태 R010630
-		codeParam.put("group_id","R010630");
+		codeParam.put("group_id", "R010630");
 		List saleStatusComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("saleStatusComboStr", saleStatusComboStr);
 
 		DataMap resultMap = productService.selectProduct(param);
-		
+
 		// #### FILE LIST 검색 Start ####
-		List<TnProductImageVo> fileList = tnProductRepository.selectProductImagesByProductId(param.getLong("productId"));
+		List<TnProductImageVo> fileList = tnProductRepository
+				.selectProductImagesByProductId(param.getLong("productId"));
 		// #### FILE LIST 검색 End ####
-		
+
 		model.addAttribute("fileList", fileList);
 		model.addAttribute("resultMap", resultMap);
 		model.addAttribute("param", param);
-		
+
 		return "mgt/product/selectProduct";
 	}
-	
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 		: insertFormProduct
@@ -148,49 +157,49 @@ public class ProdcutController {
 	 * 4. 작성자    			: SooHyun.Seo
 	 * 5. 작성일    			: 2025. 09. 19 18:00
 	 * </PRE>
-	 *   @return String
-	 *   @param request
-	 *   @param response
-	 *   @param model
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @return String
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value = "/mgt/product/insertFormProduct.do")
-	public String insertFormProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
-		
+	public String insertFormProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+			throws Exception {
+
 		DataMap param = RequestUtil.getDataMap(request);
 		DataMap codeParam = new DataMap();
 
 		// 판매상태 R010630
-		codeParam.put("group_id","R010630");
+		codeParam.put("group_id", "R010630");
 		List saleStatusComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("saleStatusComboStr", saleStatusComboStr);
 
 		// 카테고리 R010610
-		codeParam.put("group_id","R010610");
+		codeParam.put("group_id", "R010610");
 		List cateooryMComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("categoryMComboStr", cateooryMComboStr);
 
 		// 카테고리 R010070
-		codeParam.put("group_id","R010070");
+		codeParam.put("group_id", "R010070");
 		List areaMComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("areaMComboStr", areaMComboStr);
 
 		// 단위코드 R010070
-		codeParam.put("group_id","R010620");
+		codeParam.put("group_id", "R010620");
 		List unitCodeComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("unitCodeComboStr", unitCodeComboStr);
-		
-		
+
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
-		
-		
+
 		model.addAttribute("param", param);
-		
+
 		return "mgt/product/insertFormProduct";
 	}
-	
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: insertProduct
@@ -199,39 +208,41 @@ public class ProdcutController {
 	 * 4. 작성자    		: SooHyun.Seo
 	 * 5. 작성일    		: 2025. 09. 19 18:00
 	 * </PRE>
-	 *   @return String
-	 *   @param request
-	 *   @param response
-	 *   @param model
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @return String
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value = "/mgt/product/insertProduct.do")
-	public String insertProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+	public String insertProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+			throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
-		
+
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
 
-		String metasJson =request.getParameter("imageMetasJson");
-		log.debug("metasJson: "+metasJson);
+		String metasJson = request.getParameter("imageMetasJson");
+		log.debug("metasJson: " + metasJson);
 
 		List<TnProductImageVo> metas = parseImageMetas(metasJson);
-		log.debug("metas: {}"+ metas);
+		log.debug("metas: {}" + metas);
 
 		// 파일 객체 가져옴
-		List<MultipartFile> fileList =  atFileMngUtil.getFiles((MultipartHttpServletRequest)request);
+		List<MultipartFile> fileList = AtFileMngUtil.getFiles((MultipartHttpServletRequest) request);
 
 		productService.insertProduct(param, fileList, metas);
-		
+
 		MessageUtil.setMessage(request, egovMessageSource.getMessage("succ.data.insert"));
-		
+
 		param.put("redirectUrl", "/mgt/product/selectPageListProduct.do");
 		model.addAttribute("param", param);
-		
+
 		return "common/redirect";
 	}
-	
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: updateFormProduct
@@ -240,54 +251,55 @@ public class ProdcutController {
 	 * 4. 작성자    		: SooHyun.Seo
 	 * 5. 작성일    		: 2025. 09. 19 18:00
 	 * </PRE>
-	 *   @return String
-	 *   @param request
-	 *   @param response
-	 *   @param model
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @return String
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value = "/mgt/product/updateFormProduct.do")
-	public String updateFormProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
-		
+	public String updateFormProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+			throws Exception {
+
 		DataMap param = RequestUtil.getDataMap(request);
 		DataMap codeParam = new DataMap();
-		
+
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
 
 		// 판매상태 R010630
-		codeParam.put("group_id","R010630");
+		codeParam.put("group_id", "R010630");
 		List saleStatusComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("saleStatusComboStr", saleStatusComboStr);
 
 		// 카테고리 R010610
-		codeParam.put("group_id","R010610");
+		codeParam.put("group_id", "R010610");
 		List cateooryMComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("categoryMComboStr", cateooryMComboStr);
 
 		// 카테고리 R010070
-		codeParam.put("group_id","R010070");
+		codeParam.put("group_id", "R010070");
 		List areaMComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("areaMComboStr", areaMComboStr);
 
 		// 단위코드 R010070
-		codeParam.put("group_id","R010620");
+		codeParam.put("group_id", "R010620");
 		List unitCodeComboStr = commonCodeService.selectCodeList(codeParam);
 		model.addAttribute("unitCodeComboStr", unitCodeComboStr);
 
-
-
 		DataMap resultMap = productService.selectProduct(param);
-		
+
 		// #### FILE LIST 검색 Start ####
-		List<TnProductImageVo> fileList = tnProductRepository.selectProductImagesByProductId(param.getLong("productId"));
+		List<TnProductImageVo> fileList = tnProductRepository
+				.selectProductImagesByProductId(param.getLong("productId"));
 		// #### FILE LIST 검색 End ####
-		
+
 		model.addAttribute("fileList", fileList);
 		model.addAttribute("resultMap", resultMap);
 		model.addAttribute("param", param);
-		
+
 		return "mgt/product/updateFormProduct";
 	}
 
@@ -299,43 +311,45 @@ public class ProdcutController {
 	 * 4. 작성자    		: SooHyun.Seo
 	 * 5. 작성일    		: 2025. 09. 19 18:00
 	 * </PRE>
-	 *   @return String
-	 *   @param request
-	 *   @param response
-	 *   @param model
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @return String
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value = "/mgt/product/updateProduct.do")
-	public String updateProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+	public String updateProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+			throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
 
-		String metasJson =request.getParameter("imageMetasJson");
-		log.debug("metasJson: "+metasJson);
+		String metasJson = request.getParameter("imageMetasJson");
+		log.debug("metasJson: " + metasJson);
 
 		List<TnProductImageVo> metas = parseImageMetas(metasJson);
-		log.debug("metas: {}"+ metas);
-
+		log.debug("metas: {}" + metas);
 
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
-		
+
 		// 파일 객체 가져옴
-		//MultipartHttpServletRequest mreq = (MultipartHttpServletRequest) request;
-		//List<MultipartFile> fileList = extractIndexedFiles(mreq, "images"); // ↓ 헬
-		List<MultipartFile> fileList = atFileMngUtil.getFiles((MultipartHttpServletRequest)request);
+		// MultipartHttpServletRequest mreq = (MultipartHttpServletRequest) request;
+		// List<MultipartFile> fileList = extractIndexedFiles(mreq, "images"); // ↓ 헬
+		List<MultipartFile> fileList = AtFileMngUtil.getFiles((MultipartHttpServletRequest) request);
 
 		productService.updateProduct(param, fileList, metas);
 
 		model.addAttribute("param", param);
 		MessageUtil.setMessage(request, egovMessageSource.getMessage("succ.data.update"));
 		param.put("redirectUrl", "/mgt/product/selectProduct.do");
-		
+
 		return "common/redirect";
 	}
 
 	private List<MultipartFile> extractIndexedFiles(MultipartHttpServletRequest req, String prefix) {
-		java.util.regex.Pattern p = java.util.regex.Pattern.compile("^" + java.util.regex.Pattern.quote(prefix) + "\\[(\\d+)]$");
+		java.util.regex.Pattern p = java.util.regex.Pattern
+				.compile("^" + java.util.regex.Pattern.quote(prefix) + "\\[(\\d+)]$");
 		java.util.TreeMap<Integer, MultipartFile> sorted = new java.util.TreeMap<>();
 		for (java.util.Map.Entry<String, MultipartFile> e : req.getFileMap().entrySet()) {
 			java.util.regex.Matcher m = p.matcher(e.getKey());
@@ -350,8 +364,9 @@ public class ProdcutController {
 		return new java.util.ArrayList<>(sorted.values());
 	}
 
-	private List<TnProductImageVo> parseImageMetas(String json){
-		if (json == null || json.isBlank()) return java.util.Collections.emptyList();
+	private List<TnProductImageVo> parseImageMetas(String json) {
+		if (json == null || json.isBlank())
+			return java.util.Collections.emptyList();
 		try {
 			var om = new com.fasterxml.jackson.databind.ObjectMapper()
 					.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -361,6 +376,7 @@ public class ProdcutController {
 			throw new IllegalArgumentException("imageMetasJson 파싱 오류: " + e.getMessage(), e);
 		}
 	}
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: deleteProduct
@@ -369,15 +385,17 @@ public class ProdcutController {
 	 * 4. 작성자    		: SooHyun.Seo
 	 * 5. 작성일    		: 2025. 09. 19 18:00
 	 * </PRE>
-	 *   @return String
-	 *   @param request
-	 *   @param response
-	 *   @param model
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @return String
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value = "/mgt/product/deleteProduct.do")
-	public String deleteProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+	public String deleteProduct(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+			throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
 
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
@@ -398,28 +416,71 @@ public class ProdcutController {
 	 * 4. 작성자    		: SooHyun.Seo
 	 * 5. 작성일    		: 2025. 09. 19 18:00
 	 * </PRE>
-	 *   @return String
-	 *   @param request
-	 *   @param response
-	 *   @param model
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @return String
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
 	 */
 	@RequestMapping(value = "/mgt/product/updateProductStatus.do")
-	public String updateProductStatus(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+	public String updateProductStatus(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+			throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
 
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
-
 
 		productService.updateProductStatus(param);
 
 		model.addAttribute("param", param);
 		MessageUtil.setMessage(request, egovMessageSource.getMessage("succ.data.update"));
 
-		return "redirect:/mgt/product/selectProduct.do?productId="+param.getLong("productId");
+		return "redirect:/mgt/product/selectProduct.do?productId=" + param.getLong("productId");
 
+	}
+
+	@RequestMapping(value = "/mgt/product/uploadSummernoteImage.do")
+	@ResponseBody
+	public ResponseEntity<?> uploadSummernoteImage(HttpServletRequest request) throws Exception {
+		DataMap param = RequestUtil.getDataMap(request);
+		MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+		MultipartFile file = multiRequest.getFile("file");
+
+		if (file == null || file.isEmpty()) {
+			Map<String, String> error = new HashMap<>();
+			error.put("error", "No file uploaded");
+			return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+		}
+
+		try {
+			UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+			param.put("ss_user_no", userInfoVo.getUserNo());
+
+			DataMap result = productService.uploadSummernoteImage(param, file);
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			Map<String, String> error = new HashMap<>();
+			error.put("error", e.getMessage());
+			return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@RequestMapping(value = "/mgt/product/deleteSummernoteImage.do")
+	@ResponseBody
+	public ResponseEntity<?> deleteSummernoteImage(HttpServletRequest request) throws Exception {
+		DataMap param = RequestUtil.getDataMap(request);
+		try {
+			productService.deleteSummernoteImage(param);
+			Map<String, String> result = new HashMap<>();
+			result.put("status", "success");
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			Map<String, String> error = new HashMap<>();
+			error.put("error", e.getMessage());
+			return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }

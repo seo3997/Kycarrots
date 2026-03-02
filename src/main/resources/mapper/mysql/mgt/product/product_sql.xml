@@ -50,7 +50,6 @@
 			  (A.QUANTITY - (SELECT IFNULL(SUM(I.QUANTITY), 0) FROM tb_order_items I JOIN tb_orders O ON I.ORDER_ID = O.ORDER_ID WHERE I.PRODUCT_ID = A.PRODUCT_ID AND O.ORDER_STATUS != '40')) AS AVAILABLE_QUANTITY,
 			  A.UNIT_GROUP,
 			  A.UNIT_CODE,
-			  A.DESIRED_SHIPPING_DATE,
 			  A.SALE_STATUS,
 			 (SELECT CODE_NM FROM op_code WHERE GROUP_ID='R010630' AND CODE=A.SALE_STATUS) AS SALE_STATUS_NM,
 			  A.REGISTER_NO,
@@ -114,6 +113,7 @@
 			A.UNIT_CODE,
 			(SELECT CODE_NM FROM op_code WHERE GROUP_ID='R010620' AND CODE=A.UNIT_CODE) AS UNIT_CODE_NM,
 			A.DESIRED_SHIPPING_DATE,
+			CAST(A.EDITOR_MODE AS SIGNED) AS EDITOR_MODE,
 			A.WHOLESALER_NO,
 			(SELECT USER_ID FROM op_user WHERE USER_NO = A.WHOLESALER_NO) AS WHOLESALER_ID,
 			(SELECT USER_ID FROM op_user WHERE USER_NO = A.USER_NO) AS USER_ID,
@@ -148,6 +148,7 @@
 		UNIT_GROUP,
 		UNIT_CODE,
 		DESIRED_SHIPPING_DATE,
+		EDITOR_MODE,
 		SALE_STATUS,
 		WHOLESALER_NO,
 		REGISTER_NO,
@@ -171,6 +172,7 @@
 		#{unitGroup},            -- 단위 코드
 		#{unitCode},             -- 단위 코드
 		#{desiredShippingDate},  -- 희망 출하일
+		#{editorMode},           -- 에디터 모드
 		#{saleStatus},           -- 판매 상태
 		<choose>
 			<when test="wholesalerNo != null and wholesalerNo != ''">
@@ -206,6 +208,7 @@
 			UNIT_GROUP = #{unitGroup},
 			UNIT_CODE = #{unitCode},
 			DESIRED_SHIPPING_DATE = #{desiredShippingDate},
+			EDITOR_MODE = #{editorMode},
 			SALE_STATUS = #{saleStatus},
 			UPDUSR_NO = #{updusrNo},
 			UPDT_DT = CURRENT_TIMESTAMP
@@ -259,6 +262,18 @@
 	<delete id="deleteProductImagesByProductId" parameterType="long">
 		DELETE FROM tb_product_image
 		WHERE PRODUCT_ID = #{productId}
+	</delete>
+
+	<select id="selectProductImageByImageId" parameterType="long" resultType="com.whomade.kycarrots.entity.product.TnProductImageVo">
+		SELECT * FROM tb_product_image WHERE IMAGE_ID = #{imageId}
+	</select>
+
+	<select id="selectProductImageByUrl" parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductImageVo">
+		SELECT * FROM tb_product_image WHERE IMAGE_URL = #{imageUrl}
+	</select>
+
+	<delete id="deleteProductImageByImageId" parameterType="long">
+		DELETE FROM tb_product_image WHERE IMAGE_ID = #{imageId}
 	</delete>
 
 	<update id="updateProductStatus" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">

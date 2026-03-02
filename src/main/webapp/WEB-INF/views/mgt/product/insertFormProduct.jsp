@@ -27,6 +27,8 @@
 		saleStatusNm = "승인요청";
 	}
 
+	String currentEditorMode = param.getString("editorMode");
+	if (currentEditorMode.equals("")) currentEditorMode = "1"; // Default to Summernote for new registration
 %>
 
 <html>
@@ -41,15 +43,19 @@
 	  .badge-main { position:absolute; top:6px; left:6px; }
 	  .thumb-actions { position:absolute; right:6px; bottom:6px; display:flex; gap:6px; }
 	  .thumb-actions .btn { padding:2px 6px; font-size:12px; line-height:1.2; }
+	  
+	  /* Summernote custom styling */
+	  .note-editor.note-frame { border: 1px solid #ced4da; }
+	  .note-editor.note-frame .note-statusbar { display: none; }
 	</style>
+	<!-- Summernote CSS/JS -->
+	<link rel="stylesheet" href="/common/summernote/summernote-bs4.css">
+	<script type="text/javascript" src="/common/summernote/summernote-bs4.js"></script>
+	<script type="text/javascript" src="/common/summernote/lang/summernote-ko-KR.js"></script>
 
 	<script type="text/javascript">
 	//<![CDATA[
 		$(function(){
-			$('#desiredShippingDate').datetimepicker(
-               { format: 'YYYY-MM-DD' }).on('dp.change', function (e) {
-			});
-
 			rebuildImageMetas();
 		    $('#aform').on('submit', function(){ rebuildImageMetas(); });
 
@@ -159,14 +165,107 @@
 			  $(this).find("#modal-body").empty().end().removeData("mode");
 			});
 
+			// Summernote 초기화
+			if ('<%=currentEditorMode%>' === '1') {
+				initSummernote();
+			}
 
+			// Editor Mode 변경 시
+			$('#editorMode').on('change', function() {
+				if (this.value === '1') {
+					initSummernote();
+				} else {
+					$('#description').summernote('destroy');
+				}
+			});
 		});
+
+		function initSummernote() {
+			$('#description').summernote({
+				height: 400,
+				lang: 'ko-KR',
+				toolbar: [
+					['style', ['style']],
+					['font', ['bold', 'underline', 'clear']],
+					['color', ['color']],
+					['para', ['ul', 'ol', 'paragraph']],
+					['table', ['table']],
+					['insert', ['link', 'picture', 'video']],
+					['view', ['fullscreen', 'codeview', 'help']]
+				],
+				callbacks: {
+					onImageUpload: function(files) {
+						for (var i = 0; i < files.length; i++) {
+							uploadSummernoteImage(files[i], this);
+						}
+					},
+					onMediaDelete: function($target) {
+						var src = $target.attr('src');
+						deleteSummernoteImage(src);
+					}
+				}
+			});
+		}
+
+		function uploadSummernoteImage(file, editor) {
+			var data = new FormData();
+			data.append("file", file);
+			// product id가 아직 없으면 "0"으로 전송
+			data.append("productId", $('#productId').val() || "0");
+
+			$.ajax({
+				url: '/mgt/product/uploadSummernoteImage.do',
+				cache: false,
+				contentType: false,
+				processData: false,
+				data: data,
+				type: "POST",
+				success: function(res) {
+					$(editor).summernote('insertImage', res.url);
+				},
+				error: function(err) {
+					console.error(err);
+					alert("이미지 업로드에 실패했습니다.");
+				}
+			});
+		}
+
+		function deleteSummernoteImage(src) {
+			$.ajax({
+				url: '/mgt/product/deleteSummernoteImage.do',
+				data: { src: src },
+				type: "POST",
+				success: function(res) {
+					console.log("Image deleted from server");
+				}
+			});
+		}
 		
 		// 목록
 		function fnGoList(){
 			$('#aform').attr({ action : '/mgt/product/selectPageListProduct.do', method : 'post' }).submit();
 		}
-		
+
+		// 미리보기
+		function fnPreview() {
+			var mode = $('#editorMode').val();
+			var content = (mode === '1') ? $('#description').summernote('code') : $('#description').val();
+			var $previewBody = $('#previewModalBody');
+
+			// Clear previous content
+			$previewBody.empty();
+
+			if (mode === '1' || mode === '2') {
+				// Summernote or Raw HTML: Render as-is
+				$previewBody.html(content);
+			} else {
+				// Plain Text: Escape and convert newlines (matches selectProduct.jsp logic)
+				var escaped = $('<div>').text(content).html();
+				$previewBody.html(escaped.replace(/\n/g, '<br/>'));
+			}
+			$('#previewModal').modal('show');
+		}
+
 		// 등록
 		function fnGoInsert(){
 
@@ -200,11 +299,13 @@
 				return false;
 			}
 			$('[name=supplyPrice]').val(removeComma($('[name=supplyPrice]').val()));
+/*
 			if($('[name=desiredShippingDate]').val() == ''){
 				alert('희망 출하일을 입력해 주세요.');
 				$('[name=desiredShippingDate]').focus();
 				return false;
 			}
+*/
 			if($('[name=quantity]').val() == ''){
 				alert('남은수량을 입력해 주세요.');
 				$('[name=quantity]').focus();
@@ -370,15 +471,6 @@
 								<option value="FREE" <%= "FREE".equals(param.getString("taxType")) ? "selected" : "" %>>면세</option>
 							</select>
 						</div>
-                        <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">희망 출하일</label>
-                        <div class="col-xs-12 col-sm-9 col-md-3 col-lg-4">
-                          <div class="input-group date dateTimePicker" id="desiredShippingDate">
-                            <input type="text" class="form-control" name="desiredShippingDate" required="required" maxlength="12"  value="<%=param.getString("desiredShippingDate") %>"/>
-                            <span class="input-group-addon" id="btnDesiredShippingDate" style="cursor:pointer;">
-                              <i class="fa fa-calendar-alt" style="bottom:1px;"></i>
-                            </span>
-                          </div>
-                        </div>
 					</div>
 
                     <div class="form-group row">
@@ -416,9 +508,23 @@
 					</div>
 
 					<div class="form-group row">
-						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="description">긴급사유</label>
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">에디터 모드</label>
+						<div class="col-xs-12 col-sm-9 col-md-9 col-lg-10">
+							<select id="editorMode" name="editorMode" class="form-control input-sm w-25">
+								<option value="1" <%= "1".equals(currentEditorMode) ? "selected" : "" %>>Summernote 에디터</option>
+								<option value="2" <%= "2".equals(currentEditorMode) ? "selected" : "" %>>Raw HTML 직접입력</option>
+								<option value="3" <%= "3".equals(currentEditorMode) ? "selected" : "" %>>Plain Text (단순 텍스트)</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="description">
+							상품 상세 설명
+							<button type="button" class="btn btn-info btn-xs ml-2" onclick="fnPreview(); return false;">미리보기</button>
+						</label>
 						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
-							<textarea class="form-control" rows="5" name="description" id="description"><%=param.getString("description") %></textarea>
+							<textarea class="form-control" rows="10" name="description" id="description"><%=param.getString("description") %></textarea>
 						</div>
 					</div>
 
@@ -462,13 +568,33 @@
 		</section>
 	</div>
 
-	<!-- The Modal -->
+	<!-- The Image Modal -->
 	<div id="myModal" class="modal">
 	  <span class="close">&times;</span>
 	  <div class="myzoom">
 	  <img class="modal-content" id="img01">
 	  </div>
 	  <div id="caption"></div>
+	</div>
+
+	<!-- Preview Modal -->
+	<div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">상품 상세 설명 미리보기</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="previewModalBody" style="min-height: 300px; max-height: 300px; overflow-y: auto;">
+					<!-- Content injected by JS -->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
 	</div>
 	<div id="selectModal" class="modal fade" role="dialog">
 	  <div class="modal-dialog modal-lg">
