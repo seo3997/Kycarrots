@@ -104,7 +104,7 @@ public class ShopController {
         }
 
         param.put("userNo", userInfoVo.getUserNo());
-        param.put("sch_not_order_status", "READY");
+        param.put("sch_not_order_status", "10");
         List<DataMap> resultList = mgtOrderService.selectPageListOrder(model, param);
 
         model.addAttribute("resultList", resultList);

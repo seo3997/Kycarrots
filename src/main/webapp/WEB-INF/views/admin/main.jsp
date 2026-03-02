@@ -285,7 +285,16 @@
                                                     ${order.BRANCH_DEPOSIT_STATUS == 'WAITING' ? '지점입금대기' : '입금확인완료'}
                                                 </span>
                                             </td>
-                                            <td>${order.ORDER_STATUS}</td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${order.ORDER_STATUS == '10'}">결제대기</c:when>
+                                                    <c:when test="${order.ORDER_STATUS == '30'}">결제완료</c:when>
+                                                    <c:when test="${order.ORDER_STATUS == '40'}">주문취소</c:when>
+                                                    <c:when test="${order.ORDER_STATUS == '60'}">배송중</c:when>
+                                                    <c:when test="${order.ORDER_STATUS == '70'}">배송완료</c:when>
+                                                    <c:otherwise>${order.ORDER_STATUS}</c:otherwise>
+                                                </c:choose>
+                                            </td>
                                         </tr>
                                     </c:forEach>
                                 </tbody>

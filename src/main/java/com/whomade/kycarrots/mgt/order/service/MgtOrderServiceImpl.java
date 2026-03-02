@@ -67,14 +67,14 @@ public class MgtOrderServiceImpl implements MgtOrderService {
         // At the same time, if shipping info is provided, update it.
         if (param.getString("deliveryCompanyCode") != null && !param.getString("deliveryCompanyCode").isEmpty()
                 && param.getString("trackingNo") != null && !param.getString("trackingNo").isEmpty()) {
-            param.put("orderStatus", "SHIPPING");
+            param.put("orderStatus", "60");
             commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
         }
     }
 
     @Override
     public void updateOrderShippingInfo(DataMap param) throws Exception {
-        param.put("orderStatus", "SHIPPING");
+        param.put("orderStatus", "60");
         commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
     }
 }
