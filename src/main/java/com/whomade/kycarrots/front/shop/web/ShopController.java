@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import com.whomade.kycarrots.entity.product.TnProductImageVo;
+import com.whomade.kycarrots.repository.mybatis.product.TnProductRepository;
 import java.util.List;
 
 @Slf4j
@@ -26,6 +28,9 @@ public class ShopController {
 
     @Resource(name = "orderService")
     private com.whomade.kycarrots.service.order.OrderService orderService;
+
+    @Resource
+    private TnProductRepository tnProductRepository;
 
     @RequestMapping(value = "/shop/list.do")
     public String selectListShop(HttpServletRequest request, HttpServletResponse response, ModelMap model)
@@ -55,7 +60,13 @@ public class ShopController {
         DataMap param = RequestUtil.getDataMap(request);
 
         DataMap productInfo = productService.selectProduct(param);
+
+        // Fetch all images for this product
+        List<TnProductImageVo> imageList = tnProductRepository
+                .selectProductImagesByProductId(param.getLong("productId"));
+
         model.addAttribute("productInfo", productInfo);
+        model.addAttribute("imageList", imageList);
         model.addAttribute("param", param);
         return "front/shop/detail";
     }

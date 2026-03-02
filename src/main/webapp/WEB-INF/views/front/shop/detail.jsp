@@ -43,6 +43,9 @@
         .description-card { background: white; border-radius: 20px; padding: 2.5rem; box-shadow: var(--shadow); margin-top: 2rem; }
         .description-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #f1f5f9; }
         .description { color: var(--text-muted); line-height: 1.8; font-size: 1.05rem; }
+        
+        .additional-images { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+        .additional-img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; cursor: zoom-in; }
         .description img { max-width: 100%; height: auto; border-radius: 8px; margin: 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .description table { width: 100% !important; border-collapse: collapse; margin: 1.5rem 0; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
         .description table th, .description table td { padding: 12px 16px; border: 1px solid #e2e8f0; }
@@ -144,6 +147,17 @@
                 <%= StringUtil.getHtmlValue(desc) %>
             <% } %>
         </div>
+
+        <!-- Additional Images Section -->
+        <c:if test="${not empty imageList}">
+            <div class="additional-images">
+                <c:forEach var="img" items="${imageList}">
+                    <c:if test="${img.represent == 0 && (img.imageCd == '1' || img.imageCd == '2')}">
+                        <img src="${img.imageUrl}" class="additional-img" alt="Additional Image" onclick="window.open(this.src)">
+                    </c:if>
+                </c:forEach>
+            </div>
+        </c:if>
     </div>
 </main>
 
