@@ -71,27 +71,6 @@ public class AdvertiseController {
         param.put("saleStatus", q.getSaleStatus());
         // 페이지당 항목 수
         PagingUtil.applyPaging(param, q.getPageno(), PagingUtil.DEFAULT_PAGE_SIZE);
-        // 카테고리 필터
-        if (q.getCategoryGroup() != null && !"ALL".equals(q.getCategoryGroup())) {
-            param.put("categoryGroup", q.getCategoryGroup());
-        }
-        if (q.getCategoryMid() != null && !"ALL".equals(q.getCategoryMid())) {
-            param.put("categoryMid", q.getCategoryMid());
-        }
-        if (q.getCategoryScls() != null && !"ALL".equals(q.getCategoryScls())) {
-            param.put("categoryScls", q.getCategoryScls());
-        }
-
-        // 지역 필터
-        if (q.getAreaGroup() != null && !"ALL".equals(q.getAreaGroup())) {
-            param.put("areaGroup", q.getAreaGroup());
-        }
-        if (q.getAreaMid() != null && !"ALL".equals(q.getAreaMid())) {
-            param.put("areaMid", q.getAreaMid());
-        }
-        if (q.getAreaScls() != null && !"ALL".equals(q.getAreaScls())) {
-            param.put("areaScls", q.getAreaScls());
-        }
 
         // 가격 필터
         if (q.getMinPrice() != null) {

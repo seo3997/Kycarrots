@@ -46,43 +46,23 @@
     <select id="selectBuyTbProduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
         SELECT  <include refid="productColumns"/>
         FROM tb_product A
-        <where>
-            AND A.SALE_STATUS = '1'
-            <!-- 카테고리 대분류 -->
-            <if test="categoryGroup != null and categoryGroup != 'ALL'">
-                AND A.CATEGORY_GROUP = #{categoryGroup}
-            </if>
-            <!-- 카테고리 중분류 -->
-            <if test="categoryMid != null and categoryMid != 'ALL'">
-                AND A.CATEGORY_MID = #{categoryMid}
-            </if>
-            <!-- 카테고리 소분류 -->
-            <if test="categoryScls != null and categoryScls != 'ALL'">
-                AND A.CATEGORY_SCLS = #{categoryScls}
-            </if>
-
-            <!-- 도시(대분류) -->
-            <if test="areaGroup != null and areaGroup != 'ALL'">
-                AND A.AREA_GROUP = #{areaGroup}
-            </if>
-            <!-- 시·구(중분류) -->
-            <if test="areaMid != null and areaMid != 'ALL'">
-                AND A.AREA_MID = #{areaMid}
-            </if>
-            <!-- 동·읍·면(소분류) -->
-            <if test="areaScls != null and areaScls != 'ALL'">
-                AND A.AREA_SCLS = #{areaScls}
-            </if>
-
-            <!-- 가격 최소값 -->
-            <if test="minPrice != null">
-                AND A.PRICE &gt;= #{minPrice}
-            </if>
-            <!-- 가격 최대값 -->
-            <if test="maxPrice != null">
-                AND A.PRICE &lt;= #{maxPrice}
-            </if>
-        </where>
+        WHERE 1=1
+        <if test="saleStatus != null">
+            <choose>
+                <when test='"1".equals(saleStatus)'>
+                    AND A.SALE_STATUS = '1'
+                </when>
+                <otherwise>
+                    AND A.SALE_STATUS IN ('1','20','30','99')
+                </otherwise>
+            </choose>
+        </if>
+        <if test="minPrice != null">
+            AND A.PRICE &gt;= #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            AND A.PRICE &lt;= #{maxPrice}
+        </if>
         ORDER BY A.REGIST_DT DESC
         LIMIT #{offset}, #{limit}
     </select>
