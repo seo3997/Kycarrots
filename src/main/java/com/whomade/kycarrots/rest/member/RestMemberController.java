@@ -39,6 +39,7 @@ import com.whomade.kycarrots.email.PasswordResetService;
 public class RestMemberController {
     private final OpUserService opUserService;
     private final PasswordResetService passwordResetService;
+    private final com.whomade.kycarrots.front.member.service.AddressBookService addressBookService;
 
     @Autowired
     private EncodedTokenizer tokenizer = new EncodedTokenizer();
@@ -555,6 +556,69 @@ public class RestMemberController {
             return ResponseEntity.ok(SimpleResultResponse.ok("unlink success"));
         } else {
             return ResponseEntity.ok(SimpleResultResponse.fail("no mapping found"));
+        }
+    }
+
+    @GetMapping("/address")
+    public ResponseEntity<List<DataMap>> getAddressList(@RequestParam("token") String token) {
+        try {
+            OpUserVO user = tokenizer.getMember(token);
+            DataMap param = new DataMap();
+            param.put("userNo", user.getUserNo());
+            List<DataMap> list = addressBookService.selectAddressList(param);
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            log.error("배송지 목록 조회 실패", e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @PostMapping("/address")
+    public ResponseEntity<SimpleResultResponse> addAddress(@RequestParam("token") String token,
+            @RequestBody com.whomade.kycarrots.entity.member.TbAddressBookVo addressVo) {
+        try {
+            OpUserVO user = tokenizer.getMember(token);
+            addressVo.setUserNo(user.getUserNo());
+            addressBookService.insertAddress(addressVo);
+            return ResponseEntity.ok(SimpleResultResponse.ok("배송지 추가 성공"));
+        } catch (Exception e) {
+            log.error("배송지 추가 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(SimpleResultResponse.fail(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/address/update/{id}")
+    public ResponseEntity<SimpleResultResponse> updateAddress(@PathVariable("id") Long id,
+            @RequestParam("token") String token,
+            @RequestBody com.whomade.kycarrots.entity.member.TbAddressBookVo addressVo) {
+        try {
+            OpUserVO user = tokenizer.getMember(token);
+            addressVo.setUserNo(user.getUserNo());
+            addressVo.setAddressId(id);
+            addressBookService.updateAddress(addressVo);
+            return ResponseEntity.ok(SimpleResultResponse.ok("배송지 수정 성공"));
+        } catch (Exception e) {
+            log.error("배송지 수정 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(SimpleResultResponse.fail(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/address/delete/{id}")
+    public ResponseEntity<SimpleResultResponse> deleteAddress(@PathVariable("id") Long id,
+            @RequestParam("token") String token) {
+        try {
+            OpUserVO user = tokenizer.getMember(token);
+            DataMap param = new DataMap();
+            param.put("userNo", user.getUserNo());
+            param.put("addressId", id);
+            addressBookService.deleteAddress(param);
+            return ResponseEntity.ok(SimpleResultResponse.ok("배송지 삭제 성공"));
+        } catch (Exception e) {
+            log.error("배송지 삭제 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(SimpleResultResponse.fail(e.getMessage()));
         }
     }
 

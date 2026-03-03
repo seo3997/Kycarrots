@@ -77,6 +77,21 @@ public class PaymentServiceImpl implements PaymentService {
         Long orderId = orderVo.getOrderId();
         Long branchId = orderVo.getBranchId();
 
+        // 1. Validate Delivery Fee using Branch Policy
+        if (branchId != null) {
+            try {
+                DataMap branchParam = new DataMap();
+                branchParam.put("branchId", branchId);
+                DataMap branchInfo = mgtBranchService.selectBranch(branchParam);
+                if (branchInfo != null) {
+                    param.put("branch_base_shipping_fee", branchInfo.getInt("BASE_SHIPPING_FEE"));
+                    param.put("branch_free_shipping_threshold", branchInfo.getInt("FREE_SHIPPING_THRESHOLD"));
+                }
+            } catch (Exception e) {
+                log.error("Failed to fetch branch info for validation", e);
+            }
+        }
+
         for (Map<String, Object> item : items) {
             String productId = String.valueOf(item.get("productId"));
             int quantity = Integer.parseInt(String.valueOf(item.get("quantity")));
@@ -122,6 +137,19 @@ public class PaymentServiceImpl implements PaymentService {
 
         orderVo.setTotalItemAmount(totalItemAmount);
         orderVo.setSupplyPriceSum(supplyPriceSum);
+
+        // Validation for Delivery Fee based on Branch Policy
+        if (param.get("branch_base_shipping_fee") != null) {
+            int baseFee = param.getInt("branch_base_shipping_fee");
+            int threshold = param.getInt("branch_free_shipping_threshold");
+            int expectedFee = (totalItemAmount >= threshold) ? 0 : baseFee;
+            if (orderVo.getDeliveryFee() != expectedFee) {
+                log.warn("Delivery fee mismatch for order {}: expected {}, got {}. Overriding.", orderNo, expectedFee,
+                        orderVo.getDeliveryFee());
+                orderVo.setDeliveryFee(expectedFee);
+            }
+        }
+
         orderVo.setTotalPayAmount(totalItemAmount + orderVo.getDeliveryFee() - orderVo.getDiscountAmount());
         paymentRepository.updateOrderAmount(orderVo);
 
