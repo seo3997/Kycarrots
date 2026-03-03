@@ -203,7 +203,96 @@
             </div>
         </c:if>
     </div>
+    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <c:if test="${resultVo.orderStatus == '50'}">
+            <button type="button" class="btn-cancel" style="flex: 1; padding: 1rem; font-size: 1.1rem;" id="btn-cancel-${resultVo.orderNo}"
+                    onclick="handleCancel('${resultVo.orderNo}', '${resultVo.orderedAt}')">주문취소</button>
+        </c:if>
+        <c:if test="${resultVo.orderStatus == '70'}">
+            <fmt:parseDate value="${resultVo.deliveredAt}" var="deliveredAtDate" pattern="yyyy-MM-dd HH:mm:ss" />
+            <jsp:useBean id="now" class="java.util.Date" />
+            <fmt:parseNumber value="${(now.time - deliveredAtDate.time) / (1000 * 60 * 60 * 24)}" var="diffDays" integerOnly="true" />
+            <c:if test="${diffDays <= 7}">
+                <button type="button" class="btn-cancel" style="flex: 1; padding: 1rem; font-size: 1.1rem; border-color: var(--primary); color: var(--primary);" id="btn-return-${resultVo.orderNo}"
+                        onclick="handleReturn('${resultVo.orderNo}', '${resultVo.deliveredAt}', '${resultVo.orderStatus}')">반품요청</button>
+            </c:if>
+        </c:if>
+    </div>
 </main>
+
+<script>
+    async function handleCancel(orderNo, orderedAt) {
+        if (!confirm("정말로 주문을 취소하시겠습니까?")) return;
+        const cancelReason = prompt("취소 사유를 입력해주세요.", "고객 변심");
+        if (cancelReason === null) return;
+
+        const btn = document.getElementById('btn-cancel-' + orderNo);
+        btn.disabled = true;
+        btn.innerText = "취소 중...";
+
+        try {
+            const response = await fetch("/api/payment/cancel", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    orderNo: orderNo,
+                    cancelReason: cancelReason,
+                    userNo: "${userInfoVo.userNo}"
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert("주문이 정상적으로 취소되었습니다.");
+                location.reload();
+            } else {
+                alert("취소 실패: " + result.message);
+                btn.disabled = false;
+                btn.innerText = "주문취소";
+            }
+        } catch (error) {
+            console.error(error);
+            alert("처리 중 오류가 발생했습니다.");
+            btn.disabled = false;
+            btn.innerText = "주문취소";
+        }
+    }
+
+    async function handleReturn(orderNo, deliveredAt, status) {
+        if (!confirm("반품을 요청하시겠습니까? (배송비가 발생할 수 있습니다.)")) return;
+        const returnReason = prompt("반품 사유를 입력해주세요.", "단순 변심");
+        if (returnReason === null) return;
+
+        const btn = document.getElementById('btn-return-' + orderNo);
+        btn.disabled = true;
+        btn.innerText = "처리 중...";
+
+        try {
+            const response = await fetch("/api/payment/return", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    orderNo: orderNo,
+                    returnReason: returnReason,
+                    userNo: "${userInfoVo.userNo}"
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert("반품 요청이 정상적으로 접수되었습니다.");
+                location.reload();
+            } else {
+                alert("반품 요청 실패: " + result.message);
+                btn.disabled = false;
+                btn.innerText = "반품요청";
+            }
+        } catch (error) {
+            console.error(error);
+            alert("처리 중 오류가 발생했습니다.");
+            btn.disabled = false;
+            btn.innerText = "반품요청";
+        }
+    }
+</script>
 
 <%@ include file="/common/inc/msg.jspf" %>
 </body>

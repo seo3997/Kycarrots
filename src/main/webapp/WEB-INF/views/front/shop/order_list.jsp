@@ -72,6 +72,7 @@
 
 <main class="container" style="padding-top: 1.5rem;">
     <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; color: var(--text);">나의 주문 내역</h1>
+    <jsp:useBean id="now" class="java.util.Date" />
 
     <c:choose>
         <c:when test="${not empty resultList}">
@@ -91,36 +92,26 @@
                         </a>
                         <div class="order-status">
                             <span class="badge ${item.ORDER_STATUS == '40' ? 'badge-cancel' : 'badge-success'}">
-                                <c:choose>
-                                    <c:when test="${item.ORDER_STATUS == '30'}">결제완료</c:when>
-                                    <c:when test="${item.ORDER_STATUS == '40'}">주문취소</c:when>
-                                    <c:when test="${item.ORDER_STATUS == '50'}">배송준비중</c:when>
-                                    <c:when test="${item.ORDER_STATUS == '60'}">배송중</c:when>
-                                    <c:when test="${item.ORDER_STATUS == '70'}">배송완료</c:when>
-                                    <c:when test="${item.ORDER_STATUS == '80'}">반품요청</c:when>
-                                    <c:when test="${item.ORDER_STATUS == '89'}">반품완료</c:when>
-                                    <c:when test="${item.ORDER_STATUS == '99'}">주문확정</c:when>
-                                    <c:otherwise>${item.ORDER_STATUS}</c:otherwise>
-                                </c:choose>
+                                ${not empty item.ORDER_STATUS_NM ? item.ORDER_STATUS_NM : item.ORDER_STATUS}
                             </span>
                             <c:if test="${item.ORDER_STATUS == '60'}">
                                 <div style="margin-top: 0.5rem; font-size: 0.85rem; text-align: right; color: var(--text-muted);">
                                     택배사: ${item.DELIVERY_COMPANY_NM} | 송장번호: ${item.TRACKING_NO}
                                 </div>
                             </c:if>
-                            <c:if test="${item.ORDER_STATUS == '30'}">
+                            <c:if test="${item.ORDER_STATUS == '50'}">
                                 <button type="button" class="btn-cancel" id="btn-cancel-${item.ORDER_NO}"
                                         onclick="handleCancel('${item.ORDER_NO}', '${item.ORDERED_AT}')">주문취소</button>
                             </c:if>
-                            <c:if test="${item.ORDER_STATUS == '60' || item.ORDER_STATUS == '70'}">
+                            <c:if test="${item.ORDER_STATUS == '70' and not empty item.DELIVERED_AT}">
                                 <%-- 배송완료(70)인 경우 7일 이내만 표시 --%>
-                                <c:set var="showReturn" value="true" />
-                                <c:if test="${item.ORDER_STATUS == '70' && not empty item.DELIVERED_AT}">
-                                    <%-- Date check in JSP/Taglib is complex, better do a basic check or just show it and check in JS --%>
-                                </c:if>
-                                <c:if test="${showReturn}">
-                                    <button type="button" class="btn-cancel" id="btn-return-${item.ORDER_NO}"
-                                            onclick="handleReturn('${item.ORDER_NO}', '${item.ORDER_STATUS == '70' ? item.DELIVERED_AT : item.ORDERED_AT}', '${item.ORDER_STATUS}')">반품요청</button>
+                                <fmt:parseDate value="${fn:replace(item.DELIVERED_AT, 'T', ' ')}" var="deliveredAtDate" pattern="yyyy-MM-dd HH:mm:ss" />
+                                <c:if test="${not empty deliveredAtDate}">
+                                    <fmt:parseNumber value="${(now.time - deliveredAtDate.time) / (1000 * 60 * 60 * 24)}" var="diffDays" integerOnly="true" />
+                                    <c:if test="${diffDays <= 7}">
+                                        <button type="button" class="btn-cancel" id="btn-return-${item.ORDER_NO}"
+                                                onclick="handleReturn('${item.ORDER_NO}', '${item.DELIVERED_AT}', '${item.ORDER_STATUS}')">반품요청</button>
+                                    </c:if>
                                 </c:if>
                             </c:if>
                         </div>
