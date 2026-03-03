@@ -1,12 +1,10 @@
 package com.whomade.kycarrots.chat;
 
-
 import com.whomade.kycarrots.entity.chat.ChatMessageVo;
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.push.FcmService;
-import com.whomade.kycarrots.repository.mybatis.chat.ChatMessageRepository;
 import com.whomade.kycarrots.service.chat.ChatMessageService;
 import com.whomade.kycarrots.service.member.OpUserService;
 import com.whomade.kycarrots.service.product.TnProductService;
@@ -30,7 +28,6 @@ public class ChatWsController {
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
     private final OpUserService opUserService;
-
 
     @Autowired
     private WebSocketUserTracker userTracker;
@@ -91,11 +88,11 @@ public class ChatWsController {
                 receiverId = ""; // 또는 throw 예외
             }
 
-            log.info("receiverId:["+receiverId+"]");
+            log.info("receiverId:[" + receiverId + "]");
 
             log.info("메시지 저장 성공");
             if (!userTracker.isUserOnline(receiverId) && !receiverId.equals("")) {
-                //log.info("receiver {} 는 접속 중이 아님. 푸시 전송 시도", receiverId);
+                // log.info("receiver {} 는 접속 중이 아님. 푸시 전송 시도", receiverId);
 
                 Long productId = chatRoom.getProductId();
                 DataMap param = new DataMap();
@@ -107,7 +104,7 @@ public class ChatWsController {
 
                 // 2. FCM 데이터 payload 구성
                 Map<String, String> data = new HashMap<>();
-                data.put("id", pushId);                        // ✅ 핵심(중복방지용)
+                data.put("id", pushId); // ✅ 핵심(중복방지용)
                 data.put("roomId", roomId);
                 data.put("buyerId", buyerId);
                 data.put("sellerId", sellerId);
@@ -115,20 +112,19 @@ public class ChatWsController {
                 data.put("type", "chat");
                 data.put("msg", message.getMessage());
                 data.put("title", messgeTitle); // 알림 제목
-                data.put("body", message.getMessage());   // 알림 내
+                data.put("body", message.getMessage()); // 알림 내
 
                 OpUserVO opUserVO = opUserService.fetchFcmToken(receiverId); // 직접 구현 필요
                 String fcmToken = opUserVO.getPushToken();
                 String deviceType = opUserVO.getDeviceType(); // "ANDROID", "IOS"
-                log.info("fcmToken:["+fcmToken+"]");
+                log.info("fcmToken:[" + fcmToken + "]");
                 if (fcmToken != null) {
                     fcmService.sendPushToUser(
-                            deviceType,                   // ✅ IOS / ANDROID
+                            deviceType, // ✅ IOS / ANDROID
                             fcmToken,
                             messgeTitle,
                             message.getMessage(),
-                            data
-                    );
+                            data);
 
                 } else {
                     log.warn("푸시 전송 실패: FCM 토큰 없음");
@@ -139,11 +135,9 @@ public class ChatWsController {
                 log.info("receiver {} 는 현재 접속 중", receiverId);
             }
 
-
-
         } catch (Exception e) {
             log.error("메시지 저장 실패", e);
         }
-        return  message;
+        return message;
     }
 }

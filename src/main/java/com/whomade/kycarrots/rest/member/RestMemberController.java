@@ -8,7 +8,7 @@ import com.whomade.kycarrots.dto.login.ResetChangeRequest;
 import com.whomade.kycarrots.dto.user.StringResponse;
 import com.whomade.kycarrots.dto.user.PushTokenVo;
 import com.whomade.kycarrots.dto.user.UnlinkSocialRequest;
-import com.whomade.kycarrots.email.EmailService;
+
 import com.whomade.kycarrots.email.PasswordResetResult;
 import com.whomade.kycarrots.framework.common.constant.Const;
 import com.whomade.kycarrots.framework.common.object.DataMap;
@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import com.whomade.kycarrots.email.PasswordResetService;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/members")
@@ -39,55 +40,59 @@ public class RestMemberController {
     private final OpUserService opUserService;
     private final PasswordResetService passwordResetService;
 
-    private final EmailService eailService;
-
     @Autowired
     private EncodedTokenizer tokenizer = new EncodedTokenizer();
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+
     /*
-    @PostMapping(value = "/login",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public LoginResponse login(
-            @RequestParam("id") String id,
-            @RequestParam("pass") String pass,
-            @RequestParam("ret_id") String retId,
-            @RequestParam("appver") String appver) {
-
-        // 여기서는 예시로 단순히 입력값을 확인한 후 고정 토큰을 리턴합니다.
-        // 실제 구현 시 id, pass 등으로 인증 로직을 구현하면 됩니다.
-
-        String password = tokenizer.encode(pass);
-        password="d404559f602eab6fd602ac7680dacbfaadd13630335e951f097af3900e9de176b6db28512f2e000b9d04fba5133e8b1c6e8df59db3a8ab9d60be4b97cc9e81db";
-        DataMap param = new DataMap();
-        param.put("userId", id);
-        param.put("password", password);
-        OpUserVO member = opUserService.findByUserIdAndPassword(param);
-
-        String token = "%2FV%2F26xyieYwgQKUf6wFvdeMy3O%2Fw%2Fc6g0sAskcxhDZq1I3kiw2GIHmlt3Mm5SSL0eVM%2BtFASntulXfELYjlr3oQr%2Bu%2FUmTdipdABtBlxDBugFIv9vHqd8bN4TZl7vqGPlL5VRHhKxKzJayL1K6vQ6P1IUZe%2Bz5z1mnnQvRm66b4%3D";
-
-        try {
-             token = new EncodedTokenizer().getToken(member);
-        } catch (DecoderException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-
-
-
-        // 인증 성공 시 token 리턴 (여기서는 단순 예시)
-        return new LoginResponse(token);
-    }
+     * @PostMapping(value = "/login",
+     * produces = MediaType.APPLICATION_JSON_VALUE)
+     * public LoginResponse login(
+     * 
+     * @RequestParam("id") String id,
+     * 
+     * @RequestParam("pass") String pass,
+     * 
+     * @RequestParam("ret_id") String retId,
+     * 
+     * @RequestParam("appver") String appver) {
+     * 
+     * // 여기서는 예시로 단순히 입력값을 확인한 후 고정 토큰을 리턴합니다.
+     * // 실제 구현 시 id, pass 등으로 인증 로직을 구현하면 됩니다.
+     * 
+     * String password = tokenizer.encode(pass);
+     * password=
+     * "d404559f602eab6fd602ac7680dacbfaadd13630335e951f097af3900e9de176b6db28512f2e000b9d04fba5133e8b1c6e8df59db3a8ab9d60be4b97cc9e81db";
+     * DataMap param = new DataMap();
+     * param.put("userId", id);
+     * param.put("password", password);
+     * OpUserVO member = opUserService.findByUserIdAndPassword(param);
+     * 
+     * String token =
+     * "%2FV%2F26xyieYwgQKUf6wFvdeMy3O%2Fw%2Fc6g0sAskcxhDZq1I3kiw2GIHmlt3Mm5SSL0eVM%2BtFASntulXfELYjlr3oQr%2Bu%2FUmTdipdABtBlxDBugFIv9vHqd8bN4TZl7vqGPlL5VRHhKxKzJayL1K6vQ6P1IUZe%2Bz5z1mnnQvRm66b4%3D";
+     * 
+     * try {
+     * token = new EncodedTokenizer().getToken(member);
+     * } catch (DecoderException e1) {
+     * // TODO Auto-generated catch block
+     * e1.printStackTrace();
+     * }
+     * 
+     * 
+     * 
+     * // 인증 성공 시 token 리턴 (여기서는 단순 예시)
+     * return new LoginResponse(token);
+     * }
      */
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public LoginResponse login(
             @RequestParam("id") String id,
             @RequestParam("pass") String pass,
             @RequestParam("login_cd") String loginCd,
-            @RequestParam("reg_id") String regId,  // 클라이언트에서 보내는 이름에 맞춤
+            @RequestParam("reg_id") String regId, // 클라이언트에서 보내는 이름에 맞춤
             @RequestParam("appver") String appver,
-            @RequestParam("providerUserId") String providerUserId
-            ) {
+            @RequestParam("providerUserId") String providerUserId) {
 
         String encodedPassword = "";
         try {
@@ -103,44 +108,52 @@ public class RestMemberController {
 
         if (member == null) {
             // 아이디 없음
-            return new LoginResponse(601, null, null, null, null, null, null, null,null,null,null,null); // RESULT_NO_USER
+            return new LoginResponse(601, null, null, null, null, null, null, null, null, null, null, null, null); // RESULT_NO_USER
         }
 
         if (!encodedPassword.equals(member.getPassword()) && "PWD".equals(loginCd)) {
             // 비밀번호 불일치
-            return new LoginResponse(602, null, null, null, null, null, null, null,null,null,null,null); // RESULT_PWD_ERR
+            return new LoginResponse(602, null, null, null, null, null, null, null, null, null, null, null, null); // RESULT_PWD_ERR
         }
 
         if (!"PWD".equals(loginCd)) {
-            //  소셜회원 아님
+            // 소셜회원 아님
             DataMap socialParam = new DataMap();
             socialParam.put("provider", loginCd);
             socialParam.put("providerUserId", providerUserId);
 
-            if(!opUserService.existsSocialAccount(socialParam)) {
-                return new LoginResponse(605, null, null, null, null, null, null, null, null, null, null, null); // RESULT_PWD_ERR
+            if (!opUserService.existsSocialAccount(socialParam)) {
+                return new LoginResponse(605, null, null, null, null, null, null, null, null, null, null, null, null); // RESULT_PWD_ERR
             }
         }
 
         /*
-        if (!memberCode.equals(member.getMemberCode())) {
-            //  회원타입 불일치
-            return new LoginResponse(603, null, null, null, null, null, null, null,null,null,null,null); // RESULT_PWD_ERR
-        }
-        */
+         * if (!memberCode.equals(member.getMemberCode())) {
+         * // 회원타입 불일치
+         * return new LoginResponse(603, null, null, null, null, null, null,
+         * null,null,null,null,null); // RESULT_PWD_ERR
+         * }
+         */
 
         String token = "";
-        //token = "%2FV%2F26xyieYwgQKUf6wFvdeMy3O%2Fw%2Fc6g0sAskcxhDZq1I3kiw2GIHmlt3Mm5SSL0eVM%2BtFASntulXfELYjlr3oQr%2Bu%2FUmTdipdABtBlxDBugFIv9vHqd8bN4TZl7vqGPlL5VRHhKxKzJayL1K6vQ6P1IUZe%2Bz5z1mnnQvRm66b4%3D";
+        // token =
+        // "%2FV%2F26xyieYwgQKUf6wFvdeMy3O%2Fw%2Fc6g0sAskcxhDZq1I3kiw2GIHmlt3Mm5SSL0eVM%2BtFASntulXfELYjlr3oQr%2Bu%2FUmTdipdABtBlxDBugFIv9vHqd8bN4TZl7vqGPlL5VRHhKxKzJayL1K6vQ6P1IUZe%2Bz5z1mnnQvRm66b4%3D";
 
         try {
             token = tokenizer.getToken(member);
         } catch (DecoderException e) {
             e.printStackTrace();
-            return new LoginResponse(500, null, null, null, null, null, null,null,null,null,null,null); // 서버 에러
+            return new LoginResponse(500, null, null, null, null, null, null, null, null, null, null, null, null); // 서버
+                                                                                                                   // 에러
+        }
+
+        com.whomade.kycarrots.dto.BranchInfoVo branchInfo = null;
+        if (member.getBranchId() != null && !member.getBranchId().isEmpty()) {
+            branchInfo = opUserService.selectBranchInfo(Long.valueOf(member.getBranchId()));
         }
 
         return new LoginResponse(
-                200,                    // RESULT_CODE_200
+                200, // RESULT_CODE_200
                 token,
                 String.valueOf(member.getUserNo()),
                 "",
@@ -151,10 +164,9 @@ public class RestMemberController {
                 member.getMemberCode(),
                 member.getUserId(),
                 loginCd,
-                String.valueOf(member.getUserNo())
-        );
+                String.valueOf(member.getUserNo()),
+                branchInfo);
     }
-
 
     @PostMapping(value = "/email-check", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> checkEmailDuplicate(@RequestParam("email") String email) {
@@ -164,15 +176,7 @@ public class RestMemberController {
         param.put("userId", email);
         // 4) 유저 조회 후 토큰 발급
         OpUserVO member = opUserService.seelectUser(param);
-        boolean exists = true;
-
-        if (member == null) {
-            exists =false;
-        } else {
-            exists =true;
-        }
-
-        if (exists) {
+        if (member != null) {
             response.put("result", false);
             response.put("message", member.getUserNo());
         } else {
@@ -180,13 +184,10 @@ public class RestMemberController {
             response.put("message", "사용가능한 이메일입니다.");
         }
         return ResponseEntity.ok(response);
-
-
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public LoginResponse registerUser(@RequestBody OpUserVO user) {
-        Map<String, Object> response = new HashMap<>();
         try {
             // 비밀번호 암호화
             String encryptedPassword = EgovFileScrty.encryptSHA512(user.getPassword());
@@ -202,8 +203,13 @@ public class RestMemberController {
                     e.printStackTrace();
                 }
 
+                com.whomade.kycarrots.dto.BranchInfoVo branchInfo = null;
+                if (user.getBranchId() != null && !user.getBranchId().isEmpty()) {
+                    branchInfo = opUserService.selectBranchInfo(Long.valueOf(user.getBranchId()));
+                }
+
                 return new LoginResponse(
-                        200,                    // RESULT_CODE_200
+                        200, // RESULT_CODE_200
                         token,
                         String.valueOf(user.getUserNo()),
                         "",
@@ -214,14 +220,16 @@ public class RestMemberController {
                         user.getMemberCode(),
                         user.getUserId(),
                         user.getProvider(),
-                        user.getProviderUserId()
-                );
+                        user.getProviderUserId(),
+                        branchInfo);
             } else {
-                return new LoginResponse(0, null, null, null, null, null, null,null,null,null,null,null); // 서버 에러
+                return new LoginResponse(0, null, null, null, null, null, null, null, null, null, null, null, null); // 서버
+                                                                                                                     // 에러
             }
         } catch (Exception e) {
             log.error("회원가입 중 오류 발생", e);
-            return new LoginResponse(0, null, null, null, null, null, null,null,null,null,null,null); // 서버 에러
+            return new LoginResponse(0, null, null, null, null, null, null, null, null, null, null, null, null); // 서버
+                                                                                                                 // 에러
         }
     }
 
@@ -244,8 +252,7 @@ public class RestMemberController {
 
     @PostMapping(value = "/push/savetoken", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleResultResponse> registerPushToken(
-            @RequestBody PushTokenVo request
-    ) {
+            @RequestBody PushTokenVo request) {
         if (request.getUserId() == null || request.getPushToken() == null) {
             return ResponseEntity
                     .badRequest()
@@ -263,8 +270,7 @@ public class RestMemberController {
 
             if (updated > 0) {
                 return ResponseEntity.ok(
-                        SimpleResultResponse.ok("푸시 토큰 저장 성공")
-                );
+                        SimpleResultResponse.ok("푸시 토큰 저장 성공"));
             } else {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
@@ -295,10 +301,10 @@ public class RestMemberController {
     }
 
     @PostMapping("/default-wholesaler")
-    public ResponseEntity<Void> setDefaultWholesaler(@RequestParam String userId,@RequestParam Long wholesalerNo) {
+    public ResponseEntity<Void> setDefaultWholesaler(@RequestParam String userId, @RequestParam Long wholesalerNo) {
         OpUserVO opUserVO = new OpUserVO();
         opUserVO.setUserId(userId);
-        opUserVO.setWholesalerNo(wholesalerNo+"");
+        opUserVO.setWholesalerNo(wholesalerNo + "");
         opUserService.updateDefaultWholesalerByUserId(opUserVO);
         return ResponseEntity.ok().build();
     }
@@ -314,7 +320,7 @@ public class RestMemberController {
         opUserVO.setUserNm(name);
         opUserVO.setCttpc(phone);
 
-        OpUserVO found  = opUserService.findEmailByNameAndPhone(opUserVO);
+        OpUserVO found = opUserService.findEmailByNameAndPhone(opUserVO);
 
         String email = (found != null) ? found.getEmail() : null;
         if (email == null || email.isBlank()) {
@@ -368,7 +374,7 @@ public class RestMemberController {
         if (userId == null || userId.isBlank()
                 || selector == null || selector.isBlank()
                 || verifier == null || verifier.isBlank()
-                || np.isEmpty() || !np.equals(cp)  || np.length() > 20) {
+                || np.isEmpty() || !np.equals(cp) || np.length() > 20) {
             return ResponseEntity.ok(new StringResponse(Const.RESULT_CODE_ERR)); // "0"
         }
 
@@ -382,15 +388,17 @@ public class RestMemberController {
 
         // 0) 파라미터 검증
         if (!StringUtils.hasText(req.getProvider())) {
-                return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "provider required","",null,null,null));
+            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "provider required", "",
+                    null, null, null, null));
         }
 
         // 1) 토큰 검증 → provider_user_id(+email) 추출 (실구현으로 교체)
         /*
-        TokenInfo tokenInfo = introspect(req);
-        if (!tokenInfo.valid) {
-            return ResponseEntity.ok(new LoginResponse(604, null, null, null, null, null, null, "invalid token")); // RESULT_NO_DATA(온보딩 유도)
-        }
+         * TokenInfo tokenInfo = introspect(req);
+         * if (!tokenInfo.valid) {
+         * return ResponseEntity.ok(new LoginResponse(604, null, null, null, null, null,
+         * null, "invalid token")); // RESULT_NO_DATA(온보딩 유도)
+         * }
          */
 
         final String provider = req.getProvider().toUpperCase();
@@ -405,7 +413,8 @@ public class RestMemberController {
         OpUserVO member = opUserService.selectUserBySocial(dm);
         if (member == null) {
             // 매핑 없음 → 온보딩 필요
-            return ResponseEntity.ok(new LoginResponse(604, null, null, null, null, null, null, "onboarding required","",null,null,null));
+            return ResponseEntity.ok(new LoginResponse(604, null, null, null, null, null, null, "onboarding required",
+                    "", null, null, null, null));
         }
 
         // 3) 마지막 로그인 갱신
@@ -417,20 +426,26 @@ public class RestMemberController {
             token = tokenizer.getToken(member);
         } catch (DecoderException e) {
             e.printStackTrace();
-            return ResponseEntity.ok(new LoginResponse(500, null, null, null, null, null, null, "server error",null,null,null,null));
+            return ResponseEntity.ok(new LoginResponse(500, null, null, null, null, null, null, "server error", null,
+                    null, null, null, null));
+        }
+
+        com.whomade.kycarrots.dto.BranchInfoVo branchInfo = null;
+        if (member.getBranchId() != null && !member.getBranchId().isEmpty()) {
+            branchInfo = opUserService.selectBranchInfo(Long.valueOf(member.getBranchId()));
         }
 
         return ResponseEntity.ok(new LoginResponse(
-                200,                                 // RESULT_CODE_200
+                200, // RESULT_CODE_200
                 token,
-                String.valueOf(member.getUserNo()),  // userNo
-                "", "", "", "",                      // 예전 필드 자리 유지
-                member.getUserNm(),                   // userName
+                String.valueOf(member.getUserNo()), // userNo
+                "", "", "", "", // 예전 필드 자리 유지
+                member.getUserNm(), // userName
                 member.getMemberCode(),
                 member.getUserId(),
                 provider,
-                providerUserId
-        ));
+                providerUserId,
+                branchInfo));
     }
 
     @PostMapping(value = "/link", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -438,13 +453,16 @@ public class RestMemberController {
 
         // 0) 파라미터 검증
         if (req.getUserNo() == null || req.getUserNo().isEmpty()) {
-            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "userNo required", null,null,null,null));
+            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "userNo required", null,
+                    null, null, null, null));
         }
         if (!StringUtils.hasText(req.getProvider())) {
-            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "provider required", null,null,null,null));
+            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "provider required",
+                    null, null, null, null, null));
         }
         if (!StringUtils.hasText(req.getProviderUserId())) {
-            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null, "providerUserId required", null,null,null,null));
+            return ResponseEntity.ok(new LoginResponse(400, null, null, null, null, null, null,
+                    "providerUserId required", null, null, null, null, null));
         }
 
         final String provider = req.getProvider().toUpperCase();
@@ -457,7 +475,7 @@ public class RestMemberController {
         if (mapped != null && !String.valueOf(req.getUserNo()).equals(mapped.getUserNo())) {
             // 이미 다른 유저에 묶여 있으면 충돌
             return ResponseEntity.ok(new LoginResponse(409, null, null, null, null, null, null,
-                    "providerUserId already linked to another user", null,null,null,null));
+                    "providerUserId already linked to another user", null, null, null, null, null));
         }
 
         // 2) INSERT (또는 이미 동일 유저에 매핑되어 있으면 스킵)
@@ -467,10 +485,10 @@ public class RestMemberController {
             vo.setProvider(provider);
             vo.setProviderUserId(req.getProviderUserId());
 
-            int ins = opUserService.insertTbSocialAccount(vo);  // <-- 네가 준비한 서비스 메서드
+            int ins = opUserService.insertTbSocialAccount(vo); // <-- 네가 준비한 서비스 메서드
             if (ins < 1) {
                 return ResponseEntity.ok(new LoginResponse(500, null, null, null, null, null, null,
-                        "insert social account failed", null,null,null,null));
+                        "insert social account failed", null, null, null, null, null));
             }
         }
 
@@ -482,7 +500,8 @@ public class RestMemberController {
         // 4) 유저 조회 후 토큰 발급
         OpUserVO member = opUserService.seelectUser(param);
         if (member == null) {
-            return ResponseEntity.ok(new LoginResponse(601, null, null, null, null, null, null, "user not found", null,null,null,null));
+            return ResponseEntity.ok(new LoginResponse(601, null, null, null, null, null, null, "user not found", null,
+                    null, null, null, null));
         }
 
         String token;
@@ -490,20 +509,26 @@ public class RestMemberController {
             token = tokenizer.getToken(member);
         } catch (DecoderException e) {
             e.printStackTrace();
-            return ResponseEntity.ok(new LoginResponse(500, null, null, null, null, null, null, "server error", null,null,null,null));
+            return ResponseEntity.ok(new LoginResponse(500, null, null, null, null, null, null, "server error", null,
+                    null, null, null, null));
+        }
+
+        com.whomade.kycarrots.dto.BranchInfoVo branchInfo = null;
+        if (member.getBranchId() != null && !member.getBranchId().isEmpty()) {
+            branchInfo = opUserService.selectBranchInfo(Long.valueOf(member.getBranchId()));
         }
 
         return ResponseEntity.ok(new LoginResponse(
-                200,                                 // RESULT_CODE_200
+                200, // RESULT_CODE_200
                 token,
-                String.valueOf(member.getUserNo()),  // userNo
-                "", "", "", "",                      // 예전 필드 유지
-                member.getUserNm(),                  // userName
-                member.getMemberCode(),               // memberCode (있다면)
+                String.valueOf(member.getUserNo()), // userNo
+                "", "", "", "", // 예전 필드 유지
+                member.getUserNm(), // userName
+                member.getMemberCode(), // memberCode (있다면)
                 member.getUserId(),
                 provider,
-                req.getProviderUserId()
-        ));
+                req.getProviderUserId(),
+                branchInfo));
     }
 
     @PostMapping(value = "/unlink", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

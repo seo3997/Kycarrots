@@ -1,32 +1,25 @@
 package com.whomade.kycarrots.rest.advertise;
 
-import com.whomade.kycarrots.dto.SimpleResultResponse;
-import com.whomade.kycarrots.dto.advertise.AdvertiseItem;
 import com.whomade.kycarrots.dto.advertise.AdvertiseQueryParams;
 import com.whomade.kycarrots.dto.advertise.AdvertiseResponse;
 import com.whomade.kycarrots.dto.advertise.TnProductDetailResponse;
-import com.whomade.kycarrots.dto.login.LoginResponse;
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.PagingUtil;
 import com.whomade.kycarrots.framework.common.util.encrypt.EncodedTokenizer;
-import com.whomade.kycarrots.push.FcmService;
 import com.whomade.kycarrots.service.member.OpUserService;
 import com.whomade.kycarrots.service.product.TnProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.DecoderException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.whomade.kycarrots.dto.SimpleResultResponse;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,13 +31,8 @@ public class AdvertiseController {
     private final EncodedTokenizer tokenizer;
     private final TnProductService tnProductService;
     private final OpUserService opUserService;
-    private final FcmService fcmService;
 
-    @PostMapping(
-            value = "",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public AdvertiseResponse getListAdvertise(@RequestBody AdvertiseQueryParams q) {
         // 실제 구현에서는 token, ad_code, pageno를 활용하여 광고 목록을 조회합니다.
         // 아래는 예제용으로 고정된 데이터를 리턴하는 예시입니다.
@@ -53,6 +41,10 @@ public class AdvertiseController {
             opUserVO = tokenizer.getMember(q.getToken());
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        if (opUserVO == null) {
+            return new AdvertiseResponse();
         }
 
         DataMap param = new DataMap();
@@ -70,21 +62,11 @@ public class AdvertiseController {
         response.setItems(tnProductVos);
         return response;
     }
-    @PostMapping(
-            value = "/buyListAdvertise",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+
+    @PostMapping(value = "/buyListAdvertise", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public AdvertiseResponse getBuyListAdvertise(@RequestBody AdvertiseQueryParams q) {
         // 실제 구현에서는 token, ad_code, pageno를 활용하여 광고 목록을 조회합니다.
         // 아래는 예제용으로 고정된 데이터를 리턴하는 예시입니다.
-        OpUserVO opUserVO = null;
-        try {
-            opUserVO = tokenizer.getMember(q.getToken());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         DataMap param = new DataMap();
         param.put("saleStatus", q.getSaleStatus());
         // 페이지당 항목 수
@@ -135,13 +117,13 @@ public class AdvertiseController {
             @RequestPart("images") List<MultipartFile> images) {
 
         try {
-            if(!productVo.getSystemType().isEmpty() && productVo.getSystemType().equals("2")) {
+            if (!productVo.getSystemType().isEmpty() && productVo.getSystemType().equals("2")) {
                 Long defaultWh = opUserService.findWholesalerNoByUserNo(Long.parseLong(productVo.getUserNo()));
                 if (defaultWh == null) {
                     return ResponseEntity.status(HttpStatus.PRECONDITION_REQUIRED)
                             .body(SimpleResultResponse.fail("중간센터 미지정. 먼저 기본 중간센터를 설정하세요."));
                 }
-                productVo.setWholesalerNo(defaultWh+"");
+                productVo.setWholesalerNo(defaultWh + "");
             }
 
             tnProductService.insertProductWithImages(productVo, imageMetas, images);
@@ -167,8 +149,8 @@ public class AdvertiseController {
     }
 
     @GetMapping("/detail/{productId}")
-    public ResponseEntity<TnProductDetailResponse> getProductDetail(@PathVariable Long productId
-            ,@RequestParam(name = "userNo", required = false) Long userNo) {
+    public ResponseEntity<TnProductDetailResponse> getProductDetail(@PathVariable Long productId,
+            @RequestParam(name = "userNo", required = false) Long userNo) {
         DataMap param = new DataMap();
         param.put("productId", productId);
         param.put("userNo", userNo);
@@ -187,6 +169,7 @@ public class AdvertiseController {
                     .body("이미지 삭제 실패: " + e.getMessage());
         }
     }
+
     @GetMapping("/dashboard")
     public ResponseEntity<DataMap> getProductDashboard(@RequestParam("token") String token) {
         try {
@@ -222,17 +205,15 @@ public class AdvertiseController {
     public ResponseEntity<String> sendPush(
             @RequestParam String token,
             @RequestParam String title,
-            @RequestParam String body
-    ) {
-        //fcmService.sendPush(token, title, body);
+            @RequestParam String body) {
+        // fcmService.sendPush(token, title, body);
         return ResponseEntity.ok("푸시 전송 완료");
     }
 
     @PostMapping("/status/update")
     public ResponseEntity<SimpleResultResponse> updateProductStatus(
             @RequestParam String token,
-            @RequestBody TnProductVo productVo
-    ) {
+            @RequestBody TnProductVo productVo) {
         try {
             // 1. 토큰으로 사용자 조회
             OpUserVO user = tokenizer.getMember(token);
@@ -249,8 +230,7 @@ public class AdvertiseController {
             int updated = tnProductService.updateProductStatus(productVo);
             if (updated > 0) {
                 return ResponseEntity.ok(
-                        SimpleResultResponse.ok("상태 변경 성공")
-                );
+                        SimpleResultResponse.ok("상태 변경 성공"));
             } else {
                 return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
@@ -264,11 +244,11 @@ public class AdvertiseController {
                     .body(SimpleResultResponse.fail("상태 변경 실패"));
         }
     }
+
     @GetMapping(value = "/interests/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public AdvertiseResponse getInterestList(
             @RequestParam("token") String token,
-            @RequestParam("pageno") int pageNo
-    ) {
+            @RequestParam("pageno") int pageNo) {
         OpUserVO user;
         try {
             user = tokenizer.getMember(token);
@@ -290,8 +270,7 @@ public class AdvertiseController {
     @GetMapping(value = "/purchases/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public AdvertiseResponse getPurchaseList(
             @RequestParam("token") String token,
-            @RequestParam("pageno") int pageNo
-    ) {
+            @RequestParam("pageno") int pageNo) {
         OpUserVO user;
         try {
             user = tokenizer.getMember(token);
@@ -311,8 +290,8 @@ public class AdvertiseController {
     }
 
     @GetMapping("/chat/buyers")
-    public List<Map<String,Object>> buyers(@RequestParam Long productId,
-                                           @RequestParam String sellerId) {
+    public List<Map<String, Object>> buyers(@RequestParam Long productId,
+            @RequestParam String sellerId) {
         DataMap param = new DataMap();
         param.put("productId", productId);
         param.put("sellerId", sellerId);

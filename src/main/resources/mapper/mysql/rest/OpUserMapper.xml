@@ -254,4 +254,28 @@
         WHERE PROVIDER = #{provider}
           AND PROVIDER_USER_ID = #{providerUserId}
     </delete>
+    <select id="selectBranchInfo" resultType="com.whomade.kycarrots.dto.BranchInfoVo" parameterType="long">
+        SELECT
+            BRANCH_ID AS branch_id,
+            BRANCH_CODE AS branch_code,
+            BRANCH_NAME AS branch_name,
+            LOGO_IMAGE_URL AS logo_image_url,
+            BRANCH_STATUS AS branch_status,
+            COMPANY_NAME AS company_name,
+            REPRESENTATIVE_NAME AS representative_name,
+            BUSINESS_NUMBER AS business_number,
+            TONGSIN_NUMBER AS tongsin_number,
+            CS_PHONE AS cs_phone,
+            ADDRESS AS address,
+            TOSS_CLIENT_KEY AS toss_client_key,
+            BANK_CD AS bank_cd,
+            ACCOUNT_NO AS account_no,
+            ACCOUNT_HOLDER AS account_holder,
+            BASE_SHIPPING_FEE AS base_shipping_fee,
+            FREE_SHIPPING_THRESHOLD AS free_shipping_threshold,
+            EXTRA_SHIPPING_FEE AS extra_shipping_fee,
+            IS_USE_CUSTOM_PRICE AS is_use_custom_price
+        FROM tb_branches
+        WHERE BRANCH_ID = #{branchId}
+    </select>
 </mapper>

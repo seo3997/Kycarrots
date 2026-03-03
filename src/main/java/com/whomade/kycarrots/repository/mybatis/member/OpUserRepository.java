@@ -28,6 +28,7 @@ public class OpUserRepository {
         OpUserVO opUserVO = opUserMapper.seelectUser(param);
         return opUserVO;
     }
+
     public int insertUser(OpUserVO user) {
         return opUserMapper.insertUser(user);
     }
@@ -39,6 +40,7 @@ public class OpUserRepository {
     public int updatePushToken(OpUserVO user) {
         return opUserMapper.updatePushToken(user);
     }
+
     public OpUserVO fetchFcmToken(String userId) {
         return opUserMapper.fetchFcmToken(userId);
     }
@@ -50,9 +52,11 @@ public class OpUserRepository {
     public Long findWholesalerNoByUserId(String userId) {
         return opUserMapper.findWholesalerNoByUserId(userId);
     }
+
     public Long findWholesalerNoByUserNo(Long userNo) {
         return opUserMapper.findWholesalerNoByUserNo(userNo);
     }
+
     public int updateDefaultWholesalerByUserId(OpUserVO user) {
         return opUserMapper.updateDefaultWholesalerByUserId(user);
     }
@@ -65,9 +69,10 @@ public class OpUserRepository {
         return opUserMapper.selectByEmail(email);
     }
 
-    public PasswordResetToken selectValidForUser(@Param("userId") String userId,@Param("now") LocalDateTime now) {
+    public PasswordResetToken selectValidForUser(@Param("userId") String userId, @Param("now") LocalDateTime now) {
         return opUserMapper.selectValidForUser(userId, now);
     }
+
     // 1회성 사용 처리
     public int markUsed(@Param("userId") String userId) {
         return opUserMapper.markUsed(userId);
@@ -96,5 +101,9 @@ public class OpUserRepository {
 
     public int deleteTbSocialAccount(DataMap param) {
         return opUserMapper.deleteTbSocialAccount(param);
+    }
+
+    public com.whomade.kycarrots.dto.BranchInfoVo selectBranchInfo(Long branchId) {
+        return opUserMapper.selectBranchInfo(branchId);
     }
 }

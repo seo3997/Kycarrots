@@ -1,18 +1,12 @@
 package com.whomade.kycarrots.rest.common;
 
-import com.whomade.kycarrots.dto.login.LoginResponse;
 import com.whomade.kycarrots.entity.common.OpCodeVo;
 import com.whomade.kycarrots.entity.common.OpSclasCodeVO;
 import com.whomade.kycarrots.entity.common.TxtListDataInfo;
-import com.whomade.kycarrots.entity.member.OpUserVO;
-import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
-import com.whomade.kycarrots.framework.common.util.encrypt.EncodedTokenizer;
 import com.whomade.kycarrots.service.common.OpCodeService;
-import com.whomade.kycarrots.service.member.OpUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.DecoderException;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +40,8 @@ public class RestCommonController {
     }
 
     @GetMapping(value = "/sCodeList", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TxtListDataInfo> sCodeList(@RequestParam("groupId") String groupId,@RequestParam("mcode") String mcode) {
+    public List<TxtListDataInfo> sCodeList(@RequestParam("groupId") String groupId,
+            @RequestParam("mcode") String mcode) {
         DataMap param = new DataMap();
         param.put("groupId", groupId);
         param.put("mcode", mcode);

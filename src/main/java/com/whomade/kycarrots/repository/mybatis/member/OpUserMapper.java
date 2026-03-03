@@ -18,22 +18,34 @@ import java.util.List;
 @Mapper
 public interface OpUserMapper {
     OpUserVO seelectUser(DataMap param);
+
     int insertUser(OpUserVO user);
+
     boolean existsByEmail(@Param("email") String email);
+
     int updatePushToken(OpUserVO user);
+
     OpUserVO fetchFcmToken(@Param("userId") String userId);
+
     // OpUserMapper.java
     List<OpUserVO> selectActiveWholesalers(@Param("memberCode") String memberCode);
+
     Long findWholesalerNoByUserId(@Param("userId") String userId);
+
     Long findWholesalerNoByUserNo(@Param("userNo") Long userNo);
+
     int updateDefaultWholesalerByUserId(OpUserVO user);
+
     OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO);
+
     OpUserVO selectByEmail(@Param("email") String email);
 
     int upsertToken(PasswordResetToken token);
+
     // 검증: 사용자당 1행 유지 → USER_ID 로 단건 조회
     PasswordResetToken selectValidForUser(@Param("userId") String userId,
-                                          @Param("now") LocalDateTime now);
+            @Param("now") LocalDateTime now);
+
     // 1회성 사용 처리
     int markUsed(@Param("userId") String userId);
 
@@ -48,5 +60,7 @@ public interface OpUserMapper {
     boolean existsSocialAccount(DataMap param);
 
     int deleteTbSocialAccount(DataMap param);
+
+    com.whomade.kycarrots.dto.BranchInfoVo selectBranchInfo(@Param("branchId") Long branchId);
 
 }

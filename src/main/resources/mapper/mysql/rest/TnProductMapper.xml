@@ -39,29 +39,7 @@
     <select id="selectTbProduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
         SELECT  <include refid="productColumns"/>
         FROM tb_product A
-        WHERE
-       <choose>
-            <when test='memberCode == "ROLE_SELL"'>
-                A.USER_NO = #{userNo}
-            </when>
-            <when test='memberCode == "ROLE_PROJ"'>
-                A.WHOLESALER_NO = #{userNo}
-            </when>
-            <otherwise>
-                1 = 0
-            </otherwise>
-        </choose>
-         <!-- 항상 필터링: 판매 상태 -->
-        <if test="saleStatus != null and saleStatus != ''">
-            <choose>
-                <when test="saleStatus == '0' or saleStatus == 0">
-                    AND A.SALE_STATUS IN ('0', '98')
-                </when>
-                <otherwise>
-                    AND A.SALE_STATUS = #{saleStatus}
-                </otherwise>
-            </choose>
-        </if>
+        WHERE A.SALE_STATUS = '1'
         ORDER BY A.REGIST_DT DESC
         LIMIT #{offset}, #{limit}
     </select>
@@ -69,18 +47,7 @@
         SELECT  <include refid="productColumns"/>
         FROM tb_product A
         <where>
-            <!-- 항상 필터링: 판매 상태 -->
-            <choose>
-                <!-- 체크(on) = 1: 정확히 1만 -->
-                <when test="saleStatus == 1 or saleStatus == '1'">
-                    AND A.SALE_STATUS = 1
-                </when>
-
-                <!-- 체크(off) = 0: 1, 10, 99 모두 -->
-                <when test="saleStatus == 0 or saleStatus == '0'">
-                    AND A.SALE_STATUS IN (1,10,99)
-                </when>
-           </choose>
+            AND A.SALE_STATUS = '1'
             <!-- 카테고리 대분류 -->
             <if test="categoryGroup != null and categoryGroup != 'ALL'">
                 AND A.CATEGORY_GROUP = #{categoryGroup}

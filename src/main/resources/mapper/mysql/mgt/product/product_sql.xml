@@ -67,12 +67,7 @@
 	WHERE 1 = 1
 	</sql>
 	<sql id="whereParam">
-		<if test="memberCode == 'ROLE_SELL'">
-			AND A.USER_NO = #{ss_user_no}
-		</if>
-		<if test="memberCode == 'ROLE_PROJ'">
-			AND A.WHOLESALER_NO = #{ss_user_no}
-		</if>
+		<!-- Removed ROLE_SELL and ROLE_PROJ filters as per requirement -->
 		<choose>
 			<when test="sch_shop_sale_statuses != null and sch_shop_sale_statuses != ''">
 				AND A.SALE_STATUS IN ('1', '20', '30', '99')

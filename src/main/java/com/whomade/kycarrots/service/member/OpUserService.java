@@ -27,7 +27,6 @@ import java.util.List;
 public class OpUserService {
     private final OpUserRepository opUserRepository;
 
-
     public OpUserVO seelectUser(DataMap param) {
         return opUserRepository.seelectUser(param);
     }
@@ -35,7 +34,7 @@ public class OpUserService {
     public int insertUser(OpUserVO user) {
         int iReturn = 0;
         iReturn = opUserRepository.insertUser(user);
-        if(!"PWD".equals(user.getProvider())) {
+        if (!"PWD".equals(user.getProvider())) {
             opUserRepository.insertTbSocialAccount(user);
             iReturn++;
         }
@@ -84,7 +83,6 @@ public class OpUserService {
         return opUserRepository.updatetouchLastLogin(param);
     }
 
-
     public OpUserVO selectUserBySocial(DataMap param) {
         return opUserRepository.selectUserBySocial(param);
     }
@@ -103,12 +101,15 @@ public class OpUserService {
         try {
             var nowUtc = java.time.LocalDateTime.now(java.time.ZoneOffset.UTC);
             var token = opUserRepository.selectValidForUser(userId, nowUtc);
-            if (token == null) return Const.RESULT_NO_DATA;             // 만료/무효
+            if (token == null)
+                return Const.RESULT_NO_DATA; // 만료/무효
 
-            if (!selector.equals(token.getSelector())) return Const.RESULT_NO_DATA; // 구링크
+            if (!selector.equals(token.getSelector()))
+                return Const.RESULT_NO_DATA; // 구링크
 
             String calc = sha256Base64(verifierPlain);
-            if (!calc.equals(token.getVerifierHash())) return Const.RESULT_NO_DATA; // 검증 실패
+            if (!calc.equals(token.getVerifierHash()))
+                return Const.RESULT_NO_DATA; // 검증 실패
 
             // 비번 저장 (SHA-512)
             String enc = EgovFileScrty.encryptSHA512(newPasswordRaw);
@@ -116,7 +117,8 @@ public class OpUserService {
             inParam.put("member_id", userId);
             inParam.put("member_new_pw", enc);
             int updated = opUserRepository.updatePw(inParam);
-            if (updated < 1) return Const.RESULT_NO_USER;
+            if (updated < 1)
+                return Const.RESULT_NO_USER;
 
             // 1회성 사용 처리
             opUserRepository.markUsed(userId);
@@ -126,7 +128,6 @@ public class OpUserService {
             return Const.RESULT_CODE_ERR;
         }
     }
-
 
     private static String sha256Base64(String s) {
         try {
@@ -144,5 +145,9 @@ public class OpUserService {
 
     public int deleteTbSocialAccount(DataMap param) {
         return opUserRepository.deleteTbSocialAccount(param);
+    }
+
+    public com.whomade.kycarrots.dto.BranchInfoVo selectBranchInfo(Long branchId) {
+        return opUserRepository.selectBranchInfo(branchId);
     }
 }

@@ -1,5 +1,6 @@
 package com.whomade.kycarrots.dto.login;
 
+import com.whomade.kycarrots.dto.BranchInfoVo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,5 @@ public class LoginResponse {
     private String login_id;
     private String login_cd;
     private String login_social_id;
+    private BranchInfoVo branch_info;
 }
