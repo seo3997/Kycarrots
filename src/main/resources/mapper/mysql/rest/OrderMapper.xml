@@ -54,6 +54,7 @@
         SELECT
             O.*,
             (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010660' AND CODE = O.DELIVERY_COMPANY_CODE) AS DELIVERY_COMPANY_NM,
+            (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010650' AND CODE = O.ORDER_STATUS) AS ORDER_STATUS_NM,
             P.PAYMENT_ID,
             P.PG_TID
         FROM tb_orders O

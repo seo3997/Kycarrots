@@ -39,10 +39,12 @@ public class OrderController {
         return orderService.selectPageListOrder(param, PageRequest.of(page, size));
     }
 
-    @Operation(summary = "주문 상세 조회 (앱 구매내역 상세)", description = "주문 번호를 기준으로 주문 마스터 정보와 포함된 상품들의 상세 정보(상품명, 이미지 등)를 조회합니다. 결제 취소 기능을 위해 paymentId, pgTid 정보가 포함됩니다.", responses = {
-            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(type = "object", example = "{\"order\": {\"orderId\": 1, \"orderNo\": \"ORDER-20240222...\", \"totalPayAmount\": 50000, \"paymentId\": 123, \"pgTid\": \"toss_tid_123\", ...}, \"items\": [{\"productId\": 1, \"productName\": \"유기농 당근\", \"title\": \"산지직송 유기농 당근 1kg\", \"imageUrl\": \"https://.../image.jpg\", \"unitPrice\": 15000, \"quantity\": 2}]}"))),
-            @ApiResponse(responseCode = "404", description = "주문을 찾을 수 없음")
-    })
+    @Operation(summary = "주문 상세 조회 (앱 구매내역 상세)", description = "주문 번호를 기준으로 주문 마스터 정보와 포함된 상품들의 상세 정보(상품명, 이미지 등)를 조회합니다. "
+            +
+            "orderStatusNm 필드에 주문 상태 명칭이 포함되며, 결제 취소 기능을 위해 paymentId, pgTid 정보가 포함됩니다. " +
+            "주문 상태 코드: 10(결제대기), 20(결제실패), 30(결제완료), 40(주문취소), 50(배송준비중), 60(배송중), 70(배송완료), 80(반품요청), 90(교환완료)")
+    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(type = "object", example = "{\"order\": {\"orderId\": 1, \"orderNo\": \"ORDER-20240222...\", \"orderStatus\": \"30\", \"orderStatusNm\": \"결제완료\", \"totalPayAmount\": 50000, \"paymentId\": 123, \"pgTid\": \"toss_tid_123\", ...}, \"items\": [{\"productId\": 1, \"productName\": \"유기농 당근\", \"title\": \"산지직송 유기농 당근 1kg\", \"imageUrl\": \"https://.../image.jpg\", \"unitPrice\": 15000, \"quantity\": 2}]}")))
+    @ApiResponse(responseCode = "404", description = "주문을 찾을 수 없음")
     @GetMapping("/{orderNo}")
     public ResponseEntity<Map<String, Object>> getOrderDetail(
             @Parameter(description = "주문번호 (예: ORDER-20240219...)") @PathVariable String orderNo) {
