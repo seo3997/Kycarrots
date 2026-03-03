@@ -8,23 +8,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BranchInfoVo {
-    private long branch_id;
-    private String branch_code;
-    private String branch_name;
-    private String logo_image_url;
-    private String branch_status;
-    private String toss_client_key;
-    private String bank_cd;
-    private String account_no;
-    private String account_holder;
-    private int base_shipping_fee;
-    private int free_shipping_threshold;
-    private int extra_shipping_fee;
-    private int is_use_custom_price;
-    private String company_name;
-    private String representative_name;
-    private String business_number;
-    private String tongsin_number;
-    private String cs_phone;
+    private long branchId;
+    private String branchCode;
+    private String branchName;
+    private String logoImageUrl;
+    private String branchStatus;
+    private String tossClientKey;
+    private String bankCd;
+    private String accountNo;
+    private String accountHolder;
+    private int baseShippingFee;
+    private int freeShippingThreshold;
+    private int extraShippingFee;
+    private int isUseCustomPrice;
+    private String companyName;
+    private String representativeName;
+    private String businessNumber;
+    private String tongsinNumber;
+    private String csPhone;
     private String address;
 }
