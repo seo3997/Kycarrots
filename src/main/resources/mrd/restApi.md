@@ -1,4 +1,5 @@
 지점 및 지점 판매자 등록 프로세스 추가 rest api 변경
+rest api  변경시 안드로이드 소스 파일도 변경해야 함 안드로이드 소스 파일은 /Users/soo/kycarrotsApp/에 존재함
 
 1. 로그인 지점 정보 추가  
    1.1 로그인 api 변경
@@ -39,7 +40,8 @@
    }
    }
 
-   2.회원가입시 BRANCH_ID를 입력받아 op_user 테이블에 저장
+2. 회원가입 BRANCH_ID 추가 
+   BRANCH_ID를 입력받아 op_user 테이블에 저장
    EndPoint:/api/members/register
    출력값에 branch_info 추가
 
@@ -116,3 +118,22 @@
    "address": "서울특별시 강남구 테헤란로..."
    }
    }
+
+3. 상품리스트 변경
+3-1 상품리스트 api 변경
+EndPoint:/api/product/buyListAdvertise
+3-1 sql문 변경 (mgt/product도 동일)
+본사에서 물건등록 하기에 tb_product 조회시 USER_NO,WHOLESALER_NO 삭제
+SALE_STATUS 필터링
+		<if test="memberCode == 'ROLE_SELL'">
+			AND A.USER_NO = #{ss_user_no}
+		</if>
+		<if test="memberCode == 'ROLE_PROJ'">
+			AND A.WHOLESALER_NO = #{ss_user_no}
+		</if>
+3-2 앱에서는 판매중인상품만보기 체크시  조호조건 있음
+3-3 
+
+4. 토스페이먼트 결제
+앱에서 토스페이먼트 요청시 서버에서 내려온 toss_client_key를 사용 - 앱만수정
+/api/payment/confirm 에서 사용하는 SECRET_KEY는 이미 구현되어 있음      
