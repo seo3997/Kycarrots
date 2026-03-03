@@ -137,3 +137,24 @@ SALE_STATUS 필터링
 4. 토스페이먼트 결제
 앱에서 토스페이먼트 요청시 서버에서 내려온 toss_client_key를 사용 - 앱만수정
 /api/payment/confirm 에서 사용하는 SECRET_KEY는 이미 구현되어 있음      
+
+5. 상품주문하기 웹과 동일하게 변경
+안드로이드 상품 상세화면에 구매하기 웹화면과 동일하게 변경
+5-1 안드로이드 상품상세 화면
+AdDetailActivity.kt activity_detail.xml
+/front/shop/detail.jsp 와 동일한 화면 구성
+상세보기는 네이티브로 이미구현되어 있어서 아래 부분만 수정한다.
+배송비 가져오는 부분, 구매가능수량 ,수량 수정시 구매가능 수량 변경은 detail.jsp를 참조해서 변경한다.
+배송비는 로그인시 branch_info의 base_shipping_fee,free_shipping_threshold로 내려오고 있음
+구매가능수량도 detail.jsp에서 사용하는 서버 프로그램 참조 필요하면 /api/product/detail/{productId} RestApi  수정
+
+5-2 안드로이드 주문하기 화면
+5-2-1 주문하기 화면 변경
+OrderDetailActivity.kt activity_order.xml
+/front/shop/chcout.jsp 와 동일한 화면 구성   
+/front/shop/chcout.jsp 에서 사용하는 서버 프로그램 참조 필요하면 /api/product/detail/{productId} RestApi  수정 및 배송지 목록,배송지 추가,배송지 수정,배송지 삭제,배송지 기본설정 RestApi 추가
+5-2-2 
+토스페이먼트 결제
+앱에서 토스페이먼트 요청시 서버에서 내려온 toss_client_key를 사용 - 앱만수정
+/api/payment/confirm 에서 사용하는 SECRET_KEY는 이미 구현되어 있음   
+
