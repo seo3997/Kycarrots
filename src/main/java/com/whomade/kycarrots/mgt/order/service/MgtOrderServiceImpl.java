@@ -78,9 +78,4 @@ public class MgtOrderServiceImpl implements MgtOrderService {
         commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
     }
 
-    @Override
-    public void confirmOrder(DataMap param) throws Exception {
-        param.put("orderStatus", "99"); // 주문확정
-        commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
-    }
 }

@@ -122,7 +122,8 @@ public class MgtOrderController {
         UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
         param.put("updusrNo", userInfoVo.getUserNo());
 
-        mgtOrderService.confirmOrder(param);
+        param.put("orderStatus", "99");
+        mgtOrderService.updateOrderShippingInfo(param);
 
         MessageUtil.setMessage(request, "주문이 확정되었습니다.");
         return "redirect:/mgt/main/dashBoard.do";

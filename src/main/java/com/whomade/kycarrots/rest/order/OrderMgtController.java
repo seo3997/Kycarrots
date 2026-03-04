@@ -143,8 +143,8 @@ public class OrderMgtController {
 
             DataMap param = new DataMap();
             param.put("orderNo", orderNo);
-            param.put("deliveryCompanyCd", carrier);
-            param.put("waybillNo", trackingNo);
+            param.put("deliveryCompanyCode", carrier);
+            param.put("trackingNo", trackingNo);
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.updateOrderShippingInfo(param);
@@ -155,10 +155,11 @@ public class OrderMgtController {
         }
     }
 
-    @Operation(summary = "주문 확정 처리", description = "관리자 권한으로 주문을 확정 처리합니다.")
-    @PostMapping("/confirmOrder")
-    public ResponseEntity<?> confirmOrder(@RequestParam("token") String token,
-            @RequestParam("orderNo") String orderNo) {
+    @Operation(summary = "주문 상태 변경", description = "주문의 상태 코드를 직접 변경합니다.")
+    @PostMapping("/status")
+    public ResponseEntity<?> updateStatus(@RequestParam("token") String token,
+            @RequestParam("orderNo") String orderNo,
+            @RequestParam("status") String status) {
         try {
             OpUserVO user = tokenizer.getMember(token);
             if (user == null) {
@@ -167,12 +168,13 @@ public class OrderMgtController {
 
             DataMap param = new DataMap();
             param.put("orderNo", orderNo);
+            param.put("orderStatus", status);
             param.put("updusrNo", user.getUserNo());
 
-            mgtOrderService.confirmOrder(param);
+            mgtOrderService.updateOrderShippingInfo(param);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.error("주문 확정 처리 중 오류 발생", e);
+            log.error("주문 상태 변경 중 오류 발생", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
