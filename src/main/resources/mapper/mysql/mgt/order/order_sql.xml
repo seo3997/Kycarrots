@@ -15,24 +15,29 @@
             (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010660' AND CODE = O.DELIVERY_COMPANY_CODE) AS DELIVERY_COMPANY_NM,
             (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010650' AND CODE = O.ORDER_STATUS) AS ORDER_STATUS_NM,
             O.TRACKING_NO,
-            I.PRODUCT_NAME, I.UNIT_PRICE, I.QUANTITY
+            I.PRODUCT_NAME, I.UNIT_PRICE, I.QUANTITY,
+            B.BRANCH_NAME
         FROM tb_product A
         INNER JOIN tb_order_items I ON A.PRODUCT_ID = I.PRODUCT_ID
         INNER JOIN tb_orders O ON I.ORDER_ID = O.ORDER_ID
+        LEFT JOIN tb_branches B ON O.BRANCH_ID = B.BRANCH_ID
         <where>
             1=1
             AND O.ORDER_STATUS != '10'
-            <if test="userNo != null and userNo != ''">
-                AND O.USER_NO = #{userNo}
+            <if test="memberCode == 'ROLE_PROJ'">
+                AND O.BRANCH_ID = #{branchId}
             </if>
-            <if test="sch_order_no != null and sch_order_no != ''">
-                AND O.ORDER_NO LIKE CONCAT('%', #{sch_order_no}, '%')
+            <if test="orderStatus != null and orderStatus != ''">
+                AND O.ORDER_STATUS = #{orderStatus}
             </if>
-            <if test="sch_order_status != null and sch_order_status != ''">
-                AND O.ORDER_STATUS = #{sch_order_status}
+            <if test="orderStDt != null and orderStDt != ''">
+                AND O.ORDERED_AT &gt;= STR_TO_DATE(#{orderStDt}, '%Y-%m-%d')
             </if>
-            <if test="sch_not_order_status != null and sch_not_order_status != ''">
-                AND O.ORDER_STATUS != #{sch_not_order_status}
+            <if test="orderEdDt != null and orderEdDt != ''">
+                AND O.ORDERED_AT &lt; DATE_ADD(STR_TO_DATE(#{orderEdDt}, '%Y-%m-%d'), INTERVAL 1 DAY)
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (O.ORDER_NO LIKE CONCAT('%', #{searchKeyword}, '%') OR B.BRANCH_NAME LIKE CONCAT('%', #{searchKeyword}, '%'))
             </if>
         </where>
         ORDER BY O.ORDERED_AT DESC
@@ -41,23 +46,25 @@
 
     <select id="selectOrderCount" parameterType="dataMap" resultType="int">
         SELECT COUNT(*) 
-        FROM tb_product A
-        INNER JOIN tb_order_items I ON A.PRODUCT_ID = I.PRODUCT_ID
-        INNER JOIN tb_orders O ON I.ORDER_ID = O.ORDER_ID
+        FROM tb_orders O
+        LEFT JOIN tb_branches B ON O.BRANCH_ID = B.BRANCH_ID
         <where>
             1=1
             AND O.ORDER_STATUS != '10'
-            <if test="userNo != null and userNo != ''">
-                AND O.USER_NO = #{userNo}
+            <if test="memberCode == 'ROLE_PROJ'">
+                AND O.BRANCH_ID = #{branchId}
             </if>
-            <if test="sch_order_no != null and sch_order_no != ''">
-                AND O.ORDER_NO LIKE CONCAT('%', #{sch_order_no}, '%')
+            <if test="orderStatus != null and orderStatus != ''">
+                AND O.ORDER_STATUS = #{orderStatus}
             </if>
-            <if test="sch_order_status != null and sch_order_status != ''">
-                AND O.ORDER_STATUS = #{sch_order_status}
+            <if test="orderStDt != null and orderStDt != ''">
+                AND O.ORDERED_AT &gt;= STR_TO_DATE(#{orderStDt}, '%Y-%m-%d')
             </if>
-            <if test="sch_not_order_status != null and sch_not_order_status != ''">
-                AND O.ORDER_STATUS != #{sch_not_order_status}
+            <if test="orderEdDt != null and orderEdDt != ''">
+                AND O.ORDERED_AT &lt; DATE_ADD(STR_TO_DATE(#{orderEdDt}, '%Y-%m-%d'), INTERVAL 1 DAY)
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (O.ORDER_NO LIKE CONCAT('%', #{searchKeyword}, '%') OR B.BRANCH_NAME LIKE CONCAT('%', #{searchKeyword}, '%'))
             </if>
         </where>
     </select>
