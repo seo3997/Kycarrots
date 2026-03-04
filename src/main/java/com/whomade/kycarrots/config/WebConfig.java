@@ -31,6 +31,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {
         registry.addInterceptor(branchInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/admin/**", "/common/**", "/css/**", "/js/**", "/img/**");
+                .excludePathPatterns("/admin/**", "/api/**", "/common/**", "/css/**", "/js/**", "/img/**");
     }
 }

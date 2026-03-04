@@ -108,7 +108,15 @@
     </delete>
 
     <select id="selectListBranch" parameterType="dataMap" resultType="dataMap">
-        SELECT * FROM tb_branches
+        SELECT BRANCH_ID,
+               BRANCH_CODE,
+               BRANCH_NAME
+        FROM tb_branches
+        <where>
+            <if test='excludeAdmin != null and excludeAdmin == "Y"'>
+                AND BRANCH_ID NOT IN (1, 2)
+            </if>
+        </where>
         ORDER BY BRANCH_NAME ASC
     </select>
 
