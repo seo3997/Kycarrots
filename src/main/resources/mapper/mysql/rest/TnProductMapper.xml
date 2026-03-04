@@ -39,7 +39,7 @@
     <select id="selectTbProduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
         SELECT  <include refid="productColumns"/>
         FROM tb_product A
-        WHERE A.SALE_STATUS = '1'
+        WHERE A.SALE_STATUS = #{saleStatus}
         ORDER BY A.REGIST_DT DESC
         LIMIT #{offset}, #{limit}
     </select>

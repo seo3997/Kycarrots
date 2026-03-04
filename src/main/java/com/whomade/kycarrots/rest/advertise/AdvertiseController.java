@@ -48,9 +48,7 @@ public class AdvertiseController {
         }
 
         DataMap param = new DataMap();
-        param.put("userNo", opUserVO.getUserNo());
         param.put("saleStatus", q.getSaleStatus());
-        param.put("memberCode", q.getMemberCode());
         // 페이지당 항목 수
         PagingUtil.applyPaging(param, q.getPageno(), PagingUtil.DEFAULT_PAGE_SIZE);
 
