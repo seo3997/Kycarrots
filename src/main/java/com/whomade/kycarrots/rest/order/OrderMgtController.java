@@ -97,7 +97,7 @@ public class OrderMgtController {
 
             Map<String, Object> res = new HashMap<>();
             res.put("resultVo", resultVo);
-            res.put("itemList", itemList);
+            res.put("orderItemList", itemList);
             res.put("deliveryCompanyList", deliveryCompanyList);
 
             return ResponseEntity.ok(res);
