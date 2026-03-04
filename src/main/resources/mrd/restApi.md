@@ -163,7 +163,7 @@ OrderDetailActivity.kt activity_order.xml
 앱에서 토스페이먼트 요청시 서버에서 내려온 toss_client_key를 사용 - 앱만수정
 /api/payment/confirm 에서 사용하는 SECRET_KEY는 이미 구현되어 있음
 
-6. 지점.본점 안드로이드 대시보드 변경 1.안드로이드 대시보드 화면변경
+6. 지점.본점 안드로이드 대시보드 변경
    6-1 안드로이드 대시보드 화면
    안드로이드 화면 DashboardActivity.kt activity_dashboard.xml
    /views/admin/main.jsp 와 동일한 화면 구성
