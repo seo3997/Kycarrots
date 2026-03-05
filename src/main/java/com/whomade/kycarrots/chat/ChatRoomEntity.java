@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "tb_chat_room",
-        uniqueConstraints = @UniqueConstraint(columnNames = "room_id"))
+@Table(name = "tb_chat_room", uniqueConstraints = @UniqueConstraint(columnNames = "room_id"))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,8 +23,8 @@ public class ChatRoomEntity {
     @Column(name = "BUYER_ID", nullable = false)
     private String buyerId;
 
-    @Column(name = "SELLER_ID", nullable = false)
-    private String sellerId;
+    @Column(name = "BRANCH_ID", nullable = false)
+    private String branchId;
 
     @Column(name = "ROOM_ID", nullable = false, unique = true)
     private String roomId;

@@ -16,6 +16,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -72,67 +73,64 @@ public class ChatWsController {
             String senderId = message.getSenderId();
             ChatRoomEntity chatRoom = chatRoomOpt.get();
 
-            String buyerId = chatRoom.getBuyerId();
-            String sellerId = chatRoom.getSellerId();
+            String id1 = chatRoom.getBuyerId(); // Buyer or Branch
+            String id2 = chatRoom.getBranchId(); // Branch or HQ
 
-            String receiverId = "";
-            String messgeTitle = "";
+            List<OpUserVO> receivers = new java.util.ArrayList<>();
+            String messageTitle = "";
 
-            if (senderId.equals(buyerId)) {
-                receiverId = sellerId;
-            } else if (senderId.equals(sellerId)) {
-                receiverId = buyerId;
+            if (senderId.equals(id1)) {
+                // Sender is id1 (Buyer or Branch). Target is id2.
+                // If id2 is HQ ("BR_0002"), target role is ROLE_SELL.
+                // Otherwise, target role is ROLE_PROJ.
+                if ("BR_0002".equals(id2)) {
+                    receivers = opUserService.selectUsersByBranchAndRole(id2, "ROLE_SELL");
+                } else {
+                    receivers = opUserService.selectUsersByBranchAndRole(id2, "ROLE_PROJ");
+                }
             } else {
-                // 예외 상황: senderId가 둘 다 아닌 경우
-                log.warn("senderId가 이 채팅방에 속하지 않음: {}", senderId);
-                receiverId = ""; // 또는 throw 예외
+                // Sender is id2 (Branch or HQ). Target is id1.
+                // If id1 is a branch (starts with 'BR_'), target role is ROLE_PROJ.
+                // Otherwise, it's a single buyer.
+                if (id1.startsWith("BR_")) {
+                    receivers = opUserService.selectUsersByBranchAndRole(id1, "ROLE_PROJ");
+                } else {
+                    OpUserVO buyer = opUserService.fetchFcmToken(id1);
+                    if (buyer != null)
+                        receivers.add(buyer);
+                }
             }
 
-            log.info("receiverId:[" + receiverId + "]");
-
             log.info("메시지 저장 성공");
-            if (!userTracker.isUserOnline(receiverId) && !receiverId.equals("")) {
-                // log.info("receiver {} 는 접속 중이 아님. 푸시 전송 시도", receiverId);
 
-                Long productId = chatRoom.getProductId();
-                DataMap param = new DataMap();
-                param.put("productId", productId);
-                param.put("userNo", "0");
-                TnProductVo product = tnProductService.getProduct(param);
-                messgeTitle = product.getTitle() + "  채팅메시지";
-                String pushId = UUID.randomUUID().toString(); // ✅ 푸시 고유키
+            Long productId = chatRoom.getProductId();
+            DataMap param = new DataMap();
+            param.put("productId", productId);
+            param.put("userNo", "0");
+            TnProductVo product = tnProductService.getProduct(param);
+            messageTitle = (product != null ? product.getTitle() : "알림") + " 채팅메시지";
 
-                // 2. FCM 데이터 payload 구성
-                Map<String, String> data = new HashMap<>();
-                data.put("id", pushId); // ✅ 핵심(중복방지용)
-                data.put("roomId", roomId);
-                data.put("buyerId", buyerId);
-                data.put("sellerId", sellerId);
-                data.put("productId", productId != null ? productId.toString() : "");
-                data.put("type", "chat");
-                data.put("msg", message.getMessage());
-                data.put("title", messgeTitle); // 알림 제목
-                data.put("body", message.getMessage()); // 알림 내
+            for (OpUserVO receiver : receivers) {
+                if (receiver != null && !receiver.getUserId().equals(senderId)
+                        && !userTracker.isUserOnline(receiver.getUserId())) {
+                    String pushId = UUID.randomUUID().toString();
+                    Map<String, String> data = new HashMap<>();
+                    data.put("id", pushId);
+                    data.put("roomId", roomId);
+                    data.put("buyerId", id1);
+                    data.put("branchId", id2);
+                    data.put("productId", productId != null ? productId.toString() : "");
+                    data.put("type", "chat");
+                    data.put("msg", message.getMessage());
+                    data.put("title", messageTitle);
+                    data.put("body", message.getMessage());
 
-                OpUserVO opUserVO = opUserService.fetchFcmToken(receiverId); // 직접 구현 필요
-                String fcmToken = opUserVO.getPushToken();
-                String deviceType = opUserVO.getDeviceType(); // "ANDROID", "IOS"
-                log.info("fcmToken:[" + fcmToken + "]");
-                if (fcmToken != null) {
-                    fcmService.sendPushToUser(
-                            deviceType, // ✅ IOS / ANDROID
-                            fcmToken,
-                            messgeTitle,
-                            message.getMessage(),
-                            data);
-
-                } else {
-                    log.warn("푸시 전송 실패: FCM 토큰 없음");
+                    String fcmToken = receiver.getPushToken();
+                    String deviceType = receiver.getDeviceType();
+                    if (fcmToken != null) {
+                        fcmService.sendPushToUser(deviceType, fcmToken, messageTitle, message.getMessage(), data);
+                    }
                 }
-
-                return null; // 👈 메시지 브로드캐스트하지 않음
-            } else {
-                log.info("receiver {} 는 현재 접속 중", receiverId);
             }
 
         } catch (Exception e) {

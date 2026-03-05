@@ -25,6 +25,7 @@ public class TnProductVo {
     private String updtDt;
     private String imageUrl;
     private String userId;
+    private String branchId;
 
     private String areaGroup; // 도시 대분류 코드
     private String areaMid; // 도시 중분류 코드
@@ -46,8 +47,6 @@ public class TnProductVo {
 
     private String saleStatusNm;
 
-    private String wholesalerNo;
-    private String wholesalerId;
     private String rejectReason;
     private String fav;
     private String systemType;

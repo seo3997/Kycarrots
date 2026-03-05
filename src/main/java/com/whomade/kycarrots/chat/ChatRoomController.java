@@ -20,8 +20,8 @@ public class ChatRoomController {
     public ResponseEntity<ChatRoomEntity> createOrGetRoom(
             @RequestParam Long productId,
             @RequestParam String buyerId,
-            @RequestParam String sellerId) {
-        ChatRoomEntity room = chatRoomService.createOrGetRoom(productId, buyerId, sellerId);
+            @RequestParam String branchId) {
+        ChatRoomEntity room = chatRoomService.createOrGetRoom(productId, buyerId, branchId);
         return ResponseEntity.ok(room);
     }
 

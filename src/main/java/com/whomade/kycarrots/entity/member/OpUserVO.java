@@ -38,7 +38,6 @@ public class OpUserVO {
     private String updtDt; // UPDT_DT: 수정 일시
     private String pushToken;
     private String deviceType;
-    private String wholesalerNo;
     private String provider;
     private String providerUserId;
     private String branchId;

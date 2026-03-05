@@ -9,7 +9,6 @@ import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.PagingUtil;
 import com.whomade.kycarrots.framework.common.util.encrypt.EncodedTokenizer;
-import com.whomade.kycarrots.service.member.OpUserService;
 import com.whomade.kycarrots.service.product.TnProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,6 @@ import java.util.Map;
 public class AdvertiseController {
     private final EncodedTokenizer tokenizer;
     private final TnProductService tnProductService;
-    private final OpUserService opUserService;
 
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public AdvertiseResponse getListAdvertise(@RequestBody AdvertiseQueryParams q) {
@@ -94,14 +92,6 @@ public class AdvertiseController {
             @RequestPart("images") List<MultipartFile> images) {
 
         try {
-            if (!productVo.getSystemType().isEmpty() && productVo.getSystemType().equals("2")) {
-                Long defaultWh = opUserService.findWholesalerNoByUserNo(Long.parseLong(productVo.getUserNo()));
-                if (defaultWh == null) {
-                    return ResponseEntity.status(HttpStatus.PRECONDITION_REQUIRED)
-                            .body(SimpleResultResponse.fail("중간센터 미지정. 먼저 기본 중간센터를 설정하세요."));
-                }
-                productVo.setWholesalerNo(defaultWh + "");
-            }
 
             tnProductService.insertProductWithImages(productVo, imageMetas, images);
             return ResponseEntity.ok(SimpleResultResponse.ok("등록 성공"));
@@ -268,10 +258,10 @@ public class AdvertiseController {
 
     @GetMapping("/chat/buyers")
     public List<Map<String, Object>> buyers(@RequestParam Long productId,
-            @RequestParam String sellerId) {
+            @RequestParam String branchId) {
         DataMap param = new DataMap();
         param.put("productId", productId);
-        param.put("sellerId", sellerId);
+        param.put("branchId", branchId);
 
         return tnProductService.getChatBuyers(param);
     }

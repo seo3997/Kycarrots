@@ -303,6 +303,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		tnProductVo.setSaleStatus(param.getString("saleStatus"));
 		tnProductVo.setUserNo(param.getString("ss_user_no"));
 		tnProductVo.setUpdusrNo(param.getString("ss_user_no"));
+		tnProductVo.setBranchId(param.getString("branchId"));
 		return tnProductVo;
 	}
 
@@ -311,7 +312,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		TnProductVo tnProductVo = new TnProductVo();
 		// USER_NO 와 WHOLESALER_NO 가 빠졌음
 		tnProductVo.setUserNo(param.getString("userNo"));
-		// tnProductVo.setWholesalerId(param.getString("wholesalerId"));
+		tnProductVo.setBranchId(param.getString("branchId"));
 		tnProductVo.setSaleStatus(param.getString("saleStatus"));
 		tnProductVo.setProductId(param.getString("productId"));
 		tnProductVo.setTitle(param.getString("title"));

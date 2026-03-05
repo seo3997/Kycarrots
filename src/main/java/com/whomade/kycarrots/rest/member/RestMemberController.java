@@ -286,30 +286,6 @@ public class RestMemberController {
         }
     }
 
-    @GetMapping("/wholesalers")
-    public ResponseEntity<List<OpUserVO>> getWholesalers(@RequestParam String memberCode) {
-        List<OpUserVO> list = opUserService.selectActiveWholesalers(memberCode);
-        return ResponseEntity.ok(list);
-    }
-
-    @GetMapping("/default-wholesaler")
-    public ResponseEntity<Long> getDefaultWholesaler(@RequestParam String userId) {
-        Long wholesalerNo = opUserService.findWholesalerNoByUserId(userId);
-        if (wholesalerNo == null) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(wholesalerNo); //
-    }
-
-    @PostMapping("/default-wholesaler")
-    public ResponseEntity<Void> setDefaultWholesaler(@RequestParam String userId, @RequestParam Long wholesalerNo) {
-        OpUserVO opUserVO = new OpUserVO();
-        opUserVO.setUserId(userId);
-        opUserVO.setWholesalerNo(wholesalerNo + "");
-        opUserService.updateDefaultWholesalerByUserId(opUserVO);
-        return ResponseEntity.ok().build();
-    }
-
     // GET /api/members/find-email?nm=이름&hp=010-1234-5678
     @GetMapping("/find-email")
     public ResponseEntity<StringResponse> findEmail(

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -16,16 +15,16 @@ public class ChatRoomService {
     /**
      * 상품 + 구매자 + 판매자 기준으로 채팅방을 조회하거나 없으면 생성
      */
-    public ChatRoomEntity createOrGetRoom(Long productId, String buyerId, String sellerId) {
+    public ChatRoomEntity createOrGetRoom(Long productId, String buyerId, String branchId) {
         Optional<ChatRoomEntity> existing = chatRoomRepository
-                .findByProductIdAndBuyerIdAndSellerId(productId, buyerId, sellerId);
+                .findByProductIdAndBuyerIdAndBranchId(productId, buyerId, branchId);
 
         return existing.orElseGet(() -> {
-            String roomId = generateRoomId(productId, buyerId, sellerId);
+            String roomId = generateRoomId(productId, buyerId, branchId);
             ChatRoomEntity newRoom = ChatRoomEntity.builder()
                     .productId(productId)
                     .buyerId(buyerId)
-                    .sellerId(sellerId)
+                    .branchId(branchId)
                     .roomId(roomId)
                     .build();
             return chatRoomRepository.save(newRoom);
@@ -35,15 +34,15 @@ public class ChatRoomService {
     /**
      * 현재 로그인 유저가 참여한 모든 채팅방 조회
      */
-    public List<ChatRoomEntity> getUserChatRooms(String productId,String userId) {
-        return chatRoomRepository.findByProductIdAndUserInvolved(productId,userId);
+    public List<ChatRoomEntity> getUserChatRooms(String productId, String userId) {
+        return chatRoomRepository.findByProductIdAndUserInvolved(productId, userId);
     }
 
     /**
      * 상품 ID + 사용자 ID 기준 고유 roomId 생성
      */
-    private String generateRoomId(Long productId, String buyerId, String sellerId) {
-        return productId + "_" + buyerId + "_" + sellerId;
+    private String generateRoomId(Long productId, String id1, String id2) {
+        return productId + "_" + id1 + "_" + id2;
     }
 
     // Optional로 리턴!

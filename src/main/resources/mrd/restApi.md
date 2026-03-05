@@ -77,7 +77,7 @@ rest api 변경시 안드로이드 소스 파일도 변경해야 함 안드로�
    "updtDt": "string",
    "pushToken": "string",
    "deviceType": "string",
-   "wholesalerNo": "string",
+   "branchId": "string",
    "provider": "string",
    "providerUserId": "string",
    "branchId": "string",

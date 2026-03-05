@@ -17,13 +17,12 @@
 <%@ include file="/common/inc/docType.jspf" %>
 
 <%
-  String systemType   = Const.SYSTEM_TYPE;
   String role         = ssAuthorId; // 세션 권한
   String saleStatus   = resultMap.getString("SALE_STATUS","");
   String saleStatusNm = resultMap.getString("SALE_STATUS_NM","");
   boolean saleStatusEnable  = true;
 
-  if("ROLE_SELL".equals(role) && "2".equals(systemType)) {
+  if("ROLE_SELL".equals(role)) {
 	  if ("0".equals(saleStatus) || "98".equals(saleStatus)) {
 	     saleStatusEnable = true;
 	  } else {
@@ -418,21 +417,12 @@
 	  $('#aform').attr({ action : '/mgt/product/updateProductStatus.do', method : 'post' }).submit();
 	});
 
-	var SYSTEM_TYPE = '<%=systemType%>';
   	var ROLE        = '<%=role%>';
 	  // 역할/시스템타입별 허용 상태
 	function allowedStatuses() {
 		// 전체 코드 예: ['0','98','1','10','99']  // 0:승인요청, 98:반려, 1:판매중, 10:예약중, 99:판매완료
-		if (SYSTEM_TYPE === '1') {
-		  // 승인/반려 기능 없음 → 0,98 제거
-		  return ['1','10','99'];
-		}
-		if (SYSTEM_TYPE === '2') {
-		  if (ROLE === 'ROLE_SELL') return ['0','98']; // 판매자는 승인요청만
-		  // 관리자/센터는 전체
-		  return ['0','98','1','10','99'];
-		}
-		// 기본(안전)
+		if (ROLE === 'ROLE_SELL') return ['0','98']; // 판매자는 승인요청만
+		// 관리자/센터는 전체
 		return ['0','98','1','10','99'];
 	}
 	 // 드롭다운 옵션 필터링

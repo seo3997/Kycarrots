@@ -48,7 +48,7 @@ public class ShopController {
 
         // Fetch products for the shop
         // Assuming branchId matches WHOLESALER_NO for filtering products
-        param.put("wholesalerNo", branchId);
+        param.put("branchId", branchId);
         param.put("rowCount", param.getString("rowCount", "20"));
 
         // Default sale status to '1' (On Sale) if not provided and not 'ALL'

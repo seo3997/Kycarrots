@@ -101,35 +101,6 @@
         WHERE USER_ID = #{userId}
     </select>
 
-    <select id="selectActiveWholesalers" parameterType="string" resultType="com.whomade.kycarrots.entity.member.OpUserVO">
-        SELECT  A.USER_NO AS userNo,
-                A.USER_ID AS userId,
-                A.USER_NM AS userNm
-        FROM op_user A
-        WHERE       A.MEMBER_CODE = #{memberCode}
-        AND         A.USER_STTUS_CODE = '10'
-        ORDER BY    A.USER_NM
-    </select>
-
-    <select id="findWholesalerNoByUserId" parameterType="string" resultType="long">
-        SELECT A.WHOLESALER_NO
-        FROM op_user A
-        WHERE A.USER_ID = #{userId}
-            LIMIT 1
-    </select>
-
-    <select id="findWholesalerNoByUserNo" parameterType="long" resultType="long">
-        SELECT A.WHOLESALER_NO
-        FROM op_user A
-        WHERE A.USER_NO = #{userNo}
-        LIMIT 1
-    </select>
-
-    <update id="updateDefaultWholesalerByUserId" parameterType="com.whomade.kycarrots.entity.member.OpUserVO">
-        UPDATE op_user
-        SET WHOLESALER_NO = #{wholesalerNo}
-        WHERE USER_ID = #{userId}
-    </update>
 
     <select id="findEmailByNameAndPhone" parameterType="com.whomade.kycarrots.entity.member.OpUserVO" resultType="com.whomade.kycarrots.entity.member.OpUserVO">
         SELECT A.EMAIL
@@ -278,5 +249,13 @@
             IS_USE_CUSTOM_PRICE
         FROM tb_branches
         WHERE BRANCH_ID = #{branchId}
+    </select>
+
+    <select id="selectUsersByBranchAndRole" parameterType="map" resultType="com.whomade.kycarrots.entity.member.OpUserVO">
+        SELECT USER_NO, USER_ID, DEVICE_TYPE, PUSH_TOKEN
+        FROM op_user
+        WHERE BRANCH_ID = #{branchId}
+          AND MEMBER_CODE = #{memberCode}
+          AND USER_STTUS_CODE = '10'
     </select>
 </mapper>

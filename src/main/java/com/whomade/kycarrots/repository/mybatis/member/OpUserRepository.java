@@ -45,22 +45,6 @@ public class OpUserRepository {
         return opUserMapper.fetchFcmToken(userId);
     }
 
-    public List<OpUserVO> selectActiveWholesalers(String memberCode) {
-        return opUserMapper.selectActiveWholesalers(memberCode);
-    }
-
-    public Long findWholesalerNoByUserId(String userId) {
-        return opUserMapper.findWholesalerNoByUserId(userId);
-    }
-
-    public Long findWholesalerNoByUserNo(Long userNo) {
-        return opUserMapper.findWholesalerNoByUserNo(userNo);
-    }
-
-    public int updateDefaultWholesalerByUserId(OpUserVO user) {
-        return opUserMapper.updateDefaultWholesalerByUserId(user);
-    }
-
     public OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO) {
         return opUserMapper.findEmailByNameAndPhone(opUserVO);
     }
@@ -105,5 +89,9 @@ public class OpUserRepository {
 
     public com.whomade.kycarrots.dto.BranchInfoVo selectBranchInfo(Long branchId) {
         return opUserMapper.selectBranchInfo(branchId);
+    }
+
+    public List<OpUserVO> selectUsersByBranchAndRole(String branchId, String memberCode) {
+        return opUserMapper.selectUsersByBranchAndRole(branchId, memberCode);
     }
 }

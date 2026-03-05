@@ -3,7 +3,6 @@ package com.whomade.kycarrots.repository.mybatis.product;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
-import com.whomade.kycarrots.push.PushTargetDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -24,18 +23,19 @@ public class TnProductRepository {
     private final TnProductMapper tnProductMapper;
 
     public List<TnProductVo> selectTbProduct(DataMap param) {
-        List<TnProductVo> tbproducts= tnProductMapper.selectTbProduct(param);
+        List<TnProductVo> tbproducts = tnProductMapper.selectTbProduct(param);
         return tbproducts;
     }
 
     public List<TnProductVo> selectBuyTbProduct(DataMap param) {
-        List<TnProductVo> tbproducts= tnProductMapper.selectBuyTbProduct(param);
+        List<TnProductVo> tbproducts = tnProductMapper.selectBuyTbProduct(param);
         return tbproducts;
     }
 
     public TnProductVo selectProductById(DataMap param) {
         return tnProductMapper.selectProductById(param);
     }
+
     // INSERT
     public int insertTbProduct(TnProductVo vo) {
         return tnProductMapper.insertTbProduct(vo);
@@ -75,12 +75,8 @@ public class TnProductRepository {
         return tnProductMapper.selectProductStatusCounts(param);
     }
 
-    public List<TnProductVo> selectRecentProductsByUser(DataMap param){
+    public List<TnProductVo> selectRecentProductsByUser(DataMap param) {
         return tnProductMapper.selectRecentProductsByUser(param);
-    }
-
-    public PushTargetDto selectPushTargetsByProductId(long wholesalerNo) {
-        return tnProductMapper.selectPushTargetsByProductId(wholesalerNo);
     }
 
     public int updateProductStatus(TnProductVo vo) {

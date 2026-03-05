@@ -53,24 +53,6 @@ public class OpUserService {
         return opUserRepository.fetchFcmToken(userId);
     }
 
-    public List<OpUserVO> selectActiveWholesalers(String memberCode) {
-        return opUserRepository.selectActiveWholesalers(memberCode);
-    }
-
-    // 추가: 기본 중간센터 조회/설정 (USER_ID 기준)
-    public Long findWholesalerNoByUserId(String userId) {
-        return opUserRepository.findWholesalerNoByUserId(userId);
-    }
-    // 추가: 기본 중간센터 조회/설정 (USER_ID 기준)
-
-    public Long findWholesalerNoByUserNo(long userNo) {
-        return opUserRepository.findWholesalerNoByUserNo(userNo);
-    }
-
-    public int updateDefaultWholesalerByUserId(OpUserVO user) {
-        return opUserRepository.updateDefaultWholesalerByUserId(user);
-    }
-
     public OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO) {
         return opUserRepository.findEmailByNameAndPhone(opUserVO);
     }
@@ -149,5 +131,9 @@ public class OpUserService {
 
     public com.whomade.kycarrots.dto.BranchInfoVo selectBranchInfo(Long branchId) {
         return opUserRepository.selectBranchInfo(branchId);
+    }
+
+    public List<OpUserVO> selectUsersByBranchAndRole(String branchId, String memberCode) {
+        return opUserRepository.selectUsersByBranchAndRole(branchId, memberCode);
     }
 }

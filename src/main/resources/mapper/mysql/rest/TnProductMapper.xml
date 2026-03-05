@@ -33,7 +33,10 @@
             AND REPRESENT = 1) AS IMAGE_URL,
         (SELECT USER_ID
            FROM op_user
-          WHERE USER_NO = A.USER_NO) AS USER_ID
+          WHERE USER_NO = A.USER_NO) AS USER_ID,
+        (SELECT BRANCH_ID
+           FROM op_user
+          WHERE USER_NO = A.USER_NO) AS BRANCH_ID
     </sql>
 
     <select id="selectTbProduct"  parameterType="dataMap" resultType="com.whomade.kycarrots.entity.product.TnProductVo">
@@ -171,7 +174,6 @@
             UNIT_CODE,
             DESIRED_SHIPPING_DATE,
             SALE_STATUS,
-            WHOLESALER_NO,
             REGISTER_NO,
             REGIST_DT,
             UPDUSR_NO,
@@ -194,14 +196,6 @@
                      #{unitCode},             -- 단위 코드
                      #{desiredShippingDate},  -- 희망 출하일
                      #{saleStatus},           -- 판매 상태
-                    <choose>
-                        <when test="wholesalerNo != null and wholesalerNo != ''">
-                            #{wholesalerNo}
-                        </when>
-                        <otherwise>
-                            NULL
-                        </otherwise>
-                    </choose>,
                      #{registerNo},           -- 등록자 번호
                      CURRENT_TIMESTAMP,       -- 등록 일시
                      #{updusrNo},             -- 수정자 번호
@@ -311,9 +305,8 @@
             A.UNIT_CODE,
             (SELECT CODE_NM FROM op_code WHERE GROUP_ID='R010620' AND CODE=A.UNIT_CODE) AS UNIT_CODE_NM,
             A.DESIRED_SHIPPING_DATE,
-            A.WHOLESALER_NO,
-            (SELECT USER_ID FROM op_user WHERE USER_NO = A.WHOLESALER_NO) AS WHOLESALER_ID,
             (SELECT USER_ID FROM op_user WHERE USER_NO = A.USER_NO) AS USER_ID,
+            (SELECT BRANCH_ID FROM op_user WHERE USER_NO = A.USER_NO) AS BRANCH_ID,
             A.SALE_STATUS,
             A.REJECT_REASON,
             A.EDITOR_MODE,
@@ -360,9 +353,6 @@
             <when test='memberCode == "ROLE_SELL"'>
                 USER_NO = #{userNo}
             </when>
-            <when test='memberCode == "ROLE_PROJ"'>
-                WHOLESALER_NO = #{userNo}
-            </when>
             <otherwise>
                 1 = 1
             </otherwise>
@@ -400,9 +390,6 @@
             <when test='memberCode == "ROLE_SELL"'>
                 A.USER_NO = #{userNo}
             </when>
-            <when test='memberCode == "ROLE_PROJ"'>
-                A.WHOLESALER_NO = #{userNo}
-            </when>
             <otherwise>
                 1 = 0
             </otherwise>
@@ -412,14 +399,6 @@
     </select>
 
     <!-- 도매상/센터 푸시 대상자 정보 조회 -->
-    <select id="selectPushTargetsByProductId" parameterType="long" resultType="com.whomade.kycarrots.push.PushTargetDto">
-        SELECT
-            U.USER_NO,
-            U.DEVICE_TYPE,
-            U.PUSH_TOKEN
-        FROM op_user U
-        WHERE U.USER_NO = #{wholesalerNo}
-    </select>
 
     <update id="updateProductStatus" parameterType="com.whomade.kycarrots.entity.product.TnProductVo">
         UPDATE tb_product
@@ -433,7 +412,7 @@
 
     <select id="selectChatBuyersByProductAndSeller" parameterType="dataMap" resultType="map">
         SELECT
-            A.room_id, A.product_id, A.seller_id,
+            A.room_id, A.product_id, A.branch_id,
             B.USER_ID   AS buyer_id,
             B.USER_NO   AS buyer_no,
             B.USER_NM   AS buyer_nm,
@@ -441,9 +420,9 @@
             C.USER_NM   AS seller_nm
         FROM tb_chat_room A
         LEFT JOIN op_user B ON B.USER_ID = A.buyer_id
-        LEFT JOIN op_user C ON C.USER_ID = A.seller_id
+        LEFT JOIN op_user C ON C.USER_ID = A.branch_id
         WHERE A.PRODUCT_ID = #{productId}
-       AND A.SELLER_ID  = #{sellerId}
+       AND A.BRANCH_ID  = #{branchId}
         ORDER BY A.ROOM_ID DESC
     </select>
 </mapper>

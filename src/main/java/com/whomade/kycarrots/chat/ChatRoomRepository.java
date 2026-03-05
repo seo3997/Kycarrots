@@ -11,9 +11,10 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> 
 
     Optional<ChatRoomEntity> findByRoomId(String roomId);
 
-    Optional<ChatRoomEntity> findByProductIdAndBuyerIdAndSellerId(Long productId, String buyerId, String sellerId);
+    Optional<ChatRoomEntity> findByProductIdAndBuyerIdAndBranchId(Long productId, String buyerId, String branchId);
 
-    @Query("SELECT r FROM ChatRoomEntity r WHERE r.productId = :productId AND  r.sellerId = :userId")
-    List<ChatRoomEntity> findByProductIdAndUserInvolved(@Param("productId") String productId, @Param("userId") String userId);
+    @Query("SELECT r FROM ChatRoomEntity r WHERE r.productId = :productId AND  r.branchId = :userId")
+    List<ChatRoomEntity> findByProductIdAndUserInvolved(@Param("productId") String productId,
+            @Param("userId") String userId);
 
 }

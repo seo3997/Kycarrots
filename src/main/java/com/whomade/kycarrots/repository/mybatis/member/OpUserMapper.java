@@ -17,50 +17,44 @@ import java.util.List;
  */
 @Mapper
 public interface OpUserMapper {
-    OpUserVO seelectUser(DataMap param);
+        OpUserVO seelectUser(DataMap param);
 
-    int insertUser(OpUserVO user);
+        int insertUser(OpUserVO user);
 
-    boolean existsByEmail(@Param("email") String email);
+        boolean existsByEmail(@Param("email") String email);
 
-    int updatePushToken(OpUserVO user);
+        int updatePushToken(OpUserVO user);
 
-    OpUserVO fetchFcmToken(@Param("userId") String userId);
+        OpUserVO fetchFcmToken(@Param("userId") String userId);
 
-    // OpUserMapper.java
-    List<OpUserVO> selectActiveWholesalers(@Param("memberCode") String memberCode);
+        OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO);
 
-    Long findWholesalerNoByUserId(@Param("userId") String userId);
+        OpUserVO selectByEmail(@Param("email") String email);
 
-    Long findWholesalerNoByUserNo(@Param("userNo") Long userNo);
+        int upsertToken(PasswordResetToken token);
 
-    int updateDefaultWholesalerByUserId(OpUserVO user);
+        // 검증: 사용자당 1행 유지 → USER_ID 로 단건 조회
+        PasswordResetToken selectValidForUser(@Param("userId") String userId,
+                        @Param("now") LocalDateTime now);
 
-    OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO);
+        // 1회성 사용 처리
+        int markUsed(@Param("userId") String userId);
 
-    OpUserVO selectByEmail(@Param("email") String email);
+        int updatePw(DataMap param);
 
-    int upsertToken(PasswordResetToken token);
+        int insertTbSocialAccount(OpUserVO use);
 
-    // 검증: 사용자당 1행 유지 → USER_ID 로 단건 조회
-    PasswordResetToken selectValidForUser(@Param("userId") String userId,
-            @Param("now") LocalDateTime now);
+        int updatetouchLastLogin(DataMap param);
 
-    // 1회성 사용 처리
-    int markUsed(@Param("userId") String userId);
+        OpUserVO selectUserBySocial(DataMap param);
 
-    int updatePw(DataMap param);
+        boolean existsSocialAccount(DataMap param);
 
-    int insertTbSocialAccount(OpUserVO use);
+        int deleteTbSocialAccount(DataMap param);
 
-    int updatetouchLastLogin(DataMap param);
+        com.whomade.kycarrots.dto.BranchInfoVo selectBranchInfo(@Param("branchId") Long branchId);
 
-    OpUserVO selectUserBySocial(DataMap param);
-
-    boolean existsSocialAccount(DataMap param);
-
-    int deleteTbSocialAccount(DataMap param);
-
-    com.whomade.kycarrots.dto.BranchInfoVo selectBranchInfo(@Param("branchId") Long branchId);
+        List<OpUserVO> selectUsersByBranchAndRole(@Param("branchId") String branchId,
+                        @Param("memberCode") String memberCode);
 
 }

@@ -16,16 +16,8 @@
 <%@ include file="/common/inc/common.jspf" %>
 <%@ include file="/common/inc/docType.jspf" %>
 <%
-   String saleStatus="";
-   String saleStatusNm="";
-	if (Const.SYSTEM_TYPE.equals("1")) {
-		saleStatus = "1";
-		saleStatusNm = "판매중";
-	}
-	if (Const.SYSTEM_TYPE.equals("2")) {
-		saleStatus = "0";
-		saleStatusNm = "승인요청";
-	}
+   String saleStatus = "0";
+   String saleStatusNm = "승인요청";
 
 	String currentEditorMode = param.getString("editorMode");
 	if (currentEditorMode.equals("")) currentEditorMode = "1"; // Default to Summernote for new registration
@@ -70,10 +62,10 @@
 				goUrl = "/api/members/wholesalers?memberCode=ROLE_SELL";
 				$(".modal-title").text("판매자검색");
 				mode = "user";
-			  } else if (discd === "modalWholesaler") {
+			  } else if (discd === "modalBranch") {
 				goUrl = "/api/members/wholesalers?memberCode=ROLE_PROJ";
 				$(".modal-title").text("센터검색");
-				mode = "wh";
+				mode = "branch";
 			  } else {
 				return; // 정의되지 않은 호출은 무시
 			  }
@@ -142,10 +134,10 @@
 				// 판매자 세팅
 				$("#userNo").val(no);                        // hidden
 				$("#sellerNmView").val(id + "/" + nm);       // 표시용
-			  } else if (mode === "wh") {
+			  } else if (mode === "branch") {
 				// 센터(중간센터) 세팅
-				$("#wholesalerNo").val(no);                  // hidden
-				$("#wholesalerNm").val(id + "/" + nm);       // 표시용
+				$("#branchId").val(no);                  // hidden
+				$("#branchNmView").val(id + "/" + nm);       // 표시용
 			  }
 			  $("#selectModal").modal("hide");
 			});
@@ -275,12 +267,10 @@
 				return false;
 			}
 			<% } %>
-			<% if(Const.SYSTEM_TYPE.equals("2")){ %>
-				if($('[name=wholesalerNo]').val() == ''){
-					alert('중간센터를 선택주세요.');
-					return false;
-				}
-			<% } %>
+			if($('[name=branchId]').val() == ''){
+				alert('중간센터를 선택주세요.');
+				return false;
+			}
 
 			if($('[name=title]').val() == ''){
 				alert('상품명을 입력해 주세요.');
@@ -421,27 +411,25 @@
 					%>
 					</div>
 
-					<% if(Const.SYSTEM_TYPE.equals("2")){ %>
 					<div class="form-group row">
 						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2" for="saleStatus">중간센터</label>
 						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-4">
 						<div class="input-group w-20">
-						  <input type="text" class="form-control" id="wholesalerNm" name="wholesalerNm" placeholder="중간센터를 선택하세요" readonly>
+						  <input type="text" class="form-control" id="branchNmView" name="branchNmView" placeholder="중간센터를 선택하세요" readonly>
 						  <div class="input-group-append">
 							<button type="button"
 									class="btn btn-secondary"
 									data-toggle="modal"
 									data-target="#selectModal"
-									data-discd="modalWholesaler">
+									data-discd="modalBranch">
 							  <i class="fa fa-search"></i> 검색
 							</button>
 						  </div>
 						</div>
 						<!-- 실제 전송되는 값 -->
-						<input type="hidden" id="wholesalerNo" name="wholesalerNo">
+						<input type="hidden" id="branchId" name="branchId">
 						</div>
 					</div>
-					<% } %>
 
 
 
