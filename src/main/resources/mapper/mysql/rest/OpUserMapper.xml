@@ -96,7 +96,7 @@
     </update>
 
     <select id="fetchFcmToken" resultType="com.whomade.kycarrots.entity.member.OpUserVO" parameterType="string">
-        SELECT PUSH_TOKEN, DEVICE_TYPE
+        SELECT USER_ID,PUSH_TOKEN, DEVICE_TYPE
         FROM op_user
         WHERE USER_ID = #{userId}
     </select>
