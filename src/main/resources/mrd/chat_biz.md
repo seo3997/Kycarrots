@@ -1,6 +1,7 @@
 1. 챗팅 및 상품 시스템 구조 변경 상세 설계 (MRD)
 
 1.1 데이터베이스 및 필드 변경
+테이블은 mrd/chat_sql.md 참조
 tb_product 테이블: WHOLESALER_NO 필드 삭제 (도매처 개념 제거).
 tb_chat_room 테이블: SELLER_ID 컬럼을 BRANCH_ID로 변경 (지점 중심의 관리).
 시스템 환경: SYSTEM_TYPE = 1 관련 로직 전체 삭제 (오직 SYSTEM_TYPE = 2인 본사-지점-구매자 구조만 유지).
@@ -10,8 +11,8 @@ room_id는 고유 식별을 위해 [상품ID]*[참여 주체 1]\_[참여 주체 
 
 용자 권한 대상 room_id 구성 방식
 구매자 (ROLE_PUB) 소속 지점 productId + userId + branchId
-지점 (ROLE_PROJ) 본사 productId + branchId + 본사branchId(BR_0002)
-본사 (ROLE_SELL) 지점 선택 productId + targetBranchId + 본사branchId(BR_0002)
+지점 (ROLE_PROJ) 본사 productId + branchId + 본사branchId(2)
+본사 (ROLE_SELL) 지점 선택 productId + targetBranchId + 본사branchId(2)
 
 1.3 챗팅 흐름 (Communication Flow)
 구매자: 오직 본인이 소속된 지점(ROLE_PROJ) 관리자와만 대화 가능.
