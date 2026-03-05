@@ -141,8 +141,6 @@ public class ChatWsController {
                     Map<String, String> data = new HashMap<>();
                     data.put("id", pushId);
                     data.put("roomId", roomId);
-                    data.put("buyerId", id1);
-                    data.put("branchId", id2);
                     data.put("productId", productId != null ? productId.toString() : "");
                     data.put("type", "chat");
                     data.put("msg", message.getMessage());

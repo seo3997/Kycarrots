@@ -135,40 +135,7 @@ public class TnProductService {
         String messaeTitle = "";
         String messaeBody = "";
 
-        if ("0".equals(saleStatus)) {
-            // 승인요청: 해당 지점의 모든 ROLE_PROJ 사용자에게 전송
-            // 이 시점에는 이미 branchId가 product 데이터에 있어야 함.
-            // 하지만 현재 TnProductVo에는 branchId가 없음.
-            // op_user 테이블에서 판매자(userNo)의 branchId를 가져와야 함.
-            DataMap paramForUser = new DataMap();
-            paramForUser.put("userId", productVo.getUserId());
-            OpUserVO sellerInfo = opUserService.seelectUser(paramForUser);
-            if (sellerInfo != null && sellerInfo.getBranchId() != null) {
-                List<OpUserVO> branchUsers = opUserService.selectUsersByBranchAndRole(sellerInfo.getBranchId(),
-                        "ROLE_PROJ");
-                messaeTitle = "상품 승인 요청";
-                messaeBody = productTitle + " 상품이 등록되었습니다. 승인해주세요.";
-                for (OpUserVO branchUser : branchUsers) {
-                    if (branchUser.getPushToken() != null) {
-                        fcmService.sendPushToUserAndLog(
-                                Long.parseLong(productVo.getUserNo()),
-                                branchUser.getDeviceType(),
-                                branchUser.getUserNo(),
-                                branchUser.getPushToken(),
-                                messaeTitle,
-                                messaeBody,
-                                productId,
-                                "승인요청",
-                                Map.of(
-                                        "productId", productId,
-                                        "userId", userId,
-                                        "type", "product",
-                                        "title", messaeTitle,
-                                        "body", messaeBody));
-                    }
-                }
-            }
-        } else if ("1".equals(saleStatus)) {
+        if ("1".equals(saleStatus)) {
             // 판매중: 일반 구매자에게 topic으로 브로드캐스트
             messaeTitle = "신규 상품 등록";
             messaeBody = productTitle + " 상품이 판매중으로 등록되었습니다.";
@@ -178,7 +145,6 @@ public class TnProductService {
                     messaeBody,
                     Map.of(
                             "productId", productId,
-                            "userId", userId,
                             "type", "product",
                             "title", messaeTitle,
                             "body", messaeBody));
