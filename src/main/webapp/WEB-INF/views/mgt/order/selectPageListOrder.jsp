@@ -213,7 +213,7 @@
 											<td>${item.ORDERED_AT}</td>
 											<td>
 												<c:if test="${item.ORDER_STATUS != '40' && ssAuthorId != 'ROLE_SELL'}">
-													<button type="button" class="btn btn-xs btn-danger" onclick="event.stopPropagation(); fnCancel('${item.ORDER_ID}');">결제취소</button>
+													<button type="button" class="btn btn-xs btn-danger" onclick="event.stopPropagation(); fnCancel('${item.ORDER_ID}');">주문취소</button>
 												</c:if>
 												<c:if test="${(ssAuthorId == 'ROLE_ADMIN' || ssAuthorId == 'ROLE_SELL') && item.ORDER_STATUS != '40' && (item.BRANCH_DEPOSIT_STATUS == '10' || item.BRANCH_DEPOSIT_STATUS == '20')}">
 													<button type="button" class="btn btn-xs btn-primary" onclick="event.stopPropagation(); fnConfirmDeposit('${item.ORDER_ID}', this)">입금확인</button>

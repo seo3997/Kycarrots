@@ -471,7 +471,7 @@
                                                      </c:if>
                                                      <c:if test="${(order.ORDER_STATUS == '30' || order.ORDER_STATUS == '50' || order.ORDER_STATUS == '60' || order.ORDER_STATUS == '70' || order.ORDER_STATUS == '80') && memberCode != 'ROLE_SELL'}">
                                                          <button type="button" class="btn-action danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="fnCancelByBranch('${order.ORDER_ID}', '${order.ORDER_STATUS}')">
-                                                             ${order.ORDER_STATUS == '80' ? '반품승인(환불)' : '결제취소'}
+                                                             ${order.ORDER_STATUS == '80' ? '반품승인(환불)' : '주문취소'}
                                                          </button>
                                                      </c:if>
                                                  </div>
