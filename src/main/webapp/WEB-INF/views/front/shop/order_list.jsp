@@ -78,7 +78,7 @@
         <c:when test="${not empty resultList}">
             <c:forEach var="item" items="${resultList}">
                 <div class="order-card">
-                    <div class="order-header" style="cursor: pointer;" onclick="location.href='/shop/orderDetail.do?orderNo=${item.ORDER_NO}'">
+                    <div class="order-header" style="cursor: pointer;" onclick="location.href='/shop/orderDetail.do?orderId=${item.ORDER_ID}'">
                         <span class="order-id" style="color: var(--primary); text-decoration: underline;">주문번호: ${item.ORDER_NO}</span>
                         <span class="order-date">${item.ORDERED_AT}</span>
                     </div>
@@ -100,8 +100,8 @@
                                 </div>
                             </c:if>
                             <c:if test="${item.ORDER_STATUS == '50'}">
-                                <button type="button" class="btn-cancel" id="btn-cancel-${item.ORDER_NO}"
-                                        onclick="handleCancel('${item.ORDER_NO}', '${item.ORDERED_AT}')">주문취소</button>
+                                <button type="button" class="btn-cancel" id="btn-cancel-${item.ORDER_ID}"
+                                        onclick="handleCancel('${item.ORDER_ID}', '${item.ORDERED_AT}')">주문취소</button>
                             </c:if>
                             <c:if test="${item.ORDER_STATUS == '70' and not empty item.DELIVERED_AT}">
                                 <%-- 배송완료(70)인 경우 7일 이내만 표시 --%>
@@ -109,8 +109,8 @@
                                 <c:if test="${not empty deliveredAtDate}">
                                     <fmt:parseNumber value="${(now.time - deliveredAtDate.time) / (1000 * 60 * 60 * 24)}" var="diffDays" integerOnly="true" />
                                     <c:if test="${diffDays <= 7}">
-                                        <button type="button" class="btn-cancel" id="btn-return-${item.ORDER_NO}"
-                                                onclick="handleReturn('${item.ORDER_NO}', '${item.DELIVERED_AT}', '${item.ORDER_STATUS}')">반품요청</button>
+                                        <button type="button" class="btn-cancel" id="btn-return-${item.ORDER_ID}"
+                                                onclick="handleReturn('${item.ORDER_ID}', '${item.DELIVERED_AT}', '${item.ORDER_STATUS}')">반품요청</button>
                                     </c:if>
                                 </c:if>
                             </c:if>
@@ -130,7 +130,7 @@
 </main>
 
 <script>
-    async function handleCancel(orderNo, orderedAt) {
+    async function handleCancel(orderId, orderedAt) {
         // Date check: orderedAt is "YYYY.MM.DD HH:mm"
         const orderDate = new Date(orderedAt.replace(/\./g, '/'));
         const now = new Date();
@@ -148,7 +148,7 @@
         const cancelReason = prompt("취소 사유를 입력해주세요.", "고객 변심");
         if (cancelReason === null) return; // User cancelled prompt
 
-        const btn = document.getElementById('btn-cancel-' + orderNo);
+        const btn = document.getElementById('btn-cancel-' + orderId);
         btn.disabled = true;
         btn.innerText = "취소 중...";
 
@@ -157,7 +157,7 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    orderNo: orderNo,
+                    orderId: orderId,
                     cancelReason: cancelReason,
                     userNo: "${userInfoVo.userNo}"
                 })
@@ -179,7 +179,7 @@
             btn.innerText = "주문취소";
         }
     }
-    async function handleReturn(orderNo, baseDate, status) {
+    async function handleReturn(orderId, baseDate, status) {
         // baseDate is "YYYY-MM-DD HH:mm:ss" or similar from DB
         if (status === '70') {
             const deliveredDate = new Date(baseDate.replace(/-/g, '/'));
@@ -199,7 +199,7 @@
         const returnReason = prompt("반품 사유를 입력해주세요.", "단순 변심");
         if (returnReason === null) return;
 
-        const btn = document.getElementById('btn-return-' + orderNo);
+        const btn = document.getElementById('btn-return-' + orderId);
         btn.disabled = true;
         btn.innerText = "처리 중...";
 
@@ -208,7 +208,7 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    orderNo: orderNo,
+                    orderId: orderId,
                     returnReason: returnReason,
                     userNo: "${userInfoVo.userNo}"
                 })

@@ -149,13 +149,14 @@ public class ShopController {
     public String selectOrderDetailShop(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
-        String orderNo = param.getString("orderNo");
+        String orderIdStr = param.getString("orderId");
 
-        if (orderNo == null || orderNo.isEmpty()) {
+        if (orderIdStr == null || orderIdStr.isEmpty()) {
             return "redirect:/shop/orderList.do";
         }
 
-        com.whomade.kycarrots.entity.payment.OrderVo resultVo = orderService.selectOrderByNo(orderNo);
+        Long orderId = Long.parseLong(orderIdStr);
+        com.whomade.kycarrots.entity.payment.OrderVo resultVo = orderService.selectOrderById(orderId);
         if (resultVo == null) {
             return "redirect:/shop/orderList.do";
         }
