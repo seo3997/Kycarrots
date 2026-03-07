@@ -63,3 +63,7 @@ Params: {"order_id": "12345"}
 기존 참조: TnProductService.insertProductWithImages 내의 sendPushToTopic 로직.
 개선 방향: \* PushService(또는 공통 Component)로 푸시 발송 로직 분리.
 호출 위치: 1. 관리자 상품 등록 (mgt/product/) 2. 프론트/앱 결제 완료 시 3. 주문 상태 변경(입금확인, 배송시작 등) 시
+
+1-6-4 푸시로그 테이블 필드 변경
+tb_push_log PRODUCT_ID 에서 TARGET_ID 로 변경
+TARGET_ID는 주문번호, 상품번호
