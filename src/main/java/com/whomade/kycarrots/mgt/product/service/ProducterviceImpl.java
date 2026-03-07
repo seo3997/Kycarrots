@@ -225,9 +225,28 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 	 * @throws Exception
 	 */
 	public void updateProduct(DataMap param, List<MultipartFile> files, List<TnProductImageVo> metas) throws Exception {
+		// 현재 상태 확인 (상태 변경 체크를 위해)
+		DataMap oldProduct = selectProduct(param);
+		String oldStatus = (oldProduct != null) ? oldProduct.getString("SALE_STATUS") : "";
+
 		// 상품 기본정보 업데이트
 		TnProductVo tnProductVo = buildUpTnProductVo(param);
 		commonMybatisDao.update("mgt.product.updateProduct", tnProductVo);
+
+		// 상태가 '판매중(1)'으로 변경된 경우에만 푸시 발송
+		if ("1".equals(tnProductVo.getSaleStatus()) && !"1".equals(oldStatus)) {
+			String title = "신규 상품 등록";
+			String body = "[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!";
+			java.util.Map<String, String> payload = java.util.Map.of(
+					"productId", tnProductVo.getProductId(),
+					"type", "product",
+					"title", title,
+					"body", body);
+			pushService.sendTargetPush(
+					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ"),
+					null, null, null,
+					title, body, "PRODUCT_REGISTER", payload);
+		}
 
 		// ########### Upload File 처리 시작 #############
 		// 1) 이미지 변경 안했으면 종료

@@ -418,29 +418,6 @@
 	});
 
   	var ROLE        = '<%=role%>';
-	  // 역할/시스템타입별 허용 상태
-	function allowedStatuses() {
-		// 전체 코드 예: ['0','98','1','10','99']  // 0:승인요청, 98:반려, 1:판매중, 10:예약중, 99:판매완료
-		if (ROLE === 'ROLE_SELL') return ['0','98']; // 판매자는 승인요청만
-		// 관리자/센터는 전체
-		return ['0','98','1','10','99'];
-	}
-	 // 드롭다운 옵션 필터링
-	  function filterSaleStatusOptions() {
-		var $sel = $('#saleStatus');
-		var allow = allowedStatuses();
-		// 기존 선택값가 허용 밖이면 초기화
-		if ($sel.val() && allow.indexOf($sel.val()) === -1) {
-		  $sel.val('');
-		}
-		// 옵션 필터 (placeholder 빈값은 유지)
-		$sel.find('option').each(function(){
-		  var v = this.value;
-		  if (!v) return; // '선택하세요' 유지
-		  if (allow.indexOf(v) === -1) $(this).remove();
-		});
-	  }
-	  filterSaleStatusOptions();
 </script>
 
 </body>

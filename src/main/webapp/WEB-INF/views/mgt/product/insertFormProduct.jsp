@@ -17,7 +17,7 @@
 <%@ include file="/common/inc/docType.jspf" %>
 <%
    String saleStatus = "0";
-   String saleStatusNm = "승인요청";
+   String saleStatusNm = "상품등록중";
 
 	String currentEditorMode = param.getString("editorMode");
 	if (currentEditorMode.equals("")) currentEditorMode = "1"; // Default to Summernote for new registration

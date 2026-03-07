@@ -5,12 +5,8 @@ import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.file.FileUtil;
-import com.whomade.kycarrots.push.FcmService;
 import com.whomade.kycarrots.dto.advertise.TnProductDetailResponse;
-import com.whomade.kycarrots.push.SaleStatus;
 import com.whomade.kycarrots.repository.mybatis.product.TnProductRepository;
-import com.whomade.kycarrots.entity.member.OpUserVO;
-import com.whomade.kycarrots.service.member.OpUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,12 +34,8 @@ public class TnProductService {
     private String publicUrl;
 
     private final TnProductRepository tnProductRepository;
-    private final OpUserService opUserService;
     @Autowired
     private FileStorageProperties fileStorageProperties;
-
-    @Autowired
-    private FcmService fcmService;
 
     @Autowired
     private com.whomade.kycarrots.push.PushService pushService;
@@ -131,7 +122,6 @@ public class TnProductService {
         }
         // PUSH 전송
         String saleStatus = productVo.getSaleStatus(); // "0" or "1"
-        String userId = productVo.getUserId();
         String productId = productVo.getProductId();
         String productTitle = productVo.getTitle();
 
@@ -296,11 +286,8 @@ public class TnProductService {
     }
 
     public void handleStatusChange(TnProductVo p, String oldStatusCode, String newStatusCode) {
-        var oldS = SaleStatus.of(oldStatusCode);
-        var newS = SaleStatus.of(newStatusCode);
-
         // [수정] 판매중(1)으로 변경될 때만 푸시 발송
-        if (newS == SaleStatus.ON_SALE && oldS != SaleStatus.ON_SALE) {
+        if ("1".equals(newStatusCode) && !"1".equals(oldStatusCode)) {
             String title = "신규 상품 등록";
             String body = "[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!";
 

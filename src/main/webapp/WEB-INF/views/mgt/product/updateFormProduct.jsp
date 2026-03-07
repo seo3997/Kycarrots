@@ -62,6 +62,7 @@
 				initSummernote();
 			}
 
+
 			// Editor Mode 변경 시
 			$('#editorMode').on('change', function() {
 				if (this.value === '1') {
