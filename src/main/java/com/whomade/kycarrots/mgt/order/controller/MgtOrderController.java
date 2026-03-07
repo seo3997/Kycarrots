@@ -102,6 +102,20 @@ public class MgtOrderController {
         return "redirect:/mgt/main/dashBoard.do";
     }
 
+    @RequestMapping(value = "/mgt/order/requestBranchDeposit.do")
+    public String requestBranchDeposit(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+            throws Exception {
+        DataMap param = RequestUtil.getDataMap(request);
+        UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+        param.put("updusrNo", userInfoVo.getUserNo());
+        param.put("branchName", userInfoVo.getBranchName());
+
+        mgtOrderService.requestBranchDeposit(param);
+
+        MessageUtil.setMessage(request, "본사에 입금 확인 요청을 보냈습니다.");
+        return "redirect:/mgt/main/dashBoard.do";
+    }
+
     @RequestMapping(value = "/mgt/order/updateOrderShippingInfo.do")
     public String updateOrderShippingInfo(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {

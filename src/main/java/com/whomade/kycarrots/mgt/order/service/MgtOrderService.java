@@ -16,4 +16,6 @@ public interface MgtOrderService {
 
     void updateOrderShippingInfo(DataMap param) throws Exception;
 
+    void requestBranchDeposit(DataMap param) throws Exception;
+
 }

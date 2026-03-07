@@ -14,6 +14,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.repository.mybatis.product.TnProductRepository;
+import com.whomade.kycarrots.framework.common.page.util.pageNavigationUtil;
 import java.util.List;
 
 @Slf4j
@@ -138,7 +139,20 @@ public class ShopController {
 
         param.put("userNo", userInfoVo.getUserNo());
         param.put("sch_not_order_status", "10");
+
+        // Paging setup: 5 items per page
+        if (param.getString("rowPerPage").isEmpty()) {
+            param.put("rowPerPage", "5");
+        }
+        if (param.getString("curPage").isEmpty()) {
+            param.put("curPage", "1");
+        }
+        param.put("currentPage", param.getString("curPage"));
+
         List<DataMap> resultList = mgtOrderService.selectPageListOrder(model, param);
+
+        // Add pagination info for the view
+        pageNavigationUtil.createNavigationInfo(model, param);
 
         model.addAttribute("resultList", resultList);
         model.addAttribute("param", param);

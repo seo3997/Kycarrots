@@ -38,6 +38,38 @@
             background: #f1f5f9;
             color: #64748b;
         }
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 0;
+            gap: 0.5rem;
+        }
+        .page-item .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+        .page-item.active .page-link {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .page-item .page-link:hover:not(.active) {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .sr-only { display: none; }
     </style>
 </head>
 <body>
@@ -127,9 +159,22 @@
             </div>
         </c:otherwise>
     </c:choose>
+
+    <div style="margin-top: 3rem; margin-bottom: 2rem;">
+        ${navigationBar}
+    </div>
+
+    <form name="aform" id="aform" method="get" action="/shop/orderList.do">
+        <input type="hidden" name="curPage" id="curPage" value="${param.curPage}">
+    </form>
 </main>
 
 <script>
+    function fnGoPage(page) {
+        document.getElementById('curPage').value = page;
+        document.aform.submit();
+    }
+
     async function handleCancel(orderId, orderedAt) {
         // Date check: orderedAt is "YYYY.MM.DD HH:mm"
         const orderDate = new Date(orderedAt.replace(/\./g, '/'));

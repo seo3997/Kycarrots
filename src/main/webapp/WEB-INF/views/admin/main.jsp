@@ -195,6 +195,7 @@
         }
 
         .badge-waiting { background: #fff7ed; color: #ea580c; }
+        .badge-request { background: #fef9c3; color: #854d0e; }
         .badge-confirmed { background: #ecfdf5; color: #059669; }
         .badge-shipping { background: #eff6ff; color: #2563eb; }
 
@@ -282,19 +283,12 @@
                                             <td><a href="/mgt/order/selectOrder.do?orderId=${order.ORDER_ID}" style="color: var(--primary); font-weight: 600; text-decoration: underline;">${order.ORDER_NO}</a></td>
                                             <td>₩<fmt:formatNumber value="${order.SUPPLY_PRICE_SUM}" /></td>
                                             <td>
-                                                <span class="badge-status ${order.BRANCH_DEPOSIT_STATUS == '10' ? 'badge-waiting' : 'badge-confirmed'}">
-                                                    ${order.BRANCH_DEPOSIT_STATUS == '10' ? '지점입금대기' : '입금확인완료'}
+                                                <span class="badge-status ${order.BRANCH_DEPOSIT_STATUS == '10' ? 'badge-waiting' : (order.BRANCH_DEPOSIT_STATUS == '20' ? 'badge-request' : 'badge-confirmed')}">
+                                                    ${order.BRANCH_DEPOSIT_STATUS_NM}
                                                 </span>
                                             </td>
                                             <td>
-                                                <c:choose>
-                                                    <c:when test="${order.ORDER_STATUS == '10'}">결제대기</c:when>
-                                                    <c:when test="${order.ORDER_STATUS == '30'}">결제완료</c:when>
-                                                    <c:when test="${order.ORDER_STATUS == '40'}">주문취소</c:when>
-                                                    <c:when test="${order.ORDER_STATUS == '60'}">배송중</c:when>
-                                                    <c:when test="${order.ORDER_STATUS == '70'}">배송완료</c:when>
-                                                    <c:otherwise>${order.ORDER_STATUS}</c:otherwise>
-                                                </c:choose>
+                                                ${order.ORDER_STATUS_NM}
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -354,8 +348,8 @@
                                             <td><a href="/mgt/order/selectOrder.do?orderId=${order.ORDER_ID}" style="color: var(--primary); font-weight: 600; text-decoration: underline;">${order.ORDER_NO}</a></td>
                                             <td>₩<fmt:formatNumber value="${order.SUPPLY_PRICE_SUM}" /></td>
                                             <td>
-                                                <span class="badge-status ${order.BRANCH_DEPOSIT_STATUS == '10' ? 'badge-waiting' : 'badge-confirmed'}">
-                                                    ${order.BRANCH_DEPOSIT_STATUS == '10' ? '지점입금대기' : '입금확인완료'}
+                                                <span class="badge-status ${order.BRANCH_DEPOSIT_STATUS == '10' ? 'badge-waiting' : (order.BRANCH_DEPOSIT_STATUS == '20' ? 'badge-request' : 'badge-confirmed')}">
+                                                    ${order.BRANCH_DEPOSIT_STATUS_NM}
                                                 </span>
                                             </td>
                                             <td>
@@ -369,7 +363,7 @@
                                             </td>
                                             <td>
                                                 <c:choose>
-                                                    <c:when test="${order.BRANCH_DEPOSIT_STATUS == '10'}">
+                                                    <c:when test="${order.BRANCH_DEPOSIT_STATUS == '10' || order.BRANCH_DEPOSIT_STATUS == '20'}">
                                                         <button type="button" class="btn-action primary" onclick="fnConfirmDeposit('${order.ORDER_ID}', this)">입금확인</button>
                                                     </c:when>
                                                     <c:otherwise>
@@ -458,26 +452,20 @@
                                             <td style="color: var(--danger); font-weight: 500;">₩<fmt:formatNumber value="${order.SUPPLY_PRICE_SUM}" /></td>
                                              <td>₩<fmt:formatNumber value="${order.MY_PROFIT}" /></td>
                                              <td>
-                                                 <span class="badge-status ${order.BRANCH_DEPOSIT_STATUS == '10' ? 'badge-waiting' : 'badge-confirmed'}">
-                                                     ${order.BRANCH_DEPOSIT_STATUS == '10' ? '송금필요' : '확인됨'}
+                                                 <span class="badge-status ${order.BRANCH_DEPOSIT_STATUS == '10' ? 'badge-waiting' : (order.BRANCH_DEPOSIT_STATUS == '20' ? 'badge-request' : 'badge-confirmed')}">
+                                                     ${order.BRANCH_DEPOSIT_STATUS_NM}
                                                  </span>
                                              </td>
                                              <td style="font-size: 0.85rem; color: var(--text-muted);">${not empty order.DELIVERY_COMPANY_NM ? order.DELIVERY_COMPANY_NM : '-'}</td>
                                              <td style="font-size: 0.85rem; color: var(--primary); font-family: monospace;">${not empty order.TRACKING_NO ? order.TRACKING_NO : '-'}</td>
                                              <td>
-                                                 <c:choose>
-                                                     <c:when test="${order.ORDER_STATUS == '30'}">결제완료</c:when>
-                                                     <c:when test="${order.ORDER_STATUS == '50'}">배송준비중</c:when>
-                                                     <c:when test="${order.ORDER_STATUS == '60'}">배송중</c:when>
-                                                     <c:when test="${order.ORDER_STATUS == '70'}">배송완료</c:when>
-                                                     <c:when test="${order.ORDER_STATUS == '80'}">반품요청</c:when>
-                                                     <c:when test="${order.ORDER_STATUS == '89'}">반품완료</c:when>
-                                                     <c:when test="${order.ORDER_STATUS == '99'}">주문확정</c:when>
-                                                     <c:otherwise>${order.ORDER_STATUS}</c:otherwise>
-                                                 </c:choose>
+                                                 ${order.ORDER_STATUS_NM}
                                              </td>
                                              <td>
                                                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                                                     <c:if test="${order.BRANCH_DEPOSIT_STATUS == '10' || order.BRANCH_DEPOSIT_STATUS == '20'}">
+                                                         <button type="button" class="btn-action info" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="fnRequestBranchDeposit('${order.ORDER_ID}', '${order.ORDER_NO}')">입금확인요청</button>
+                                                     </c:if>
                                                      <c:if test="${order.ORDER_STATUS == '70'}">
                                                          <button type="button" class="btn-action primary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="fnConfirmOrderByBranch('${order.ORDER_ID}')">주문확정</button>
                                                      </c:if>
@@ -579,6 +567,13 @@
                           '&orderStatus=60';
         }
     }
+    
+    function fnRequestBranchDeposit(orderId, orderNo) {
+        if (confirm('본사에 입금 확인 요청을 보내시겠습니까?\n주문번호: ' + orderNo)) {
+            location.href = '/mgt/order/requestBranchDeposit.do?orderId=' + orderId + '&orderNo=' + orderNo;
+        }
+    }
+
     function fnCancelByBranch(orderId, status) {
         var msg = status === '80' ? '반품을 승인하고 환불 처리를 진행하시겠습니까?' : '해당 결제를 취소하시겠습니까?';
         var cancelReason = prompt('취소/반품 사유를 입력해주세요.', status === '80' ? '반품 승인 환불' : '지점 요청 취소');
