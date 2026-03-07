@@ -44,6 +44,12 @@
 				location.href = "/mgt/order/updateOrderShippingInfo.do?orderId=${resultVo.orderId}&deliveryCompanyCode=" + deliveryCompanyCode + "&trackingNo=" + trackingNo;
 			}
 		}
+
+		function fnRequestBranchDeposit(orderId, orderNo) {
+			if (confirm('본사에 입금 확인 요청을 보내시겠습니까?\n주문번호: ' + orderNo)) {
+				location.href = '/mgt/order/requestBranchDeposit.do?orderId=' + orderId + '&orderNo=' + orderNo;
+			}
+		}
 	</script>
 </head>
 <body class="hold-transition skin-green-light sidebar-mini">
@@ -73,7 +79,7 @@
 									<col>
 								</colgroup>
 								<tr>
-									<th>주민번호</th>
+									<th>주문번호</th>
 									<td>${resultVo.orderNo}</td>
 									<th>주문상태</th>
 									<td>
@@ -87,21 +93,34 @@
 											<c:when test="${resultVo.orderStatus == '70'}"><span class="label label-success" style="background-color: #00a65a !important;">배송완료</span></c:when>
 											<c:when test="${resultVo.orderStatus == '80'}"><span class="label label-warning">반품요청</span></c:when>
 											<c:when test="${resultVo.orderStatus == '90'}"><span class="label label-info">교환완료</span></c:when>
-											<c:otherwise><span class="label label-default">${resultVo.orderStatus}</span></c:otherwise>
+											<c:otherwise><span class="label label-default">${not empty resultVo.orderStatusNm ? resultVo.orderStatusNm : resultVo.orderStatus}</span></c:otherwise>
 										</c:choose>
 									</td>
 								</tr>
 								<tr>
+									<th>본사입금확인</th>
+									<td>
+										<c:choose>
+											<c:when test="${resultVo.branchDepositStatus == '10'}"><span class="label label-default">입금대기</span></c:when>
+											<c:when test="${resultVo.branchDepositStatus == '20'}"><span class="label label-info">입금확인요청</span></c:when>
+											<c:when test="${resultVo.branchDepositStatus == '30'}"><span class="label label-success">입금완료</span></c:when>
+											<c:otherwise>
+												<span class="label label-default">${not empty resultVo.branchDepositStatusNm ? resultVo.branchDepositStatusNm : resultVo.branchDepositStatus}</span>
+											</c:otherwise>
+										</c:choose>
+									</td>
 									<th>결제금액</th>
 									<td>${resultVo.totalPayAmount}원 (상품: ${resultVo.totalItemAmount} / 배송비: ${resultVo.deliveryFee} / 할인: ${resultVo.discountAmount})</td>
-									<th>주문일시</th>
-									<td>${resultVo.orderedAt}</td>
 								</tr>
 								<tr>
+									<th>주문일시</th>
+									<td>${resultVo.orderedAt}</td>
 									<th>수령인</th>
 									<td>${resultVo.receiverName} (${resultVo.receiverPhone})</td>
+								</tr>
+								<tr>
 									<th>배송지</th>
-									<td>[${resultVo.zipCode}] ${resultVo.address1} ${resultVo.address2}</td>
+									<td colspan="3">[${resultVo.zipCode}] ${resultVo.address1} ${resultVo.address2}</td>
 								</tr>
 								<tr>
 									<th>배송메모</th>
@@ -168,6 +187,9 @@
 						<div class="box-footer text-right">
 							<c:if test="${resultVo.orderStatus != '40'}">
 								<button type="button" class="btn btn-danger" onclick="fnCancel();">결제취소</button>
+							</c:if>
+							<c:if test="${ssAuthorId == 'ROLE_PROJ' && resultVo.orderStatus == '50' && (resultVo.branchDepositStatus == '10' || resultVo.branchDepositStatus == '20')}">
+								<button type="button" class="btn btn-info" onclick="fnRequestBranchDeposit('${resultVo.orderId}', '${resultVo.orderNo}')">입금확인요청</button>
 							</c:if>
 							<button type="button" class="btn btn-default" onclick="fnList();">목록으로</button>
 						</div>

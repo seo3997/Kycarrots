@@ -421,6 +421,21 @@ public class PaymentServiceImpl implements PaymentService {
                 updatePayment.setUpdusrNo(userNo);
                 paymentRepository.updatePaymentStatus(updatePayment);
 
+                // Push for cancellation
+                java.util.Map<String, String> payload = java.util.Map.of(
+                        "targetId", String.valueOf(orderVo.getOrderId()),
+                        "type", "order");
+                String title = "40".equals(nextStatus) ? "[주문취소]" : "[반품완료]";
+                String pushBody = "주문 " + orderVo.getOrderNo() + "이(가) " + ("40".equals(nextStatus) ? "취소" : "반품")
+                        + " 처리되었습니다.";
+
+                // 1. Send push to Branch (ROLE_PROJ)
+                pushService.sendTargetPush(java.util.List.of("ROLE_PROJ"), String.valueOf(orderVo.getBranchId()), null,
+                        null, title, pushBody, "order_cancelled", payload);
+                // 2. Send push to HQ (ROLE_SELL)
+                pushService.sendTargetPush(java.util.List.of("ROLE_SELL"), null, null, null, title, pushBody,
+                        "order_cancelled", payload);
+
                 result.put("success", true);
                 result.put("message", "주문이 정상적으로 취소되었습니다.");
             } else {
@@ -461,6 +476,20 @@ public class PaymentServiceImpl implements PaymentService {
         orderVo.setCancelReason(returnReason); // Use cancelReason field for return reason
         orderVo.setUpdusrNo(userNo);
         paymentRepository.updateOrderStatus(orderVo);
+
+        // Push for return request
+        java.util.Map<String, String> payload = java.util.Map.of(
+                "targetId", String.valueOf(orderVo.getOrderId()),
+                "type", "order");
+        String title = "[반품요청]";
+        String body = "주문 " + orderVo.getOrderNo() + "에 대한 반품 요청이 접수되었습니다.";
+
+        // 1. Send push to Branch (ROLE_PROJ)
+        pushService.sendTargetPush(java.util.List.of("ROLE_PROJ"), String.valueOf(orderVo.getBranchId()), null, null,
+                title, body, "return_requested", payload);
+        // 2. Send push to HQ (ROLE_SELL)
+        pushService.sendTargetPush(java.util.List.of("ROLE_SELL"), null, null, null, title, body, "return_requested",
+                payload);
 
         result.put("success", true);
         result.put("message", "반품 요청이 정상적으로 접수되었습니다.");

@@ -23,6 +23,9 @@
             P.PAID_AT,
             O.ORDER_NO,
             O.RECEIVER_NAME,
+            O.ORDER_STATUS,
+            O.BRANCH_DEPOSIT_STATUS,
+            (SELECT CODE_NM FROM op_code WHERE GROUP_ID = 'R010680' AND CODE = O.BRANCH_DEPOSIT_STATUS) AS BRANCH_DEPOSIT_STATUS_NM,
             (SELECT GROUP_CONCAT(PRODUCT_NAME) FROM tb_order_items WHERE ORDER_ID = P.ORDER_ID) as productNames
         FROM tb_payments P
         JOIN tb_orders O ON P.ORDER_ID = O.ORDER_ID

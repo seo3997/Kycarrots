@@ -157,11 +157,64 @@ public class MgtOrderServiceImpl implements MgtOrderService {
 
     @Override
     public void updateOrderShippingInfo(DataMap param) throws Exception {
+        String orderStatus = param.getString("orderStatus");
         // If orderStatus is not provided, default to 60 (SHIPPING)
-        if (param.getString("orderStatus") == null || param.getString("orderStatus").isEmpty()) {
-            param.put("orderStatus", "60");
+        if (orderStatus == null || orderStatus.isEmpty()) {
+            orderStatus = "60";
+            param.put("orderStatus", orderStatus);
         }
         commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
+
+        // Fetch order details for push notifications
+        DataMap order = commonMybatisDao.selectOne("mgt.order.selectOrderById",
+                Long.parseLong(param.getString("orderId")));
+        if (order != null) {
+            String orderId = order.getString("ORDER_ID");
+            String orderNo = order.getString("ORDER_NO");
+            String branchId = order.getString("BRANCH_ID");
+
+            String title = "";
+            String body = "";
+            String type = "order";
+            String eventType = "";
+            java.util.List<String> targetRoles = null;
+            String targetBranchId = null;
+
+            if ("70".equals(orderStatus)) {
+                title = "배송 완료";
+                body = "주문 " + orderNo + "의 배송이 완료되었습니다.";
+                eventType = "shipping_completed";
+                targetRoles = java.util.Arrays.asList("ROLE_PROJ");
+                targetBranchId = branchId;
+            } else if ("80".equals(orderStatus)) {
+                title = "반품 요청";
+                body = "주문 " + orderNo + "에 대한 반품 요청이 접수되었습니다.";
+                eventType = "return_requested";
+                targetRoles = java.util.Arrays.asList("ROLE_PROJ");
+                targetBranchId = branchId;
+            } else if ("89".equals(orderStatus)) {
+                title = "반품 완료";
+                body = "주문 " + orderNo + "의 반품 처리가 완료되었습니다.";
+                eventType = "return_completed";
+                targetRoles = java.util.Arrays.asList("ROLE_PROJ");
+                targetBranchId = branchId;
+            } else if ("99".equals(orderStatus)) {
+                title = "주문 확정";
+                body = "주문 " + orderNo + "이(가) 확정되었습니다.";
+                eventType = "order_confirmed";
+                targetRoles = java.util.Arrays.asList("ROLE_SELL"); // HQ
+            }
+
+            if (!title.isEmpty()) {
+                java.util.Map<String, String> payload = new java.util.HashMap<>();
+                payload.put("targetId", orderId);
+                payload.put("type", type);
+                payload.put("title", title);
+                payload.put("body", body);
+
+                pushService.sendTargetPush(targetRoles, targetBranchId, null, null, title, body, eventType, payload);
+            }
+        }
     }
 
 }

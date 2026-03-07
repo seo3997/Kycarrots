@@ -47,8 +47,14 @@
 								alert("취소 실패: " + res.message);
 							}
 						}
-					});
+						});
 				}
+			}
+		}
+
+		function fnRequestBranchDeposit(orderId, orderNo) {
+			if (confirm('본사에 입금 확인 요청을 보내시겠습니까?\n주문번호: ' + orderNo)) {
+				location.href = '/mgt/order/requestBranchDeposit.do?orderId=' + orderId + '&orderNo=' + orderNo;
 			}
 		}
 	</script>
@@ -106,6 +112,7 @@
 										<th>상품명</th>
 										<th>결제금액</th>
 										<th>주문상태</th>
+										<th>본사입금확인</th>
 										<th>주문일시</th>
 										<th>관리</th>
 									</tr>
@@ -127,7 +134,15 @@
 													<c:when test="${item.ORDER_STATUS == '70'}"><span class="label label-success" style="background-color: #00a65a !important;">배송완료</span></c:when>
 													<c:when test="${item.ORDER_STATUS == '80'}"><span class="label label-warning">반품요청</span></c:when>
 													<c:when test="${item.ORDER_STATUS == '90'}"><span class="label label-info">교환완료</span></c:when>
-													<c:otherwise><span class="label label-default">${item.ORDER_STATUS}</span></c:otherwise>
+													<c:otherwise><span class="label label-default">${not empty item.ORDER_STATUS_NM ? item.ORDER_STATUS_NM : item.ORDER_STATUS}</span></c:otherwise>
+												</c:choose>
+											</td>
+											<td>
+												<c:choose>
+													<c:when test="${item.BRANCH_DEPOSIT_STATUS == '10'}"><span class="label label-default">입금대기</span></c:when>
+													<c:when test="${item.BRANCH_DEPOSIT_STATUS == '20'}"><span class="label label-info">입금확인요청</span></c:when>
+													<c:when test="${item.BRANCH_DEPOSIT_STATUS == '30'}"><span class="label label-success">입금완료</span></c:when>
+													<c:otherwise><span class="label label-default">${item.BRANCH_DEPOSIT_STATUS_NM}</span></c:otherwise>
 												</c:choose>
 											</td>
 											<td>${item.ORDERED_AT}</td>
@@ -135,12 +150,15 @@
 												<c:if test="${item.ORDER_STATUS != '40'}">
 													<button type="button" class="btn btn-xs btn-danger" onclick="event.stopPropagation(); fnCancel('${item.ORDER_ID}');">결제취소</button>
 												</c:if>
+												<c:if test="${ssAuthorId == 'ROLE_PROJ' && item.ORDER_STATUS == '50' && (item.BRANCH_DEPOSIT_STATUS == '10' || item.BRANCH_DEPOSIT_STATUS == '20')}">
+													<button type="button" class="btn btn-xs btn-info" onclick="event.stopPropagation(); fnRequestBranchDeposit('${item.ORDER_ID}', '${item.ORDER_NO}')">입금확인요청</button>
+												</c:if>
 											</td>
 										</tr>
 									</c:forEach>
 									<c:if test="${empty resultList}">
 										<tr>
-											<td colspan="6" class="text-center">데이터가 없습니다.</td>
+											<td colspan="7" class="text-center">데이터가 없습니다.</td>
 										</tr>
 									</c:if>
 								</tbody>

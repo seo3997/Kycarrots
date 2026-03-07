@@ -25,6 +25,12 @@
             var url = "/mgt/payment/selectPaymentDetail.do?paymentId=" + paymentId;
             window.open(url, "paymentDetail", "width=800,height=700,scrollbars=yes");
         }
+
+        function fnRequestBranchDeposit(orderId, orderNo) {
+            if (confirm('본사에 입금 확인 요청을 보내시겠습니까?\n주문번호: ' + orderNo)) {
+                location.href = '/mgt/order/requestBranchDeposit.do?orderId=' + orderId + '&orderNo=' + orderNo;
+            }
+        }
     </script>
 </head>
 <body class="hold-transition skin-green-light sidebar-mini">
@@ -98,8 +104,9 @@
                                 <th>상품명</th>
                                 <th>결제금액</th>
                                 <th>상태</th>
-                                <th>결제수단</th>
+                                 <th>결제수단</th>
                                 <th>결제일시</th>
+                                <th>관리</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -116,13 +123,18 @@
                                             <c:otherwise><span class="label label-default">${item.PAYMENT_STATUS}</span></c:otherwise>
                                         </c:choose>
                                     </td>
-                                    <td>${item.PAYMENT_METHOD}</td>
+                                     <td>${item.PAYMENT_METHOD}</td>
                                     <td>${item.PAID_AT}</td>
+                                    <td>
+                                        <c:if test="${ssAuthorId == 'ROLE_PROJ' && (item.BRANCH_DEPOSIT_STATUS == '10' || item.BRANCH_DEPOSIT_STATUS == '20')}">
+                                            <button type="button" class="btn btn-xs btn-info" onclick="event.stopPropagation(); fnRequestBranchDeposit('${item.ORDER_ID}', '${item.ORDER_NO}')">입금확인요청</button>
+                                        </c:if>
+                                    </td>
                                 </tr>
                             </c:forEach>
                             <c:if test="${empty resultList}">
                                 <tr>
-                                    <td colspan="7" class="text-center">데이터가 없습니다.</td>
+                                    <td colspan="8" class="text-center">데이터가 없습니다.</td>
                                 </tr>
                             </c:if>
                         </tbody>
