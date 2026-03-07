@@ -53,6 +53,9 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 	@Resource(name = "AtFileMngUtil")
 	private AtFileMngUtil atFileMngUtil;
 
+	@Autowired
+	private com.whomade.kycarrots.push.PushService pushService;
+
 	/**
 	 * <PRE>
 	 * 1. MethodName 	: selectPageListProcuct
@@ -191,6 +194,21 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			r.put("productId", productId);
 			r.put("imageId", representId);
 			commonMybatisDao.update("mgt.product.updateRepresentByProduct", r);
+		}
+
+		// 4) 판매중(1) 상태로 등록될 경우 푸시 발송
+		if ("1".equals(tnProductVo.getSaleStatus())) {
+			String title = "신규 상품 등록";
+			String body = "[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!";
+			java.util.Map<String, String> payload = java.util.Map.of(
+					"productId", String.valueOf(productId),
+					"type", "product",
+					"title", title,
+					"body", body);
+			pushService.sendTargetPush(
+					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ"),
+					null, null, null,
+					title, body, "PRODUCT_REGISTER", payload);
 		}
 
 	}
@@ -502,6 +520,21 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		tnProductVo.setRejectReason(param.getString("rejectReason"));
 		tnProductVo.setUpdusrNo(param.getString("ss_user_no"));
 		commonMybatisDao.update("mgt.product.updateProductStatus", tnProductVo);
+
+		// [추가] 상태가 '판매중(1)'으로 변경될 경우 알림 발송
+		if ("1".equals(tnProductVo.getSaleStatus())) {
+			String title = "신규 상품 등록";
+			String body = "[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!";
+			java.util.Map<String, String> payload = java.util.Map.of(
+					"productId", tnProductVo.getProductId(),
+					"type", "product",
+					"title", title,
+					"body", body);
+			pushService.sendTargetPush(
+					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ"),
+					null, null, null,
+					title, body, "PRODUCT_REGISTER", payload);
+		}
 	}
 
 }

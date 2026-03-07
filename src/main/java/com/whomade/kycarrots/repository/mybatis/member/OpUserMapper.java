@@ -27,6 +27,8 @@ public interface OpUserMapper {
 
         OpUserVO fetchFcmToken(@Param("userId") String userId);
 
+        OpUserVO fetchFcmTokenByUserNo(@Param("userNo") Long userNo);
+
         OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO);
 
         OpUserVO selectByEmail(@Param("email") String email);

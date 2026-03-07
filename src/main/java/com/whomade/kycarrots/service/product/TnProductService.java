@@ -46,6 +46,9 @@ public class TnProductService {
     @Autowired
     private FcmService fcmService;
 
+    @Autowired
+    private com.whomade.kycarrots.push.PushService pushService;
+
     // SELECT
     public List<TnProductVo> selectTbproduct(DataMap param) {
         return tnProductRepository.selectTbProduct(param);
@@ -139,10 +142,15 @@ public class TnProductService {
             // 판매중: 일반 구매자에게 topic으로 브로드캐스트
             messaeTitle = "신규 상품 등록";
             messaeBody = productTitle + " 상품이 판매중으로 등록되었습니다.";
-            fcmService.sendPushToTopic(
-                    "ROLE_PUB",
+            // CHANGED to use PushService according to chat_biz.md spec
+            pushService.sendTargetPush(
+                    List.of("ROLE_PUB", "ROLE_PROJ"),
+                    null,
+                    null,
+                    null,
                     messaeTitle,
                     messaeBody,
+                    "PRODUCT_REGISTER",
                     Map.of(
                             "productId", productId,
                             "type", "product",
@@ -290,117 +298,27 @@ public class TnProductService {
     public void handleStatusChange(TnProductVo p, String oldStatusCode, String newStatusCode) {
         var oldS = SaleStatus.of(oldStatusCode);
         var newS = SaleStatus.of(newStatusCode);
-        Map<String, String> payload = new LinkedHashMap<>(); // 순서 유지해서 로그 가독성 ↑
 
-        // 0->1: 승인됨 → 모든 구매자에게 브로드캐스트
-        if (oldS == SaleStatus.REQUEST && newS == SaleStatus.ON_SALE) {
+        // [수정] 판매중(1)으로 변경될 때만 푸시 발송
+        if (newS == SaleStatus.ON_SALE && oldS != SaleStatus.ON_SALE) {
             String title = "신규 상품 등록";
-            String body = p.getTitle() + " 상품이 판매중으로 등록되었습니다.";
+            String body = "[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!";
 
+            Map<String, String> payload = new java.util.HashMap<>();
             payload.put("type", "product");
             payload.put("productId", p.getProductId());
-            payload.put("userId", p.getUserId());
             payload.put("title", title);
             payload.put("body", body);
-            log.debug("####payload[" + payload + "]");
 
-            fcmService.sendPushToTopic(
-                    "ROLE_PUB",
+            pushService.sendTargetPush(
+                    List.of("ROLE_PUB", "ROLE_PROJ"),
+                    null,
+                    null,
+                    null,
                     title,
                     body,
+                    "PRODUCT_REGISTER",
                     payload);
-        }
-
-        // 0->98: 반려됨 → 판매자에게 수정요청
-        else if (oldS == SaleStatus.REQUEST && newS == SaleStatus.REJECT) {
-            String title = "상품 반려 안내";
-            String body = p.getTitle() + " 상품이 반려되었습니다. 내용을 수정 후 재승인 요청해주세요.";
-            // 판매자 단일 대상 푸시 (토큰/유저 조회)
-            OpUserVO seller = opUserService.fetchFcmToken(p.getUserId());
-            if (seller != null && seller.getPushToken() != null) {
-                payload.put("type", "product");
-                payload.put("productId", p.getProductId());
-                payload.put("userId", p.getUserId());
-                payload.put("title", title);
-                payload.put("body", body);
-                log.debug("####payload[" + payload + "]");
-
-                fcmService.sendPushToUserAndLog(
-                        0L, // actorUserNo (System or Manager)
-                        seller.getDeviceType(),
-                        seller.getUserNo(),
-                        seller.getPushToken(),
-                        title,
-                        body,
-                        p.getProductId(),
-                        "반려",
-                        payload);
-            }
-        }
-
-        // 98->0: 재승인 요청 → 해당 지점의 모든 ROLE_PROJ 사용자에게 알림
-        else if (oldS == SaleStatus.REJECT && newS == SaleStatus.REQUEST) {
-            String title = "재승인 요청";
-            String body = p.getTitle() + " 상품이 수정되어 재승인 요청되었습니다.";
-
-            DataMap paramForSeller = new DataMap();
-            paramForSeller.put("userId", p.getUserId());
-            OpUserVO sellerInfo = opUserService.seelectUser(paramForSeller);
-            if (sellerInfo != null && sellerInfo.getBranchId() != null) {
-                List<OpUserVO> branchUsers = opUserService.selectUsersByBranchAndRole(sellerInfo.getBranchId(),
-                        "ROLE_PROJ");
-                for (OpUserVO branchUser : branchUsers) {
-                    if (branchUser.getPushToken() != null) {
-                        payload.put("type", "product");
-                        payload.put("productId", p.getProductId());
-                        payload.put("userId", p.getUserId());
-                        payload.put("title", title);
-                        payload.put("body", body);
-
-                        fcmService.sendPushToUserAndLog(
-                                Long.parseLong(p.getUserNo()),
-                                branchUser.getDeviceType(),
-                                branchUser.getUserNo(),
-                                branchUser.getPushToken(),
-                                title,
-                                body,
-                                p.getProductId(),
-                                "재승인요청",
-                                payload);
-                    }
-                }
-            }
-        }
-
-        // 필요 시: 1->99(판매완료) 등도 여기서 추가 가능
-        else if (oldS == SaleStatus.ON_SALE && newS == SaleStatus.DONE) {
-            String title = "판매 완료";
-            String body = p.getTitle() + " 상품이 판매 완료되었습니다.";
-
-            payload = new LinkedHashMap<>();
-            payload.put("type", "product");
-            payload.put("productId", p.getProductId());
-            payload.put("userId", p.getUserId());
-            payload.put("title", title);
-            payload.put("body", body);
-            log.debug("####payload {}", payload);
-
-            // 판매자 단건
-            OpUserVO seller = opUserService.fetchFcmToken(p.getUserId());
-            if (seller != null && seller.getPushToken() != null) {
-                fcmService.sendPushToUserAndLog(
-                        0L,
-                        seller.getDeviceType(),
-                        seller.getUserNo(),
-                        seller.getPushToken(),
-                        title,
-                        body,
-                        p.getProductId(),
-                        "판매완료",
-                        payload);
-            } else {
-                log.warn("판매완료 푸시 스킵: 판매자 토큰 없음 userId={}", p.getUserId());
-            }
         }
     }
 }

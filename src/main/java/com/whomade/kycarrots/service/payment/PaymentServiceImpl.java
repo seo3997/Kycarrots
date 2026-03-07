@@ -30,6 +30,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final TnProductRepository tnProductRepository;
+    private final com.whomade.kycarrots.push.PushService pushService;
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${toss.payments.secret-key:test_sk_vZnjEJeQVxawBOMzxKXZrPmOoBN0}")
@@ -275,6 +276,15 @@ public class PaymentServiceImpl implements PaymentService {
                 orderVo.setOrderStatus("50");
                 orderVo.setPaymentStatus("30");
                 paymentRepository.updateOrderStatus(orderVo);
+
+                // PUSH 발송: 지점 관리자 및 본사 관리자에게 주문 접수 알림
+                java.util.Map<String, String> payload = java.util.Map.of("order_id",
+                        String.valueOf(orderVo.getOrderId()), "type", "order");
+                pushService.sendTargetPush(java.util.List.of("ROLE_PROJ"), String.valueOf(orderVo.getBranchId()), null,
+                        null,
+                        "[주문완료]", "새로운 주문 접수 (주문번호: " + orderId + ")", "PAYMENT_DONE", payload);
+                pushService.sendTargetPush(java.util.List.of("ROLE_SELL"), null, null, null,
+                        "[주문완료]", "새로운 주문 접수 (주문번호: " + orderId + ")", "PAYMENT_DONE", payload);
 
                 result.put("success", true);
                 result.put("paymentVo", paymentVo);

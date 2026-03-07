@@ -33,6 +33,8 @@ public class OrderMgtController {
     private final OrderService orderService;
     private final CommonCodeService commonCodeService;
     private final EncodedTokenizer tokenizer;
+    private final com.whomade.kycarrots.push.PushService pushService;
+    private final com.whomade.kycarrots.service.member.OpUserService opUserService;
 
     @Operation(summary = "주문 목록 조회", description = "지점/본점 권한별 주문 목록을 조회합니다.")
     @GetMapping("/list")
@@ -122,6 +124,20 @@ public class OrderMgtController {
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.confirmBranchDeposit(param);
+
+            // 입금 확인 요청 푸시 발송 (지점 -> 본사)
+            String branchName = user.getBranchId();
+            if (user.getBranchId() != null && !user.getBranchId().isEmpty()) {
+                com.whomade.kycarrots.dto.BranchInfoVo branchInfo = opUserService
+                        .selectBranchInfo(Long.parseLong(user.getBranchId()));
+                if (branchInfo != null && branchInfo.getBranchName() != null) {
+                    branchName = branchInfo.getBranchName();
+                }
+            }
+            java.util.Map<String, String> payload = java.util.Map.of("type", "deposit_req");
+            pushService.sendTargetPush(java.util.List.of("ROLE_SELL"), null, null, null,
+                    "[입금확인요청]", "[" + branchName + "]에서 입금을 요청했습니다.", "DEPOSIT_REQ", payload);
+
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("입금 확인 처리 중 오류 발생", e);
@@ -148,6 +164,17 @@ public class OrderMgtController {
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.updateOrderShippingInfo(param);
+
+            // 배송 시작 푸시 발송 (본사/지점 -> 구매자)
+            OrderVo orderVo = orderService.selectOrderByNo(orderNo);
+            if (orderVo != null) {
+                java.util.Map<String, String> payload = java.util.Map.of(
+                        "order_id", String.valueOf(orderVo.getOrderId()),
+                        "type", "order");
+                pushService.sendTargetPush(null, null, null, orderVo.getUserNo(),
+                        "[배송시작]", "상품을 택배사에 전달하였습니다. (송장번호 확인)", "SHIPPING_START", payload);
+            }
+
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("배송 정보 업데이트 중 오류 발생", e);

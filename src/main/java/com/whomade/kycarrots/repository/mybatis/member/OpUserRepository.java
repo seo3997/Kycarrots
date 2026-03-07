@@ -1,7 +1,6 @@
 package com.whomade.kycarrots.repository.mybatis.member;
 
 import com.whomade.kycarrots.email.PasswordResetToken;
-import com.whomade.kycarrots.entity.member.OpUserAuthorVO;
 import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import jakarta.transaction.Transactional;
@@ -43,6 +42,10 @@ public class OpUserRepository {
 
     public OpUserVO fetchFcmToken(String userId) {
         return opUserMapper.fetchFcmToken(userId);
+    }
+
+    public OpUserVO fetchFcmTokenByUserNo(Long userNo) {
+        return opUserMapper.fetchFcmTokenByUserNo(userNo);
     }
 
     public OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO) {

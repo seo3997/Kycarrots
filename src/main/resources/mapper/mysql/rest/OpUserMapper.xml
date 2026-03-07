@@ -101,6 +101,12 @@
         WHERE USER_ID = #{userId}
     </select>
 
+    <select id="fetchFcmTokenByUserNo" resultType="com.whomade.kycarrots.entity.member.OpUserVO" parameterType="long">
+        SELECT USER_ID, PUSH_TOKEN, DEVICE_TYPE, USER_NO
+        FROM op_user
+        WHERE USER_NO = #{userNo}
+    </select>
+
 
     <select id="findEmailByNameAndPhone" parameterType="com.whomade.kycarrots.entity.member.OpUserVO" resultType="com.whomade.kycarrots.entity.member.OpUserVO">
         SELECT A.EMAIL

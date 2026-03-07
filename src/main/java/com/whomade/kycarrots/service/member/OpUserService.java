@@ -53,6 +53,10 @@ public class OpUserService {
         return opUserRepository.fetchFcmToken(userId);
     }
 
+    public OpUserVO fetchFcmTokenByUserNo(Long userNo) {
+        return opUserRepository.fetchFcmTokenByUserNo(userNo);
+    }
+
     public OpUserVO findEmailByNameAndPhone(OpUserVO opUserVO) {
         return opUserRepository.findEmailByNameAndPhone(opUserVO);
     }
