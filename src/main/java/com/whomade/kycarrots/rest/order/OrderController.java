@@ -45,13 +45,13 @@ public class OrderController {
             "주문 상태 코드: 10(결제대기), 20(결제실패), 30(결제완료), 40(주문취소), 50(배송준비중), 60(배송중), 70(배송완료), 80(반품요청), 90(교환완료)")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(type = "object", example = "{\"order\": {\"orderId\": 1, \"orderNo\": \"ORDER-20240222...\", \"orderStatus\": \"30\", \"orderStatusNm\": \"결제완료\", \"totalPayAmount\": 50000, \"paymentId\": 123, \"pgTid\": \"toss_tid_123\", ...}, \"items\": [{\"productId\": 1, \"productName\": \"유기농 당근\", \"title\": \"산지직송 유기농 당근 1kg\", \"imageUrl\": \"https://.../image.jpg\", \"unitPrice\": 15000, \"quantity\": 2}]}")))
     @ApiResponse(responseCode = "404", description = "주문을 찾을 수 없음")
-    @GetMapping("/{orderNo}")
+    @GetMapping("/{orderId}")
     public ResponseEntity<Map<String, Object>> getOrderDetail(
-            @Parameter(description = "주문번호 (예: ORDER-20240219...)") @PathVariable String orderNo) {
+            @Parameter(description = "주문ID (PK)") @PathVariable Long orderId) {
         Map<String, Object> res = new HashMap<>();
 
         // 결제 취소(환불) 기능을 위해 paymentId, pgTid 정보를 포함하여 주문 상세를 조회합니다.
-        OrderVo orderVo = orderService.selectOrderByNo(orderNo);
+        OrderVo orderVo = orderService.selectOrderById(orderId);
         if (orderVo == null) {
             return ResponseEntity.notFound().build();
         }

@@ -9,7 +9,7 @@ public interface PaymentService {
 
     void handleWebhook(DataMap webhookData);
 
-    DataMap cancelPayment(String orderNo, String cancelReason, Integer userNo);
+    DataMap cancelPayment(String orderId, String cancelReason, Integer userNo);
 
-    DataMap requestReturn(String orderNo, String returnReason, Integer userNo);
+    DataMap requestReturn(String orderId, String returnReason, Integer userNo);
 }

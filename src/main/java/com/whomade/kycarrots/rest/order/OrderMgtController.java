@@ -75,17 +75,17 @@ public class OrderMgtController {
     }
 
     @Operation(summary = "주문 상세 조회", description = "주문 상세 정보(마스터 및 상세 아이템)를 조회합니다.")
-    @GetMapping("/{orderNo}")
+    @GetMapping("/{orderId}")
     @SuppressWarnings("unchecked")
     public ResponseEntity<Map<String, Object>> getOrderDetail(@RequestParam("token") String token,
-            @PathVariable("orderNo") String orderNo) {
+            @PathVariable("orderId") String orderId) {
         try {
             OpUserVO user = tokenizer.getMember(token);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
-            OrderVo resultVo = orderService.selectOrderByNo(orderNo);
+            OrderVo resultVo = orderService.selectOrderById(Long.parseLong(orderId));
             if (resultVo == null) {
                 return ResponseEntity.notFound().build();
             }
@@ -112,7 +112,7 @@ public class OrderMgtController {
     @Operation(summary = "입금 확인 처리", description = "지점 무통장 입금 확인 처리를 수행합니다.")
     @PostMapping("/confirmDeposit")
     public ResponseEntity<?> confirmDeposit(@RequestParam("token") String token,
-            @RequestParam("orderNo") String orderNo) {
+            @RequestParam("orderId") String orderId) {
         try {
             OpUserVO user = tokenizer.getMember(token);
             if (user == null) {
@@ -120,7 +120,7 @@ public class OrderMgtController {
             }
 
             DataMap param = new DataMap();
-            param.put("orderNo", orderNo);
+            param.put("orderId", orderId);
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.confirmBranchDeposit(param);
@@ -135,7 +135,7 @@ public class OrderMgtController {
                 }
             }
             java.util.Map<String, String> payload = java.util.Map.of(
-                    "targetId", orderNo,
+                    "targetId", orderId,
                     "type", "deposit_req");
             pushService.sendTargetPush(java.util.List.of("ROLE_SELL"), null, null, null,
                     "[입금확인요청]", "[" + branchName + "]에서 입금을 요청했습니다.", "DEPOSIT_REQ", payload);
@@ -150,7 +150,7 @@ public class OrderMgtController {
     @Operation(summary = "배송 정보(운송장 등) 업데이트", description = "운송장 번호 입력 및 배송 상태를 변경합니다.")
     @PostMapping("/updateShipping")
     public ResponseEntity<?> updateShipping(@RequestParam("token") String token,
-            @RequestParam("orderNo") String orderNo,
+            @RequestParam("orderId") String orderId,
             @RequestParam("carrier") String carrier,
             @RequestParam("trackingNo") String trackingNo) {
         try {
@@ -160,7 +160,7 @@ public class OrderMgtController {
             }
 
             DataMap param = new DataMap();
-            param.put("orderNo", orderNo);
+            param.put("orderId", orderId);
             param.put("deliveryCompanyCode", carrier);
             param.put("trackingNo", trackingNo);
             param.put("updusrNo", user.getUserNo());
@@ -168,7 +168,7 @@ public class OrderMgtController {
             mgtOrderService.updateOrderShippingInfo(param);
 
             // 배송 시작 푸시 발송 (본사/지점 -> 구매자)
-            OrderVo orderVo = orderService.selectOrderByNo(orderNo);
+            OrderVo orderVo = orderService.selectOrderById(Long.parseLong(orderId));
             if (orderVo != null) {
                 java.util.Map<String, String> payload = java.util.Map.of(
                         "targetId", String.valueOf(orderVo.getOrderId()),
@@ -187,7 +187,7 @@ public class OrderMgtController {
     @Operation(summary = "주문 상태 변경", description = "주문의 상태 코드를 직접 변경합니다.")
     @PostMapping("/status")
     public ResponseEntity<?> updateStatus(@RequestParam("token") String token,
-            @RequestParam("orderNo") String orderNo,
+            @RequestParam("orderId") String orderId,
             @RequestParam("status") String status) {
         try {
             OpUserVO user = tokenizer.getMember(token);
@@ -196,7 +196,7 @@ public class OrderMgtController {
             }
 
             DataMap param = new DataMap();
-            param.put("orderNo", orderNo);
+            param.put("orderId", orderId);
             param.put("orderStatus", status);
             param.put("updusrNo", user.getUserNo());
 

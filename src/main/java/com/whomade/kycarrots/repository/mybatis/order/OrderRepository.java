@@ -26,6 +26,10 @@ public class OrderRepository {
         return orderMapper.selectOrderByNo(orderNo);
     }
 
+    public OrderVo selectOrderById(Long orderId) {
+        return orderMapper.selectOrderById(orderId);
+    }
+
     public List<OrderItemVo> selectOrderItemsByOrderId(Long orderId) {
         return orderMapper.selectOrderItemsByOrderId(orderId);
     }

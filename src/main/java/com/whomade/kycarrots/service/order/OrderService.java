@@ -13,6 +13,8 @@ public interface OrderService {
 
     OrderVo selectOrderByNo(String orderNo);
 
+    OrderVo selectOrderById(Long orderId);
+
     List<OrderItemVo> selectOrderItemsByOrderId(Long orderId);
 
     // Admin methods

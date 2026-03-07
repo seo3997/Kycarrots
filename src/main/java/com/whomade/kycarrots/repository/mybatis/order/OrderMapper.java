@@ -15,6 +15,8 @@ public interface OrderMapper {
 
     OrderVo selectOrderByNo(String orderNo);
 
+    OrderVo selectOrderById(Long orderId);
+
     List<OrderItemVo> selectOrderItemsByOrderId(Long orderId);
 
     void updateOrderStatus(OrderVo orderVo);

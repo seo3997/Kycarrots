@@ -109,4 +109,8 @@
         SELECT * FROM tb_payments WHERE MERCHANT_UID = #{merchantUid}
     </select>
 
+    <select id="selectPaymentByOrderId" parameterType="long" resultType="com.whomade.kycarrots.entity.payment.PaymentVo">
+        SELECT * FROM tb_payments WHERE ORDER_ID = #{orderId}
+    </select>
+
 </mapper>

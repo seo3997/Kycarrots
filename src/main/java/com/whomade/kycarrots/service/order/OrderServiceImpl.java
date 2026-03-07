@@ -41,6 +41,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public OrderVo selectOrderById(Long orderId) {
+        return orderRepository.selectOrderById(orderId);
+    }
+
+    @Override
     public List<OrderItemVo> selectOrderItemsByOrderId(Long orderId) {
         return orderRepository.selectOrderItemsByOrderId(orderId);
     }

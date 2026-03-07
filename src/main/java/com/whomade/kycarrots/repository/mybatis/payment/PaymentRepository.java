@@ -57,6 +57,10 @@ public class PaymentRepository {
         return paymentMapper.selectPaymentByMerchantUid(merchantUid);
     }
 
+    public PaymentVo selectPaymentByOrderId(Long orderId) {
+        return paymentMapper.selectPaymentByOrderId(orderId);
+    }
+
     public DataMap selectPaymentStats(DataMap param) {
         return paymentMapper.selectPaymentStats(param);
     }

@@ -33,6 +33,8 @@ public interface PaymentMapper {
 
     PaymentVo selectPaymentByMerchantUid(String merchantUid);
 
+    PaymentVo selectPaymentByOrderId(Long orderId);
+
     // Admin Dashboard
     DataMap selectPaymentStats(DataMap param);
 

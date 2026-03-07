@@ -70,7 +70,11 @@
     </select>
 
     <select id="selectOrderByNo" parameterType="dataMap" resultType="dataMap">
-        SELECT * FROM tb_orders WHERE ORDER_NO = #{orderNo} OR CAST(ORDER_ID AS CHAR) = #{orderNo}
+        SELECT * FROM tb_orders WHERE ORDER_NO = #{orderNo}
+    </select>
+
+    <select id="selectOrderById" parameterType="long" resultType="dataMap">
+        SELECT * FROM tb_orders WHERE ORDER_ID = #{orderId}
     </select>
 
     <select id="selectOrderItemsByOrderId" parameterType="long" resultType="dataMap">
@@ -92,7 +96,7 @@
             BRANCH_DEPOSIT_CONFIRMED_AT = CASE WHEN #{branchDepositStatus} = '20' THEN CURRENT_TIMESTAMP ELSE BRANCH_DEPOSIT_CONFIRMED_AT END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
-        WHERE ORDER_NO = #{orderNo} OR CAST(ORDER_ID AS CHAR) = #{orderNo}
+        WHERE ORDER_ID = #{orderId}
     </update>
 
     <update id="updateOrderShippingInfo" parameterType="dataMap">
@@ -104,7 +108,7 @@
             DELIVERED_AT = CASE WHEN #{orderStatus} = '70' AND DELIVERED_AT IS NULL THEN CURRENT_TIMESTAMP ELSE DELIVERED_AT END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
-        WHERE ORDER_NO = #{orderNo} OR CAST(ORDER_ID AS CHAR) = #{orderNo}
+        WHERE ORDER_ID = #{orderId}
     </update>
 
     <select id="selectDashboardStatsSell" parameterType="dataMap" resultType="dataMap">
@@ -139,6 +143,7 @@
 
     <select id="selectDashboardOrderListSell" parameterType="dataMap" resultType="dataMap">
         SELECT 
+            O.ORDER_ID,
             DATE_FORMAT(O.ORDERED_AT, '%Y.%m.%d %H:%i') AS ORDERED_AT,
             O.ORDER_NO,
             O.TOTAL_PAY_AMOUNT,
@@ -160,6 +165,7 @@
 
     <select id="selectDashboardOrderListProj" parameterType="dataMap" resultType="dataMap">
         SELECT 
+            O.ORDER_ID,
             B.BRANCH_NAME,
             O.ORDER_NO,
             O.SUPPLY_PRICE_SUM,

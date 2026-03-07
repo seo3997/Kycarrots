@@ -333,10 +333,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public DataMap cancelPayment(String orderNo, String cancelReason, Integer userNo) {
+    public DataMap cancelPayment(String orderId, String cancelReason, Integer userNo) {
         DataMap result = new DataMap();
 
-        OrderVo orderVo = paymentRepository.selectOrderByNo(orderNo);
+        Long id = Long.parseLong(orderId);
+        OrderVo orderVo = paymentRepository.selectOrderById(id);
         if (orderVo == null) {
             result.put("success", false);
             result.put("message", "주문 정보를 찾을 수 없습니다.");
@@ -352,7 +353,7 @@ public class PaymentServiceImpl implements PaymentService {
             return result;
         }
 
-        PaymentVo paymentVo = paymentRepository.selectPaymentByMerchantUid(orderNo);
+        PaymentVo paymentVo = paymentRepository.selectPaymentByOrderId(id);
         if (paymentVo == null || paymentVo.getPgTid() == null) {
             result.put("success", false);
             result.put("message", "결제 정보를 찾을 수 없습니다.");
@@ -421,9 +422,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public DataMap requestReturn(String orderNo, String returnReason, Integer userNo) {
+    public DataMap requestReturn(String orderId, String returnReason, Integer userNo) {
         DataMap result = new DataMap();
-        OrderVo orderVo = paymentRepository.selectOrderByNo(orderNo);
+        Long id = Long.parseLong(orderId);
+        OrderVo orderVo = paymentRepository.selectOrderById(id);
 
         if (orderVo == null) {
             result.put("success", false);
