@@ -27,6 +27,30 @@
 		function fnSearch(){
 			$('#aform').attr({ action : '/mgt/order/selectPageListOrder.do', method : 'get' }).submit();
 		}
+		
+		function fnCancel(orderId){
+			if(confirm("정말로 결제취소하시겠습니까? (결제 취소 API가 호출됩니다)")){
+				var reason = prompt("취소 사유를 입력하세요", "관리자 직접 취소");
+				if(reason != null){
+					$.ajax({
+						url: '/mgt/payment/cancelPayment.do',
+						type: 'POST',
+						data: {
+							orderId: orderId,
+							cancelReason: reason
+						},
+						success: function(res) {
+							if (res.success) {
+								alert("취소되었습니다.");
+								location.reload();
+							} else {
+								alert("취소 실패: " + res.message);
+							}
+						}
+					});
+				}
+			}
+		}
 	</script>
 </head>
 <body class="hold-transition skin-green-light sidebar-mini">
@@ -83,6 +107,7 @@
 										<th>결제금액</th>
 										<th>주문상태</th>
 										<th>주문일시</th>
+										<th>관리</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -106,11 +131,16 @@
 												</c:choose>
 											</td>
 											<td>${item.ORDERED_AT}</td>
+											<td>
+												<c:if test="${item.ORDER_STATUS != '40'}">
+													<button type="button" class="btn btn-xs btn-danger" onclick="event.stopPropagation(); fnCancel('${item.ORDER_ID}');">결제취소</button>
+												</c:if>
+											</td>
 										</tr>
 									</c:forEach>
 									<c:if test="${empty resultList}">
 										<tr>
-											<td colspan="5" class="text-center">데이터가 없습니다.</td>
+											<td colspan="6" class="text-center">데이터가 없습니다.</td>
 										</tr>
 									</c:if>
 								</tbody>

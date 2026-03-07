@@ -20,8 +20,8 @@
 		}
 		
 		function fnCancel(){
-			if(confirm("정말로 이 주문을 취소하시겠습니까? (Toss 결제 취소 API가 호출됩니다)")){
-				var reason = prompt("취소 사유를 입력하세요", "관리자 취소");
+			if(confirm("정말로 이 주문을 결제취소하시겠습니까? (결제 취소 API가 호출됩니다)")){
+				var reason = prompt("취소 사유를 입력하세요", "관리자 직접 취소");
 				if(reason != null){
 					location.href = "/mgt/order/cancelOrder.do?orderId=${resultVo.orderId}&cancelReason=" + encodeURIComponent(reason);
 				}
@@ -166,8 +166,8 @@
 						</div>
 
 						<div class="box-footer text-right">
-							<c:if test="${resultVo.orderStatus == '30'}">
-								<button type="button" class="btn btn-danger" onclick="fnCancel();">주문 취소</button>
+							<c:if test="${resultVo.orderStatus != '40'}">
+								<button type="button" class="btn btn-danger" onclick="fnCancel();">결제취소</button>
 							</c:if>
 							<button type="button" class="btn btn-default" onclick="fnList();">목록으로</button>
 						</div>
