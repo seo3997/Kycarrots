@@ -20,8 +20,8 @@
 	<title><%=headTitle%></title>
 	<%@ include file="/common/inc/cssScript.jspf" %>
 	<script type="text/javascript">
-		function fnSelect(orderNo){
-			location.href = "/mgt/order/selectOrder.do?orderNo=" + orderNo;
+		function fnSelect(orderId){
+			location.href = "/mgt/order/selectOrder.do?orderId=" + orderId;
 		}
 		
 		function fnSearch(){
@@ -87,7 +87,7 @@
 								</thead>
 								<tbody>
 									<c:forEach var="item" items="${resultList}">
-										<tr onclick="fnSelect('${item.ORDER_NO}');" style="cursor:pointer;" class="text-center">
+										<tr onclick="fnSelect('${item.ORDER_ID}');" style="cursor:pointer;" class="text-center">
 											<td>${item.ORDER_NO}</td>
 											<td class="text-left">${item.PRODUCT_NAME}</td>
 											<td class="text-right">${item.TOTAL_PAY_AMOUNT}원</td>

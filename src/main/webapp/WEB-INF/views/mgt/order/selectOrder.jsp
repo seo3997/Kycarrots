@@ -23,7 +23,7 @@
 			if(confirm("정말로 이 주문을 취소하시겠습니까? (Toss 결제 취소 API가 호출됩니다)")){
 				var reason = prompt("취소 사유를 입력하세요", "관리자 취소");
 				if(reason != null){
-					location.href = "/mgt/order/cancelOrder.do?orderNo=${resultVo.orderNo}&cancelReason=" + encodeURIComponent(reason);
+					location.href = "/mgt/order/cancelOrder.do?orderId=${resultVo.orderId}&cancelReason=" + encodeURIComponent(reason);
 				}
 			}
 		}
@@ -41,7 +41,7 @@
 			}
 			
 			if(confirm("배송 정보를 업데이트하시겠습니까?")){
-				location.href = "/mgt/order/updateOrderShippingInfo.do?orderNo=${resultVo.orderNo}&deliveryCompanyCode=" + deliveryCompanyCode + "&trackingNo=" + trackingNo;
+				location.href = "/mgt/order/updateOrderShippingInfo.do?orderId=${resultVo.orderId}&deliveryCompanyCode=" + deliveryCompanyCode + "&trackingNo=" + trackingNo;
 			}
 		}
 	</script>

@@ -46,10 +46,10 @@ public class PaymentMgtServiceImpl implements PaymentMgtService {
     @Override
     @Transactional
     public DataMap cancelPayment(DataMap param) {
-        String orderNo = param.getString("merchantUid");
+        String orderId = param.getString("orderId");
         String cancelReason = param.getString("cancelReason", "관리자 취소");
 
         // 관리자 번호가 없을 수 있으므로 시스템 관리자 번호(보통 1)를 기본값으로 사용
-        return paymentService.cancelPayment(orderNo, cancelReason, 1);
+        return paymentService.cancelPayment(orderId, cancelReason, 1);
     }
 }

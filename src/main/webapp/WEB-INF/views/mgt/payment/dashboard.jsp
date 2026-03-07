@@ -22,18 +22,18 @@
             $('#aform').attr({ action : '/mgt/payment/dashboard.do', method : 'get' }).submit();
         }
         
-        function fnOrder(orderNo) {
-            location.href = "/mgt/order/selectOrder.do?orderNo=" + orderNo;
+        function fnOrder(orderId) {
+            location.href = "/mgt/order/selectOrder.do?orderId=" + orderId;
         }
         
-        function fnCancel(paymentId, merchantUid, paymentKey) {
+        function fnCancel(paymentId, orderId, paymentKey) {
             if (confirm("정말로 결제를 취소하시겠습니까?")) {
                 $.ajax({
                     url: '/mgt/payment/cancelPayment.do',
                     type: 'POST',
                     data: {
                         paymentId: paymentId,
-                        merchantUid: merchantUid,
+                        orderId: orderId,
                         paymentKey: paymentKey,
                         cancelReason: "관리자 직접 취소"
                     },
@@ -169,11 +169,11 @@
                         <tbody>
                             <c:forEach var="item" items="${resultList}">
                                 <tr>
-                                    <td><a href="javascript:fnOrder('${item.ORDER_NO}')">${item.ORDER_NO}</a></td>
+                                    <td><a href="javascript:fnOrder('${item.ORDER_ID}')">${item.ORDER_NO}</a></td>
                                     <td>${item.RECEIVER_NAME}</td>
                                     <td>${item.productNames}</td>
                                     <td class="text-right">${StringUtil.setComma(item.AMOUNT_TOTAL)}원</td>
-                                    <td style="cursor: pointer;" onclick="fnOrder('${item.ORDER_NO}')">
+                                    <td style="cursor: pointer;" onclick="fnOrder('${item.ORDER_ID}')">
                                         <c:choose>
                                              <c:when test="${item.PAYMENT_STATUS == '30'}"><span class="label label-success">결제완료</span></c:when>
                                              <c:when test="${item.PAYMENT_STATUS == '40'}"><span class="label label-danger">취소됨</span></c:when>
@@ -184,7 +184,7 @@
                                     <td>${item.PAID_AT}</td>
                                     <td>
                                          <c:if test="${item.PAYMENT_STATUS == '30'}">
-                                            <button type="button" class="btn btn-xs btn-danger" onclick="fnCancel('${item.PAYMENT_ID}', '${item.ORDER_NO}', '${item.PG_TID}')">결제취소</button>
+                                            <button type="button" class="btn btn-xs btn-danger" onclick="fnCancel('${item.PAYMENT_ID}', '${item.ORDER_ID}', '${item.PG_TID}')">결제취소</button>
                                         </c:if>
                                     </td>
                                 </tr>

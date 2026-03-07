@@ -49,9 +49,9 @@ public class MgtOrderController {
     public String selectOrder(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
-        String orderNo = param.getString("orderNo");
+        Long orderId = Long.parseLong(param.getString("orderId"));
 
-        OrderVo resultVo = orderService.selectOrderByNo(orderNo);
+        OrderVo resultVo = orderService.selectOrderById(orderId);
         if (resultVo != null) {
             List<OrderItemVo> itemList = orderService.selectOrderItemsByOrderId(resultVo.getOrderId());
             model.addAttribute("resultVo", resultVo);
@@ -72,12 +72,12 @@ public class MgtOrderController {
     public String cancelOrder(HttpServletRequest request, HttpServletResponse response, ModelMap model)
             throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
-        String orderNo = param.getString("orderNo");
+        String orderId = param.getString("orderId");
         String cancelReason = param.getString("cancelReason", "관리자 취소");
 
         UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 
-        DataMap result = paymentService.cancelPayment(orderNo, cancelReason,
+        DataMap result = paymentService.cancelPayment(orderId, cancelReason,
                 Integer.parseInt(String.valueOf(userInfoVo.getUserNo())));
 
         if (result.getBoolean("success")) {
@@ -86,7 +86,7 @@ public class MgtOrderController {
             MessageUtil.setMessage(request, "취소 실패: " + result.getString("message"));
         }
 
-        return "redirect:/mgt/order/selectOrder.do?orderNo=" + orderNo;
+        return "redirect:/mgt/order/selectOrder.do?orderId=" + orderId;
     }
 
     @RequestMapping(value = "/mgt/order/confirmBranchDeposit.do")
