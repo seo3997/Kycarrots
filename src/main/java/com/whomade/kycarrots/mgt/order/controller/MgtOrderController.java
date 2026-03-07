@@ -99,6 +99,10 @@ public class MgtOrderController {
         mgtOrderService.confirmBranchDeposit(param);
 
         MessageUtil.setMessage(request, "입금 확인 처리되었습니다.");
+        String orderId = param.getString("orderId");
+        if (orderId != null && !orderId.isEmpty()) {
+            return "redirect:/mgt/order/selectOrder.do?orderId=" + orderId;
+        }
         return "redirect:/mgt/main/dashBoard.do";
     }
 
@@ -113,6 +117,10 @@ public class MgtOrderController {
         mgtOrderService.requestBranchDeposit(param);
 
         MessageUtil.setMessage(request, "본사에 입금 확인 요청을 보냈습니다.");
+        String orderId = param.getString("orderId");
+        if (orderId != null && !orderId.isEmpty()) {
+            return "redirect:/mgt/order/selectOrder.do?orderId=" + orderId;
+        }
         return "redirect:/mgt/main/dashBoard.do";
     }
 
@@ -126,6 +134,10 @@ public class MgtOrderController {
         mgtOrderService.updateOrderShippingInfo(param);
 
         MessageUtil.setMessage(request, "배송 정보가 업데이트되었습니다.");
+        String orderId = param.getString("orderId");
+        if (orderId != null && !orderId.isEmpty()) {
+            return "redirect:/mgt/order/selectOrder.do?orderId=" + orderId;
+        }
         return "redirect:/mgt/main/dashBoard.do";
     }
 
@@ -140,6 +152,10 @@ public class MgtOrderController {
         mgtOrderService.updateOrderShippingInfo(param);
 
         MessageUtil.setMessage(request, "주문이 확정되었습니다.");
+        String orderId = param.getString("orderId");
+        if (orderId != null && !orderId.isEmpty()) {
+            return "redirect:/mgt/order/selectOrder.do?orderId=" + orderId;
+        }
         return "redirect:/mgt/main/dashBoard.do";
     }
 }

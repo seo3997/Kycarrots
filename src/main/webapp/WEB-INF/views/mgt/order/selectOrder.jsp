@@ -50,6 +50,18 @@
 				location.href = '/mgt/order/requestBranchDeposit.do?orderId=' + orderId + '&orderNo=' + orderNo;
 			}
 		}
+
+		function fnConfirmDeposit(orderId) {
+			if (confirm('본사에서 직접 입금 확인 처리를 하시겠습니까?')) {
+				location.href = '/mgt/order/confirmBranchDeposit.do?orderId=' + orderId;
+			}
+		}
+
+		function fnConfirmOrder(orderId) {
+			if (confirm('주문 확정 처리를 하시겠습니까?')) {
+				location.href = '/mgt/order/confirmOrder.do?orderId=' + orderId;
+			}
+		}
 	</script>
 </head>
 <body class="hold-transition skin-green-light sidebar-mini">
@@ -186,10 +198,16 @@
 
 						<div class="box-footer text-right">
 							<c:if test="${resultVo.orderStatus != '40'}">
-								<button type="button" class="btn btn-danger" onclick="fnCancel();">결제취소</button>
+								<button type="button" class="btn btn-danger" onclick="fnCancel();">주문취소</button>
+							</c:if>
+							<c:if test="${(ssAuthorId == 'ROLE_ADMIN' || ssAuthorId == 'ROLE_SELL') && (resultVo.branchDepositStatus == '10' || resultVo.branchDepositStatus == '20')}">
+								<button type="button" class="btn btn-primary" onclick="fnConfirmDeposit('${resultVo.orderId}')">입금확인</button>
 							</c:if>
 							<c:if test="${ssAuthorId == 'ROLE_PROJ' && resultVo.orderStatus == '50' && (resultVo.branchDepositStatus == '10' || resultVo.branchDepositStatus == '20')}">
 								<button type="button" class="btn btn-info" onclick="fnRequestBranchDeposit('${resultVo.orderId}', '${resultVo.orderNo}')">입금확인요청</button>
+							</c:if>
+							<c:if test="${ssAuthorId == 'ROLE_PROJ' && resultVo.orderStatus == '70'}">
+								<button type="button" class="btn btn-success" onclick="fnConfirmOrder('${resultVo.orderId}')">주문확정</button>
 							</c:if>
 							<button type="button" class="btn btn-default" onclick="fnList();">목록으로</button>
 						</div>

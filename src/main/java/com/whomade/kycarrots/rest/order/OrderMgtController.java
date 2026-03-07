@@ -33,7 +33,6 @@ public class OrderMgtController {
     private final OrderService orderService;
     private final CommonCodeService commonCodeService;
     private final EncodedTokenizer tokenizer;
-    private final com.whomade.kycarrots.push.PushService pushService;
     private final com.whomade.kycarrots.service.member.OpUserService opUserService;
 
     @Operation(summary = "주문 목록 조회", description = "지점/본점 권한별 주문 목록을 조회합니다.")
@@ -190,16 +189,6 @@ public class OrderMgtController {
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.updateOrderShippingInfo(param);
-
-            // 배송 시작 푸시 발송 (본사/지점 -> 구매자)
-            OrderVo orderVo = orderService.selectOrderById(Long.parseLong(orderId));
-            if (orderVo != null) {
-                java.util.Map<String, String> payload = java.util.Map.of(
-                        "targetId", String.valueOf(orderVo.getOrderId()),
-                        "type", "order");
-                pushService.sendTargetPush(null, null, null, orderVo.getUserNo(),
-                        "[배송시작]", "상품을 택배사에 전달하였습니다. (송장번호 확인)", "SHIPPING_START", payload);
-            }
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {

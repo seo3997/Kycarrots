@@ -179,8 +179,14 @@ public class MgtOrderServiceImpl implements MgtOrderService {
             String eventType = "";
             java.util.List<String> targetRoles = null;
             String targetBranchId = null;
+            Long targetUserNo = null;
 
-            if ("70".equals(orderStatus)) {
+            if ("60".equals(orderStatus)) {
+                title = "[배송시작]";
+                body = "상품을 택배사에 전달하였습니다. (주문번호: " + orderNo + ")";
+                eventType = "shipping_started";
+                targetUserNo = order.getLong("USER_NO");
+            } else if ("70".equals(orderStatus)) {
                 title = "배송 완료";
                 body = "주문 " + orderNo + "의 배송이 완료되었습니다.";
                 eventType = "shipping_completed";
@@ -190,7 +196,7 @@ public class MgtOrderServiceImpl implements MgtOrderService {
                 title = "반품 요청";
                 body = "주문 " + orderNo + "에 대한 반품 요청이 접수되었습니다.";
                 eventType = "return_requested";
-                targetRoles = java.util.Arrays.asList("ROLE_PROJ");
+                targetRoles = java.util.Arrays.asList("ROLE_PROJ", "ROLE_SELL"); // Added ROLE_SELL per requirements
                 targetBranchId = branchId;
             } else if ("89".equals(orderStatus)) {
                 title = "반품 완료";
@@ -198,11 +204,23 @@ public class MgtOrderServiceImpl implements MgtOrderService {
                 eventType = "return_completed";
                 targetRoles = java.util.Arrays.asList("ROLE_PROJ");
                 targetBranchId = branchId;
+            } else if ("90".equals(orderStatus)) {
+                title = "교환 완료";
+                body = "주문 " + orderNo + "의 교환 처리가 완료되었습니다.";
+                eventType = "exchange_completed";
+                targetRoles = java.util.Arrays.asList("ROLE_PROJ");
+                targetBranchId = branchId;
             } else if ("99".equals(orderStatus)) {
                 title = "주문 확정";
                 body = "주문 " + orderNo + "이(가) 확정되었습니다.";
                 eventType = "order_confirmed";
                 targetRoles = java.util.Arrays.asList("ROLE_SELL"); // HQ
+            } else if ("40".equals(orderStatus)) {
+                title = "[주문취소]";
+                body = "주문 " + orderNo + "이(가) 취소되었습니다.";
+                eventType = "order_cancelled";
+                targetRoles = java.util.Arrays.asList("ROLE_PROJ", "ROLE_SELL");
+                targetBranchId = branchId;
             }
 
             if (!title.isEmpty()) {
@@ -212,7 +230,8 @@ public class MgtOrderServiceImpl implements MgtOrderService {
                 payload.put("title", title);
                 payload.put("body", body);
 
-                pushService.sendTargetPush(targetRoles, targetBranchId, null, null, title, body, eventType, payload);
+                pushService.sendTargetPush(targetRoles, targetBranchId, null, targetUserNo, title, body, eventType,
+                        payload);
             }
         }
     }

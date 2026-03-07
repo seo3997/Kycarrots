@@ -134,7 +134,7 @@ public class TnProductService {
             messaeBody = productTitle + " 상품이 판매중으로 등록되었습니다.";
             // CHANGED to use PushService according to chat_biz.md spec
             pushService.sendTargetPush(
-                    List.of("ROLE_PUB", "ROLE_PROJ"),
+                    List.of("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
                     null,
                     null,
                     null,
@@ -254,11 +254,8 @@ public class TnProductService {
 
         iReturn = tnProductRepository.updateProductStatus(vo);
 
-        // 중간센터 도매상용
-        if (vo.getSystemType().equals("2")) {
-            if (vo != null && oldStatus != null && vo.getSaleStatus() != null) {
-                handleStatusChange(product, oldStatus, vo.getSaleStatus());
-            }
+        if (vo != null && oldStatus != null && vo.getSaleStatus() != null) {
+            handleStatusChange(product, oldStatus, vo.getSaleStatus());
         }
 
         return iReturn;
@@ -298,7 +295,7 @@ public class TnProductService {
             payload.put("body", body);
 
             pushService.sendTargetPush(
-                    List.of("ROLE_PUB", "ROLE_PROJ"),
+                    List.of("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
                     null,
                     null,
                     null,

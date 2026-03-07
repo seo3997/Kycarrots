@@ -206,7 +206,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 					"title", title,
 					"body", body);
 			pushService.sendTargetPush(
-					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ"),
+					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
 					null, null, null,
 					title, body, "PRODUCT_REGISTER", payload);
 		}
@@ -243,7 +243,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 					"title", title,
 					"body", body);
 			pushService.sendTargetPush(
-					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ"),
+					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
 					null, null, null,
 					title, body, "PRODUCT_REGISTER", payload);
 		}
@@ -550,7 +550,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 					"title", title,
 					"body", body);
 			pushService.sendTargetPush(
-					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ"),
+					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
 					null, null, null,
 					title, body, "PRODUCT_REGISTER", payload);
 		}
