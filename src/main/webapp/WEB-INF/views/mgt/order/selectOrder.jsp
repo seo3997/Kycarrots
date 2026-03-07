@@ -52,8 +52,20 @@
 		}
 
 		function fnConfirmDeposit(orderId) {
-			if (confirm('본사에서 직접 입금 확인 처리를 하시겠습니까?')) {
-				location.href = '/mgt/order/confirmBranchDeposit.do?orderId=' + orderId;
+			var deliveryCompanyCode = $("#deliveryCompanyCode").val();
+			var trackingNo = $("#trackingNo").val();
+
+			if(!deliveryCompanyCode){
+				alert("입금 확인 시 택배사를 먼저 선택해주세요.");
+				return;
+			}
+			if(!trackingNo){
+				alert("입금 확인 시 운송장 번호를 먼저 입력해주세요.");
+				return;
+			}
+
+			if (confirm('해당 주문의 입금을 확인하고 배송 처리(60:배송중)를 진행하시겠습니까?')) {
+				location.href = '/mgt/order/confirmBranchDeposit.do?orderId=' + orderId + '&deliveryCompanyCode=' + deliveryCompanyCode + '&trackingNo=' + trackingNo;
 			}
 		}
 
@@ -160,7 +172,9 @@
 											</c:when>
 											<c:otherwise>
 												<input type="text" id="trackingNo" class="form-control input-sm" style="width: 200px; display: inline-block;" value="${resultVo.trackingNo}">
-												<button type="button" class="btn btn-sm btn-primary" onclick="fnUpdateShipping();" style="margin-left: 5px;">업데이트</button>
+												<c:if test="${resultVo.branchDepositStatus == '30'}">
+													<button type="button" class="btn btn-sm btn-primary" onclick="fnUpdateShipping();" style="margin-left: 5px;">업데이트</button>
+												</c:if>
 											</c:otherwise>
 										</c:choose>
 									</td>

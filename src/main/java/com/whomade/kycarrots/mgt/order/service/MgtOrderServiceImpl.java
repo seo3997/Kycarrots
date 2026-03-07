@@ -21,16 +21,16 @@ public class MgtOrderServiceImpl implements MgtOrderService {
 
     @Override
     public List<DataMap> selectPageListOrder(ModelMap model, DataMap param) throws Exception {
-        // Use limitStart and limitEnd set by pageNavigationUtil
-        int limit = Integer.parseInt(param.getString("limitEnd", "5"));
-        int offset = Integer.parseInt(param.getString("limitStart", "0"));
-
-        param.put("offset", offset);
-        param.put("limit", limit);
-
-        List<DataMap> resultList = commonMybatisDao.selectList("mgt.order.selectPageListOrder", param);
         int totalCount = commonMybatisDao.selectOne("mgt.order.selectOrderCount", param);
         param.put("totalCount", totalCount);
+
+        com.whomade.kycarrots.framework.common.page.util.pageNavigationUtil.createNavigationInfo(model, param);
+
+        // Map pagination parameters for MyBatis (MySQL)
+        param.put("offset", param.get("limitStart"));
+        param.put("limit", param.get("limitEnd"));
+
+        List<DataMap> resultList = commonMybatisDao.selectList("mgt.order.selectPageListOrder", param);
         model.addAttribute("totalCount", totalCount);
 
         return resultList;

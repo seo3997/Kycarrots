@@ -7,6 +7,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page import="com.whomade.kycarrots.framework.common.object.DataMap" %>
 <%@ page import="com.whomade.kycarrots.framework.common.util.StringUtil" %>
+<%@ page import="java.util.List" %>
 
 <jsp:useBean id="resultList"  type="java.util.List" class="java.util.ArrayList" scope="request"/>
 <jsp:useBean id="param" class="com.whomade.kycarrots.framework.common.object.DataMap" scope="request"/>
@@ -56,6 +57,50 @@
 			if (confirm('본사에 입금 확인 요청을 보내시겠습니까?\n주문번호: ' + orderNo)) {
 				location.href = '/mgt/order/requestBranchDeposit.do?orderId=' + orderId + '&orderNo=' + orderNo;
 			}
+		}
+
+		function fnConfirmDeposit(orderId, btn) {
+			var $tr = $(btn).closest('tr');
+			var deliveryCompanyCode = $tr.find('[name=deliveryCompanyCode]').val();
+			var trackingNo = $tr.find('[name=trackingNo]').val();
+
+			if(!deliveryCompanyCode){
+				alert("입금 확인 시 택배사를 먼저 선택해주세요.");
+				return;
+			}
+			if(!trackingNo){
+				alert("입금 확인 시 운송장 번호를 먼저 입력해주세요.");
+				return;
+			}
+
+			if (confirm('해당 주문의 입금을 확인하고 배송 처리(60:배송중)를 진행하시겠습니까?')) {
+				location.href = '/mgt/order/confirmBranchDeposit.do?orderId=' + orderId + '&deliveryCompanyCode=' + deliveryCompanyCode + '&trackingNo=' + trackingNo;
+			}
+		}
+
+		function fnUpdateShipping(orderId, btn) {
+			var $tr = $(btn).closest('tr');
+			var deliveryCompanyCode = $tr.find('[name=deliveryCompanyCode]').val();
+			var trackingNo = $tr.find('[name=trackingNo]').val();
+
+			if(!deliveryCompanyCode){
+				alert("택배사를 선택해주세요.");
+				return;
+			}
+			if(!trackingNo){
+				alert("운송장 번호를 입력해주세요.");
+				return;
+			}
+
+			if (confirm('배송 정보를 업데이트하시겠습니까?')) {
+				location.href = '/mgt/order/updateOrderShippingInfo.do?orderId=' + orderId + '&deliveryCompanyCode=' + deliveryCompanyCode + '&trackingNo=' + trackingNo;
+			}
+		}
+
+		function fnGoPage(pageNo) {
+			$("#currentPage").val(pageNo);
+			$("#aform").attr("action", "/mgt/order/selectPageListOrder.do");
+			$("#aform").submit();
 		}
 	</script>
 </head>
@@ -113,6 +158,8 @@
 										<th>결제금액</th>
 										<th>주문상태</th>
 										<th>본사입금확인</th>
+										<th>택배사</th>
+										<th>운송장번호</th>
 										<th>주문일시</th>
 										<th>관리</th>
 									</tr>
@@ -145,10 +192,34 @@
 													<c:otherwise><span class="label label-default">${item.BRANCH_DEPOSIT_STATUS_NM}</span></c:otherwise>
 												</c:choose>
 											</td>
+											<td>
+												<c:if test="${(ssAuthorId == 'ROLE_ADMIN' || ssAuthorId == 'ROLE_SELL') && item.ORDER_STATUS != '40'}">
+													<select name="deliveryCompanyCode" class="form-control input-sm" style="width: 100px;" onclick="event.stopPropagation();">
+														<%=CommboUtil.getComboStr((List)request.getAttribute("deliveryCompanyList"), "CODE", "CODE_NM", (String)((DataMap)pageContext.getAttribute("item")).getString("DELIVERY_COMPANY_CODE") , "C")%>
+													</select>
+												</c:if>
+												<c:if test="${ssAuthorId == 'ROLE_PROJ' || item.ORDER_STATUS == '40'}">
+													${item.DELIVERY_COMPANY_NM}
+												</c:if>
+											</td>
+											<td>
+												<c:if test="${(ssAuthorId == 'ROLE_ADMIN' || ssAuthorId == 'ROLE_SELL') && item.ORDER_STATUS != '40'}">
+													<input type="text" name="trackingNo" class="form-control input-sm" style="width: 120px;" value="${item.TRACKING_NO}" onclick="event.stopPropagation();">
+												</c:if>
+												<c:if test="${ssAuthorId == 'ROLE_PROJ' || item.ORDER_STATUS == '40'}">
+													${item.TRACKING_NO}
+												</c:if>
+											</td>
 											<td>${item.ORDERED_AT}</td>
 											<td>
 												<c:if test="${item.ORDER_STATUS != '40' && ssAuthorId != 'ROLE_SELL'}">
 													<button type="button" class="btn btn-xs btn-danger" onclick="event.stopPropagation(); fnCancel('${item.ORDER_ID}');">결제취소</button>
+												</c:if>
+												<c:if test="${(ssAuthorId == 'ROLE_ADMIN' || ssAuthorId == 'ROLE_SELL') && item.ORDER_STATUS != '40' && (item.BRANCH_DEPOSIT_STATUS == '10' || item.BRANCH_DEPOSIT_STATUS == '20')}">
+													<button type="button" class="btn btn-xs btn-primary" onclick="event.stopPropagation(); fnConfirmDeposit('${item.ORDER_ID}', this)">입금확인</button>
+												</c:if>
+												<c:if test="${(ssAuthorId == 'ROLE_ADMIN' || ssAuthorId == 'ROLE_SELL') && item.ORDER_STATUS != '40' && item.BRANCH_DEPOSIT_STATUS == '30'}">
+													<button type="button" class="btn btn-xs btn-info" onclick="event.stopPropagation(); fnUpdateShipping('${item.ORDER_ID}', this)">배송정보 업데이트</button>
 												</c:if>
 												<c:if test="${ssAuthorId == 'ROLE_PROJ' && item.ORDER_STATUS == '50' && (item.BRANCH_DEPOSIT_STATUS == '10' || item.BRANCH_DEPOSIT_STATUS == '20')}">
 													<button type="button" class="btn btn-xs btn-info" onclick="event.stopPropagation(); fnRequestBranchDeposit('${item.ORDER_ID}', '${item.ORDER_NO}')">입금확인요청</button>
@@ -163,6 +234,9 @@
 									</c:if>
 								</tbody>
 							</table>
+						</div>
+						<div class="box-footer text-center">
+							${navigationBar}
 						</div>
 					</form>
 				</div>

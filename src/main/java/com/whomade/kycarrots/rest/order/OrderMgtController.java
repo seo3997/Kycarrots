@@ -111,7 +111,9 @@ public class OrderMgtController {
     @Operation(summary = "입금 확인 처리 (본사/관리자용)", description = "본사 관리자가 지점 무통장 입금 확인 처리를 수행합니다.")
     @PostMapping("/confirmDeposit")
     public ResponseEntity<?> confirmDeposit(@RequestParam("token") String token,
-            @RequestParam("orderId") String orderId) {
+            @RequestParam("orderId") String orderId,
+            @RequestParam(value = "carrier", required = false) String carrier,
+            @RequestParam(value = "trackingNo", required = false) String trackingNo) {
         try {
             OpUserVO user = tokenizer.getMember(token);
             if (user == null) {
@@ -120,6 +122,8 @@ public class OrderMgtController {
 
             DataMap param = new DataMap();
             param.put("orderId", orderId);
+            param.put("deliveryCompanyCode", carrier);
+            param.put("trackingNo", trackingNo);
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.confirmBranchDeposit(param);
