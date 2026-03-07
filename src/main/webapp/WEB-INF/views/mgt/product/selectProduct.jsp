@@ -180,7 +180,7 @@
 						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">판매상태</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
 					        <% if (saleStatusEnable) { %>
-					        <select id="saleStatus" name="saleStatus" class="form-control input-sm w-25" >
+					        <select id="saleStatus" name="saleStatus" class="form-control input-sm w-100" >
 								<%=CommboUtil.getComboStr(saleStatusComboStr, "CODE", "CODE_NM", resultMap.getString("SALE_STATUS") , "C")%>
 							</select>
 							<% } else { %>
