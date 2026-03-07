@@ -109,7 +109,7 @@ public class OrderMgtController {
         }
     }
 
-    @Operation(summary = "입금 확인 처리", description = "지점 무통장 입금 확인 처리를 수행합니다.")
+    @Operation(summary = "입금 확인 처리 (본사/관리자용)", description = "본사 관리자가 지점 무통장 입금 확인 처리를 수행합니다.")
     @PostMapping("/confirmDeposit")
     public ResponseEntity<?> confirmDeposit(@RequestParam("token") String token,
             @RequestParam("orderId") String orderId) {
@@ -124,8 +124,34 @@ public class OrderMgtController {
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.confirmBranchDeposit(param);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("입금 확인 처리 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
-            // 입금 확인 요청 푸시 발송 (지점 -> 본사)
+    @Operation(summary = "지점 입금 확인 요청 (지점용)", description = "지점 관리자가 본사에 입금 확인 요청을 보냅니다.")
+    @PostMapping("/requestBranchDeposit")
+    public ResponseEntity<?> requestBranchDeposit(@RequestParam("token") String token,
+            @RequestParam("orderId") String orderId) {
+        try {
+            OpUserVO user = tokenizer.getMember(token);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            DataMap param = new DataMap();
+            param.put("orderId", orderId);
+            param.put("updusrNo", user.getUserNo());
+
+            // Get order info to get orderNo
+            OrderVo orderVo = orderService.selectOrderById(Long.parseLong(orderId));
+            if (orderVo != null) {
+                param.put("orderNo", orderVo.getOrderNo());
+            }
+
+            // Get branch info
             String branchName = user.getBranchId();
             if (user.getBranchId() != null && !user.getBranchId().isEmpty()) {
                 com.whomade.kycarrots.dto.BranchInfoVo branchInfo = opUserService
@@ -134,15 +160,13 @@ public class OrderMgtController {
                     branchName = branchInfo.getBranchName();
                 }
             }
-            java.util.Map<String, String> payload = java.util.Map.of(
-                    "targetId", orderId,
-                    "type", "deposit_req");
-            pushService.sendTargetPush(java.util.List.of("ROLE_SELL"), null, null, null,
-                    "[입금확인요청]", "[" + branchName + "]에서 입금을 요청했습니다.", "DEPOSIT_REQ", payload);
+            param.put("branchName", branchName);
+
+            mgtOrderService.requestBranchDeposit(param);
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.error("입금 확인 처리 중 오류 발생", e);
+            log.error("지점 입금 확인 요청 중 오류 발생", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

@@ -73,6 +73,56 @@ public class MgtOrderServiceImpl implements MgtOrderService {
         // Always set status to 60 (SHIPPING) as requested: "입금확인이 되면 60"
         param.put("orderStatus", "60");
         commonMybatisDao.update("mgt.order.updateOrderShippingInfo", param);
+
+        // Fetch order details for push notifications
+        DataMap order = commonMybatisDao.selectOne("mgt.order.selectOrderById",
+                Long.parseLong(param.getString("orderId")));
+        if (order != null) {
+            String orderId = order.getString("ORDER_ID");
+            String orderNo = order.getString("ORDER_NO");
+            String branchId = order.getString("BRANCH_ID");
+            Long userNo = Long.parseLong(order.getString("USER_NO"));
+
+            // 1. Send push to Branch (ROLE_PROJ)
+            String branchTitle = "입금 확인 및 배송 시작";
+            String branchBody = "주문 " + orderNo + "의 입금이 확인되어 배송이 시작되었습니다.";
+
+            java.util.Map<String, String> branchPayload = new java.util.HashMap<>();
+            branchPayload.put("targetId", orderId);
+            branchPayload.put("type", "order");
+            branchPayload.put("title", branchTitle);
+            branchPayload.put("body", branchBody);
+
+            pushService.sendTargetPush(
+                    java.util.Arrays.asList("ROLE_PROJ"),
+                    branchId,
+                    null,
+                    null,
+                    branchTitle,
+                    branchBody,
+                    "branch_deposit_confirmed",
+                    branchPayload);
+
+            // 2. Send push to Buyer (userNo)
+            String buyerTitle = "배송 시작 안내";
+            String buyerBody = "주문하신 상품의 입금이 확인되어 배송이 시작되었습니다. (주문번호: " + orderNo + ")";
+
+            java.util.Map<String, String> buyerPayload = new java.util.HashMap<>();
+            buyerPayload.put("targetId", orderId);
+            buyerPayload.put("type", "order");
+            buyerPayload.put("title", buyerTitle);
+            buyerPayload.put("body", buyerBody);
+
+            pushService.sendTargetPush(
+                    null,
+                    null,
+                    null,
+                    userNo,
+                    buyerTitle,
+                    buyerBody,
+                    "shipping_started",
+                    buyerPayload);
+        }
     }
 
     @Override
@@ -81,18 +131,28 @@ public class MgtOrderServiceImpl implements MgtOrderService {
         commonMybatisDao.update("mgt.order.updateBranchDepositStatus", param);
 
         // Send push to HQ (ROLE_SELL)
+        String orderId = param.getString("orderId");
         String orderNo = param.getString("orderNo");
         String branchName = param.getString("branchName");
+
+        String title = "지점 입금 확인 요청";
+        String body = "[" + branchName + "] 지점에서 주문 " + orderNo + "에 대한 입금을 완료하여 확인 요청하였습니다.";
+
+        java.util.Map<String, String> payload = new java.util.HashMap<>();
+        payload.put("targetId", orderId);
+        payload.put("type", "order");
+        payload.put("title", title);
+        payload.put("body", body);
 
         pushService.sendTargetPush(
                 Arrays.asList("ROLE_SELL"),
                 null,
                 null,
                 null,
-                "지점 입금 확인 요청",
-                "[" + branchName + "] 지점에서 주문 " + orderNo + "에 대한 입금을 완료하여 확인 요청하였습니다.",
+                title,
+                body,
                 "branch_deposit_request",
-                null);
+                payload);
     }
 
     @Override
