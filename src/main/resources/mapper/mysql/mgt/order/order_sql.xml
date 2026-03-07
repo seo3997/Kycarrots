@@ -70,7 +70,7 @@
     </select>
 
     <select id="selectOrderByNo" parameterType="dataMap" resultType="dataMap">
-        SELECT * FROM tb_orders WHERE ORDER_NO = #{orderNo}
+        SELECT * FROM tb_orders WHERE ORDER_NO = #{orderNo} OR CAST(ORDER_ID AS CHAR) = #{orderNo}
     </select>
 
     <select id="selectOrderItemsByOrderId" parameterType="long" resultType="dataMap">
@@ -92,7 +92,7 @@
             BRANCH_DEPOSIT_CONFIRMED_AT = CASE WHEN #{branchDepositStatus} = '20' THEN CURRENT_TIMESTAMP ELSE BRANCH_DEPOSIT_CONFIRMED_AT END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
-        WHERE ORDER_NO = #{orderNo}
+        WHERE ORDER_NO = #{orderNo} OR CAST(ORDER_ID AS CHAR) = #{orderNo}
     </update>
 
     <update id="updateOrderShippingInfo" parameterType="dataMap">
@@ -104,7 +104,7 @@
             DELIVERED_AT = CASE WHEN #{orderStatus} = '70' AND DELIVERED_AT IS NULL THEN CURRENT_TIMESTAMP ELSE DELIVERED_AT END,
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
-        WHERE ORDER_NO = #{orderNo}
+        WHERE ORDER_NO = #{orderNo} OR CAST(ORDER_ID AS CHAR) = #{orderNo}
     </update>
 
     <select id="selectDashboardStatsSell" parameterType="dataMap" resultType="dataMap">

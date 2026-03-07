@@ -24,11 +24,11 @@ public class FcmService {
 
     // ✅ 새 버전: actorUserNo + eventType까지 기록
     public void sendPushToTopicAndLog(Long actorUserNo,
-                                      String topic,
-                                      String title,
-                                      String body,
-                                      Map<String, String> data,
-                                      String eventType) {
+            String topic,
+            String title,
+            String body,
+            Map<String, String> data,
+            String eventType) {
 
         String sendStatus = "FAIL";
         try {
@@ -44,20 +44,19 @@ public class FcmService {
             log.error("Topic push FAIL topic={}, eventType={}", topic, eventType, e);
 
         } finally {
-            Long productId = parseLongSafe(data != null ? data.get("productId") : null);
+            String targetId = data != null ? data.get("targetId") : (data != null ? data.get("productId") : null);
 
             // ✅ 새 테이블 기준 저장
             savePushLog(
                     actorUserNo,
                     "TOPIC",
-                    topic,            // ❗ /topics/ 붙이지 않음
-                    productId,
+                    topic, // ❗ /topics/ 붙이지 않음
+                    targetId,
                     eventType,
-                    "ALL",            // PUSH_TYPE (topic은 플랫폼 2번 전송이라 ALL로)
+                    "ALL", // PUSH_TYPE (topic은 플랫폼 2번 전송이라 ALL로)
                     title,
                     body,
-                    sendStatus
-            );
+                    sendStatus);
         }
     }
 
@@ -71,7 +70,8 @@ public class FcmService {
                         .setPriority(AndroidConfig.Priority.HIGH)
                         .build());
 
-        if (data != null && !data.isEmpty()) b.putAllData(data);
+        if (data != null && !data.isEmpty())
+            b.putAllData(data);
         return FirebaseMessaging.getInstance().send(b.build());
     }
 
@@ -90,22 +90,22 @@ public class FcmService {
                 .setTopic(topic)
                 .setApnsConfig(apns);
 
-        if (data != null && !data.isEmpty()) b.putAllData(data);
+        if (data != null && !data.isEmpty())
+            b.putAllData(data);
         return FirebaseMessaging.getInstance().send(b.build());
     }
 
     // ✅ 새 버전: actorUserNo 기록 가능
     public void sendPushToUserAndLog(
             Long actorUserNo,
-            String deviceType,   // ANDROID / IOS
+            String deviceType, // ANDROID / IOS
             String targetUserNo, // ✅ 수신자 userNo (문자열)
             String token,
             String title,
             String body,
-            String productId,
-            String eventType,    // ✅ 반려 / 재승인요청 / 판매완료 ...
-            Map<String, String> data
-    ) {
+            String targetId,
+            String eventType, // ✅ 반려 / 재승인요청 / 판매완료 ...
+            Map<String, String> data) {
         String sendStatus = "FAIL";
 
         try {
@@ -120,31 +120,30 @@ public class FcmService {
             sendStatus = "SUCCESS";
 
         } catch (Exception e) {
-            log.error("User push FAIL deviceType={}, targetUserNo={}, eventType={}", deviceType, targetUserNo, eventType, e);
+            log.error("User push FAIL deviceType={}, targetUserNo={}, eventType={}", deviceType, targetUserNo,
+                    eventType, e);
 
         } finally {
-            Long pid = parseLongSafe(productId);
+            String tid = targetId;
             savePushLog(
                     actorUserNo,
                     "USER",
                     targetUserNo,
-                    pid,
+                    tid,
                     eventType,
-                    deviceType.toUpperCase(),  // PUSH_TYPE에 플랫폼 저장(ANDROID/IOS)
+                    deviceType.toUpperCase(), // PUSH_TYPE에 플랫폼 저장(ANDROID/IOS)
                     title,
                     body,
-                    sendStatus
-            );
+                    sendStatus);
         }
     }
 
     public void sendPushToUser(
-            String deviceType,   // ANDROID / IOS
+            String deviceType, // ANDROID / IOS
             String token,
             String title,
             String body,
-            Map<String, String> data
-    ) {
+            Map<String, String> data) {
         String sendStatus = "FAIL";
         try {
             if ("ANDROID".equalsIgnoreCase(deviceType)) {
@@ -173,7 +172,8 @@ public class FcmService {
                         .setPriority(AndroidConfig.Priority.HIGH)
                         .build());
 
-        if (data != null && !data.isEmpty()) b.putAllData(data);
+        if (data != null && !data.isEmpty())
+            b.putAllData(data);
         return FirebaseMessaging.getInstance().send(b.build());
     }
 
@@ -191,7 +191,8 @@ public class FcmService {
                 .setToken(token)
                 .setApnsConfig(apns);
 
-        if (data != null && !data.isEmpty()) b.putAllData(data);
+        if (data != null && !data.isEmpty())
+            b.putAllData(data);
         return FirebaseMessaging.getInstance().send(b.build());
     }
 
@@ -202,19 +203,18 @@ public class FcmService {
             Long actorUserNo,
             String targetType,
             String targetValue,
-            Long productId,
+            String targetId,
             String eventType,
             String pushType,
             String title,
             String body,
-            String sendStatus
-    ) {
+            String sendStatus) {
         try {
             pushLogRepository.save(PushLog.builder()
                     .actorUserNo(actorUserNo)
                     .targetType(targetType)
                     .targetValue(targetValue)
-                    .productId(productId)
+                    .targetId(targetId)
                     .eventType(eventType)
                     .messageTitle(title)
                     .messageBody(body)
@@ -223,16 +223,9 @@ public class FcmService {
                     .readYn("N")
                     .build());
         } catch (Exception e) {
-            log.error("PushLog SAVE FAIL targetType={}, targetValue={}, err={}", targetType, targetValue, e.getMessage(), e);
+            log.error("PushLog SAVE FAIL targetType={}, targetValue={}, err={}", targetType, targetValue,
+                    e.getMessage(), e);
         }
     }
 
-    private Long parseLongSafe(String v) {
-        try {
-            if (v == null || v.isBlank()) return null;
-            return Long.parseLong(v.trim());
-        } catch (Exception ignore) {
-            return null;
-        }
-    }
 }

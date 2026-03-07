@@ -134,7 +134,9 @@ public class OrderMgtController {
                     branchName = branchInfo.getBranchName();
                 }
             }
-            java.util.Map<String, String> payload = java.util.Map.of("type", "deposit_req");
+            java.util.Map<String, String> payload = java.util.Map.of(
+                    "targetId", orderNo,
+                    "type", "deposit_req");
             pushService.sendTargetPush(java.util.List.of("ROLE_SELL"), null, null, null,
                     "[입금확인요청]", "[" + branchName + "]에서 입금을 요청했습니다.", "DEPOSIT_REQ", payload);
 
@@ -169,7 +171,7 @@ public class OrderMgtController {
             OrderVo orderVo = orderService.selectOrderByNo(orderNo);
             if (orderVo != null) {
                 java.util.Map<String, String> payload = java.util.Map.of(
-                        "order_id", String.valueOf(orderVo.getOrderId()),
+                        "targetId", String.valueOf(orderVo.getOrderId()),
                         "type", "order");
                 pushService.sendTargetPush(null, null, null, orderVo.getUserNo(),
                         "[배송시작]", "상품을 택배사에 전달하였습니다. (송장번호 확인)", "SHIPPING_START", payload);

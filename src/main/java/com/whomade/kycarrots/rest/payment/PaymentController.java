@@ -32,12 +32,12 @@ public class PaymentController {
         })
         @PostMapping("/confirm")
         public DataMap confirmPayment(
-                        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "승인 데이터 (In)", content = @Content(schema = @Schema(type = "object", example = "{\"paymentKey\": \"tgen_20240219...\", \"orderId\": \"ORDER-1708348400000\", \"amount\": 53000}"))) @RequestBody DataMap param) {
+                        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "승인 데이터 (In)", content = @Content(schema = @Schema(type = "object", example = "{\"paymentKey\": \"tgen_20240219...\", \"orderNo\": \"ORDER-1708348400000\", \"amount\": 53000}"))) @RequestBody DataMap param) {
                 String paymentKey = param.getString("paymentKey");
-                String orderId = param.getString("orderId");
+                String orderNo = param.getString("orderNo");
                 Integer amount = param.getInt("amount");
 
-                return paymentService.confirmPayment(paymentKey, orderId, amount);
+                return paymentService.confirmPayment(paymentKey, orderNo, amount);
         }
 
         @Operation(summary = "토스 웹훅 수신", description = "결제 상태 변경, 가상계좌 입금 등을 토스로부터 비동기로 수신합니다.", responses = {

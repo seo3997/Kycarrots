@@ -59,6 +59,7 @@ tb_orders.PAYMENT_STATUS 필드 사용
 2-3 상품상태코드
 공통코드그룹:R010630
 tb_product.SALE_STATUS 필드 사용
+0:상품등록중
 1:판매중
 20:품절
 30:판매중지

@@ -60,7 +60,7 @@
             P.PG_TID
         FROM tb_orders O
         LEFT JOIN tb_payments P ON O.ORDER_ID = P.ORDER_ID
-        WHERE O.ORDER_NO = #{orderNo}
+        WHERE O.ORDER_NO = #{orderNo} OR CAST(O.ORDER_ID AS CHAR) = #{orderNo}
     </select>
 
     <select id="selectOrderItemsByOrderId" parameterType="long" resultType="com.whomade.kycarrots.entity.payment.OrderItemVo">

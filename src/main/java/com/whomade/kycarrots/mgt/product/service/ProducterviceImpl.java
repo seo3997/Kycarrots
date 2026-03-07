@@ -201,7 +201,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			String title = "신규 상품 등록";
 			String body = "[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!";
 			java.util.Map<String, String> payload = java.util.Map.of(
-					"productId", String.valueOf(productId),
+					"targetId", String.valueOf(productId),
 					"type", "product",
 					"title", title,
 					"body", body);
@@ -238,7 +238,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			String title = "신규 상품 등록";
 			String body = "[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!";
 			java.util.Map<String, String> payload = java.util.Map.of(
-					"productId", tnProductVo.getProductId(),
+					"targetId", tnProductVo.getProductId(),
 					"type", "product",
 					"title", title,
 					"body", body);
@@ -545,7 +545,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			String title = "신규 상품 등록";
 			String body = "[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!";
 			java.util.Map<String, String> payload = java.util.Map.of(
-					"productId", tnProductVo.getProductId(),
+					"targetId", tnProductVo.getProductId(),
 					"type", "product",
 					"title", title,
 					"body", body);

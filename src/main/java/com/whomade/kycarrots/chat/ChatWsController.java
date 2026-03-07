@@ -140,8 +140,7 @@ public class ChatWsController {
                     String pushId = UUID.randomUUID().toString();
                     Map<String, String> data = new HashMap<>();
                     data.put("id", pushId);
-                    data.put("roomId", roomId);
-                    data.put("productId", productId != null ? productId.toString() : "");
+                    data.put("targetId", roomId);
                     data.put("type", "chat");
                     data.put("msg", message.getMessage());
                     data.put("title", messageTitle);

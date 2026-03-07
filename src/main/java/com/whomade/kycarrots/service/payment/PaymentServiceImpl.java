@@ -167,11 +167,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     @SuppressWarnings("unchecked")
-    public DataMap confirmPayment(String paymentKey, String orderId, Integer amount) {
+    public DataMap confirmPayment(String paymentKey, String orderNo, Integer amount) {
         DataMap result = new DataMap();
 
         // 1. Amount verification
-        OrderVo orderVo = paymentRepository.selectOrderByNo(orderId);
+        OrderVo orderVo = paymentRepository.selectOrderByNo(orderNo);
         if (orderVo == null) {
             result.put("success", false);
             result.put("message", "Order not found");
@@ -215,7 +215,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             Map<String, Object> body = Map.of(
                     "paymentKey", paymentKey,
-                    "orderId", orderId,
+                    "orderId", orderNo,
                     "amount", amount);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
@@ -239,7 +239,7 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentVo.setPgTid((String) responseBody.get("paymentKey"));
                 paymentVo.setTossPaymentKey((String) responseBody.get("paymentKey"));
                 paymentVo.setTossMid((String) responseBody.get("mId"));
-                paymentVo.setMerchantUid(orderId);
+                paymentVo.setMerchantUid(orderNo);
                 paymentVo.setAmountTotal(amount);
                 paymentVo.setBranchId(orderVo.getBranchId());
 
@@ -278,13 +278,14 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentRepository.updateOrderStatus(orderVo);
 
                 // PUSH 발송: 지점 관리자 및 본사 관리자에게 주문 접수 알림
-                java.util.Map<String, String> payload = java.util.Map.of("order_id",
-                        String.valueOf(orderVo.getOrderId()), "type", "order");
+                java.util.Map<String, String> payload = java.util.Map.of(
+                        "targetId", String.valueOf(orderVo.getOrderId()),
+                        "type", "order");
                 pushService.sendTargetPush(java.util.List.of("ROLE_PROJ"), String.valueOf(orderVo.getBranchId()), null,
                         null,
-                        "[주문완료]", "새로운 주문 접수 (주문번호: " + orderId + ")", "PAYMENT_DONE", payload);
+                        "[주문완료]", "새로운 주문 접수 (주문번호: " + orderNo + ")", "PAYMENT_DONE", payload);
                 pushService.sendTargetPush(java.util.List.of("ROLE_SELL"), null, null, null,
-                        "[주문완료]", "새로운 주문 접수 (주문번호: " + orderId + ")", "PAYMENT_DONE", payload);
+                        "[주문완료]", "새로운 주문 접수 (주문번호: " + orderNo + ")", "PAYMENT_DONE", payload);
 
                 result.put("success", true);
                 result.put("paymentVo", paymentVo);

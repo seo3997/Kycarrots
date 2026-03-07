@@ -76,7 +76,8 @@ public class PushService {
                     user.getPushToken(),
                     messageTitle,
                     messageBody,
-                    dataPayload != null ? dataPayload.get("productId") : null,
+                    dataPayload != null ? (dataPayload.containsKey("targetId") ? dataPayload.get("targetId")
+                            : dataPayload.get("productId")) : null,
                     eventType,
                     dataPayload);
         }

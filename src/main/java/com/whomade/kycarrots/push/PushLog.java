@@ -29,8 +29,8 @@ public class PushLog {
     @Column(name = "TARGET_VALUE", nullable = false, length = 50)
     private String targetValue;
 
-    @Column(name = "PRODUCT_ID")
-    private Long productId;
+    @Column(name = "TARGET_ID", length = 50)
+    private String targetId;
 
     @Column(name = "EVENT_TYPE", nullable = false, length = 30)
     private String eventType;

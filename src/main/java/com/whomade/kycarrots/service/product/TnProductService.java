@@ -142,7 +142,7 @@ public class TnProductService {
                     messaeBody,
                     "PRODUCT_REGISTER",
                     Map.of(
-                            "productId", productId,
+                            "targetId", productId,
                             "type", "product",
                             "title", messaeTitle,
                             "body", messaeBody));
@@ -293,7 +293,7 @@ public class TnProductService {
 
             Map<String, String> payload = new java.util.HashMap<>();
             payload.put("type", "product");
-            payload.put("productId", p.getProductId());
+            payload.put("targetId", p.getProductId());
             payload.put("title", title);
             payload.put("body", body);
 
