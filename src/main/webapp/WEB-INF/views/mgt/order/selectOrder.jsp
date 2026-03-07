@@ -197,7 +197,7 @@
 						</div>
 
 						<div class="box-footer text-right">
-							<c:if test="${resultVo.orderStatus != '40'}">
+							<c:if test="${resultVo.orderStatus != '40' && ssAuthorId != 'ROLE_SELL'}">
 								<button type="button" class="btn btn-danger" onclick="fnCancel();">주문취소</button>
 							</c:if>
 							<c:if test="${(ssAuthorId == 'ROLE_ADMIN' || ssAuthorId == 'ROLE_SELL') && (resultVo.branchDepositStatus == '10' || resultVo.branchDepositStatus == '20')}">

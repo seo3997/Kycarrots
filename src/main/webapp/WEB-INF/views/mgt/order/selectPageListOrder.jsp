@@ -147,7 +147,7 @@
 											</td>
 											<td>${item.ORDERED_AT}</td>
 											<td>
-												<c:if test="${item.ORDER_STATUS != '40'}">
+												<c:if test="${item.ORDER_STATUS != '40' && ssAuthorId != 'ROLE_SELL'}">
 													<button type="button" class="btn btn-xs btn-danger" onclick="event.stopPropagation(); fnCancel('${item.ORDER_ID}');">결제취소</button>
 												</c:if>
 												<c:if test="${ssAuthorId == 'ROLE_PROJ' && item.ORDER_STATUS == '50' && (item.BRANCH_DEPOSIT_STATUS == '10' || item.BRANCH_DEPOSIT_STATUS == '20')}">
