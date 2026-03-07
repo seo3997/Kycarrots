@@ -90,7 +90,7 @@
             contentType: "application/json",
             data: JSON.stringify({
                 paymentKey: paymentKey,
-                orderId: orderId,
+                orderNo: orderId,
                 amount: parseInt(amount)
             }),
             success: function(res) {

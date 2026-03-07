@@ -113,4 +113,8 @@
         SELECT * FROM tb_payments WHERE ORDER_ID = #{orderId}
     </select>
 
+    <select id="selectMaxOrderNo" parameterType="string" resultType="string">
+        SELECT MAX(ORDER_NO) FROM tb_orders WHERE ORDER_NO LIKE CONCAT(#{prefix}, '%')
+    </select>
+
 </mapper>

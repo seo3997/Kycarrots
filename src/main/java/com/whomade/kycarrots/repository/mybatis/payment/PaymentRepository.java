@@ -37,6 +37,10 @@ public class PaymentRepository {
         return paymentMapper.selectOrderById(orderId);
     }
 
+    public String selectMaxOrderNo(String prefix) {
+        return paymentMapper.selectMaxOrderNo(prefix);
+    }
+
     public int insertOrderItem(OrderItemVo orderItemVo) {
         return paymentMapper.insertOrderItem(orderItemVo);
     }

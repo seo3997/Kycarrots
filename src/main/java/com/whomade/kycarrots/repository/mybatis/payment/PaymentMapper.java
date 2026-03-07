@@ -21,6 +21,8 @@ public interface PaymentMapper {
 
     OrderVo selectOrderById(Long orderId);
 
+    String selectMaxOrderNo(String prefix);
+
     // Order Items
     int insertOrderItem(OrderItemVo orderItemVo);
 

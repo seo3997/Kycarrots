@@ -18,10 +18,11 @@ import jakarta.annotation.Resource;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -47,8 +48,39 @@ public class PaymentServiceImpl implements PaymentService {
 
         String userNo = param.getString("userNo");
         List<Map<String, Object>> items = (List<Map<String, Object>>) param.get("items");
+        Long branchId = param.getLong("branchId");
 
-        String orderNo = "ORDER_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString().substring(0, 8);
+        String branchCode = "0000";
+        // 1. Fetch Branch Info for validation and order numbering
+        if (branchId != null) {
+            try {
+                DataMap branchParam = new DataMap();
+                branchParam.put("branchId", branchId);
+                DataMap branchInfo = mgtBranchService.selectBranch(branchParam);
+                if (branchInfo != null) {
+                    branchCode = branchInfo.getString("BRANCH_CODE");
+                    param.put("branch_base_shipping_fee", branchInfo.getInt("BASE_SHIPPING_FEE"));
+                    param.put("branch_free_shipping_threshold", branchInfo.getInt("FREE_SHIPPING_THRESHOLD"));
+                }
+            } catch (Exception e) {
+                log.error("Failed to fetch branch info", e);
+            }
+        }
+
+        // 2. Generate Order Number: ORD_BRANCHCODE_YYYYMMDD00001
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String prefix = "ORD_" + branchCode + "_" + today;
+        String maxOrderNo = paymentRepository.selectMaxOrderNo(prefix);
+        int seq = 1;
+        if (maxOrderNo != null && maxOrderNo.length() >= prefix.length() + 5) {
+            try {
+                String seqStr = maxOrderNo.substring(prefix.length());
+                seq = Integer.parseInt(seqStr) + 1;
+            } catch (Exception e) {
+                log.warn("Failed to parse sequence from maxOrderNo: {}, using 1", maxOrderNo);
+            }
+        }
+        String orderNo = prefix + String.format("%05d", seq);
 
         int totalItemAmount = 0;
         int supplyPriceSum = 0;
@@ -72,26 +104,10 @@ public class PaymentServiceImpl implements PaymentService {
         orderVo.setRegisterNo(Integer.parseInt(userNo));
         orderVo.setUpdusrNo(Integer.parseInt(userNo));
         orderVo.setDiscountAmount(param.get("discountAmount") == null ? 0 : param.getInt("discountAmount"));
-        orderVo.setBranchId(param.getLong("branchId"));
+        orderVo.setBranchId(branchId);
 
         paymentRepository.insertOrder(orderVo);
         Long orderId = orderVo.getOrderId();
-        Long branchId = orderVo.getBranchId();
-
-        // 1. Validate Delivery Fee using Branch Policy
-        if (branchId != null) {
-            try {
-                DataMap branchParam = new DataMap();
-                branchParam.put("branchId", branchId);
-                DataMap branchInfo = mgtBranchService.selectBranch(branchParam);
-                if (branchInfo != null) {
-                    param.put("branch_base_shipping_fee", branchInfo.getInt("BASE_SHIPPING_FEE"));
-                    param.put("branch_free_shipping_threshold", branchInfo.getInt("FREE_SHIPPING_THRESHOLD"));
-                }
-            } catch (Exception e) {
-                log.error("Failed to fetch branch info for validation", e);
-            }
-        }
 
         for (Map<String, Object> item : items) {
             String productId = String.valueOf(item.get("productId"));
