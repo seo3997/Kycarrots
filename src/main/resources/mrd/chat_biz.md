@@ -39,3 +39,27 @@ putExtra(AdDetailActivity.EXTRA_USER_ID, item.userId)
 1-5-4 안드로이드 SYSTEM_TYPE=2인 경우만 사용
 Constants.SYSTEM_TYPE 항목 삭제
 SYSTEM_TYPE=1 인경우 모든 소스 삭제
+
+1-6 서비스 단계별 Push 알림 발송 정의
+1-6-1. 발생 이벤트 및 발송 조건
+번호,발생 이벤트,발송 조건 (Trigger),수신 대상 (Receiver),알림 메시지 예시
+1,신규 상품 등록,본사(ROLE_SELL) 상품 등록 완료 시,"전체 사용자 (ROLE_PUB, ROLE_PROJ)",[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!
+2,주문/결제 완료,구매자(ROLE_PUB) 결제 완료 시,해당 지점(ROLE_PROJ) & 본사(ROLE_SELL),[주문완료] 새로운 주문 접수 (주문번호: {order_id})
+3,입금 확인 요청,지점(ROLE_PROJ)이 본사에 요청 시,본사(ROLE_SELL) 전체,[입금확인요청] [{branch_nm}]에서 입금을 요청했습니다.
+4,배송 시작,상태가 **'배송중'**으로 변경 시,해당 주문 구매자 (ROLE_PUB),[배송시작] 상품을 택배사에 전달하였습니다. (송장번호 확인)
+
+1-6-2. 기술적 구현 가이드 (개발 참고용)
+Logic: 관리자/프론트에서 주문 상태 변경(DELIVERY_READY → DELIVERING) 및 송장 번호 저장 API 호출 시 트리거.
+
+Target 추출: tb_order 테이블의 user_id를 조회하여 단일 발송.
+
+Android Deep-Link: 푸시 클릭 시 OrderDetailActivity로 이동하도록 order_id를 데이터 페이로드(Data Payload)에 포함.
+
+Landing Activity: com.package.OrderDetailActivity (예시)
+
+Params: {"order_id": "12345"}
+
+1-6-3. 소스 구조 개선 (Refactoring)
+기존 참조: TnProductService.insertProductWithImages 내의 sendPushToTopic 로직.
+개선 방향: \* PushService(또는 공통 Component)로 푸시 발송 로직 분리.
+호출 위치: 1. 관리자 상품 등록 (mgt/product/) 2. 프론트/앱 결제 완료 시 3. 주문 상태 변경(입금확인, 배송시작 등) 시
