@@ -582,28 +582,41 @@
 
                     let html = '';
                     data.list.forEach(item => {
-                        const isSecret = item.SECRET_YN === 'Y';
-                        const isMine = '${userInfoVo.userNo}' == item.USER_NO;
+                        // Handle both UPPER_CASE and camelCase keys
+                        const qnaId = item.QNA_ID || item.qnaId;
+                        const secretYn = item.SECRET_YN || item.secretYn || 'N';
+                        const userNo = item.USER_NO || item.userNo;
+                        const userNm = item.USER_NM || item.userNm;
+                        const registDt = item.REGIST_DT || item.registDt;
+                        const title = item.TITLE || item.title;
+                        const contents = item.CONTENTS || item.contents;
+                        const qnaStatus = item.QNA_STATUS || item.qnaStatus;
+                        const answerContents = item.ANSWER_CONTENTS || item.answerContents;
+                        const answererNm = item.ANSWERER_NM || item.answererNm;
+                        const answeredAt = item.ANSWERED_AT || item.answeredAt;
+
+                        const isSecret = secretYn === 'Y';
+                        const isMine = '${userInfoVo.userNo}' == userNo;
                         const isAdmin = '${ssAuthorId}' == 'ROLE_ADMIN' || '${ssAuthorId}' == 'ROLE_SELL' || '${ssAuthorId}' == 'ROLE_PROJ';
                         const canSee = !isSecret || isMine || isAdmin;
 
                         let deleteBtn = '';
                         if (isMine || isAdmin) {
-                            deleteBtn = `<button class="btn-delete" onclick="deleteQna('\${item.QNA_ID}')" style="margin-left: 0;">삭제</button>`;
+                            deleteBtn = `<button class="btn-delete" onclick="deleteQna('\${qnaId}')" style="margin-left: 0;">삭제</button>`;
                         }
 
                         let statusBadge = `
-                            <span class="badge" style="background: \${item.QNA_STATUS === '20' ? '#ecfdf5; color: #059669;' : '#f1f5f9; color: #64748b;'} padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">
-                                \${item.QNA_STATUS === '20' ? '답변완료' : '접수'}
+                            <span class="badge" style="background: \${qnaStatus === '20' ? '#ecfdf5; color: #059669;' : '#f1f5f9; color: #64748b;'} padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">
+                                \${qnaStatus === '20' ? '답변완료' : '접수'}
                             </span>`;
 
                         let answerHtml = '';
-                        if (canSee && item.QNA_STATUS === '20') {
+                        if (canSee && qnaStatus === '20') {
                             answerHtml = `
                                 <div class="qna-answer">
                                     <div style="font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-reply fa-rotate-180" style="margin-right: 8px; color: var(--primary);"></i>답변</div>
-                                    <div>\${item.ANSWER_CONTENTS}</div>
-                                    <div class="qna-answer-meta">\${item.ANSWERER_NM} (\${item.ANSWERED_AT})</div>
+                                    <div>\${answerContents || ''}</div>
+                                    <div class="qna-answer-meta">\${answererNm || ''} (\${answeredAt || ''})</div>
                                 </div>`;
                         }
 
@@ -613,15 +626,15 @@
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <div style="font-weight: 600;">
                                             \${isSecret ? '<i class="fas fa-lock" style="margin-right: 4px;"></i>' : ''}
-                                            \${item.TITLE}
+                                            \${title}
                                         </div>
                                         \${statusBadge}
                                         \${deleteBtn}
                                     </div>
-                                    <div class="item-meta">\${item.USER_NM} | \${item.REGIST_DT}</div>
+                                    <div class="item-meta">\${userNm} | \${registDt}</div>
                                 </div>
                                 <div class="item-content">
-                                    \${canSee ? item.CONTENTS : '<span style="color: #94a3b8;">비밀글입니다.</span>'}
+                                    \${canSee ? contents : '<span style="color: #94a3b8;">비밀글입니다.</span>'}
                                 </div>
                                 \${answerHtml}
                             </div>

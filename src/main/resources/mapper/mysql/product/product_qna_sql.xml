@@ -63,7 +63,8 @@
             A.ANSWERED_AT,
             A.REGIST_DT,
             U.USER_NM,
-            B.BRANCH_NAME
+            B.BRANCH_NAME,
+            (SELECT USER_NM FROM op_user WHERE USER_NO = A.ANSWERER_NO) AS ANSWERER_NM
         FROM tb_product_qna A
         INNER JOIN op_user U ON A.USER_NO = U.USER_NO
         INNER JOIN tb_branches B ON A.BRANCH_ID = B.BRANCH_ID
@@ -122,7 +123,9 @@
             ANSWER_CONTENTS = #{answerContents},
             ANSWERER_NO = #{ss_user_no},
             ANSWERED_AT = CURRENT_TIMESTAMP,
+            REGISTER_NO = #{ss_user_no},
             UPDUSR_NO = #{ss_user_no},
+            USER_NO = #{ss_user_no},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE QNA_ID = #{qnaId}
     </update>

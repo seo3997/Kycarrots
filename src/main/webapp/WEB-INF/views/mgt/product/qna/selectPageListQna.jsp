@@ -169,10 +169,13 @@
 									<td><%=dataNo-i%></td>
 									<td class="text-left"><%=dataMap.getString("PRODUCT_NM") %></td>
 									<td>
-										<c:set var="status" value="<%=dataMap.getString(\"QNA_STATUS\")%>"/>
+										<c:set var="status" value='<%=dataMap.getString("QNA_STATUS", dataMap.getString("qnaStatus"))%>'/>
 										<c:choose>
 											<c:when test="${status eq '20'}">
 												<span class="label label-success">답변완료</span>
+												<div style="font-size: 0.8em; color: #777; margin-top: 3px;">
+													<%=dataMap.getString("ANSWERER_NM", dataMap.getString("answererNm"))%>
+												</div>
 											</c:when>
 											<c:otherwise>
 												<span class="label label-warning">대기중</span>
@@ -180,16 +183,19 @@
 										</c:choose>
 									</td>
 									<td class="text-left">
-										<% if(dataMap.getString("SECRET_YN").equals("Y")) { %>
+										<% 
+											String secretYn = dataMap.getString("SECRET_YN", dataMap.getString("secretYn"));
+											if("Y".equals(secretYn)) { 
+										%>
 											<i class="fa fa-lock text-muted" title="비밀글"></i>
 										<% } %>
-										<%=dataMap.getString("TITLE") %>
+										<%=dataMap.getString("TITLE", dataMap.getString("title")) %>
 									</td>
-									<td><%=dataMap.getString("USER_NM") %></td>
-									<td><%=dataMap.getString("REGIST_DT") %></td>
+									<td><%=dataMap.getString("USER_NM", dataMap.getString("userNm")) %></td>
+									<td><%=dataMap.getString("REGIST_DT", dataMap.getString("registDt")) %></td>
 									<td>
-										<button type="button" class="btn btn-xs btn-primary" onclick="fnAnswer('<%=dataMap.getString("QNA_ID")%>'); return false;">답변</button>
-										<button type="button" class="btn btn-xs btn-danger" onclick="fnDelete('<%=dataMap.getString("QNA_ID")%>'); return false;">삭제</button>
+										<button type="button" class="btn btn-xs btn-primary" onclick="fnAnswer('<%=dataMap.getString("QNA_ID", dataMap.getString("qnaId"))%>'); return false;">답변</button>
+										<button type="button" class="btn btn-xs btn-danger" onclick="fnDelete('<%=dataMap.getString("QNA_ID", dataMap.getString("qnaId"))%>'); return false;">삭제</button>
 									</td>
 								</tr>
 								<%}%>

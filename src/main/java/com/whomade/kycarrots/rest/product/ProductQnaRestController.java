@@ -106,6 +106,14 @@ public class ProductQnaRestController {
         DataMap param = RequestUtil.getDataMap(request);
         Map<String, Object> result = new HashMap<>();
 
+        UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+        if (userInfoVo != null) {
+            param.put("ss_user_no", userInfoVo.getUserNo());
+            param.put("userNo", userInfoVo.getUserNo());
+            param.put("ss_user_nm", userInfoVo.getUserNm());
+            param.put("ssAuthorId", userInfoVo.getAuthorId());
+        }
+
         productQnaService.updateQnaAnswer(param);
         result.put("success", true);
         return result;
