@@ -139,3 +139,41 @@ CREATE TABLE `tb_address_book` (
 PRIMARY KEY (`ADDRESS_ID`),
 KEY `IDX_USER_ADDRESS` (`USER_NO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='회원 배송지 관리 테이블';
+
+-- tb_product_reviews
+CREATE TABLE `tb_product_reviews` (
+`REVIEW_ID` bigint NOT NULL AUTO_INCREMENT COMMENT '리뷰 PK',
+`PRODUCT_ID` bigint NOT NULL COMMENT '상품 PK',
+`ORDER_ID` bigint NOT NULL COMMENT '주문 PK (tb_orders 참조)',
+`USER_NO` bigint NOT NULL COMMENT '작성자 사용자 PK',
+`RATING` tinyint NOT NULL DEFAULT '5' COMMENT '별점 (1~5)',
+`CONTENTS` text NOT NULL COMMENT '리뷰 내용',
+`ATCH_DOC_ID` varchar(45) DEFAULT NULL COMMENT '첨부파일 문서 ID (tb_file.DOC_ID 참조)',
+`DISPLAY_YN` char(1) DEFAULT 'Y' COMMENT '노출 여부(Y/N)',
+`REGISTER_NO` int DEFAULT NULL COMMENT '등록자 PK',
+`REGIST_DT` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '등록 일시',
+`UPDUSR_NO` int DEFAULT NULL COMMENT '수정자 PK',
+`UPDT_DT` datetime DEFAULT NULL COMMENT '수정 일시',
+PRIMARY KEY (`REVIEW_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='상품 리뷰 테이블';
+
+-- tb_product_qna
+CREATE TABLE `tb_product_qna` (
+`QNA_ID` bigint NOT NULL AUTO_INCREMENT COMMENT '문의 PK',
+`PRODUCT_ID` bigint NOT NULL COMMENT '상품 PK',
+`BRANCH_ID` bigint NOT NULL COMMENT '관련 지점 PK',
+`USER_NO` bigint NOT NULL COMMENT '질문자 사용자 PK',
+`TITLE` varchar(200) NOT NULL COMMENT '문의 제목',
+`CONTENTS` text NOT NULL COMMENT '문의 내용',
+`ATCH_DOC_ID` varchar(45) DEFAULT NULL COMMENT '첨부파일 문서 ID (tb_file.DOC_ID 참조)',
+`SECRET_YN` char(1) DEFAULT 'N' COMMENT '비밀글 여부(Y/N)',
+`QNA_STATUS` varchar(20) DEFAULT '10' COMMENT '상태(10:접수, 20:답변완료)',
+`ANSWER_CONTENTS` text COMMENT '답변 내용',
+`ANSWERER_NO` bigint DEFAULT NULL COMMENT '답변자(본사/지점) 사용자 PK',
+`ANSWERED_AT` datetime DEFAULT NULL COMMENT '답변 일시',
+`REGISTER_NO` int DEFAULT NULL COMMENT '등록자 PK',
+`REGIST_DT` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '등록 일시',
+`UPDUSR_NO` int DEFAULT NULL COMMENT '수정자 PK',
+`UPDT_DT` datetime DEFAULT NULL COMMENT '수정 일시',
+PRIMARY KEY (`QNA_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='상품 문의 테이블';

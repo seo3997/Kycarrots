@@ -69,8 +69,9 @@ tb_product.SALE_STATUS 필드 사용
 공통코드그룹:R010680
 tb_orders.BRANCH_DEPOSIT_STATUS 필드 사용
 10:WAITING:입금대기
-20:DEPOSITED:입금완료
-30:CANCEL:입금취소
+20:BRREQUESR:입금확인요청
+30:DEPOSITED:입금완료
+40:CANCEL:입금취소
 
 3.회원 배송지 관리 기능 구현
 3-1 테이블 생성
@@ -94,3 +95,174 @@ DB 구축: tb_address_book 테이블 신설 (회원번호 기준 멀티 주소 �
 
 ③ 배송 메모 자동화
 MEMO 필드를 활용해 "경비실에 맡겨주세요", "배송 전 연락주세요" 같은 문구를 저장해두면 고객이 매번 타이핑할 필요가 없습니다.
+
+4. push 로직 점검
+   4-1 사용자 권한 및 진입 경로 정의
+   권한 코드,구분,주요 진입 경로 (Web / App),서버 소스 경로
+   ROLE*PUB,구매자,"front/shop, App(사용자용)","/front/shop, /rest/*"
+   ROLE*PROJ,지점판매자,"admin/main, mgt/order, App(관리자용)","/mgt/*, /rest/_"
+   ROLE_SELL,본사,"admin/main, mgt/order, App(관리자용)","/mgt/_, /rest/\*"
+
+4-2 상태 변경에 따른 Push 알림 로직
+상태가 변경될 때, 누가 변경했는지와 누구에게 알림이 가는지가 핵심입니다.
+
+4-2-1. 상품 상태 변경 (본사 권한)
+판매중(1)으로 변경 시: 본사(ROLE_SELL)가 변경 → **모두(PUB, PROJ, SELL)**에게 Push 전송.
+4-2-2. 주문 및 입금 상태 변경 (프로세스 순서)
+프로세스,상태 변경 (코드),실행 주체,Push 수신 대상,비고
+주문/결제 완료,배송준비중(50) / 입금대기(10),구매자,"SELL, PROJ",결제 시 입금상태 10으로 초기화
+입금확인 요청,입금확인요청(20),지점,SELL,본사에게 입금 확인 부탁
+입금완료 처리,입금완료(30) / 배송중(60),본사,"PROJ, PUB",입금 확인 시 배송 시작 알림
+배송 완료,배송완료(70),본사,PROJ,지점에 배송 완료 알림
+주문 확정,주문확정(99),지점,SELL,정산 대상 확정 알림
+취소/반품,주문취소(40) / 반품요청(80),구매자,"SELL, PROJ",운영측에 즉시 알림
+교환 완료,교환완료(90),본사,PROJ,지점에 교환 처리 결과 알림
+
+4-3. 권한별 상세 진입 화면 (Web/App 통합)
+지점과 본사는 동일한 관리자 인프라(mgt)를 공유하되, 권한에 따라 기능이 분기됩니다.
+
+4-3-1. 구매자 (ROLE_PUB)
+Web: views/front/shop/ (detail.jsp, order_list.jsp)
+App: AdDetailActivity, OrderActivity, OrderDetailActivity
+주요 기능: 주문 생성, 결제, 취소 신청, 반품 신청
+
+4-3-2. 지점판매자 (ROLE_PROJ)
+Web: views/mgt/order/ (selectOrder.jsp, selectPageListOrder.jsp)
+App: DashboardActivity, OrderMgtActivity
+주요 기능: 주문 확인, 입금확인요청(20), 주문확정(99)
+
+4-3-3. 본사 (ROLE_SELL)
+Web: views/admin/main.jsp, views/mgt/order/
+App: DashboardActivity, OrderMgtActivity
+
+4-4. 로직 점검 요약 (핵심 포인트)
+입금 상태의 연동: 구매자가 결제하면 주문상태는 50(배송준비중), 지점-본사 간 입금상태는 10(입금대기)이 됩니다.
+본사의 역할: 본사는 실질적인 물류(배송)와 돈의 흐름(입금확인)을 최종 승인하며, 이때 지점과 구매자에게 알림을 줍니다.
+지점의 역할: 지점은 자기 채널의 주문을 관리하고, 최종적으로 99(주문확정)를 통해 본사에 정산을 요구하는 흐름입니다.주요 기능: 상품 상태 관리, 입금완료(30) 처리, 배송중(60)/배송완료(70) 처리, 교환완료(90) 처리
+
+5. 상품리뷰 및 상품문의 업무 추가
+   5-1. 화면 구성 및 진입로 (Front-End)
+   사용자 경험 최적화를 위해 detail.jsp 내에 탭 구조를 적용하며, 앱에서도 동일하게 사용할 수 있도록 구성합니다.
+
+웹 UI 구성: views/front/shop/detail.jsp 하단에 탭 메뉴 구현
+
+<ul class="detail-tabs">
+    <li class="active" onclick="moveTab('desc')">상품상세</li>
+    <li onclick="moveTab('review')">리뷰 (12)</li>
+    <li onclick="moveTab('qna')">상품문의 (5)</li>
+</ul>
+하이브리드 대응: Front 화면은 App WebView에서도 공통 사용하며, 데이터 통신은 rest/ 폴더 내 API를 참조합니다
+5-2. 데이터베이스 및 소스 참조 구조
+기존 시스템의 파일 관리 및 게시판 로직을 그대로 계승합니다.
+참조 테이블: /mrd/payment_sql.md 내 정의된 tb_product_reviews, tb_product_qna 사용
+관리자 로직 (Mgt): mgt/mboard 소스의 게시판 관리 기능을 참조하여 답변 및 노출 제어 구현
+사용자 로직 (Front): front/shop 소스를 참조하여 리스트 및 상세 화면 구현
+App/API 로직: 모바일 앱 연동을 위해 rest/review, rest/qna 폴더 내 Rest API 신규 추가
+5-3. 파일 업로드 및 이미지 처리 (Common Logic)
+이미지 첨부 로직의 통일성을 위해 공통 모듈을 사용합니다.
+
+리뷰 이미지 업로드: mboard의 첨부파일 처리 로직(tb_file 연동)을 그대로 참조
+
+핵심 컬럼: ATCH_DOC_ID를 통해 tb_file 테이블과 조인하여 이미지 로드
+본사 사입/직배송형 분양몰
+사용자설정 Gem
+본사 사입/직배송형 분양몰님이 보낸 내용
+제시해주신 내용을 바탕으로 5. 상품리뷰 및 상품문의 업무 추가에 대한 MRD(기획 요구사항 정의서)를 최종 정리해 드립니다.
+
+기존 소스(mgt/mboard, front/shop)의 로직을 최대한 재활용하면서, 앱(App) 대응을 위한 Rest API 표준화에 초점을 맞추었습니다.
+
+5. 상품리뷰 및 상품문의 업무 추가
+   5-1. 화면 구성 및 진입로 (Front-End)
+   사용자 경험 최적화를 위해 detail.jsp 내에 탭 구조를 적용하며, 앱에서도 동일하게 사용할 수 있도록 구성합니다.
+
+웹 UI 구성: views/front/shop/detail.jsp 하단에 탭 메뉴 구현
+
+HTML
+
+<ul class="detail-tabs">
+    <li class="active" onclick="moveTab('desc')">상품상세</li>
+    <li onclick="moveTab('review')">리뷰 (12)</li>
+    <li onclick="moveTab('qna')">상품문의 (5)</li>
+</ul>
+하이브리드 대응: Front 화면은 App WebView에서도 공통 사용하며, 데이터 통신은 rest/ 폴더 내 API를 참조합니다.
+
+5-2. 데이터베이스 및 소스 참조 구조
+기존 시스템의 파일 관리 및 게시판 로직을 그대로 계승합니다.
+
+참조 테이블: /mrd/payment_sql.md 내 정의된 tb_product_reviews, tb_product_qna 사용
+
+관리자 로직 (Mgt): mgt/mboard 소스의 게시판 관리 기능을 참조하여 답변 및 노출 제어 구현
+
+사용자 로직 (Front): front/shop 소스를 참조하여 리스트 및 상세 화면 구현
+
+App/API 로직: 모바일 앱 연동을 위해 rest/review, rest/qna 폴더 내 Rest API 신규 추가
+
+5-3. 파일 업로드 및 이미지 처리 (Common Logic)
+이미지 첨부 로직의 통일성을 위해 공통 모듈을 사용합니다.
+리뷰 이미지 업로드: mboard의 첨부파일 처리 로직(tb_file 연동)을 그대로 참조
+핵심 컬럼: ATCH_DOC_ID를 통해 tb_file 테이블과 조인하여 이미지 로드
+
+5-4. Push 알림 발송 로직
+등록 및 답변 시점에 따른 수신 대상 정의입니다.
+분류,발생 이벤트,주체 (Actor),수신자 (Receiver),알림 목적
+상품문의,문의 등록,구매자(PUB),"지점(PROJ), 본사(SELL)",신규 문의 확인 및 답변 요청
+,답변 완료,본사/지점,구매자(PUB),문의 답변 완료 안내
+상품리뷰,리뷰 작성,구매자(PUB),"지점(PROJ), 본사(SELL)",평점 모니터링 및 상품 관리
+
+본사 사입/직배송형 분양몰
+사용자설정 Gem
+본사 사입/직배송형 분양몰님이 보낸 내용
+제시해주신 내용을 바탕으로 5. 상품리뷰 및 상품문의 업무 추가에 대한 MRD(기획 요구사항 정의서)를 최종 정리해 드립니다.
+
+기존 소스(mgt/mboard, front/shop)의 로직을 최대한 재활용하면서, 앱(App) 대응을 위한 Rest API 표준화에 초점을 맞추었습니다.
+
+5. 상품리뷰 및 상품문의 업무 추가
+   5-1. 화면 구성 및 진입로 (Front-End)
+   사용자 경험 최적화를 위해 detail.jsp 내에 탭 구조를 적용하며, 앱에서도 동일하게 사용할 수 있도록 구성합니다.
+
+웹 UI 구성: views/front/shop/detail.jsp 하단에 탭 메뉴 구현
+
+HTML
+
+<ul class="detail-tabs">
+    <li class="active" onclick="moveTab('desc')">상품상세</li>
+    <li onclick="moveTab('review')">리뷰 (12)</li>
+    <li onclick="moveTab('qna')">상품문의 (5)</li>
+</ul>
+하이브리드 대응: Front 화면은 App WebView에서도 공통 사용하며, 데이터 통신은 rest/ 폴더 내 API를 참조합니다.
+
+5-2. 데이터베이스 및 소스 참조 구조
+기존 시스템의 파일 관리 및 게시판 로직을 그대로 계승합니다.
+
+참조 테이블: /mrd/payment_sql.md 내 정의된 tb_product_reviews, tb_product_qna 사용
+
+관리자 로직 (Mgt): mgt/mboard 소스의 게시판 관리 기능을 참조하여 답변 및 노출 제어 구현
+
+사용자 로직 (Front): front/shop 소스를 참조하여 리스트 및 상세 화면 구현
+
+App/API 로직: 모바일 앱 연동을 위해 rest/review, rest/qna 폴더 내 Rest API 신규 추가
+
+5-3. 파일 업로드 및 이미지 처리 (Common Logic)
+이미지 첨부 로직의 통일성을 위해 공통 모듈을 사용합니다.
+
+리뷰 이미지 업로드: product의 첨부파일 처리 로직(tb_file 연동)을 그대로 참조
+
+핵심 컬럼: ATCH_DOC_ID를 통해 tb_file 테이블과 조인하여 이미지 로드
+업로드폴드는 product의 하윅 review 폴더를 사용한다.
+product:
+upload-dir: /Users/soo/uploads/product/review
+public-url: http://127.0.0.1:9000/common/img/product/review
+resource-path: file:///Users/soo/uploads/product/review/
+
+5-4. Push 알림 발송 로직
+등록 및 답변 시점에 따른 수신 대상 정의입니다.
+
+분류 발생 이벤트 주체 (Actor) 수신자 (Receiver) 알림 목적
+상품문의 문의 등록 구매자(PUB) 지점(PROJ), 본사(SELL) 신규 문의 확인 및 답변 요청
+답변 완료 본사/지점 구매자(PUB) 문의 답변 완료 안내
+상품리뷰 리뷰 작성 구매자(PUB) 지점(PROJ), 본사(SELL) 평점 모니터링 및 상품 관리
+5-5. 개발 핵심 점검 사항 (Key Points)
+소스 재사용: 신규 개발보다는 mboard의 파일 업로드와 front/shop의 리스트 로직을 API화(@RestController) 하는 데 집중할 것.
+
+App 연동성: 웹뷰(WebView) 내에서 리뷰 작성 시, 앱의 로그인 세션(USER_NO)과 권한이 Rest API와 정상적으로 연동되는지 점검.
+Push 공통화: 웹(JSP)에서 답변을 달거나 앱(API)에서 답변을 달거나 동일한 Push 서비스 클래스를 호출하여 누락이 없도록 할 것.
