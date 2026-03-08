@@ -71,4 +71,9 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     public void deleteReview(DataMap param) throws Exception {
         commonMybatisDao.update("product.review.deleteReview", param);
     }
+
+    @Override
+    public void restoreReview(DataMap param) throws Exception {
+        commonMybatisDao.update("product.review.restoreReview", param);
+    }
 }

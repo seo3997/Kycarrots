@@ -100,4 +100,21 @@ public class ProductReviewRestController {
         result.put("success", true);
         return result;
     }
+
+    @PostMapping("/restore")
+    public Map<String, Object> restore(HttpServletRequest request) throws Exception {
+        DataMap param = RequestUtil.getDataMap(request);
+        Map<String, Object> result = new HashMap<>();
+
+        UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+        if (userInfoVo != null) {
+            param.put("ss_user_no", userInfoVo.getUserNo());
+            param.put("userNo", userInfoVo.getUserNo());
+            param.put("ssAuthorId", userInfoVo.getAuthorId());
+        }
+
+        productReviewService.restoreReview(param);
+        result.put("success", true);
+        return result;
+    }
 }

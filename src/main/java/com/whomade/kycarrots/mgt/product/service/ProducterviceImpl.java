@@ -71,7 +71,6 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 	 * @throws Exception
 	 */
 	public List<DataMap> selectPageListProcuct(ModelMap model, DataMap param) throws Exception {
-
 		List<DataMap> resultList = new ArrayList<DataMap>();
 		int totCnt = commonMybatisDao.selectOne("mgt.product.selectTotCntProduct", param);
 
@@ -83,6 +82,10 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			resultList = commonMybatisDao.selectList("mgt.product.selectPageListProduct", param);
 		}
 		return resultList;
+	}
+
+	public List<DataMap> selectListProduct(DataMap param) throws Exception {
+		return commonMybatisDao.selectList("mgt.product.selectListProduct", param);
 	}
 
 	/**

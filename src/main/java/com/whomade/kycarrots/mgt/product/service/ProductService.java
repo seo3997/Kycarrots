@@ -12,6 +12,8 @@ public interface ProductService {
 
 	List<DataMap> selectPageListProcuct(ModelMap model, DataMap param) throws Exception;
 
+	List<DataMap> selectListProduct(DataMap param) throws Exception;
+
 	DataMap selectProduct(DataMap param) throws Exception;
 
 	void insertProduct(DataMap param, List<MultipartFile> fileList, List<TnProductImageVo> metas) throws Exception;

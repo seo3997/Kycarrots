@@ -5,7 +5,10 @@
     <select id="selectTotCntReview" parameterType="dataMap" resultType="int">
         SELECT COUNT(1) AS TOT_CNT
         FROM tb_product_reviews A
-        WHERE A.DISPLAY_YN = 'Y'
+        WHERE 1 = 1
+        <if test='mgtYn != "Y"'>
+            AND A.DISPLAY_YN = 'Y'
+        </if>
         <if test="productId != null and productId != ''">
             AND A.PRODUCT_ID = #{productId}
         </if>
@@ -28,7 +31,10 @@
         FROM tb_product_reviews A
         INNER JOIN op_user U ON A.USER_NO = U.USER_NO
         INNER JOIN tb_product P ON A.PRODUCT_ID = P.PRODUCT_ID
-        WHERE A.DISPLAY_YN = 'Y'
+        WHERE 1 = 1
+        <if test='mgtYn != "Y"'>
+            AND A.DISPLAY_YN = 'Y'
+        </if>
         <if test="productId != null and productId != ''">
             AND A.PRODUCT_ID = #{productId}
         </if>
@@ -99,6 +105,14 @@
         <if test="ssAuthorId != 'ROLE_ADMIN' and ssAuthorId != 'ROLE_SELL'">
             AND USER_NO = #{ss_user_no}
         </if>
+    </update>
+    
+    <update id="restoreReview" parameterType="dataMap">
+        UPDATE tb_product_reviews
+        SET DISPLAY_YN = 'Y',
+            UPDUSR_NO = #{ss_user_no},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE REVIEW_ID = #{reviewId}
     </update>
 
 </mapper>

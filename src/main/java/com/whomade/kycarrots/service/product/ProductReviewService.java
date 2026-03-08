@@ -15,4 +15,6 @@ public interface ProductReviewService {
     void updateReview(DataMap param) throws Exception;
 
     void deleteReview(DataMap param) throws Exception;
+
+    void restoreReview(DataMap param) throws Exception;
 }

@@ -284,4 +284,13 @@
 		WHERE PRODUCT_ID = #{productId}
 	</update>
 
+	<select id="selectListProduct" parameterType="dataMap" resultType="dataMap">
+		SELECT
+			PRODUCT_ID,
+			TITLE
+		FROM tb_product
+		WHERE 1 = 1
+		ORDER BY TITLE ASC
+	</select>
+
 </mapper>
