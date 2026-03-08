@@ -266,3 +266,12 @@ resource-path: file:///Users/soo/uploads/product/review/
 
 App 연동성: 웹뷰(WebView) 내에서 리뷰 작성 시, 앱의 로그인 세션(USER_NO)과 권한이 Rest API와 정상적으로 연동되는지 점검.
 Push 공통화: 웹(JSP)에서 답변을 달거나 앱(API)에서 답변을 달거나 동일한 Push 서비스 클래스를 호출하여 누락이 없도록 할 것.
+
+6. 안드로이드 앱 상품리뷰 및 상품문의 업무 추가
+   5번 상품리뷰 및 상품문의 업무 추가의 front/shop/detail.jsp의 상품리뷰 상품문의 부분을 안드로이드 앱에서 네이티브로 구현한다.
+   안드로이드 앱경로는 /Users/soo/kycarrotsApp 있음
+   안드로이드 상품상세는 AdDetailActivity.kr 임
+   상품리뷰,상품문의 추가 화면은 com.whomade.kycarrots.ui.ad.adreview, com.whomade.kycarrots.ui.ad.adqna 임
+
+상품리뷰리 이미지 사진촬영및 갤러리이미지 업로드 기능은 안드로이드 앱에서 네이티브로 구현하는데 이미 상품들록이 이미지 업로드기능이 있어 이걸(com.whomade.kycarrots.ui.ad.admake.KtMakeADImgRegiView) 참조 한다. 이미지 선택,촬영후 미리보기, 삭제 기능 포함한다.
+이미지관련 파일은 res/xml/provider_paths.xml 이다.
