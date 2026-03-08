@@ -80,7 +80,7 @@
 	<div class="content-wrapper">
 		<!-- Content Header (Page header) -->
 		<section class="content-header">
-		<div id="navi"><i class="fa fa-home f12 color-lgray"></i><span class="blind">home</span> &rt; <span class="text" id="spnavi"></span></div>
+		<div id="navi"><i class="fa fa-home f12 color-lgray"></i><span class="blind">home</span><span class="text" id="spnavi"></span></div>
     	<div id="pagetitle">
     	</div>
 		</section>

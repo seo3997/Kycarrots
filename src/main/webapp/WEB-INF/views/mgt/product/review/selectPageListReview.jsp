@@ -78,7 +78,7 @@
 
 	<div class="content-wrapper">
 		<section class="content-header">
-			<div id="navi"><i class="fa fa-home f12 color-lgray"></i> Home &rt; 상품관리 &rt; <span class="text">상품리뷰 관리</span></div>
+			<div id="navi"><i class="fa fa-home f12 color-lgray"></i>상품관리 > <span class="text">상품리뷰 관리</span></div>
 			<div id="pagetitle">
 				<h1>상품리뷰 관리</h1>
 			</div>

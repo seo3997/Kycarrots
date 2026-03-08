@@ -97,7 +97,7 @@
 
 	<div class="content-wrapper">
 		<section class="content-header">
-			<div id="navi"><i class="fa fa-home f12 color-lgray"></i><span class="blind">home</span> &rt; <span class="text" id="spnavi">상품관리 &rt; 상품문의 관리</span></div>
+			<div id="navi"><i class="fa fa-home f12 color-lgray"></i>상품관리 > <span class="text">상품문의 관리</span></div>
 			<div id="pagetitle">
 				<h1>상품문의 관리</h1>
 			</div>
