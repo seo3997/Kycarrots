@@ -1,6 +1,7 @@
 package com.whomade.kycarrots.mgt.review.web;
 
 import com.whomade.kycarrots.framework.common.object.DataMap;
+import com.whomade.kycarrots.framework.common.page.util.pageNavigationUtil;
 import com.whomade.kycarrots.framework.common.util.RequestUtil;
 import com.whomade.kycarrots.service.product.ProductReviewService;
 import jakarta.annotation.Resource;
@@ -21,8 +22,11 @@ public class MgtReviewController {
     public String selectPageListReview(HttpServletRequest request, ModelMap model) throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
 
-        List<DataMap> resultList = productReviewService.selectPageListReview(param);
         int totalCount = productReviewService.selectTotCntReview(param);
+        param.put("totalCount", totalCount);
+        param = pageNavigationUtil.createNavigationInfo(model, param);
+
+        List<DataMap> resultList = productReviewService.selectPageListReview(param);
 
         model.addAttribute("resultList", resultList);
         model.addAttribute("totalCount", totalCount);

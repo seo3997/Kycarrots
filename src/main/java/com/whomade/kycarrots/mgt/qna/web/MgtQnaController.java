@@ -1,6 +1,7 @@
 package com.whomade.kycarrots.mgt.qna.web;
 
 import com.whomade.kycarrots.framework.common.object.DataMap;
+import com.whomade.kycarrots.framework.common.page.util.pageNavigationUtil;
 import com.whomade.kycarrots.framework.common.util.RequestUtil;
 import com.whomade.kycarrots.service.product.ProductQnaService;
 import jakarta.annotation.Resource;
@@ -21,8 +22,11 @@ public class MgtQnaController {
     public String selectPageListQna(HttpServletRequest request, ModelMap model) throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
 
-        List<DataMap> resultList = productQnaService.selectPageListQna(param);
         int totalCount = productQnaService.selectTotCntQna(param);
+        param.put("totalCount", totalCount);
+        param = pageNavigationUtil.createNavigationInfo(model, param);
+
+        List<DataMap> resultList = productQnaService.selectPageListQna(param);
 
         model.addAttribute("resultList", resultList);
         model.addAttribute("totalCount", totalCount);

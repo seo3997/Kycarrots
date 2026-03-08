@@ -5,7 +5,11 @@
     <select id="selectTotCntQna" parameterType="dataMap" resultType="int">
         SELECT COUNT(1) AS TOT_CNT
         FROM tb_product_qna A
-        WHERE A.PRODUCT_ID = #{productId}
+        <where>
+            <if test="productId != null and productId != ''">
+                AND A.PRODUCT_ID = #{productId}
+            </if>
+        </where>
     </select>
 
     <select id="selectPageListQna" parameterType="dataMap" resultType="dataMap">
@@ -25,12 +29,18 @@
             DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT,
             U.USER_NM,
             B.BRANCH_NAME,
+            P.TITLE AS PRODUCT_NM,
             (SELECT USER_NM FROM op_user WHERE USER_NO = A.ANSWERER_NO) AS ANSWERER_NM,
             (SELECT CONCAT(FILE_PARTN_COURS, FILE_ID, '.', FILE_EXTSN_NM) FROM tb_file WHERE DOC_ID = A.ATCH_DOC_ID ORDER BY SORT_ORDR LIMIT 1) AS FILE_RLTV_PATH
         FROM tb_product_qna A
         INNER JOIN op_user U ON A.USER_NO = U.USER_NO
         INNER JOIN tb_branches B ON A.BRANCH_ID = B.BRANCH_ID
-        WHERE A.PRODUCT_ID = #{productId}
+        INNER JOIN tb_product P ON A.PRODUCT_ID = P.PRODUCT_ID
+        <where>
+            <if test="productId != null and productId != ''">
+                AND A.PRODUCT_ID = #{productId}
+            </if>
+        </where>
         ORDER BY A.REGIST_DT DESC
         <if test="limitStart != null">
             LIMIT #{limitStart}, #{limitEnd}
