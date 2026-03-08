@@ -57,7 +57,7 @@
 		// 삭제
 		function fnDelete(qnaId){
 			if(confirm("문의를 삭제하시겠습니까?")){
-				$.post('/rest/product/qna/delete', { qnaId: qnaId }, function(res) {
+				$.post('/api/product/qna/delete', { qnaId: qnaId }, function(res) {
 					if(res.success) {
 						alert("삭제되었습니다.");
 						location.reload();
@@ -73,7 +73,7 @@
 			const answer = prompt("답변 내용을 입력해주세요.");
 			if(answer && answer.trim()){
 				$.ajax({
-					url: '/rest/product/qna/answer',
+					url: '/api/product/qna/answer',
 					type: 'POST',
 					data: { qnaId: qnaId, answerContents: answer },
 					success: function(res) {

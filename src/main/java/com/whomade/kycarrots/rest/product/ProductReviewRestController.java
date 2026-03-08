@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/rest/product/review")
+@RequestMapping("/api/product/review")
 public class ProductReviewRestController {
 
     @Resource(name = "productReviewService")

@@ -36,7 +36,7 @@
 		function fnDelete(reviewId){
 			if(confirm("리뷰를 숨기시겠습니까?")){
 				$.ajax({
-					url: '/rest/product/review/delete',
+					url: '/api/product/review/delete',
 					type: 'POST',
 					data: { reviewId: reviewId },
 					success: function(res) {
@@ -54,7 +54,7 @@
 		function fnRestore(reviewId){
 			if(confirm("리뷰를 다시 노출하시겠습니까?")){
 				$.ajax({
-					url: '/rest/product/review/restore',
+					url: '/api/product/review/restore',
 					type: 'POST',
 					data: { reviewId: reviewId },
 					success: function(res) {

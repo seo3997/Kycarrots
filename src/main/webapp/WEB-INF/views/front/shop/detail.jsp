@@ -505,7 +505,7 @@
         const productId = '${productInfo.PRODUCT_ID}';
         const $list = document.getElementById('review-list');
         
-        fetch('/rest/product/review/list?productId=' + productId)
+        fetch('/api/product/review/list?productId=' + productId)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
@@ -551,7 +551,7 @@
     function deleteReview(reviewId) {
         if (!confirm('리뷰를 삭제하시겠습니까?')) return;
         
-        fetch('/rest/product/review/delete', {
+        fetch('/api/product/review/delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: 'reviewId=' + reviewId
@@ -571,7 +571,7 @@
         const productId = '${productInfo.PRODUCT_ID}';
         const $list = document.getElementById('qna-list');
 
-        fetch('/rest/product/qna/list?productId=' + productId)
+        fetch('/api/product/qna/list?productId=' + productId)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
@@ -648,7 +648,7 @@
     function deleteQna(qnaId) {
         if (!confirm('문의를 삭제하시겠습니까?')) return;
         
-        fetch('/rest/product/qna/delete', {
+        fetch('/api/product/qna/delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: 'qnaId=' + qnaId
@@ -688,7 +688,7 @@
 
         const formData = new FormData(this);
         
-        fetch('/rest/product/review/insert', {
+        fetch('/api/product/review/insert', {
             method: 'POST',
             body: formData
         })
@@ -729,7 +729,7 @@
         const formData = new FormData(this);
         if (!formData.has('secretYn')) formData.append('secretYn', 'N');
 
-        fetch('/rest/product/qna/insert', {
+        fetch('/api/product/qna/insert', {
             method: 'POST',
             body: formData
         })

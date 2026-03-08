@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/rest/product/qna")
+@RequestMapping("/api/product/qna")
 public class ProductQnaRestController {
 
     @Resource(name = "productQnaService")
