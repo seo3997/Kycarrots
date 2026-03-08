@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="product.review">
+
+    <select id="selectTotCntReview" parameterType="dataMap" resultType="int">
+        SELECT COUNT(1) AS TOT_CNT
+        FROM tb_product_reviews A
+        WHERE A.DISPLAY_YN = 'Y'
+        AND A.PRODUCT_ID = #{productId}
+    </select>
+
+    <select id="selectPageListReview" parameterType="dataMap" resultType="dataMap">
+        SELECT 
+            A.REVIEW_ID,
+            A.PRODUCT_ID,
+            A.ORDER_ID,
+            A.USER_NO,
+            A.RATING,
+            A.CONTENTS,
+            A.ATCH_DOC_ID,
+            A.DISPLAY_YN,
+            DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT,
+            U.USER_NM,
+            (SELECT CONCAT(FILE_PARTN_COURS, FILE_ID, '.', FILE_EXTSN_NM) FROM tb_file WHERE DOC_ID = A.ATCH_DOC_ID ORDER BY SORT_ORDR LIMIT 1) AS FILE_RLTV_PATH
+        FROM tb_product_reviews A
+        INNER JOIN op_user U ON A.USER_NO = U.USER_NO
+        WHERE A.DISPLAY_YN = 'Y'
+        AND A.PRODUCT_ID = #{productId}
+        ORDER BY A.REGIST_DT DESC
+        <if test="limitStart != null">
+            LIMIT #{limitStart}, #{limitEnd}
+        </if>
+    </select>
+
+    <select id="selectReview" parameterType="dataMap" resultType="dataMap">
+        SELECT 
+            A.REVIEW_ID,
+            A.PRODUCT_ID,
+            A.ORDER_ID,
+            A.USER_NO,
+            A.RATING,
+            A.CONTENTS,
+            A.ATCH_DOC_ID,
+            A.DISPLAY_YN,
+            A.REGIST_DT,
+            U.USER_NM
+        FROM tb_product_reviews A
+        INNER JOIN op_user U ON A.USER_NO = U.USER_NO
+        WHERE A.REVIEW_ID = #{reviewId}
+    </select>
+
+    <insert id="insertReview" parameterType="dataMap">
+        INSERT INTO tb_product_reviews (
+            PRODUCT_ID,
+            ORDER_ID,
+            USER_NO,
+            RATING,
+            CONTENTS,
+            ATCH_DOC_ID,
+            DISPLAY_YN,
+            REGISTER_NO,
+            REGIST_DT
+        ) VALUES (
+            #{productId},
+            IFNULL(#{orderId}, 0),
+            #{ss_user_no},
+            #{rating},
+            #{contents},
+            #{atchDocId},
+            'Y',
+            #{ss_user_no},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <update id="updateReview" parameterType="dataMap">
+        UPDATE tb_product_reviews
+        SET RATING = #{rating},
+            CONTENTS = #{contents},
+            ATCH_DOC_ID = #{atchDocId},
+            UPDUSR_NO = #{ss_user_no},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE REVIEW_ID = #{reviewId}
+        AND USER_NO = #{ss_user_no}
+    </update>
+
+    <update id="deleteReview" parameterType="dataMap">
+        UPDATE tb_product_reviews
+        SET DISPLAY_YN = 'N',
+            UPDUSR_NO = #{ss_user_no},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE REVIEW_ID = #{reviewId}
+        <if test="ssAuthorId != 'ROLE_ADMIN' and ssAuthorId != 'ROLE_SELL'">
+            AND USER_NO = #{ss_user_no}
+        </if>
+    </update>
+
+</mapper>

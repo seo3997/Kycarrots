@@ -73,12 +73,144 @@
         .btn-order { width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 1.125rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
         .btn-order:hover { background: #1d4ed8; }
 
+        .detail-tabs { 
+            display: flex; 
+            border-bottom: 2px solid #f1f5f9; 
+            margin-top: 2rem;
+            background: white;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+        }
+
+        /* Modal Styles */
+        .modal-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 1000; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .modal-content { 
+            background: white; 
+            width: 90%; 
+            max-width: 500px; 
+            padding: 2rem; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); 
+        }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-control { 
+            width: 100%; 
+            padding: 0.75rem; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            outline: none;
+            font-family: inherit;
+        }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .modal-btns { display: flex; gap: 1rem; margin-top: 2rem; }
+        .btn-cancel { flex: 1; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer; }
+        .btn-submit { flex: 1; padding: 0.75rem; border: none; border-radius: 8px; background: var(--primary); color: white; font-weight: 600; cursor: pointer; }
+        
+        .star-rating { 
+            display: flex; 
+            flex-direction: row-reverse; 
+            justify-content: flex-end; 
+            gap: 4px; 
+            font-size: 1.5rem; 
+        }
+        .star-rating input { display: none; }
+        .star-rating label { cursor: pointer; color: #e2e8f0; transition: color 0.1s; }
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label { color: var(--accent); }
+
         @media (max-width: 768px) {
             .detail-wrapper { grid-template-columns: 1fr; }
             .header { padding: 0.75rem 1rem; }
             .nav-links { gap: 0.75rem; }
             .nav-links a { font-size: 0.85rem; }
             .logo span { display: none; }
+        }
+        .detail-tab { 
+            flex: 1; 
+            padding: 1.25rem 1rem; 
+            text-align: center; 
+            cursor: pointer; 
+            font-weight: 600; 
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .detail-tab.active { 
+            color: var(--primary); 
+            border-bottom: 3px solid var(--primary); 
+            background: #f8faff;
+        }
+        
+        .tab-content { 
+            display: none; 
+            background: white; 
+            padding: 2rem; 
+            border-radius: 0 0 12px 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        .tab-content.active { display: block; }
+        
+        .review-item, .qna-item { 
+            padding: 1.5rem 0; 
+            border-bottom: 1px solid #f1f5f9; 
+        }
+        .review-header, .qna-header { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .rating-stars { color: var(--accent); }
+        .item-content { line-height: 1.6; color: var(--text); margin-bottom: 0.75rem; }
+        .item-meta { font-size: 0.85rem; color: var(--text-muted); }
+        
+        .qna-answer { 
+            background: #f8fafc; 
+            padding: 1rem; 
+            border-radius: 8px; 
+            margin-top: 0.75rem; 
+            font-size: 0.95rem;
+        }
+        .qna-answer-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+        .btn-write { 
+            float: right;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 8px;
+            transition: all 0.2s;
+        }
+        .btn-delete:hover {
+            background: #fecaca;
         }
     </style>
 </head>
@@ -176,7 +308,14 @@
         </div>
     </div>
 
-    <div class="description-card">
+    <ul class="detail-tabs">
+        <li class="detail-tab active" onclick="moveTab(this, 'desc')">상품상세</li>
+        <li class="detail-tab" onclick="moveTab(this, 'review')">리뷰</li>
+        <li class="detail-tab" onclick="moveTab(this, 'qna')">상품문의</li>
+    </ul>
+
+    <!-- Tab 1: Description -->
+    <div id="tab-desc" class="tab-content active">
         <div class="description-title">상품 상세 설명</div>
         <div class="description">
             <c:set var="editorMode" value="${productInfo.EDITOR_MODE}" />
@@ -197,7 +336,6 @@
             <% } %>
         </div>
 
-        <!-- Additional Images Section -->
         <c:if test="${not empty imageList}">
             <div class="additional-images">
                 <c:forEach var="img" items="${imageList}">
@@ -208,33 +346,119 @@
             </div>
         </c:if>
     </div>
-</main>
+
+    <!-- Tab 2: Reviews -->
+    <div id="tab-review" class="tab-content">
+        <div class="description-title">
+            상품 리뷰
+            <c:if test="${not empty userInfoVo}">
+                <button class="btn-write" onclick="openReviewModal()">리뷰 쓰기</button>
+            </c:if>
+        </div>
+        <div id="review-list">
+            <div class="text-center" style="padding: 2rem; color: #94a3b8;">로딩 중...</div>
+        </div>
+    </div>
+
+    <!-- Tab 3: QnA -->
+    <div id="tab-qna" class="tab-content">
+        <div class="description-title">
+            상품 문의
+            <c:if test="${not empty userInfoVo}">
+                <button class="btn-write" onclick="openQnaModal()">문의 하기</button>
+            </c:if>
+        </div>
+        <div id="qna-list">
+            <div class="text-center" style="padding: 2rem; color: #94a3b8;">로딩 중...</div>
+        </div>
+    </div>
+    <!-- Review Modal -->
+    <div id="modal-review" class="modal-overlay">
+        <div class="modal-content">
+            <h3>리뷰 작성</h3>
+            <form id="form-review" enctype="multipart/form-data">
+                <input type="hidden" name="productId" value="${productInfo.PRODUCT_ID}">
+                <div class="form-group">
+                    <label>평점</label>
+                    <div class="star-rating">
+                        <input type="radio" name="rating" value="5" id="s5" checked><label for="s5">★</label>
+                        <input type="radio" name="rating" value="4" id="s4"><label for="s4">★</label>
+                        <input type="radio" name="rating" value="3" id="s3"><label for="s3">★</label>
+                        <input type="radio" name="rating" value="2" id="s2"><label for="s2">★</label>
+                        <input type="radio" name="rating" value="1" id="s1"><label for="s1">★</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>내용</label>
+                    <textarea name="contents" class="form-control" rows="4" placeholder="상품에 대한 솔직한 후기를 남겨주세요."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>사진 첨부</label>
+                    <input type="file" name="reviewFile" class="form-control">
+                </div>
+                <div class="modal-btns">
+                    <button type="button" class="btn-cancel" onclick="closeModal('review')">취소</button>
+                    <button type="submit" class="btn-submit">등록하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- QnA Modal -->
+    <div id="modal-qna" class="modal-overlay">
+        <div class="modal-content">
+            <h3>상품 문의</h3>
+            <form id="form-qna">
+                <input type="hidden" name="productId" value="${productInfo.PRODUCT_ID}">
+                <input type="hidden" name="branchId" value="${productInfo.BRANCH_ID}">
+                <div class="form-group">
+                    <label>제목</label>
+                    <input type="text" name="title" class="form-control" placeholder="문의 제목을 입력하세요.">
+                </div>
+                <div class="form-group">
+                    <label>내용</label>
+                    <textarea name="contents" class="form-control" rows="4" placeholder="문의하실 내용을 입력해 주세요."></textarea>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" name="secretYn" value="Y"> 비밀글로 문의하기
+                    </label>
+                </div>
+                <div class="modal-btns">
+                    <button type="button" class="btn-cancel" onclick="closeModal('qna')">취소</button>
+                    <button type="submit" class="btn-submit">등록하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 <script>
     let quantity = 1;
     const maxQty = parseInt('${productInfo.AVAILABLE_QUANTITY}') || 0;
     const quantityVal = document.getElementById('quantity-val');
     
-    if (maxQty <= 0) {
-        quantity = 0;
-        quantityVal.innerText = 0;
-    }
+    if (quantityVal) {
+        if (maxQty <= 0) {
+            quantity = 0;
+            quantityVal.innerText = 0;
+        }
 
-    document.getElementById('btn-minus').addEventListener('click', () => {
-        if (quantity > 1) {
-            quantity--;
-            quantityVal.innerText = quantity;
-        }
-    });
-    
-    document.getElementById('btn-plus').addEventListener('click', () => {
-        if (quantity < maxQty) {
-            quantity++;
-            quantityVal.innerText = quantity;
-        } else {
-            alert('구매 가능한 최대 수량은 ' + maxQty + '개입니다.');
-        }
-    });
+        document.getElementById('btn-minus').addEventListener('click', () => {
+            if (quantity > 1) {
+                quantity--;
+                quantityVal.innerText = quantity;
+            }
+        });
+        
+        document.getElementById('btn-plus').addEventListener('click', () => {
+            if (quantity < maxQty) {
+                quantity++;
+                quantityVal.innerText = quantity;
+            } else {
+                alert('구매 가능한 최대 수량은 ' + maxQty + '개입니다.');
+            }
+        });
+    }
     
     function goToCheckout() {
         const productId = '${productInfo.PRODUCT_ID}';
@@ -262,6 +486,268 @@
                 location.href = "/shop/checkout.do?productId=" + productId + "&quantity=" + currentQty;
             </c:otherwise>
         </c:choose>
+    }
+
+    function moveTab(obj, tabId) {
+        // Tab header toggle
+        document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+        obj.classList.add('active');
+
+        // Content toggle
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+
+        if (tabId === 'review') loadReviews();
+        if (tabId === 'qna') loadQnas();
+    }
+
+    function loadReviews() {
+        const productId = '${productInfo.PRODUCT_ID}';
+        const $list = document.getElementById('review-list');
+        
+        fetch('/rest/product/review/list?productId=' + productId)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.list.length === 0) {
+                        $list.innerHTML = '<div class="text-center" style="padding: 2rem; color: #94a3b8;">등록된 리뷰가 없습니다.</div>';
+                        return;
+                    }
+
+                    let html = '';
+                    data.list.forEach(item => {
+                        const isMine = '${userInfoVo.userNo}' == item.USER_NO;
+                        const isAdmin = '${ssAuthorId}' == 'ROLE_ADMIN' || '${ssAuthorId}' == 'ROLE_SELL';
+                        
+                        let deleteBtn = '';
+                        if (isMine || isAdmin) {
+                            deleteBtn = `<button class="btn-delete" onclick="deleteReview('\${item.REVIEW_ID}')">삭제</button>`;
+                        }
+
+                        let imgHtml = '';
+                        if (item.FILE_RLTV_PATH) {
+                            imgHtml = `<img src="\${item.FILE_RLTV_PATH}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 0.75rem;">`;
+                        }
+
+                        html += `
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div style="display: flex; align-items: center;">
+                                        <div class="rating-stars">` + '★'.repeat(item.RATING) + '☆'.repeat(5-item.RATING) + `</div>
+                                        \${deleteBtn}
+                                    </div>
+                                    <div class="item-meta">\${item.USER_NM} | \${item.REGIST_DT}</div>
+                                </div>
+                                \${imgHtml}
+                                <div class="item-content">\${item.CONTENTS}</div>
+                            </div>
+                        `;
+                    });
+                    $list.innerHTML = html;
+                }
+            });
+    }
+
+    function deleteReview(reviewId) {
+        if (!confirm('리뷰를 삭제하시겠습니까?')) return;
+        
+        fetch('/rest/product/review/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'reviewId=' + reviewId
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('삭제되었습니다.');
+                loadReviews();
+            } else {
+                alert(data.message || '삭제 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    function loadQnas() {
+        const productId = '${productInfo.PRODUCT_ID}';
+        const $list = document.getElementById('qna-list');
+
+        fetch('/rest/product/qna/list?productId=' + productId)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.list.length === 0) {
+                        $list.innerHTML = '<div class="text-center" style="padding: 2rem; color: #94a3b8;">등록된 문의가 없습니다.</div>';
+                        return;
+                    }
+
+                    let html = '';
+                    data.list.forEach(item => {
+                        const isSecret = item.SECRET_YN === 'Y';
+                        const isMine = '${userInfoVo.userNo}' == item.USER_NO;
+                        const isAdmin = '${ssAuthorId}' == 'ROLE_ADMIN' || '${ssAuthorId}' == 'ROLE_SELL' || '${ssAuthorId}' == 'ROLE_PROJ';
+                        const canSee = !isSecret || isMine || isAdmin;
+
+                        let deleteBtn = '';
+                        if (isMine || isAdmin) {
+                            deleteBtn = `<button class="btn-delete" onclick="deleteQna('\${item.QNA_ID}')" style="margin-left: 0;">삭제</button>`;
+                        }
+
+                        let statusBadge = `
+                            <span class="badge" style="background: \${item.QNA_STATUS === '20' ? '#ecfdf5; color: #059669;' : '#f1f5f9; color: #64748b;'} padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">
+                                \${item.QNA_STATUS === '20' ? '답변완료' : '접수'}
+                            </span>`;
+
+                        let answerHtml = '';
+                        if (canSee && item.QNA_STATUS === '20') {
+                            answerHtml = `
+                                <div class="qna-answer">
+                                    <div style="font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-reply fa-rotate-180" style="margin-right: 8px; color: var(--primary);"></i>답변</div>
+                                    <div>\${item.ANSWER_CONTENTS}</div>
+                                    <div class="qna-answer-meta">\${item.ANSWERER_NM} (\${item.ANSWERED_AT})</div>
+                                </div>`;
+                        }
+
+                        html += `
+                            <div class="qna-item">
+                                <div class="qna-header">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="font-weight: 600;">
+                                            \${isSecret ? '<i class="fas fa-lock" style="margin-right: 4px;"></i>' : ''}
+                                            \${item.TITLE}
+                                        </div>
+                                        \${statusBadge}
+                                        \${deleteBtn}
+                                    </div>
+                                    <div class="item-meta">\${item.USER_NM} | \${item.REGIST_DT}</div>
+                                </div>
+                                <div class="item-content">
+                                    \${canSee ? item.CONTENTS : '<span style="color: #94a3b8;">비밀글입니다.</span>'}
+                                </div>
+                                \${answerHtml}
+                            </div>
+                        `;
+                    });
+                    $list.innerHTML = html;
+                }
+            });
+    }
+
+    function deleteQna(qnaId) {
+        if (!confirm('문의를 삭제하시겠습니까?')) return;
+        
+        fetch('/rest/product/qna/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'qnaId=' + qnaId
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('삭제되었습니다.');
+                loadQnas();
+            } else {
+                alert(data.message || '삭제 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    // Modal handlers
+    function openReviewModal() {
+        document.getElementById('modal-review').style.display = 'flex';
+    }
+    function openQnaModal() {
+        document.getElementById('modal-qna').style.display = 'flex';
+    }
+    function closeModal(type) {
+        document.getElementById('modal-' + type).style.display = 'none';
+        document.getElementById('form-' + type).reset();
+    }
+
+    let isReviewSubmitting = false;
+    document.getElementById('form-review').addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (isReviewSubmitting) return;
+        
+        const $btn = this.querySelector('.btn-submit');
+        $btn.disabled = true;
+        $btn.innerText = '등록 중...';
+        isReviewSubmitting = true;
+
+        const formData = new FormData(this);
+        
+        fetch('/rest/product/review/insert', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Server error');
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('리뷰가 등록되었습니다.');
+                closeModal('review');
+                loadReviews();
+            } else {
+                alert(data.message || '리뷰 등록 중 오류가 발생했습니다.');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('리뷰 등록 중 오류가 발생했습니다.');
+        })
+        .finally(() => {
+            $btn.disabled = false;
+            $btn.innerText = '등록하기';
+            isReviewSubmitting = false;
+        });
+    });
+
+    let isQnaSubmitting = false;
+    document.getElementById('form-qna').addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (isQnaSubmitting) return;
+
+        const $btn = this.querySelector('.btn-submit');
+        $btn.disabled = true;
+        $btn.innerText = '등록 중...';
+        isQnaSubmitting = true;
+
+        const formData = new FormData(this);
+        if (!formData.has('secretYn')) formData.append('secretYn', 'N');
+
+        fetch('/rest/product/qna/insert', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Server error');
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('문의가 등록되었습니다.');
+                closeModal('qna');
+                loadQnas();
+            } else {
+                alert(data.message || '문의 등록 중 오류가 발생했습니다.');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('문의 등록 중 오류가 발생했습니다.');
+        })
+        .finally(() => {
+            $btn.disabled = false;
+            $btn.innerText = '등록하기';
+            isQnaSubmitting = false;
+        });
+    });
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-overlay')) {
+            event.target.style.display = "none";
+        }
     }
 </script>
 

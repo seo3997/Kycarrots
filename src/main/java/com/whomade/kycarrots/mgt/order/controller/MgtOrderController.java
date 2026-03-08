@@ -66,7 +66,7 @@ public class MgtOrderController {
             // 택배사 코드 조회 (R010660)
             DataMap codeParam = new DataMap();
             codeParam.put("group_id", "R010660");
-            List deliveryCompanyList = commonCodeService.selectCodeList(codeParam);
+            List<DataMap> deliveryCompanyList = commonCodeService.selectCodeList(codeParam);
             model.addAttribute("deliveryCompanyList", deliveryCompanyList);
         }
 

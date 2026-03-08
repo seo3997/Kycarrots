@@ -33,15 +33,15 @@ import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
  * 5. 작성자   : SooHyun.Seo
  * 6. 작성일   : 2017.12.22. 오전 9:49:02
  * </PRE>
- */ 
+ */
 @Service("commonCodeService")
-public class CommonCodeServiceImpl extends EgovAbstractServiceImpl implements CommonCodeService{
-	
+public class CommonCodeServiceImpl extends EgovAbstractServiceImpl implements CommonCodeService {
+
 	/** commonDao */
-	@Resource(name="commonMybatisDao")
-    private CommonMybatisDao commonMybatisDao;
-	
-	@Resource(name="egovMessageSource")
+	@Resource(name = "commonMybatisDao")
+	private CommonMybatisDao commonMybatisDao;
+
+	@Resource(name = "egovMessageSource")
 	private EgovMessageSource egovMessageSource;
 
 	/**
@@ -52,13 +52,13 @@ public class CommonCodeServiceImpl extends EgovAbstractServiceImpl implements Co
 	 * 4. 작성자    : SooHyun.Seo
 	 * 5. 작성일    : 2017.12.22. 오전 9:55:40
 	 * </PRE>
-	 *   @param param
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @param param
+	 * @return
+	 * @throws Exception
 	 */
-	public List selectCodeList(DataMap param) throws Exception {
-//		param.put("ss_user_lang", param.getString("ss_user_lang", ""));		
-		return (List) commonMybatisDao.selectList("common.selectCodeList", param);
+	public List<DataMap> selectCodeList(DataMap param) throws Exception {
+		return commonMybatisDao.selectList("common.selectCodeList", param);
 	}
 
 	/**
@@ -69,14 +69,15 @@ public class CommonCodeServiceImpl extends EgovAbstractServiceImpl implements Co
 	 * 4. 작성자       : SooHyun.Seo
 	 * 5. 작성일       : 2017.12.22. 오전 9:55:40
 	 * </PRE>
-	 *   @param param
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @param param
+	 * @return
+	 * @throws Exception
 	 */
-	public List selectSCodeList(DataMap param) throws Exception {
-		return (List) commonMybatisDao.selectList("common.selectSCodeList", param);
+	public List<DataMap> selectSCodeList(DataMap param) throws Exception {
+		return commonMybatisDao.selectList("common.selectSCodeList", param);
 	}
-	
+
 	/**
 	 * <PRE>
 	 * 1. MethodName : selectSDCodeList
@@ -85,14 +86,15 @@ public class CommonCodeServiceImpl extends EgovAbstractServiceImpl implements Co
 	 * 4. 작성자       : SooHyun.Seo
 	 * 5. 작성일       : 2017.12.22. 오전 9:55:40
 	 * </PRE>
-	 *   @param param
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @param param
+	 * @return
+	 * @throws Exception
 	 */
-	public List selectSDCodeList(DataMap param) throws Exception {
-		return (List) commonMybatisDao.selectList("common.selectSDCodeList", param);
+	public List<DataMap> selectSDCodeList(DataMap param) throws Exception {
+		return commonMybatisDao.selectList("common.selectSDCodeList", param);
 	}
-	
+
 	/**
 	 * <PRE>
 	 * 1. MethodName : selectCountryCodeList
@@ -101,13 +103,14 @@ public class CommonCodeServiceImpl extends EgovAbstractServiceImpl implements Co
 	 * 4. 작성자    : SooHyun.Seo
 	 * 5. 작성일    : 2015. 12. 24. 오후 4:07:41
 	 * </PRE>
-	 *   @return List
-	 *   @param param
-	 *   @return
-	 *   @throws Exception
+	 * 
+	 * @return List
+	 * @param param
+	 * @return
+	 * @throws Exception
 	 */
 	public List selectCountryCodeList(DataMap param) throws Exception {
 		return (List) commonMybatisDao.selectList("common.selectCountryCodeList", param);
 	}
-	
+
 }

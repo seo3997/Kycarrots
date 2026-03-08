@@ -2,6 +2,7 @@ package com.whomade.kycarrots.framework.common.util.file;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import java.nio.file.Paths;
 
 @Component
 public class FilePathResolver {
@@ -19,17 +20,42 @@ public class FilePathResolver {
     private String boardPublicUrl;
 
     public Storage resolve(String pathKey) {
-        if ("product".equalsIgnoreCase(pathKey)) {
-            return new Storage(ensureDir(productUploadDir), ensureUrl(productPublicUrl));
-        } else if ("board".equalsIgnoreCase(pathKey)) {
-            return new Storage(ensureDir(boardUploadDir), ensureUrl(boardPublicUrl));
+        String baseKey = pathKey;
+        String subPath = "";
+
+        if (pathKey != null && pathKey.contains("/")) {
+            int idx = pathKey.indexOf("/");
+            baseKey = pathKey.substring(0, idx);
+            subPath = pathKey.substring(idx + 1);
         }
-        // 필요하면 기본값이나 예외처리를 바꿔도 됨
-        throw new IllegalArgumentException("Unknown pathKey: " + pathKey + " (use 'product' or 'board')");
+
+        String dir = null;
+        String url = null;
+
+        if ("product".equalsIgnoreCase(baseKey)) {
+            dir = productUploadDir;
+            url = productPublicUrl;
+        } else if ("board".equalsIgnoreCase(baseKey)) {
+            dir = boardUploadDir;
+            url = boardPublicUrl;
+        }
+
+        if (dir != null) {
+            if (!subPath.isEmpty()) {
+                // 하위 경로가 있으면 OS별 경로 구분자를 처리하여 결합
+                dir = Paths.get(dir, subPath).toString();
+                // URL도 하위 경로를 포함하도록 결합
+                url = ensureUrl(url) + subPath + "/";
+            }
+            return new Storage(ensureDir(dir), ensureUrl(url));
+        }
+
+        throw new IllegalArgumentException("Unknown pathKey: " + pathKey + " (root must be 'product' or 'board')");
     }
 
     private String ensureDir(String dir) {
-        if (dir == null || dir.isEmpty()) return dir;
+        if (dir == null || dir.isEmpty())
+            return dir;
         // Windows/Unix 모두 안전: 마지막 구분자 강제 제거 (Paths로 합칠 것이므로)
         if (dir.endsWith("/") || dir.endsWith("\\")) {
             return dir.substring(0, dir.length() - 1);
@@ -38,7 +64,8 @@ public class FilePathResolver {
     }
 
     private String ensureUrl(String url) {
-        if (url == null || url.isEmpty()) return url;
+        if (url == null || url.isEmpty())
+            return url;
         return url.endsWith("/") ? url : (url + "/");
     }
 
@@ -50,7 +77,13 @@ public class FilePathResolver {
             this.uploadDir = uploadDir;
             this.publicUrl = publicUrl;
         }
-        public String getUploadDir() { return uploadDir; }
-        public String getPublicUrl() { return publicUrl; }
+
+        public String getUploadDir() {
+            return uploadDir;
+        }
+
+        public String getPublicUrl() {
+            return publicUrl;
+        }
     }
 }

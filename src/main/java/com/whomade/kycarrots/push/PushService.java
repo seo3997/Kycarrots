@@ -6,8 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -45,18 +48,38 @@ public class PushService {
 
         // 2. target_roles와 target_branch_id가 있는경우 복수 발송 (지점 관리자, 본사 관리자 등)
         if (targetRoles != null && !targetRoles.isEmpty()) {
-            for (String role : targetRoles) {
-                // 특정 지점의 역할에게 발송
-                if (targetBranchId != null && !targetBranchId.isEmpty()) {
+            if (targetBranchId != null && !targetBranchId.isEmpty()) {
+                // 특정 지점의 역할에게 발송 - 중복 방지를 위해 Set 사용
+                Set<String> processedUserNos = new HashSet<>();
+                for (String role : targetRoles) {
                     List<OpUserVO> users = opUserService.selectUsersByBranchAndRole(targetBranchId, role);
                     for (OpUserVO user : users) {
-                        sendToSingleUser(user, messageTitle, messageBody, eventType, dataPayload);
+                        if (user != null && user.getUserNo() != null && !processedUserNos.contains(user.getUserNo())) {
+                            sendToSingleUser(user, messageTitle, messageBody, eventType, dataPayload);
+                            processedUserNos.add(user.getUserNo());
+                        }
                     }
-                } else {
-                    // 특정 역할 전체에게 (본사 관리자, 혹은 전체 사용자 브로드캐스트)
+                }
+            } else {
+                // 특정 역할 전체에게 (본사 관리자, 혹은 전체 사용자 브로드캐스트)
+                if (targetRoles.size() == 1) {
                     fcmService.sendPushToTopicAndLog(
                             0L,
-                            role,
+                            targetRoles.get(0),
+                            messageTitle,
+                            messageBody,
+                            dataPayload,
+                            eventType);
+                } else {
+                    // FCM Topic Condition 사용 (중복 수신 방지)
+                    // 예: 'ROLE_ADMIN' in topics || 'ROLE_SELL' in topics
+                    String condition = targetRoles.stream()
+                            .map(r -> "'" + r + "' in topics")
+                            .collect(Collectors.joining(" || "));
+
+                    fcmService.sendPushToConditionAndLog(
+                            0L,
+                            condition,
                             messageTitle,
                             messageBody,
                             dataPayload,

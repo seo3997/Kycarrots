@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="product.qna">
+
+    <select id="selectTotCntQna" parameterType="dataMap" resultType="int">
+        SELECT COUNT(1) AS TOT_CNT
+        FROM tb_product_qna A
+        WHERE A.PRODUCT_ID = #{productId}
+    </select>
+
+    <select id="selectPageListQna" parameterType="dataMap" resultType="dataMap">
+        SELECT 
+            A.QNA_ID,
+            A.PRODUCT_ID,
+            A.BRANCH_ID,
+            A.USER_NO,
+            A.TITLE,
+            A.CONTENTS,
+            A.ATCH_DOC_ID,
+            A.SECRET_YN,
+            A.QNA_STATUS,
+            A.ANSWER_CONTENTS,
+            A.ANSWERER_NO,
+            DATE_FORMAT(A.ANSWERED_AT, '%Y.%m.%d') AS ANSWERED_AT,
+            DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT,
+            U.USER_NM,
+            B.BRANCH_NAME,
+            (SELECT USER_NM FROM op_user WHERE USER_NO = A.ANSWERER_NO) AS ANSWERER_NM,
+            (SELECT CONCAT(FILE_PARTN_COURS, FILE_ID, '.', FILE_EXTSN_NM) FROM tb_file WHERE DOC_ID = A.ATCH_DOC_ID ORDER BY SORT_ORDR LIMIT 1) AS FILE_RLTV_PATH
+        FROM tb_product_qna A
+        INNER JOIN op_user U ON A.USER_NO = U.USER_NO
+        INNER JOIN tb_branches B ON A.BRANCH_ID = B.BRANCH_ID
+        WHERE A.PRODUCT_ID = #{productId}
+        ORDER BY A.REGIST_DT DESC
+        <if test="limitStart != null">
+            LIMIT #{limitStart}, #{limitEnd}
+        </if>
+    </select>
+
+    <select id="selectQna" parameterType="dataMap" resultType="dataMap">
+        SELECT 
+            A.QNA_ID,
+            A.PRODUCT_ID,
+            A.BRANCH_ID,
+            A.USER_NO,
+            A.TITLE,
+            A.CONTENTS,
+            A.ATCH_DOC_ID,
+            A.SECRET_YN,
+            A.QNA_STATUS,
+            A.ANSWER_CONTENTS,
+            A.ANSWERER_NO,
+            A.ANSWERED_AT,
+            A.REGIST_DT,
+            U.USER_NM,
+            B.BRANCH_NAME
+        FROM tb_product_qna A
+        INNER JOIN op_user U ON A.USER_NO = U.USER_NO
+        INNER JOIN tb_branches B ON A.BRANCH_ID = B.BRANCH_ID
+        WHERE A.QNA_ID = #{qnaId}
+    </select>
+
+    <insert id="insertQna" parameterType="dataMap">
+        INSERT INTO tb_product_qna (
+            PRODUCT_ID,
+            BRANCH_ID,
+            USER_NO,
+            TITLE,
+            CONTENTS,
+            ATCH_DOC_ID,
+            SECRET_YN,
+            QNA_STATUS,
+            REGISTER_NO,
+            REGIST_DT
+        ) VALUES (
+            #{productId},
+            #{branchId},
+            #{ss_user_no},
+            #{title},
+            #{contents},
+            #{atchDocId},
+            IFNULL(#{secretYn}, 'N'),
+            '10',
+            #{ss_user_no},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <update id="updateQna" parameterType="dataMap">
+        UPDATE tb_product_qna
+        SET TITLE = #{title},
+            CONTENTS = #{contents},
+            ATCH_DOC_ID = #{atchDocId},
+            SECRET_YN = #{secretYn},
+            UPDUSR_NO = #{ss_user_no},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE QNA_ID = #{qnaId}
+        AND USER_NO = #{ss_user_no}
+    </update>
+
+    <update id="deleteQna" parameterType="dataMap">
+        DELETE FROM tb_product_qna
+        WHERE QNA_ID = #{qnaId}
+        <if test="ssAuthorId != 'ROLE_ADMIN' and ssAuthorId != 'ROLE_SELL' and ssAuthorId != 'ROLE_PROJ'">
+            AND USER_NO = #{ss_user_no}
+        </if>
+    </update>
+
+    <update id="updateQnaAnswer" parameterType="dataMap">
+        UPDATE tb_product_qna
+        SET QNA_STATUS = '20',
+            ANSWER_CONTENTS = #{answerContents},
+            ANSWERER_NO = #{ss_user_no},
+            ANSWERED_AT = CURRENT_TIMESTAMP,
+            UPDUSR_NO = #{ss_user_no},
+            UPDT_DT = CURRENT_TIMESTAMP
+        WHERE QNA_ID = #{qnaId}
+    </update>
+
+</mapper>
