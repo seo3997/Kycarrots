@@ -5,6 +5,7 @@ import com.whomade.kycarrots.framework.common.object.DataMap;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Map;
 
 @Service("productQnaService")
 public class ProductQnaServiceImpl implements ProductQnaService {
@@ -48,6 +49,10 @@ public class ProductQnaServiceImpl implements ProductQnaService {
 
             List<String> roles = java.util.Arrays.asList("ROLE_ADMIN", "ROLE_SELL", "ROLE_PROJ");
 
+            Map<String, String> data = new java.util.HashMap<>();
+            data.put("type", "product");
+            data.put("targetId", productId);
+
             pushService.sendTargetPush(
                     roles,
                     null,
@@ -56,7 +61,7 @@ public class ProductQnaServiceImpl implements ProductQnaService {
                     "새로운 상품 문의 등록",
                     "[" + productName + "] 상품에 새로운 문의가 등록되었습니다.",
                     "PRODUCT_QNA",
-                    java.util.Collections.singletonMap("productId", productId));
+                    data);
         } catch (Exception e) {
         }
     }
@@ -82,6 +87,10 @@ public class ProductQnaServiceImpl implements ProductQnaService {
                 Long userNo = qna.getLong("USER_NO");
                 String productId = qna.getString("PRODUCT_ID");
 
+                Map<String, String> data = new java.util.HashMap<>();
+                data.put("type", "product");
+                data.put("targetId", productId);
+
                 pushService.sendTargetPush(
                         null,
                         null,
@@ -90,7 +99,7 @@ public class ProductQnaServiceImpl implements ProductQnaService {
                         "상품 문의 답변 완료",
                         "문의하신 내용에 대한 답변이 등록되었습니다.",
                         "PRODUCT_QNA_ANSWER",
-                        java.util.Collections.singletonMap("productId", productId));
+                        data);
             }
         } catch (Exception e) {
         }

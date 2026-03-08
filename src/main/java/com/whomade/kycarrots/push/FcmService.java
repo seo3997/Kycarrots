@@ -31,10 +31,37 @@ public class FcmService {
 
         String sendStatus = "FAIL";
         try {
-            // Android condition
-            sendPushToConditionAndroid(condition, title, body, data);
-            // iOS condition
-            sendPushToConditionIos(condition, title, body, data);
+            Notification notification = Notification.builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .build();
+
+            AndroidConfig androidConfig = AndroidConfig.builder()
+                    .setPriority(AndroidConfig.Priority.HIGH)
+                    .setNotification(AndroidNotification.builder()
+                            .setSound("default")
+                            .build())
+                    .build();
+
+            ApnsConfig apnsConfig = ApnsConfig.builder()
+                    .putHeader("apns-priority", "10")
+                    .setAps(Aps.builder()
+                            .setAlert(ApsAlert.builder().setTitle(title).setBody(body).build())
+                            .setSound("default")
+                            .build())
+                    .build();
+
+            Message.Builder builder = Message.builder()
+                    .setCondition(condition)
+                    .setNotification(notification)
+                    .setAndroidConfig(androidConfig)
+                    .setApnsConfig(apnsConfig);
+
+            if (data != null && !data.isEmpty()) {
+                builder.putAllData(data);
+            }
+
+            FirebaseMessaging.getInstance().send(builder.build());
 
             sendStatus = "SUCCESS";
             log.info("Condition push OK condition={}, eventType={}", condition, eventType);
@@ -58,41 +85,6 @@ public class FcmService {
         }
     }
 
-    private String sendPushToConditionAndroid(String condition, String title, String body, Map<String, String> data)
-            throws FirebaseMessagingException {
-
-        Message.Builder b = Message.builder()
-                .setCondition(condition)
-                .setNotification(Notification.builder().setTitle(title).setBody(body).build())
-                .setAndroidConfig(AndroidConfig.builder()
-                        .setPriority(AndroidConfig.Priority.HIGH)
-                        .build());
-
-        if (data != null && !data.isEmpty())
-            b.putAllData(data);
-        return FirebaseMessaging.getInstance().send(b.build());
-    }
-
-    private String sendPushToConditionIos(String condition, String title, String body, Map<String, String> data)
-            throws FirebaseMessagingException {
-
-        ApnsConfig apns = ApnsConfig.builder()
-                .putHeader("apns-priority", "10")
-                .setAps(Aps.builder()
-                        .setAlert(ApsAlert.builder().setTitle(title).setBody(body).build())
-                        .setSound("default")
-                        .build())
-                .build();
-
-        Message.Builder b = Message.builder()
-                .setCondition(condition)
-                .setApnsConfig(apns);
-
-        if (data != null && !data.isEmpty())
-            b.putAllData(data);
-        return FirebaseMessaging.getInstance().send(b.build());
-    }
-
     // ✅ 새 버전: actorUserNo + eventType까지 기록
     public void sendPushToTopicAndLog(Long actorUserNo,
             String topic,
@@ -103,10 +95,37 @@ public class FcmService {
 
         String sendStatus = "FAIL";
         try {
-            // Android topic
-            sendPushToTopicAndroid(topic, title, body, data);
-            // iOS topic
-            sendPushToTopicIos(topic, title, body, data);
+            Notification notification = Notification.builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .build();
+
+            AndroidConfig androidConfig = AndroidConfig.builder()
+                    .setPriority(AndroidConfig.Priority.HIGH)
+                    .setNotification(AndroidNotification.builder()
+                            .setSound("default")
+                            .build())
+                    .build();
+
+            ApnsConfig apnsConfig = ApnsConfig.builder()
+                    .putHeader("apns-priority", "10")
+                    .setAps(Aps.builder()
+                            .setAlert(ApsAlert.builder().setTitle(title).setBody(body).build())
+                            .setSound("default")
+                            .build())
+                    .build();
+
+            Message.Builder builder = Message.builder()
+                    .setTopic(topic)
+                    .setNotification(notification)
+                    .setAndroidConfig(androidConfig)
+                    .setApnsConfig(apnsConfig);
+
+            if (data != null && !data.isEmpty()) {
+                builder.putAllData(data);
+            }
+
+            FirebaseMessaging.getInstance().send(builder.build());
 
             sendStatus = "SUCCESS";
             log.info("Topic push OK topic={}, eventType={}", topic, eventType);
@@ -129,41 +148,6 @@ public class FcmService {
                     body,
                     sendStatus);
         }
-    }
-
-    private String sendPushToTopicAndroid(String topic, String title, String body, Map<String, String> data)
-            throws FirebaseMessagingException {
-
-        Message.Builder b = Message.builder()
-                .setTopic(topic)
-                .setNotification(Notification.builder().setTitle(title).setBody(body).build())
-                .setAndroidConfig(AndroidConfig.builder()
-                        .setPriority(AndroidConfig.Priority.HIGH)
-                        .build());
-
-        if (data != null && !data.isEmpty())
-            b.putAllData(data);
-        return FirebaseMessaging.getInstance().send(b.build());
-    }
-
-    private String sendPushToTopicIos(String topic, String title, String body, Map<String, String> data)
-            throws FirebaseMessagingException {
-
-        ApnsConfig apns = ApnsConfig.builder()
-                .putHeader("apns-priority", "10")
-                .setAps(Aps.builder()
-                        .setAlert(ApsAlert.builder().setTitle(title).setBody(body).build())
-                        .setSound("default")
-                        .build())
-                .build();
-
-        Message.Builder b = Message.builder()
-                .setTopic(topic)
-                .setApnsConfig(apns);
-
-        if (data != null && !data.isEmpty())
-            b.putAllData(data);
-        return FirebaseMessaging.getInstance().send(b.build());
     }
 
     // ✅ 새 버전: actorUserNo 기록 가능

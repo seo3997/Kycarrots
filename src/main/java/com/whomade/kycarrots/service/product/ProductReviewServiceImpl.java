@@ -5,6 +5,7 @@ import com.whomade.kycarrots.framework.common.object.DataMap;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Map;
 
 @Service("productReviewService")
 public class ProductReviewServiceImpl implements ProductReviewService {
@@ -48,6 +49,10 @@ public class ProductReviewServiceImpl implements ProductReviewService {
 
             List<String> roles = java.util.Arrays.asList("ROLE_ADMIN", "ROLE_SELL", "ROLE_PROJ");
 
+            Map<String, String> data = new java.util.HashMap<>();
+            data.put("type", "product");
+            data.put("targetId", productId);
+
             pushService.sendTargetPush(
                     roles,
                     null, // sending to all admins and the specific branch?
@@ -56,7 +61,7 @@ public class ProductReviewServiceImpl implements ProductReviewService {
                     "새로운 상품 리뷰 등록",
                     "[" + productName + "] 상품에 새로운 리뷰가 등록되었습니다.",
                     "PRODUCT_REVIEW",
-                    java.util.Collections.singletonMap("productId", productId));
+                    data);
         } catch (Exception e) {
             // Ignore push error to not break the main transaction
         }
