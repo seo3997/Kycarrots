@@ -212,6 +212,42 @@
         .btn-delete:hover {
             background: #fecaca;
         }
+
+        /* Review Image Preview */
+        .review-image-preview {
+            display: none;
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow: visible;
+        }
+        .review-image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .preview-remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
@@ -394,7 +430,11 @@
                 </div>
                 <div class="form-group">
                     <label>사진 첨부</label>
-                    <input type="file" name="reviewFile" class="form-control">
+                    <input type="file" name="reviewFile" id="reviewFile" class="form-control" accept="image/*">
+                    <div id="image-preview" class="review-image-preview">
+                        <img id="preview-img" src="" alt="Preview">
+                        <button type="button" class="preview-remove-btn" onclick="removeReviewImage()"><i class="fas fa-times"></i></button>
+                    </div>
                 </div>
                 <div class="modal-btns">
                     <button type="button" class="btn-cancel" onclick="closeModal('review')">취소</button>
@@ -674,6 +714,45 @@
     function closeModal(type) {
         document.getElementById('modal-' + type).style.display = 'none';
         document.getElementById('form-' + type).reset();
+        if (type === 'review') {
+            removeReviewImage();
+        }
+    }
+
+    // Review Image Preview Logic
+    if (document.getElementById('reviewFile')) {
+        document.getElementById('reviewFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const $preview = document.getElementById('image-preview');
+            const $img = document.getElementById('preview-img');
+
+            if (file) {
+                if (!file.type.startsWith('image/')) {
+                    alert('이미지 파일만 업로드 가능합니다.');
+                    this.value = '';
+                    removeReviewImage();
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $img.src = e.target.result;
+                    $preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                removeReviewImage();
+            }
+        });
+    }
+
+    function removeReviewImage() {
+        const $input = document.getElementById('reviewFile');
+        const $preview = document.getElementById('image-preview');
+        const $img = document.getElementById('preview-img');
+        
+        if ($input) $input.value = '';
+        if ($preview) $preview.style.display = 'none';
+        if ($img) $img.src = '';
     }
 
     let isReviewSubmitting = false;
