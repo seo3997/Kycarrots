@@ -275,3 +275,11 @@ Push 공통화: 웹(JSP)에서 답변을 달거나 앱(API)에서 답변을 달�
 
 상품리뷰리 이미지 사진촬영및 갤러리이미지 업로드 기능은 안드로이드 앱에서 네이티브로 구현하는데 이미 상품들록이 이미지 업로드기능이 있어 이걸(com.whomade.kycarrots.ui.ad.admake.KtMakeADImgRegiView) 참조 한다. 이미지 선택,촬영후 미리보기, 삭제 기능 포함한다.
 이미지관련 파일은 res/xml/provider_paths.xml 이다.
+
+7.안드로이드 앱 상품리뷰 및 상품문의 등록시 push 전송 로직점검
+1.상품구매자가 상푸리뷰나 상품문의를 하는데 자기한테 push를 보내면 안됨
+2.본사,지점은 push를 받아야함
+3.push 전송시 
+ProductQnaServiceImpl.java
+ insertQna에서 
+ insert into tb_push_log 에서 Data too long for column 'TARGET_VALUE' 오류나고 있음 
