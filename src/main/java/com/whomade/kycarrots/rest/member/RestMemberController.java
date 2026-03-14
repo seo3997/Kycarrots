@@ -9,6 +9,7 @@ import com.whomade.kycarrots.dto.user.StringResponse;
 import com.whomade.kycarrots.dto.user.PushTokenVo;
 import com.whomade.kycarrots.dto.user.UnlinkSocialRequest;
 
+import com.whomade.kycarrots.dto.login.PasswordChangeRequest;
 import com.whomade.kycarrots.email.PasswordResetResult;
 import com.whomade.kycarrots.framework.common.constant.Const;
 import com.whomade.kycarrots.framework.common.object.DataMap;
@@ -617,6 +618,40 @@ public class RestMemberController {
             }
         } catch (Exception e) {
             log.error("사용자 정보 수정 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(SimpleResultResponse.fail(e.getMessage()));
+        }
+    }
+
+    @PostMapping(value = "/change-password")
+    public ResponseEntity<SimpleResultResponse> changePassword(@RequestParam("token") String token,
+            @RequestBody PasswordChangeRequest request) {
+        try {
+            OpUserVO current = tokenizer.getMember(token);
+            if (current == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+                return ResponseEntity.badRequest().body(SimpleResultResponse.fail("새 비밀번호가 일치하지 않습니다."));
+            }
+
+            String resultCode = opUserService.changePassword(current.getUserId(), request.getCurrentPassword(),
+                    request.getNewPassword());
+
+            if ("200".equals(resultCode)) {
+                return ResponseEntity.ok(SimpleResultResponse.ok("비밀번호가 성공적으로 변경되었습니다."));
+            } else if ("602".equals(resultCode)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(SimpleResultResponse.fail("현재 비밀번호가 일치하지 않습니다."));
+            } else if ("601".equals(resultCode)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(SimpleResultResponse.fail("사용자를 찾을 수 없습니다."));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(SimpleResultResponse.fail("비밀번호 변경 중 오류가 발생했습니다. 코드: " + resultCode));
+            }
+
+        } catch (Exception e) {
+            log.error("비밀번호 변경 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(SimpleResultResponse.fail(e.getMessage()));
         }

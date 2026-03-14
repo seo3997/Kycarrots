@@ -144,4 +144,28 @@ public class OpUserService {
     public List<OpUserVO> selectUsersByBranchAndRole(String branchId, String memberCode) {
         return opUserRepository.selectUsersByBranchAndRole(branchId, memberCode);
     }
+
+    public String changePassword(String userId, String currentPw, String newPw) {
+        try {
+            DataMap param = new DataMap();
+            param.put("userId", userId);
+            OpUserVO user = opUserRepository.seelectUser(param);
+            if (user == null) return Const.RESULT_NO_USER;
+
+            String encryptedCurrent = EgovFileScrty.encryptSHA512(currentPw);
+            if (!encryptedCurrent.equals(user.getPassword())) {
+                return "602"; // RESULT_PWD_ERR
+            }
+
+            String encryptedNew = EgovFileScrty.encryptSHA512(newPw);
+            DataMap updateParam = new DataMap();
+            updateParam.put("member_id", userId);
+            updateParam.put("member_new_pw", encryptedNew);
+            int result = opUserRepository.updatePw(updateParam);
+
+            return result > 0 ? Const.RESULT_CODE_200 : Const.RESULT_CODE_ERR;
+        } catch (Exception e) {
+            return Const.RESULT_CODE_ERR;
+        }
+    }
 }
