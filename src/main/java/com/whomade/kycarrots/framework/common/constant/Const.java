@@ -29,6 +29,8 @@ import com.whomade.kycarrots.framework.common.util.EgovPropertiesUtil;
 
 public class Const {
 
+	public static final String CENTER_BRANCH_ID = "2";
+
 	// 페이징처리시 기본설정
 	public static final String defFirstPage = "1"; // 디폴트 첫번째 페이지
 	public static final String defRowPerPage = "10"; // 디폴트 한화면에 보여줘야할 컨텐츠 수

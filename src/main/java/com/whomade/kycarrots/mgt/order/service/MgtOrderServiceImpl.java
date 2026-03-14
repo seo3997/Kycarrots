@@ -94,6 +94,7 @@ public class MgtOrderServiceImpl implements MgtOrderService {
             branchPayload.put("body", branchBody);
 
             pushService.sendTargetPush(
+                    param.getLong("ss_user_no"),
                     java.util.Arrays.asList("ROLE_PROJ"),
                     branchId,
                     null,
@@ -114,6 +115,7 @@ public class MgtOrderServiceImpl implements MgtOrderService {
             buyerPayload.put("body", buyerBody);
 
             pushService.sendTargetPush(
+                    param.getLong("ss_user_no"),
                     null,
                     null,
                     null,
@@ -145,6 +147,7 @@ public class MgtOrderServiceImpl implements MgtOrderService {
         payload.put("body", body);
 
         pushService.sendTargetPush(
+                param.getLong("ss_user_no"),
                 Arrays.asList("ROLE_SELL"),
                 null,
                 null,
@@ -230,7 +233,8 @@ public class MgtOrderServiceImpl implements MgtOrderService {
                 payload.put("title", title);
                 payload.put("body", body);
 
-                pushService.sendTargetPush(targetRoles, targetBranchId, null, targetUserNo, title, body, eventType,
+                pushService.sendTargetPush(param.getLong("ss_user_no"), targetRoles, targetBranchId, null, targetUserNo,
+                        title, body, eventType,
                         payload);
             }
         }

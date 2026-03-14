@@ -27,7 +27,8 @@
             DATE_FORMAT(A.REGIST_DT, '%Y.%m.%d') AS REGIST_DT,
             U.USER_NM,
             P.TITLE AS PRODUCT_NM,
-            (SELECT CONCAT(FILE_PARTN_COURS, FILE_ID, '.', FILE_EXTSN_NM) FROM tb_file WHERE DOC_ID = A.ATCH_DOC_ID ORDER BY SORT_ORDR LIMIT 1) AS FILE_RLTV_PATH
+            (SELECT GROUP_CONCAT(CONCAT(FILE_PARTN_COURS, FILE_ID, '.', FILE_EXTSN_NM) ORDER BY SORT_ORDR) 
+             FROM tb_file WHERE DOC_ID = A.ATCH_DOC_ID) AS FILE_PATHS
         FROM tb_product_reviews A
         INNER JOIN op_user U ON A.USER_NO = U.USER_NO
         INNER JOIN tb_product P ON A.PRODUCT_ID = P.PRODUCT_ID
@@ -89,7 +90,9 @@
         UPDATE tb_product_reviews
         SET RATING = #{rating},
             CONTENTS = #{contents},
-            ATCH_DOC_ID = #{atchDocId},
+            <if test="atchDocId != null and atchDocId != ''">
+                ATCH_DOC_ID = #{atchDocId},
+            </if>
             UPDUSR_NO = #{ss_user_no},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE REVIEW_ID = #{reviewId}

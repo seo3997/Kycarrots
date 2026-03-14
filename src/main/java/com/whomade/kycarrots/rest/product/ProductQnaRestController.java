@@ -67,6 +67,7 @@ public class ProductQnaRestController {
         param.put("userNo", userInfoVo.getUserNo());
         param.put("ss_user_id", userInfoVo.getId());
         param.put("ssAuthorId", userInfoVo.getAuthorId());
+        param.put("ss_branch_id", userInfoVo.getBranchId());
 
         // Handle file upload
         if (request instanceof MultipartHttpServletRequest) {
@@ -139,6 +140,7 @@ public class ProductQnaRestController {
             param.put("userNo", userInfoVo.getUserNo());
             param.put("ss_user_nm", userInfoVo.getUserNm());
             param.put("ssAuthorId", userInfoVo.getAuthorId());
+            param.put("ss_branch_id", userInfoVo.getBranchId());
         }
 
         productQnaService.updateQnaAnswer(param);
@@ -158,6 +160,7 @@ public class ProductQnaRestController {
                     userInfoVo.setId(opUserVO.getUserId());
                     userInfoVo.setUserNm(opUserVO.getUserNm());
                     userInfoVo.setAuthorId(opUserVO.getMemberCode());
+                    userInfoVo.setBranchId(opUserVO.getBranchId());
                 }
             }
         }

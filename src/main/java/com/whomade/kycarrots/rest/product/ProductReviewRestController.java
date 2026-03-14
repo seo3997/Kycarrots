@@ -67,6 +67,7 @@ public class ProductReviewRestController {
         param.put("userNo", userInfoVo.getUserNo());
         param.put("ss_user_id", userInfoVo.getId());
         param.put("ssAuthorId", userInfoVo.getAuthorId());
+        param.put("ss_branch_id", userInfoVo.getBranchId());
 
         // Handle file upload
         if (request instanceof MultipartHttpServletRequest) {
@@ -105,6 +106,30 @@ public class ProductReviewRestController {
         param.put("userNo", userInfoVo.getUserNo());
         param.put("ss_user_id", userInfoVo.getId());
         param.put("ssAuthorId", userInfoVo.getAuthorId());
+        param.put("ss_branch_id", userInfoVo.getBranchId());
+
+        // Handle file upload
+        if (request instanceof MultipartHttpServletRequest) {
+            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+            List<MultipartFile> fileList = multiRequest.getFiles("reviewFile");
+            if (!fileList.isEmpty()) {
+                DataMap existingReview = productReviewService.selectReview(param);
+                String docId = (existingReview != null) ? existingReview.getString("ATCH_DOC_ID") : null;
+
+                if (docId == null || docId.isEmpty()) {
+                    docId = SysUtil.getDocId();
+                }
+
+                param.put("atchDocId", docId);
+                for (MultipartFile mfile : fileList) {
+                    if (!mfile.isEmpty()) {
+                        AtFileVO reAtFile = atFileMngUtil.parseFileInf(mfile, docId, "product/review",
+                                param.getString("ss_user_no"));
+                        commonMybatisDao.insert("common.file.insertAttchFile", reAtFile);
+                    }
+                }
+            }
+        }
 
         productReviewService.updateReview(param);
         result.put("success", true);
@@ -157,6 +182,7 @@ public class ProductReviewRestController {
                     userInfoVo.setId(opUserVO.getUserId());
                     userInfoVo.setUserNm(opUserVO.getUserNm());
                     userInfoVo.setAuthorId(opUserVO.getMemberCode());
+                    userInfoVo.setBranchId(opUserVO.getBranchId());
                 }
             }
         }

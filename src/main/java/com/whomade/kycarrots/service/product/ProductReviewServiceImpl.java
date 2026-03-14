@@ -38,24 +38,25 @@ public class ProductReviewServiceImpl implements ProductReviewService {
         // Push Notification to HQ and Branch
         try {
             String productId = param.getString("productId");
-            String productName = param.getString("productName");
-            if (productName == null || productName.isEmpty()) {
-                DataMap product = commonMybatisDao.selectOne("mgt.product.selectProduct", param);
-                if (product != null)
-                    productName = product.getString("TITLE");
+            DataMap product = commonMybatisDao.selectOne("mgt.product.selectProduct", param);
+
+            String productName = "상품";
+            if (product != null) {
+                productName = product.getString("TITLE");
             }
-            if (productName == null)
-                productName = "상품";
+            String branchId = param.getString("ss_branch_id");
 
             List<String> roles = java.util.Arrays.asList("ROLE_ADMIN", "ROLE_SELL", "ROLE_PROJ");
+            Long actorUserNo = param.getLong("ss_user_no");
 
             Map<String, String> data = new java.util.HashMap<>();
             data.put("type", "product");
             data.put("targetId", productId);
 
             pushService.sendTargetPush(
+                    actorUserNo,
                     roles,
-                    null, // sending to all admins and the specific branch?
+                    branchId,
                     null,
                     null,
                     "새로운 상품 리뷰 등록",

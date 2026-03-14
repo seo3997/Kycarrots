@@ -297,10 +297,11 @@ public class PaymentServiceImpl implements PaymentService {
                 java.util.Map<String, String> payload = java.util.Map.of(
                         "targetId", String.valueOf(orderVo.getOrderId()),
                         "type", "order");
-                pushService.sendTargetPush(java.util.List.of("ROLE_PROJ"), String.valueOf(orderVo.getBranchId()), null,
+                pushService.sendTargetPush(orderVo.getUserNo(), java.util.List.of("ROLE_PROJ"),
+                        String.valueOf(orderVo.getBranchId()), null,
                         null,
                         "[주문완료]", "새로운 주문 접수 (주문번호: " + orderNo + ")", "PAYMENT_DONE", payload);
-                pushService.sendTargetPush(java.util.List.of("ROLE_SELL"), null, null, null,
+                pushService.sendTargetPush(orderVo.getUserNo(), java.util.List.of("ROLE_SELL"), null, null, null,
                         "[주문완료]", "새로운 주문 접수 (주문번호: " + orderNo + ")", "PAYMENT_DONE", payload);
 
                 result.put("success", true);
@@ -430,10 +431,12 @@ public class PaymentServiceImpl implements PaymentService {
                         + " 처리되었습니다.";
 
                 // 1. Send push to Branch (ROLE_PROJ)
-                pushService.sendTargetPush(java.util.List.of("ROLE_PROJ"), String.valueOf(orderVo.getBranchId()), null,
+                pushService.sendTargetPush(userNo.longValue(), java.util.List.of("ROLE_PROJ"),
+                        String.valueOf(orderVo.getBranchId()), null,
                         null, title, pushBody, "order_cancelled", payload);
                 // 2. Send push to HQ (ROLE_SELL)
-                pushService.sendTargetPush(java.util.List.of("ROLE_SELL"), null, null, null, title, pushBody,
+                pushService.sendTargetPush(userNo.longValue(), java.util.List.of("ROLE_SELL"), null, null, null, title,
+                        pushBody,
                         "order_cancelled", payload);
 
                 result.put("success", true);
@@ -485,10 +488,12 @@ public class PaymentServiceImpl implements PaymentService {
         String body = "주문 " + orderVo.getOrderNo() + "에 대한 반품 요청이 접수되었습니다.";
 
         // 1. Send push to Branch (ROLE_PROJ)
-        pushService.sendTargetPush(java.util.List.of("ROLE_PROJ"), String.valueOf(orderVo.getBranchId()), null, null,
+        pushService.sendTargetPush(userNo.longValue(), java.util.List.of("ROLE_PROJ"),
+                String.valueOf(orderVo.getBranchId()), null, null,
                 title, body, "return_requested", payload);
         // 2. Send push to HQ (ROLE_SELL)
-        pushService.sendTargetPush(java.util.List.of("ROLE_SELL"), null, null, null, title, body, "return_requested",
+        pushService.sendTargetPush(userNo.longValue(), java.util.List.of("ROLE_SELL"), null, null, null, title, body,
+                "return_requested",
                 payload);
 
         result.put("success", true);

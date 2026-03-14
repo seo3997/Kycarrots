@@ -1,18 +1,25 @@
 package com.whomade.kycarrots.push;
 
 import com.google.firebase.messaging.*;
-import lombok.RequiredArgsConstructor;
+import com.whomade.kycarrots.entity.member.OpUserVO;
+import com.whomade.kycarrots.service.member.OpUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class FcmService {
 
     private final PushLogRepository pushLogRepository;
+    private final OpUserService opUserService;
+
+    public FcmService(PushLogRepository pushLogRepository, @Lazy OpUserService opUserService) {
+        this.pushLogRepository = pushLogRepository;
+        this.opUserService = opUserService;
+    }
 
     // =========================================================
     // ✅ Topic 푸시 (기존 시그니처 유지: actorUserNo 없이 호출 가능)
@@ -174,10 +181,27 @@ public class FcmService {
 
             sendStatus = "SUCCESS";
 
+        } catch (FirebaseMessagingException e) {
+            log.error("FCM Exception: code={}, message={}, targetUserNo={}, eventType={}",
+                    e.getMessagingErrorCode(), e.getMessage(), targetUserNo, eventType);
+
+            // "Requested entity was not found" or "UNREGISTERED" error means the token is
+            // no longer valid.
+            if (MessagingErrorCode.UNREGISTERED.equals(e.getMessagingErrorCode()) ||
+                    "Requested entity was not found.".equals(e.getMessage())) {
+                try {
+                    OpUserVO u = new OpUserVO();
+                    u.setUserNo(targetUserNo);
+                    u.setPushToken(null);
+                    opUserService.updatePushToken(u);
+                    log.info("Cleared invalid FCM token for userNo={}", targetUserNo);
+                } catch (Exception ex) {
+                    log.error("Failed to clear invalid token for userNo={}", targetUserNo, ex);
+                }
+            }
         } catch (Exception e) {
             log.error("User push FAIL deviceType={}, targetUserNo={}, eventType={}", deviceType, targetUserNo,
                     eventType, e);
-
         } finally {
             String tid = targetId;
             savePushLog(

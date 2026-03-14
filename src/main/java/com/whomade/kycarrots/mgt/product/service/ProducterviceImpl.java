@@ -1,7 +1,5 @@
 package com.whomade.kycarrots.mgt.product.service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whomade.kycarrots.config.FileStorageProperties;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
@@ -9,33 +7,25 @@ import com.whomade.kycarrots.framework.common.dao.CommonMybatisDao;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.page.util.pageNavigationUtil;
 import com.whomade.kycarrots.framework.common.util.StringUtil;
-import com.whomade.kycarrots.framework.common.util.SysUtil;
 import com.whomade.kycarrots.framework.common.util.file.AtFileMngUtil;
 import com.whomade.kycarrots.framework.common.util.file.FileUtil;
 import com.whomade.kycarrots.framework.common.util.file.dao.AtFileManageDAO;
-import com.whomade.kycarrots.framework.common.util.file.vo.AtFileVO;
-import com.whomade.kycarrots.repository.mybatis.product.TnProductRepository;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 @Service("procuctService")
 public class ProducterviceImpl extends EgovAbstractServiceImpl implements ProductService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProducterviceImpl.class);
 	@Autowired
 	private FileStorageProperties fileStorageProperties;
 
@@ -209,6 +199,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 					"title", title,
 					"body", body);
 			pushService.sendTargetPush(
+					param.getLong("ss_user_no"),
 					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
 					null, null, null,
 					title, body, "PRODUCT_REGISTER", payload);
@@ -246,6 +237,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 					"title", title,
 					"body", body);
 			pushService.sendTargetPush(
+					param.getLong("ss_user_no"),
 					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
 					null, null, null,
 					title, body, "PRODUCT_REGISTER", payload);
@@ -553,6 +545,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 					"title", title,
 					"body", body);
 			pushService.sendTargetPush(
+					param.getLong("ss_user_no"),
 					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
 					null, null, null,
 					title, body, "PRODUCT_REGISTER", payload);

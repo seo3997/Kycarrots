@@ -26,7 +26,7 @@ public class PushLog {
     @Column(name = "TARGET_TYPE", nullable = false, length = 10)
     private String targetType;
 
-    @Column(name = "TARGET_VALUE", nullable = false, length = 50)
+    @Column(name = "TARGET_VALUE", nullable = false, length = 200)
     private String targetValue;
 
     @Column(name = "TARGET_ID", length = 50)
