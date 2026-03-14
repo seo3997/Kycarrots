@@ -60,13 +60,16 @@ public class FcmService {
 
             Message.Builder builder = Message.builder()
                     .setCondition(condition)
-                    .setNotification(notification)
                     .setAndroidConfig(androidConfig)
                     .setApnsConfig(apnsConfig);
 
             if (data != null && !data.isEmpty()) {
                 builder.putAllData(data);
             }
+            
+            // ✅ 알림 페이로드 대신 데이터 페이로드만 사용하여 백그라운드에서도 onMessageReceived가 실행되도록 함
+            if (title != null) builder.putData("title", title);
+            if (body != null) builder.putData("body", body);
 
             FirebaseMessaging.getInstance().send(builder.build());
 
@@ -124,13 +127,16 @@ public class FcmService {
 
             Message.Builder builder = Message.builder()
                     .setTopic(topic)
-                    .setNotification(notification)
                     .setAndroidConfig(androidConfig)
                     .setApnsConfig(apnsConfig);
 
             if (data != null && !data.isEmpty()) {
                 builder.putAllData(data);
             }
+            
+            // ✅ 알림 페이로드 대신 데이터 페이로드만 사용하여 백그라운드에서도 onMessageReceived가 실행되도록 함
+            if (title != null) builder.putData("title", title);
+            if (body != null) builder.putData("body", body);
 
             FirebaseMessaging.getInstance().send(builder.build());
 
@@ -246,13 +252,17 @@ public class FcmService {
 
         Message.Builder b = Message.builder()
                 .setToken(token)
-                .setNotification(Notification.builder().setTitle(title).setBody(body).build())
                 .setAndroidConfig(AndroidConfig.builder()
                         .setPriority(AndroidConfig.Priority.HIGH)
                         .build());
 
         if (data != null && !data.isEmpty())
             b.putAllData(data);
+
+        // ✅ 알림 페이로드 대신 데이터 페이로드만 사용하여 백그라운드에서도 onMessageReceived가 실행되도록 함
+        if (title != null) b.putData("title", title);
+        if (body != null) b.putData("body", body);
+
         return FirebaseMessaging.getInstance().send(b.build());
     }
 

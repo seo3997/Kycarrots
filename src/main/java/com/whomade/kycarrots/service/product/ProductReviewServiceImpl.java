@@ -52,6 +52,8 @@ public class ProductReviewServiceImpl implements ProductReviewService {
             Map<String, String> data = new java.util.HashMap<>();
             data.put("type", "product");
             data.put("targetId", productId);
+            data.put("title", "새로운 상품 리뷰 등록");
+            data.put("body", "[" + productName + "] 상품에 새로운 리뷰가 등록되었습니다.");
 
             pushService.sendTargetPush(
                     actorUserNo,

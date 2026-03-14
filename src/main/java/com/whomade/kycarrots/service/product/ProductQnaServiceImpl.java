@@ -52,6 +52,8 @@ public class ProductQnaServiceImpl implements ProductQnaService {
             Map<String, String> data = new java.util.HashMap<>();
             data.put("type", "product");
             data.put("targetId", productId);
+            data.put("title", "새로운 상품 문의 등록");
+            data.put("body", "[" + productName + "] 상품에 새로운 문의가 등록되었습니다.");
 
             pushService.sendTargetPush(
                     actorUserNo,
@@ -91,6 +93,8 @@ public class ProductQnaServiceImpl implements ProductQnaService {
                 Map<String, String> data = new java.util.HashMap<>();
                 data.put("type", "product");
                 data.put("targetId", productId);
+                data.put("title", "상품 문의 답변 완료");
+                data.put("body", "문의하신 내용에 대한 답변이 등록되었습니다.");
 
                 pushService.sendTargetPush(
                         param.getLong("ss_user_no"),
