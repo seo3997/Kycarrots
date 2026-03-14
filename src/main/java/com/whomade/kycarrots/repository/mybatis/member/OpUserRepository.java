@@ -40,6 +40,10 @@ public class OpUserRepository {
         return opUserMapper.updatePushToken(user);
     }
 
+    public int updateUser(OpUserVO user) {
+        return opUserMapper.updateUser(user);
+    }
+
     public OpUserVO fetchFcmToken(String userId) {
         return opUserMapper.fetchFcmToken(userId);
     }

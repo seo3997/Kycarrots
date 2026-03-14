@@ -24,6 +24,7 @@ public interface OpUserMapper {
         boolean existsByEmail(@Param("email") String email);
 
         int updatePushToken(OpUserVO user);
+        int updateUser(OpUserVO user);
 
         OpUserVO fetchFcmToken(@Param("userId") String userId);
 

@@ -95,6 +95,17 @@
         WHERE USER_NO   = #{userNo}
     </update>
 
+    <update id="updateUser" parameterType="com.whomade.kycarrots.entity.member.OpUserVO">
+        UPDATE op_user
+        SET USER_NM = #{userNm},
+            CTTPC = #{cttpc},
+            AREA_CODE = #{areaCode},
+            AREA_SE_CODE_S = #{areaSeCodeS},
+            AREA_SE_CODE_D = #{areaSeCodeD},
+            UPDT_DT = NOW()
+        WHERE USER_NO = #{userNo}
+    </update>
+
     <select id="fetchFcmToken" resultType="com.whomade.kycarrots.entity.member.OpUserVO" parameterType="string">
         SELECT USER_ID,PUSH_TOKEN, DEVICE_TYPE
         FROM op_user

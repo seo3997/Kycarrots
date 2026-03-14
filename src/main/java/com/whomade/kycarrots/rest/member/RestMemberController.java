@@ -598,4 +598,28 @@ public class RestMemberController {
         }
     }
 
+    @PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SimpleResultResponse> updateUser(@RequestParam("token") String token,
+            @RequestBody OpUserVO user) {
+        try {
+            OpUserVO current = tokenizer.getMember(token);
+            if (current == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            user.setUserNo(current.getUserNo());
+            int result = opUserService.updateUser(user);
+            if (result > 0) {
+                return ResponseEntity.ok(SimpleResultResponse.ok("사용자 정보 수정 성공"));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(SimpleResultResponse.fail("수정 실패"));
+            }
+        } catch (Exception e) {
+            log.error("사용자 정보 수정 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(SimpleResultResponse.fail(e.getMessage()));
+        }
+    }
+
 }
