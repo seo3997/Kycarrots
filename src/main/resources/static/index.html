@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kycarrots - 프리미엄 농산물 브랜드</title>
+    <script>
+        var host = window.location.hostname;
+        // 본사 도메인이거나 로컬호스트인 경우
+        if (host === 'www.kycarrots.com' || host === 'kycarrots.com' || host.indexOf('localhost') !== -1 || host === '127.0.0.1') {
+            window.location.replace('/front_index.do');
+        } else {
+            // 하위 지점 도메인 (예: amsa.kycarrots.com 등)
+            window.location.replace('/shop/list.do');
+        }
+    </script>
+    <style>
+        :root {
+            --primary: #ff6b35;
+            --secondary: #2ec4b6;
+            --dark: #011627;
+            --light: #fdfffc;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #011627 0%, #023658 100%);
+            z-index: -1;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            filter: blur(60px);
+            opacity: 0.15;
+            animation: float 20s infinite alternate;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, 50px); }
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 30px;
+            border: 1px rgba(255, 255, 255, 0.1) solid;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary), #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+
+        .glow {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            right: -100px;
+        }
+    </style>    
+</head>
+<body>
+    <div class="background"></div>
+    <div class="circle glow"></div>
+    <div class="circle" style="width: 400px; height: 400px; bottom: -150px; left: -150px; animation-delay: -5s;"></div>
+
+    <div class="container">
+        <div class="logo">🥕 Kycarrots</div>
+        <h1>신선함을 직거래하다</h1>
+        <p>전국의 우수한 농산물을 가장 빠르게 만나보세요.<br>가장 투명하고 건강한 거래가 시작됩니다.</p>
+        
+        <div class="btn-group">
+            <a href="/shop/list.do" class="btn btn-primary">쇼핑하러 가기</a>
+        </div>
+    </div>
+</body>
+</html>
