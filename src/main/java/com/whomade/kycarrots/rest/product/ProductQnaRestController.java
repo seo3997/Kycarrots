@@ -9,8 +9,11 @@ import com.whomade.kycarrots.service.product.ProductQnaService;
 import com.whomade.kycarrots.framework.common.dao.CommonMybatisDao;
 import jakarta.annotation.Resource;
 import com.whomade.kycarrots.admin.common.vo.UserInfoVo;
+import com.whomade.kycarrots.entity.member.OpUserVO;
 import com.whomade.kycarrots.framework.common.util.SessionUtil;
+import com.whomade.kycarrots.framework.common.util.encrypt.EncodedTokenizer;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -32,6 +35,9 @@ public class ProductQnaRestController {
     @Resource(name = "commonMybatisDao")
     private CommonMybatisDao commonMybatisDao;
 
+    @Autowired
+    private EncodedTokenizer tokenizer;
+
     @GetMapping("/list")
     public Map<String, Object> list(HttpServletRequest request) throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
@@ -51,7 +57,7 @@ public class ProductQnaRestController {
         DataMap param = RequestUtil.getDataMap(request);
         Map<String, Object> result = new HashMap<>();
 
-        UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+        UserInfoVo userInfoVo = getUserInfo(request);
         if (userInfoVo == null) {
             result.put("success", false);
             result.put("message", "로그인이 필요합니다.");
@@ -84,12 +90,33 @@ public class ProductQnaRestController {
         return result;
     }
 
+    @PostMapping("/update")
+    public Map<String, Object> update(HttpServletRequest request) throws Exception {
+        DataMap param = RequestUtil.getDataMap(request);
+        Map<String, Object> result = new HashMap<>();
+
+        UserInfoVo userInfoVo = getUserInfo(request);
+        if (userInfoVo == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return result;
+        }
+        param.put("ss_user_no", userInfoVo.getUserNo());
+        param.put("userNo", userInfoVo.getUserNo());
+        param.put("ss_user_id", userInfoVo.getId());
+        param.put("ssAuthorId", userInfoVo.getAuthorId());
+
+        productQnaService.updateQna(param);
+        result.put("success", true);
+        return result;
+    }
+
     @PostMapping("/delete")
     public Map<String, Object> delete(HttpServletRequest request) throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
         Map<String, Object> result = new HashMap<>();
 
-        UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+        UserInfoVo userInfoVo = getUserInfo(request);
         if (userInfoVo != null) {
             param.put("ss_user_no", userInfoVo.getUserNo());
             param.put("userNo", userInfoVo.getUserNo());
@@ -106,7 +133,7 @@ public class ProductQnaRestController {
         DataMap param = RequestUtil.getDataMap(request);
         Map<String, Object> result = new HashMap<>();
 
-        UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+        UserInfoVo userInfoVo = getUserInfo(request);
         if (userInfoVo != null) {
             param.put("ss_user_no", userInfoVo.getUserNo());
             param.put("userNo", userInfoVo.getUserNo());
@@ -117,5 +144,23 @@ public class ProductQnaRestController {
         productQnaService.updateQnaAnswer(param);
         result.put("success", true);
         return result;
+    }
+
+    private UserInfoVo getUserInfo(HttpServletRequest request) {
+        UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
+        if (userInfoVo == null) {
+            String token = request.getParameter("token");
+            if (token != null && !token.isEmpty()) {
+                OpUserVO opUserVO = tokenizer.getMember(token);
+                if (opUserVO != null) {
+                    userInfoVo = new UserInfoVo();
+                    userInfoVo.setUserNo(opUserVO.getUserNo());
+                    userInfoVo.setId(opUserVO.getUserId());
+                    userInfoVo.setUserNm(opUserVO.getUserNm());
+                    userInfoVo.setAuthorId(opUserVO.getMemberCode());
+                }
+            }
+        }
+        return userInfoVo;
     }
 }
