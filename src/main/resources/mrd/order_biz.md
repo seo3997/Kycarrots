@@ -276,10 +276,18 @@ Push 공통화: 웹(JSP)에서 답변을 달거나 앱(API)에서 답변을 달�
 상품리뷰리 이미지 사진촬영및 갤러리이미지 업로드 기능은 안드로이드 앱에서 네이티브로 구현하는데 이미 상품들록이 이미지 업로드기능이 있어 이걸(com.whomade.kycarrots.ui.ad.admake.KtMakeADImgRegiView) 참조 한다. 이미지 선택,촬영후 미리보기, 삭제 기능 포함한다.
 이미지관련 파일은 res/xml/provider_paths.xml 이다.
 
-7.안드로이드 앱 상품리뷰 및 상품문의 등록시 push 전송 로직점검
-1.상품구매자가 상푸리뷰나 상품문의를 하는데 자기한테 push를 보내면 안됨
-2.본사,지점은 push를 받아야함
-3.push 전송시 
+7.안드로이드 앱 상품리뷰 및 상품문의 등록시 push 전송 로직점검 1.상품구매자가 상푸리뷰나 상품문의를 하는데 자기한테 push를 보내면 안됨 2.본사,지점은 push를 받아야함
+3.push 전송시
 ProductQnaServiceImpl.java
- insertQna에서 
- insert into tb_push_log 에서 Data too long for column 'TARGET_VALUE' 오류나고 있음 
+insertQna에서
+insert into tb_push_log 에서 Data too long for column 'TARGET_VALUE' 오류나고 있음
+
+8.상품상세 페이지 첨부이미지 표시 오류
+tb_product_image 이미지분류
+IMAGE_CD=1,REPRESENT=1 대표이미지
+IMAGE_CD=1,REPRESENT=0 상품이미지
+IMAGE_CD=3 상품본문에서 사용하는 이미지
+
+8-1 front/shop/detail.jsp에서 상품상세 페이지에 첨부이미지 표시가 안됨
+8-2 /Users/soo/kycarrotsApp/app/src/main/java/com/whomade/kycarrots/ProductDescriptionFragment.kt 에서 상품상세 페이지에 첨부이미지 표시가 되어야 한
+첨부이미지는 tb_product_image 테이블에서 IMAGE_CD=1,REPRESENT=0 인경우만 이미지표시되는거야
