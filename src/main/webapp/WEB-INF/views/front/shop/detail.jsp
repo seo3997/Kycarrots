@@ -375,7 +375,7 @@
         <c:if test="${not empty imageList}">
             <div class="additional-images">
                 <c:forEach var="img" items="${imageList}">
-                    <c:if test="${img.represent == 0 && (img.imageCd == '1' || img.imageCd == '2')}">
+                    <c:if test="${img.represent == 0 && img.imageCd == '1'}">
                         <img src="${img.imageUrl}" class="additional-img" alt="Additional Image" onclick="window.open(this.src)">
                     </c:if>
                 </c:forEach>

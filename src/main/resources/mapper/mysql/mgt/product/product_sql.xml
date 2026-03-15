@@ -239,21 +239,22 @@
 
 	<select id="selectProductImagesByProductId" parameterType="long" resultType="com.whomade.kycarrots.entity.product.TnProductImageVo">
 		SELECT
-			IMAGE_ID,
-			PRODUCT_ID,
-			IMAGE_CD,
-			IMAGE_URL,
-			IMAGE_NAME,
-			REPRESENT,
-			IMAGE_SIZE,
-			IMAGE_TEXT,
-			IMAGE_TYPE,
-			REGISTER_NO,
-			REGIST_DT,
-			UPDUSR_NO,
-			UPDT_DT
+			IMAGE_ID AS imageId,
+			PRODUCT_ID AS productId,
+			IMAGE_CD AS imageCd,
+			IMAGE_URL AS imageUrl,
+			IMAGE_NAME AS imageName,
+			REPRESENT AS represent,
+			IMAGE_SIZE AS imageSize,
+			IMAGE_TEXT AS imageText,
+			IMAGE_TYPE AS imageType,
+			REGISTER_NO AS registerNo,
+			REGIST_DT AS registDt,
+			UPDUSR_NO AS updusrNo,
+			UPDT_DT AS updtDt
 		FROM tb_product_image
 		WHERE PRODUCT_ID = #{productId}
+		  AND IMAGE_CD = '1'
 		ORDER BY REPRESENT DESC,IMAGE_ID ASC
 	</select>
 
