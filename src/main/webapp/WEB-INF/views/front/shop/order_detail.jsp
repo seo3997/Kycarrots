@@ -11,78 +11,12 @@
     <title>주문 상세 - ${branchInfo.BRANCH_NAME}</title>
     <link rel="stylesheet" href="/common/front/lib/font-awesome/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/common/front/css/front_common.css">
-    <style>
-        .detail-card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            margin-bottom: 2rem;
-        }
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid #f1f5f9;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .info-grid {
-            display: grid;
-            grid-template-columns: 120px 1fr;
-            gap: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        .info-label {
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-        .info-value {
-            font-weight: 600;
-        }
-        .item-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .item-row {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            border-radius: 12px;
-            background: #f8fafc;
-        }
-        .item-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            background-size: cover;
-            background-position: center;
-        }
-        .item-details {
-            flex: 1;
-        }
-        .item-name {
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-        .item-price {
-            color: var(--primary);
-            font-weight: 600;
-        }
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-    </style>
+    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20240316">
 </head>
 <body>
+    <div id="loadingOverlay" class="loading-overlay" style="display: flex;">
+        <div class="spinner"></div>
+    </div>
 
 <header class="header">
     <a href="/shop/list.do" class="logo">
@@ -119,56 +53,59 @@
     </div>
 
     <div class="detail-card">
-        <div class="section-title"><i class="fas fa-info-circle"></i> 주문 정보</div>
-        <div class="info-grid">
-            <span class="info-label">주문번호</span>
-            <span class="info-value">${resultVo.orderNo}</span>
+        <div class="section-title"><i class="fas fa-receipt"></i> 주문 요약</div>
+        <div class="summary-box">
+            <div class="summary-item">
+                <div class="summary-label">주문번호</div>
+                <div class="summary-value primary">${resultVo.orderNo}</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">주문상태</div>
+                <div>
+                    <c:choose>
+                        <c:when test="${resultVo.orderStatus == '30'}"><span class="badge" style="background: #eff6ff; color: #1e40af; padding: 4px 12px;">결제완료</span></c:when>
+                        <c:when test="${resultVo.orderStatus == '40'}"><span class="badge" style="background: #fee2e2; color: #991b1b; padding: 4px 12px;">주문취소</span></c:when>
+                        <c:when test="${resultVo.orderStatus == '50'}"><span class="badge" style="background: #fff7ed; color: #9a3412; padding: 4px 12px;">배송준비중</span></c:when>
+                        <c:when test="${resultVo.orderStatus == '60'}"><span class="badge" style="background: #dbeafe; color: #1e40af; padding: 4px 12px;">배송중</span></c:when>
+                        <c:when test="${resultVo.orderStatus == '70'}"><span class="badge" style="background: #f0fdf4; color: #166534; padding: 4px 12px;">배송완료</span></c:when>
+                        <c:when test="${resultVo.orderStatus == '99'}"><span class="badge" style="background: #f8fafc; color: #0f172a; padding: 4px 12px;">주문확정</span></c:when>
+                        <c:otherwise><span class="badge" style="background: #f1f5f9; color: #475569; padding: 4px 12px;">${resultVo.orderStatus}</span></c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">주문일시</div>
+                <div class="summary-value">${resultVo.orderedAt}</div>
+            </div>
         </div>
-        <div class="info-grid">
-            <span class="info-label">주문일시</span>
-            <span class="info-value">${resultVo.orderedAt}</span>
-        </div>
-        <div class="info-grid">
-            <span class="info-label">주문상태</span>
-            <span class="info-value">
-                <c:choose>
-                    <c:when test="${resultVo.orderStatus == '30'}"><span class="status-badge" style="background: #eff6ff; color: #1e40af;">결제완료</span></c:when>
-                    <c:when test="${resultVo.orderStatus == '40'}"><span class="status-badge" style="background: #fee2e2; color: #991b1b;">주문취소</span></c:when>
-                    <c:when test="${resultVo.orderStatus == '50'}"><span class="status-badge" style="background: #fff7ed; color: #9a3412;">배송준비중</span></c:when>
-                    <c:when test="${resultVo.orderStatus == '60'}"><span class="status-badge" style="background: #dbeafe; color: #1e40af;">배송중</span></c:when>
-                    <c:when test="${resultVo.orderStatus == '70'}"><span class="status-badge" style="background: #f0fdf4; color: #166534;">배송완료</span></c:when>
-                    <c:when test="${resultVo.orderStatus == '80'}"><span class="status-badge" style="background: #fff1f2; color: #9f1239;">반품요청</span></c:when>
-                    <c:when test="${resultVo.orderStatus == '89'}"><span class="status-badge" style="background: #f1f5f9; color: #475569;">반품완료</span></c:when>
-                    <c:when test="${resultVo.orderStatus == '99'}"><span class="status-badge" style="background: #f8fafc; color: #0f172a;">주문확정</span></c:when>
-                    <c:otherwise><span class="status-badge" style="background: #f1f5f9; color: #475569;">${resultVo.orderStatus}</span></c:otherwise>
-                </c:choose>
-            </span>
-        </div>
+        
         <c:if test="${resultVo.orderStatus == '40'}">
-            <div class="info-grid">
-                <span class="info-label">취소 사유</span>
-                <span class="info-value" style="color: #ef4444;">${resultVo.cancelReason}</span>
+            <div class="info-grid" style="padding: 1rem; background: #fff1f2; border-radius: 8px; border: 1px solid #fda4af;">
+                <span class="info-label" style="color: #991b1b;">취소 사유</span>
+                <span class="info-value" style="color: #e11d48;">${resultVo.cancelReason}</span>
             </div>
         </c:if>
     </div>
 
     <div class="detail-card">
-        <div class="section-title"><i class="fas fa-box"></i> 주문 상품</div>
+        <div class="section-title"><i class="fas fa-shopping-basket"></i> 주문 상품</div>
         <div class="item-list">
             <c:forEach var="item" items="${itemList}">
                 <div class="item-row">
                     <div class="item-img" style="background-image: url('${item.imageUrl}')"></div>
                     <div class="item-details">
                         <div class="item-name">${item.title}</div>
-                        <div class="item-meta" style="font-size: 0.9rem; color: var(--text-muted);">수량: ${item.quantity}개</div>
-                        <div class="item-price"><fmt:formatNumber value="${item.unitPrice}" type="number" maxFractionDigits="0"/>원</div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                            <div class="item-meta" style="font-size: 0.9rem; color: var(--text-muted);">수량: ${item.quantity}개</div>
+                            <div class="item-price"><fmt:formatNumber value="${item.unitPrice}" type="number" maxFractionDigits="0"/>원</div>
+                        </div>
                     </div>
                 </div>
             </c:forEach>
         </div>
-        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px dashed #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 700; font-size: 1.1rem;">총 결제 금액</span>
-            <span style="font-weight: 800; font-size: 1.5rem; color: var(--primary);"><fmt:formatNumber value="${resultVo.totalPayAmount}" type="number" maxFractionDigits="0"/>원</span>
+        <div class="price-summary">
+            <span class="total-price-label">총 결제 금액</span>
+            <span class="total-price-value"><fmt:formatNumber value="${resultVo.totalPayAmount}" type="number" maxFractionDigits="0"/>원</span>
         </div>
     </div>
 
@@ -191,14 +128,13 @@
             <span class="info-value" style="font-weight: 400;">${not empty resultVo.orderMemo ? resultVo.orderMemo : '-'}</span>
         </div>
         <c:if test="${resultVo.orderStatus == '60' or resultVo.orderStatus == '70'}">
-            <div style="margin-top: 1rem; padding: 1rem; border-radius: 8px; background: #eff6ff; border: 1px solid #bfdbfe;">
-                <div class="info-grid">
-                    <span class="info-label">택배사</span>
-                    <span class="info-value">${resultVo.deliveryCompanyNm}</span>
+            <div style="margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; background: #eff6ff; border: 1px solid #bfdbfe; display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 48px; height: 48px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid #bfdbfe;">
+                    <i class="fas fa-truck-moving"></i>
                 </div>
-                <div class="info-grid">
-                    <span class="info-label">운송장번호</span>
-                    <span class="info-value" style="color: var(--primary);">${resultVo.trackingNo}</span>
+                <div>
+                    <div style="font-size: 0.85rem; color: #1e40af; font-weight: 600;">${resultVo.deliveryCompanyNm}</div>
+                    <div style="font-size: 1.1rem; font-weight: 700; color: #1e3a8a;">송장번호: ${resultVo.trackingNo}</div>
                 </div>
             </div>
         </c:if>
@@ -294,6 +230,9 @@
     }
 </script>
 
-<%@ include file="/common/inc/msg.jspf" %>
+
+<script src="/common/front/lib/jquery-3.6.0.min.js"></script>
+<script src="/common/front/js/front_common.js?v=20240316"></script>
+<%@ include file="/common/front/msg.jspf" %>
 </body>
 </html>

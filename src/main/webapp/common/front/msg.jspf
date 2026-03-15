@@ -1,0 +1,17 @@
+<%
+    // Mobile/Front Specific Message Handler
+	String message = (String)request.getSession().getAttribute("message");
+	if(message != null && !message.equals("")){
+%>
+<script type="text/javascript">
+	window.onload = function(){
+        // Using a slight delay to ensure the page is ready and any loading overlays are hidden
+        setTimeout(function() {
+		    alert("<%=message%>");
+        }, 100);
+	};
+</script>
+<%
+		request.getSession().removeAttribute("message");
+	}
+%>

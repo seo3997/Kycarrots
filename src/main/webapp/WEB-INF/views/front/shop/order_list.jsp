@@ -11,7 +11,7 @@
     <title>주문 내역 - ${branchInfo.BRANCH_NAME}</title>
     <link rel="stylesheet" href="/common/front/lib/font-awesome/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/common/front/css/front_common.css">
+    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20240316">
     <style>
         .btn-cancel {
             margin-top: 0.5rem;
@@ -24,19 +24,6 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
-        }
-        .btn-cancel:hover {
-            background: #fef2f2;
-        }
-        .order-status {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            justify-content: center;
-        }
-        .badge-cancel {
-            background: #f1f5f9;
-            color: #64748b;
         }
         /* Pagination Styles */
         .pagination {
@@ -65,14 +52,13 @@
             color: white;
             border-color: var(--primary);
         }
-        .page-item .page-link:hover:not(.active) {
-            background: #f1f5f9;
-            border-color: #cbd5e1;
-        }
         .sr-only { display: none; }
     </style>
 </head>
 <body>
+    <div id="loadingOverlay" class="loading-overlay" style="display: flex;">
+        <div class="spinner"></div>
+    </div>
 
 <header class="header">
     <a href="/shop/list.do" class="logo">
@@ -115,10 +101,10 @@
                         <span class="order-date">${item.ORDERED_AT}</span>
                     </div>
                     <div class="order-item">
-                        <a href="/shop/detail.do?productId=${item.PRODUCT_ID}" style="text-decoration: none; display: flex; align-items: center; gap: 1rem; flex: 1;">
+                        <a href="/shop/detail.do?productId=${item.PRODUCT_ID}" class="order-item-link">
                             <div class="item-img" style="background-image: url('${item.IMAGE_URL}')"></div>
                             <div class="item-info">
-                                <div class="item-name" style="color: var(--text);">${item.TITLE}</div>
+                                <div class="item-name">${item.TITLE}</div>
                                 <div class="item-meta">수량: ${item.QUANTITY}개 | 결제금액: <fmt:formatNumber value="${item.TOTAL_PAY_AMOUNT}" type="number" maxFractionDigits="0"/>원</div>
                             </div>
                         </a>
@@ -127,7 +113,7 @@
                                 ${not empty item.ORDER_STATUS_NM ? item.ORDER_STATUS_NM : item.ORDER_STATUS}
                             </span>
                             <c:if test="${item.ORDER_STATUS == '60'}">
-                                <div style="margin-top: 0.5rem; font-size: 0.85rem; text-align: right; color: var(--text-muted);">
+                                <div class="tracking-info">
                                     택배사: ${item.DELIVERY_COMPANY_NM} | 송장번호: ${item.TRACKING_NO}
                                 </div>
                             </c:if>
@@ -277,5 +263,9 @@
     }
 </script>
 
+
+<script src="/common/front/lib/jquery-3.6.0.min.js"></script>
+<script src="/common/front/js/front_common.js?v=20240316"></script>
+<%@ include file="/common/front/msg.jspf" %>
 </body>
 </html>

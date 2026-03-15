@@ -11,171 +11,12 @@
     <title>${branchInfo.BRANCH_NAME} - 전용 쇼핑몰</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #2563eb;
-            --accent: #f59e0b;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --radius: 12px;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: var(--bg); 
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 700;
-            font-size: 1.25rem;
-        }
-
-        .logo img {
-            height: 40px;
-            border-radius: 8px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover { color: var(--primary); }
-
-        .btn-login {
-            background: var(--primary);
-            color: white !important;
-            padding: 0.5rem 1.25rem;
-            border-radius: var(--radius);
-        }
-
-        .hero {
-            padding: 4rem 2rem;
-            text-align: center;
-            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #1e3a8a;
-        }
-
-        .hero p {
-            color: var(--text-muted);
-            font-size: 1.125rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        .product-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        }
-
-        .product-img {
-            height: 200px;
-            background: #e2e8f0;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .product-info { padding: 1.5rem; }
-
-        .product-name {
-            font-weight: 600;
-            font-size: 1.125rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-price {
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 1.25rem;
-        }
-
-        .footer {
-            margin-top: 4rem;
-            background: #1e293b;
-            color: #cbd5e1;
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .footer-info {
-            max-width: 800px;
-            margin: 0 auto;
-            font-size: 0.875rem;
-        }
-
-        .footer-info p { margin-bottom: 0.5rem; }
-    </style>
+    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20240316">
 </head>
 <body>
+    <div id="loadingOverlay" class="loading-overlay" style="display: flex;">
+        <div class="spinner"></div>
+    </div>
 
 <header class="header">
     <a href="/shop/list.do" class="logo">
@@ -205,85 +46,13 @@
     </nav>
 </header>
 
-<section class="hero" style="padding: 3rem 1.5rem; background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);">
+<section class="hero">
     <div style="max-width: 800px; margin: 0 auto;">
-        <h1 style="font-size: 2rem; color: #0c4a6e; line-height: 1.2;">${branchInfo.BRANCH_NAME}</h1>
-        <p class="text-muted mt-3" style="font-size: 1rem;">${branchInfo.COMPANY_NAME} 회원 전용 쇼핑몰입니다.</p>
+        <h1>${branchInfo.BRANCH_NAME}</h1>
+        <p>${branchInfo.COMPANY_NAME} 회원 전용 쇼핑몰입니다.</p>
     </div>
 </section>
 
-<style>
-    /* Grid optimization: 2 columns on small screens, more on large */
-    .product-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 1rem;
-    }
-    
-    @media (min-width: 768px) {
-        .product-grid {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-    }
-
-    .product-img {
-        aspect-ratio: 1; /* Force square images for consistency */
-        height: auto;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .not-for-sale {
-        opacity: 0.8;
-    }
-
-    .status-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1.25rem;
-        backdrop-filter: blur(2px);
-    }
-</style>
-
-<style>
-    .filter-section {
-        margin-bottom: 2rem;
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-    .filter-btn {
-        padding: 0.5rem 1.25rem;
-        border-radius: 20px;
-        background: #f1f5f9;
-        color: #64748b;
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        border: 2px solid transparent;
-        transition: all 0.2s;
-        text-decoration: none;
-    }
-    .filter-btn:hover {
-        background: #e2e8f0;
-    }
-    .filter-btn.active {
-        background: white;
-        color: var(--primary);
-        border-color: var(--primary);
-        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
-    }
-</style>
 
 <main class="container">
     <div class="filter-section">
@@ -345,5 +114,9 @@
     </div>
 </footer>
 
+
+<script src="/common/front/lib/jquery-3.6.0.min.js"></script>
+<script src="/common/front/js/front_common.js?v=20240316"></script>
+<%@ include file="/common/front/msg.jspf" %>
 </body>
 </html>

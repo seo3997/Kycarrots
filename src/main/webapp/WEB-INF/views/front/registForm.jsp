@@ -9,68 +9,12 @@
     <title>회원가입 - asagong</title>
     <link rel="stylesheet" href="/common/front/lib/font-awesome/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/common/front/css/front_common.css">
-    <style>
-        .header {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        }
-
-        .header .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 700;
-            font-size: 1.25rem;
-            white-space: nowrap;
-        }
-
-        .header .logo img {
-            height: 40px;
-            border-radius: 8px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 500;
-            font-size: 1rem;
-            transition: color 0.2s;
-            white-space: nowrap;
-        }
-
-        .nav-links a:hover { color: var(--primary); }
-
-        .nav-links .btn-login {
-            background: var(--primary);
-            color: white !important;
-            padding: 0.5rem 1.25rem;
-            border-radius: var(--radius);
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
+    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20240316">
 </head>
 <body>
+    <div id="loadingOverlay" class="loading-overlay" style="display: flex;">
+        <div class="spinner"></div>
+    </div>
 
 <header class="header">
     <a href="/shop/list.do" class="logo">
@@ -152,7 +96,7 @@
 </main>
 
 <script src="/common/front/lib/jquery-3.6.0.min.js"></script>
-<script src="/common/front/js/front_common.js"></script>
+<script src="/common/front/js/front_common.js?v=20240316"></script>
 <script type="text/javascript" src="/common/js/common.js?version=6.6"></script>
 <script>
     function fnCheckId(){
@@ -274,5 +218,6 @@
     $('#btn_save').on('click', fnGoInsert);
 </script>
 
+<%@ include file="/common/front/msg.jspf" %>
 </body>
 </html>

@@ -66,8 +66,4 @@
     } else {
         init();
     }
-    
-    // Immediate show for "calling" effect (Transition support)
-    // If the page is just starting, we might want to show it, 
-    // but the script is at the bottom. We'll rely on the click binding from the PREVIOUS page.
 })();

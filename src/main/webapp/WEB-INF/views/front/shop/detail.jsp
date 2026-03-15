@@ -12,39 +12,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>상품 상세 - ${branchInfo.BRANCH_NAME}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/common/front/css/front_common.css">
+    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20240316">
     <style>
-        :root {
-            --primary: #2563eb;
-            --accent: #f59e0b;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --radius: 12px;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--text); }
-
-        .header { background: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
-        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--text); font-weight: 700; font-size: 1.25rem; white-space: nowrap; }
-        .logo img { height: 40px; border-radius: 8px; }
-
-        .nav-links { display: flex; align-items: center; gap: 1.5rem; flex-shrink: 0; }
-        .nav-links a { text-decoration: none; color: var(--text); font-weight: 500; font-size: 0.95rem; white-space: nowrap; transition: color 0.2s; }
-        .nav-links a:hover { color: var(--primary); }
-        
-        .btn-login { 
-            background: var(--primary); 
-            color: white !important; 
-            padding: 0.5rem 1.25rem; 
-            border-radius: var(--radius); 
-            font-weight: 600;
-        }
-
-        .container { max-width: 800px; margin: 2rem auto; padding: 1rem; }
         .detail-wrapper { display: flex; flex-direction: column; gap: 2rem; background: white; padding: 2rem; border-radius: 20px; box-shadow: var(--shadow); }
 
         .product-img { width: 100%; border-radius: 12px; aspect-ratio: 16/9; background: #f1f5f9; background-size: cover; background-position: center; }
@@ -251,6 +220,9 @@
     </style>
 </head>
 <body>
+    <div id="loadingOverlay" class="loading-overlay" style="display: flex;">
+        <div class="spinner"></div>
+    </div>
 
 <header class="header">
     <a href="/shop/list.do" class="logo">
@@ -545,9 +517,11 @@
         const productId = '${productInfo.PRODUCT_ID}';
         const $list = document.getElementById('review-list');
         
+        showLoading();
         fetch('/api/product/review/list?productId=' + productId)
             .then(res => res.json())
             .then(data => {
+                hideLoading();
                 if (data.success) {
                     if (data.list.length === 0) {
                         $list.innerHTML = '<div class="text-center" style="padding: 2rem; color: #94a3b8;">등록된 리뷰가 없습니다.</div>';
@@ -591,6 +565,7 @@
     function deleteReview(reviewId) {
         if (!confirm('리뷰를 삭제하시겠습니까?')) return;
         
+        showLoading();
         fetch('/api/product/review/delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -598,6 +573,7 @@
         })
         .then(res => res.json())
         .then(data => {
+            hideLoading();
             if (data.success) {
                 alert('삭제되었습니다.');
                 loadReviews();
@@ -611,9 +587,11 @@
         const productId = '${productInfo.PRODUCT_ID}';
         const $list = document.getElementById('qna-list');
 
+        showLoading();
         fetch('/api/product/qna/list?productId=' + productId)
             .then(res => res.json())
             .then(data => {
+                hideLoading();
                 if (data.success) {
                     if (data.list.length === 0) {
                         $list.innerHTML = '<div class="text-center" style="padding: 2rem; color: #94a3b8;">등록된 문의가 없습니다.</div>';
@@ -843,5 +821,9 @@
     }
 </script>
 
+
+<script src="/common/front/lib/jquery-3.6.0.min.js"></script>
+<script src="/common/front/js/front_common.js?v=20240316"></script>
+<%@ include file="/common/front/msg.jspf" %>
 </body>
 </html>

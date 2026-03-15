@@ -14,39 +14,13 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20240316">
     <style>
-        :root {
-            --primary: #2563eb;
-            --bg: #f8fafc;
-            --text: #1e293b;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--text); }
-
-        .header { background: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
-        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--text); font-weight: 700; font-size: 1.25rem; }
-
-        .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-        .checkout-card { background: white; padding: 2rem; border-radius: 20px; box-shadow: var(--shadow); }
-        
-        h1 { font-size: 1.5rem; margin-bottom: 2rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; }
-        
-        .section-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; margin-top: 2rem; }
-
-        .order-summary { background: #f8fafc; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
         .total-row { border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 1rem; font-weight: 700; font-size: 1.25rem; color: var(--primary); }
 
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
-        .form-control { width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; }
-
         #payment-method { margin-top: 2rem; }
-        .btn-pay { width: 100%; padding: 1.25rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 1.25rem; font-weight: 700; cursor: pointer; margin-top: 2rem; }
-        .btn-pay:disabled { background: #94a3b8; cursor: not-allowed; }
-
+        
         /* Address Layer Modal */
         #address-layer {
             display: none;
@@ -72,6 +46,9 @@
     </style>
 </head>
 <body>
+    <div id="loadingOverlay" class="loading-overlay" style="display: flex;">
+        <div class="spinner"></div>
+    </div>
 
 <header class="header">
     <a href="/shop/list.do" class="logo">
@@ -393,6 +370,8 @@
                 });
             }
 
+
+            showLoading();
             // 1. Create Order in Backend
             const totalAmountVal = parseInt("${not empty totalAmount ? totalAmount : 0}");
             const deliveryFeeVal = parseInt("${not empty deliveryFee ? deliveryFee : 0}");
@@ -425,6 +404,7 @@
             const orderData = await orderResponse.json();
 
             if (orderData.success) {
+                // hideLoading() will be naturally followed by navigation or Toss popup
                 // 2. Request Payment via Toss (Direct Implementation)
                 await tossPayments.requestPayment('카드', {
                     amount: totalAmountVal + deliveryFeeVal,
@@ -435,11 +415,13 @@
                     customerName: "${userInfoVo.userNm}"
                 });
             } else {
+                hideLoading();
                 alert("주문 생성에 실패했습니다: " + orderData.message);
                 this.disabled = false;
                 this.innerText = "결제하기";
             }
         } catch (error) {
+            hideLoading();
             console.error(error);
             alert("오류가 발생했습니다.");
             this.disabled = false;
@@ -448,5 +430,9 @@
     });
 </script>
 
+
+<script src="/common/front/lib/jquery-3.6.0.min.js"></script>
+<script src="/common/front/js/front_common.js?v=20240316"></script>
+<%@ include file="/common/front/msg.jspf" %>
 </body>
 </html>
