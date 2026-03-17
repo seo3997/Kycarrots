@@ -218,6 +218,6 @@
     $('#btn_save').on('click', fnGoInsert);
 </script>
 
-<%@ include file="/common/front/msg.jspf" %>
+<%@ include file="/common/frontinc/msg.jspf" %>
 </body>
 </html>

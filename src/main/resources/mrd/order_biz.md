@@ -291,3 +291,10 @@ IMAGE_CD=3 상품본문에서 사용하는 이미지
 8-1 front/shop/detail.jsp에서 상품상세 페이지에 첨부이미지 표시가 안됨
 8-2 /Users/soo/kycarrotsApp/app/src/main/java/com/whomade/kycarrots/ProductDescriptionFragment.kt 에서 상품상세 페이지에 첨부이미지 표시가 되어야 한
 첨부이미지는 tb_product_image 테이블에서 IMAGE_CD=1,REPRESENT=0 인경우만 이미지표시되는거야
+
+9.front 화면 모바일 웹에서 최적화
+아레의 웹페이지 pc 화면은 제대로 나오지만 모바일 웹에서 최적화가 필요하다.
+front/shop/ 폴드 모바일 웹에서 최적화
+front/login.jsp
+front/registForm.jspp
+

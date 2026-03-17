@@ -233,6 +233,6 @@
 
 <script src="/common/front/lib/jquery-3.6.0.min.js"></script>
 <script src="/common/front/js/front_common.js?v=20240316"></script>
-<%@ include file="/common/front/msg.jspf" %>
+<%@ include file="/common/frontinc/msg.jspf" %>
 </body>
 </html>
