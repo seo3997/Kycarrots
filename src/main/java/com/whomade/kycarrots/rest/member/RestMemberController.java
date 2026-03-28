@@ -149,6 +149,11 @@ public class RestMemberController {
                                                                                                                    // 에러
         }
 
+        if (StringUtils.hasText(regId)) {
+            member.setPushToken(regId);
+            opUserService.updatePushToken(member);
+        }
+
         com.whomade.kycarrots.dto.BranchInfoVo branchInfo = null;
         if (member.getBranchId() != null && !member.getBranchId().isEmpty()) {
             branchInfo = opUserService.selectBranchInfo(Long.valueOf(member.getBranchId()));

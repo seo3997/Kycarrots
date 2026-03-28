@@ -61,9 +61,9 @@ public class PushService {
         // 2. target_roles가 있는 경우 복수 발송 (지점 관리자, 본사 관리자 등)
         if (targetRoles != null && !targetRoles.isEmpty()) {
             Set<String> processedUserNos = new HashSet<>();
+            Set<String> processedTokens = new HashSet<>();
 
             // 2-1. 본사 (BRANCH_ID=Const.CENTER_BRANCH_ID) 전송
-            // ROLE_ADMIN은 필터링에서 제외 여부를 호출부 의도에 맡기도록 수정 (보통 관리자도 받아야함)
             List<String> targetRolesFiltered = targetRoles.stream()
                     .collect(java.util.stream.Collectors.toList());
 
@@ -72,11 +72,15 @@ public class PushService {
                 for (String role : targetRolesFiltered) {
                     List<OpUserVO> hqUsers = opUserService.selectUsersByBranchAndRole(Const.CENTER_BRANCH_ID, role);
                     for (OpUserVO user : hqUsers) {
-                        if (user != null && user.getUserNo() != null && !processedUserNos.contains(user.getUserNo())) {
+                        if (user != null && user.getUserNo() != null && user.getPushToken() != null) {
+                            if (processedUserNos.contains(user.getUserNo()) || processedTokens.contains(user.getPushToken()))
+                                continue;
                             if (isSameUser(actorUserNo, user.getUserNo()))
                                 continue;
+                                
                             sendToSingleUser(actorUserNo, user, messageTitle, messageBody, eventType, dataPayload);
                             processedUserNos.add(user.getUserNo());
+                            processedTokens.add(user.getPushToken());
                         }
                     }
                 }
@@ -87,12 +91,15 @@ public class PushService {
                     for (String role : targetRolesFiltered) {
                         List<OpUserVO> branchUsers = opUserService.selectUsersByBranchAndRole(targetBranchId, role);
                         for (OpUserVO user : branchUsers) {
-                            if (user != null && user.getUserNo() != null
-                                    && !processedUserNos.contains(user.getUserNo())) {
+                            if (user != null && user.getUserNo() != null && user.getPushToken() != null) {
+                                if (processedUserNos.contains(user.getUserNo()) || processedTokens.contains(user.getPushToken()))
+                                    continue;
                                 if (isSameUser(actorUserNo, user.getUserNo()))
                                     continue;
+                                    
                                 sendToSingleUser(actorUserNo, user, messageTitle, messageBody, eventType, dataPayload);
                                 processedUserNos.add(user.getUserNo());
+                                processedTokens.add(user.getPushToken());
                             }
                         }
                     }
