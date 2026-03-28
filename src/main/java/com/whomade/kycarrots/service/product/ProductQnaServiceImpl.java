@@ -44,7 +44,8 @@ public class ProductQnaServiceImpl implements ProductQnaService {
             if (product != null) {
                 productName = product.getString("TITLE");
             }
-            String branchId = param.getString("ss_branch_id");
+            // [Fix] 수신 대상 지점은 상품의 지점이어야 함 (현재 세션 지점이 아님)
+            String branchId = product != null ? product.getString("BRANCH_ID") : param.getString("ss_branch_id");
 
             List<String> roles = java.util.Arrays.asList("ROLE_ADMIN", "ROLE_SELL", "ROLE_PROJ");
             Long actorUserNo = param.getLong("ss_user_no");

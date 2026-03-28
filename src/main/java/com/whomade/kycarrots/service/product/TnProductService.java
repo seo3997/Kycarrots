@@ -132,8 +132,11 @@ public class TnProductService {
             // 판매중: 일반 구매자에게 topic으로 브로드캐스트
             messaeTitle = "신규 상품 등록";
             messaeBody = productTitle + " 상품이 판매중으로 등록되었습니다.";
-            // CHANGED to use PushService according to chat_biz.md spec
+            // [Fix] actorUserNo 추가하여 본인 제외 처리
+            Long actorUserNo = (productVo.getRegisterNo() != null) ? Long.valueOf(productVo.getRegisterNo()) : null;
+
             pushService.sendTargetPush(
+                    actorUserNo,
                     List.of("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
                     null,
                     null,
@@ -294,7 +297,11 @@ public class TnProductService {
             payload.put("title", title);
             payload.put("body", body);
 
+            // [Fix] actorUserNo 추가
+            Long actorUserNo = (p.getRegisterNo() != null) ? Long.valueOf(p.getRegisterNo()) : null;
+
             pushService.sendTargetPush(
+                    actorUserNo,
                     List.of("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
                     null,
                     null,

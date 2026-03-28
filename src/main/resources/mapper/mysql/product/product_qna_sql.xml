@@ -123,9 +123,7 @@
             ANSWER_CONTENTS = #{answerContents},
             ANSWERER_NO = #{ss_user_no},
             ANSWERED_AT = CURRENT_TIMESTAMP,
-            REGISTER_NO = #{ss_user_no},
             UPDUSR_NO = #{ss_user_no},
-            USER_NO = #{ss_user_no},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE QNA_ID = #{qnaId}
     </update>

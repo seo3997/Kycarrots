@@ -46,13 +46,13 @@ public class PushService {
         // 1. targetUserId 또는 targetUserNo가 있는 경우 단일 사용자에게 매핑된 토큰으로 발송 (예: 구매자)
         if (targetUserId != null && !targetUserId.isEmpty()) {
             OpUserVO user = opUserService.fetchFcmToken(targetUserId);
-            if (user != null && actorUserNo != null && actorUserNo.toString().equals(user.getUserNo()))
+            if (user != null && isSameUser(actorUserNo, user.getUserNo()))
                 return;
             sendToSingleUser(actorUserNo, user, messageTitle, messageBody, eventType, dataPayload);
             return; // 단일 발송이 우선 처리됨
         } else if (targetUserNo != null && targetUserNo > 0) {
             OpUserVO user = opUserService.fetchFcmTokenByUserNo(targetUserNo);
-            if (user != null && actorUserNo != null && actorUserNo.equals(targetUserNo))
+            if (user != null && isSameUser(actorUserNo, user.getUserNo()))
                 return;
             sendToSingleUser(actorUserNo, user, messageTitle, messageBody, eventType, dataPayload);
             return;
@@ -63,17 +63,17 @@ public class PushService {
             Set<String> processedUserNos = new HashSet<>();
 
             // 2-1. 본사 (BRANCH_ID=Const.CENTER_BRANCH_ID) 전송
-            // ROLE_ADMIN은 제외하고 나머지 권한(ROLE_SELL, ROLE_PROJ 등)에 대해서만 전송
+            // ROLE_ADMIN은 필터링에서 제외 여부를 호출부 의도에 맡기도록 수정 (보통 관리자도 받아야함)
             List<String> targetRolesFiltered = targetRoles.stream()
-                    .filter(role -> !Const.ROLE_ADMIN.equals(role))
                     .collect(java.util.stream.Collectors.toList());
 
             if (!targetRolesFiltered.isEmpty()) {
+                // 본사(Center) 대상 전송
                 for (String role : targetRolesFiltered) {
                     List<OpUserVO> hqUsers = opUserService.selectUsersByBranchAndRole(Const.CENTER_BRANCH_ID, role);
                     for (OpUserVO user : hqUsers) {
                         if (user != null && user.getUserNo() != null && !processedUserNos.contains(user.getUserNo())) {
-                            if (actorUserNo != null && actorUserNo.toString().equals(user.getUserNo()))
+                            if (isSameUser(actorUserNo, user.getUserNo()))
                                 continue;
                             sendToSingleUser(actorUserNo, user, messageTitle, messageBody, eventType, dataPayload);
                             processedUserNos.add(user.getUserNo());
@@ -89,7 +89,7 @@ public class PushService {
                         for (OpUserVO user : branchUsers) {
                             if (user != null && user.getUserNo() != null
                                     && !processedUserNos.contains(user.getUserNo())) {
-                                if (actorUserNo != null && actorUserNo.toString().equals(user.getUserNo()))
+                                if (isSameUser(actorUserNo, user.getUserNo()))
                                     continue;
                                 sendToSingleUser(actorUserNo, user, messageTitle, messageBody, eventType, dataPayload);
                                 processedUserNos.add(user.getUserNo());
@@ -98,6 +98,17 @@ public class PushService {
                     }
                 }
             }
+        }
+    }
+
+    private boolean isSameUser(Long actorUserNo, String targetUserNo) {
+        if (actorUserNo == null || actorUserNo <= 0L) return false;
+        if (targetUserNo == null || targetUserNo.isEmpty()) return false;
+        
+        try {
+            return actorUserNo.equals(Long.parseLong(targetUserNo));
+        } catch (NumberFormatException e) {
+            return actorUserNo.toString().equals(targetUserNo);
         }
     }
 
