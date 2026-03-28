@@ -106,7 +106,7 @@ public class MgtOrderServiceImpl implements MgtOrderService {
 
             // 2. Send push to Buyer (userNo)
             String buyerTitle = "배송 시작 안내";
-            String buyerBody = "주문하신 상품의 입금이 확인되어 배송이 시작되었습니다. (주문번호: " + orderNo + ")";
+            String buyerBody = "주문하신 상품의 배송이 시작되었습니다. (주문번호: " + orderNo + ")";
 
             java.util.Map<String, String> buyerPayload = new java.util.HashMap<>();
             buyerPayload.put("targetId", orderId);
