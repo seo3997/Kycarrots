@@ -74,6 +74,24 @@
 				location.href = '/mgt/order/confirmOrder.do?orderId=' + orderId;
 			}
 		}
+
+		function fnDeliveryComplete(orderId) {
+			var deliveryCompanyCode = $("#deliveryCompanyCode").val();
+			var trackingNo = $("#trackingNo").val();
+
+			if(!deliveryCompanyCode){
+				alert("배송 완료 처리 시 택배사를 먼저 선택해주세요.");
+				return;
+			}
+			if(!trackingNo){
+				alert("배송 완료 처리 시 운송장 번호를 먼저 입력해주세요.");
+				return;
+			}
+
+			if (confirm('배송 완료 처리를 진행하시겠습니까?')) {
+				location.href = '/mgt/order/updateOrderShippingInfo.do?orderId=' + orderId + '&deliveryCompanyCode=' + deliveryCompanyCode + '&trackingNo=' + trackingNo + '&orderStatus=70';
+			}
+		}
 	</script>
 </head>
 <body class="hold-transition skin-green-light sidebar-mini">
@@ -219,6 +237,9 @@
 							</c:if>
 							<c:if test="${ssAuthorId == 'ROLE_PROJ' && resultVo.orderStatus == '50' && (resultVo.branchDepositStatus == '10' || resultVo.branchDepositStatus == '20')}">
 								<button type="button" class="btn btn-info" onclick="fnRequestBranchDeposit('${resultVo.orderId}', '${resultVo.orderNo}')">입금확인요청</button>
+							</c:if>
+							<c:if test="${(ssAuthorId == 'ROLE_ADMIN' || ssAuthorId == 'ROLE_SELL') && resultVo.orderStatus == '60'}">
+								<button type="button" class="btn btn-primary" onclick="fnDeliveryComplete('${resultVo.orderId}')">배송완료</button>
 							</c:if>
 							<c:if test="${ssAuthorId == 'ROLE_PROJ' && resultVo.orderStatus == '70'}">
 								<button type="button" class="btn btn-success" onclick="fnConfirmOrder('${resultVo.orderId}')">주문확정</button>

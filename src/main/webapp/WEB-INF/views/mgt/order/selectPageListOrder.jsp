@@ -59,6 +59,12 @@
 			}
 		}
 
+		function fnConfirmOrder(orderId) {
+			if (confirm('해당 주문을 확정 처리하시겠습니까?\n확정 후에는 취소/반품이 불가능합니다.')) {
+				location.href = '/mgt/order/confirmOrder.do?orderId=' + orderId;
+			}
+		}
+
 		function fnConfirmDeposit(orderId, btn) {
 			var $tr = $(btn).closest('tr');
 			var deliveryCompanyCode = $tr.find('[name=deliveryCompanyCode]').val();
@@ -94,6 +100,25 @@
 
 			if (confirm('배송 정보를 업데이트하시겠습니까?')) {
 				location.href = '/mgt/order/updateOrderShippingInfo.do?orderId=' + orderId + '&deliveryCompanyCode=' + deliveryCompanyCode + '&trackingNo=' + trackingNo;
+			}
+		}
+
+		function fnDeliveryComplete(orderId, btn) {
+			var $tr = $(btn).closest('tr');
+			var deliveryCompanyCode = $tr.find('[name=deliveryCompanyCode]').val();
+			var trackingNo = $tr.find('[name=trackingNo]').val();
+
+			if(!deliveryCompanyCode){
+				alert("배송 완료 처리 시 택배사를 먼저 선택해주세요.");
+				return;
+			}
+			if(!trackingNo){
+				alert("배송 완료 처리 시 운송장 번호를 먼저 입력해주세요.");
+				return;
+			}
+
+			if (confirm('배송 완료 처리를 진행하시겠습니까?')) {
+				location.href = '/mgt/order/updateOrderShippingInfo.do?orderId=' + orderId + '&deliveryCompanyCode=' + deliveryCompanyCode + '&trackingNo=' + trackingNo + '&orderStatus=70';
 			}
 		}
 
@@ -219,11 +244,20 @@
 													<button type="button" class="btn btn-xs btn-primary" onclick="event.stopPropagation(); fnConfirmDeposit('${item.ORDER_ID}', this)">입금확인</button>
 												</c:if>
 												<c:if test="${(ssAuthorId == 'ROLE_ADMIN' || ssAuthorId == 'ROLE_SELL') && item.ORDER_STATUS != '40' && item.BRANCH_DEPOSIT_STATUS == '30'}">
-													<button type="button" class="btn btn-xs btn-info" onclick="event.stopPropagation(); fnUpdateShipping('${item.ORDER_ID}', this)">배송정보 업데이트</button>
+													<c:if test="${item.ORDER_STATUS == '50' || item.ORDER_STATUS == '60'}">
+														<button type="button" class="btn btn-xs btn-info" onclick="event.stopPropagation(); fnUpdateShipping('${item.ORDER_ID}', this)">배송정보 업데이트</button>
+													</c:if>
+													<c:if test="${item.ORDER_STATUS == '60'}">
+														<button type="button" class="btn btn-xs btn-primary" onclick="event.stopPropagation(); fnDeliveryComplete('${item.ORDER_ID}', this)">배송완료</button>
+													</c:if>
 												</c:if>
 												<c:if test="${ssAuthorId == 'ROLE_PROJ' && item.ORDER_STATUS == '50' && (item.BRANCH_DEPOSIT_STATUS == '10' || item.BRANCH_DEPOSIT_STATUS == '20')}">
 													<button type="button" class="btn btn-xs btn-info" onclick="event.stopPropagation(); fnRequestBranchDeposit('${item.ORDER_ID}', '${item.ORDER_NO}')">입금확인요청</button>
 												</c:if>
+												<c:if test="${ssAuthorId == 'ROLE_PROJ' && item.ORDER_STATUS == '70'}">
+													<button type="button" class="btn btn-xs btn-success" onclick="event.stopPropagation(); fnConfirmOrder('${item.ORDER_ID}')">주문확정</button>
+												</c:if>
+												<button type="button" class="btn btn-xs btn-default" onclick="event.stopPropagation(); fnSelect('${item.ORDER_ID}');">상세</button>
 											</td>
 										</tr>
 									</c:forEach>
