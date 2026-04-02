@@ -20,9 +20,10 @@ description: seo3997/Kycarrots 저장소의 Git Push 및 Jenkins 빌드 연동 �
    ```
 3. 푸시가 성공하면 즉시 "**GitHub 푸시가 완료되었습니다. 젠킨스 'asagong-was' 빌드를 실행할까요?**"라고 묻습니다.
 4. 사용자가 승인하면 젠킨스 API를 통해 `asagong-was` 빌드를 즉시 실행합니다.
+5. **빌드 결과 확인**: 빌드가 시작되면 AI는 빌드 번호를 추적하고, 빌드가 끝날 때까지 모니터링하여 **성공/실패 여부와 주요 배송 로그 요약**을 사용자에게 보고합니다.
 
 // turbo
-#### 3. 젠킨스 빌드 실행 (승인 시)
+#### 3. 젠킨스 빌드 실행 및 결과 보고 (승인 시)
 - **Jenkins Job**: `asagong-was`
 - **URL**: `http://152.70.255.251:8080/job/asagong-was/build`
-- **Credentials**: `admin` / `114bdb616268482884ce3c6be41c0e74f6`
+- **모니터링**: 빌드 완료 시까지 상태 체크 후 `consoleText` 요역 보고.
