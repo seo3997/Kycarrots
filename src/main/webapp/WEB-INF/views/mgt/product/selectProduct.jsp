@@ -297,7 +297,8 @@
 								<img src="<%= iv.getImageUrl() %>?t=<%= System.currentTimeMillis() %>"
 									 class="img-thumbnail product-thumb"
 									 alt="<%= alt %>"
-									 onclick="openImgModal(this)">
+									 onclick="openImgModal(this)"
+									 onerror="retryImage(this)">
 								<% if (i == 0) { %>
 								  <span class="badge badge-primary badge-main">대표</span>
 								<% } %>
@@ -387,6 +388,18 @@
 <script type="text/javascript">
 	// Get the modal
 	var modal = $('#myModal');
+
+	// 이미지 로드 실패 시 재시도 (마운트 지연 대응)
+	function retryImage(img) {
+		if (!img.dataset.retryCount) img.dataset.retryCount = 0;
+		if (img.dataset.retryCount < 3) {
+			img.dataset.retryCount++;
+			setTimeout(function() {
+				var currentSrc = img.src.split('&retry=')[0];
+				img.src = currentSrc + (currentSrc.indexOf('?') > -1 ? '&' : '?') + 'retry=' + new Date().getTime();
+			}, 1000);
+		}
+	}
 
 	function openImgModal(imgEl){
 		$('#img01').attr('src', imgEl.src);
