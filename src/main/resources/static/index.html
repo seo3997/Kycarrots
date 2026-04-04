@@ -6,8 +6,10 @@
     <title>Kycarrots - 프리미엄 농산물 브랜드</title>
     <script>
         var host = window.location.hostname;
-        // 본사 도메인이거나 로컬호스트인 경우
-        if (host === 'www.kycarrots.com' || host === 'kycarrots.com' || host.indexOf('localhost') !== -1 || host === '127.0.0.1') {
+        // 본사 도메인이거나 로컬호스트인 경우 (개발: kycarrots.com, 운영: asagong.com)
+        if (host === 'www.kycarrots.com' || host === 'kycarrots.com' || 
+            host === 'www.asagong.com' || host === 'asagong.com' || 
+            host.indexOf('localhost') !== -1 || host === '127.0.0.1') {
             window.location.replace('/front_index.do');
         } else {
             // 하위 지점 도메인 (예: amsa.kycarrots.com 등)
