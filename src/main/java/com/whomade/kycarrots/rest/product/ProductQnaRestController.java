@@ -1,5 +1,6 @@
 package com.whomade.kycarrots.rest.product;
 
+import lombok.extern.slf4j.Slf4j;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.RequestUtil;
 import com.whomade.kycarrots.framework.common.util.SysUtil;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/product/qna")
+@Slf4j
 public class ProductQnaRestController {
 
     @Resource(name = "productQnaService")
@@ -63,6 +65,15 @@ public class ProductQnaRestController {
             result.put("message", "로그인이 필요합니다.");
             return result;
         }
+
+        // 지점 정보가 없으면 로그를 남기고 에러 메시지 반환
+        if (userInfoVo.getBranchId() == null || userInfoVo.getBranchId().isEmpty()) {
+            log.error("### ProductQna insert FAIL: User branchId is missing! UserId={}", userInfoVo.getId());
+            result.put("success", false);
+            result.put("message", "사용자의 지점 정보가 없습니다. 관리자에게 문의하세요.");
+            return result;
+        }
+
         param.put("ss_user_no", userInfoVo.getUserNo());
         param.put("userNo", userInfoVo.getUserNo());
         param.put("ss_user_id", userInfoVo.getId());
