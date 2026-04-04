@@ -294,7 +294,7 @@
 								 String alt = (i == 0) ? "대표 이미지" : ("추가 이미지 " + i);
 							%>
 							  <div class="thumb-box">
-								<img src="<%= iv.getImageUrl() %>"
+								<img src="<%= iv.getImageUrl() %>?t=<%= System.currentTimeMillis() %>"
 									 class="img-thumbnail product-thumb"
 									 alt="<%= alt %>"
 									 onclick="openImgModal(this)">
