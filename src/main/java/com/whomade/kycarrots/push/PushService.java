@@ -43,6 +43,9 @@ public class PushService {
             Long targetUserNo,
             String messageTitle, String messageBody, String eventType, Map<String, String> dataPayload) {
 
+        log.info("sendTargetPush: actor={}, roles={}, branch={}, targetUserId={}, targetUserNo={}, event={}", 
+            actorUserNo, targetRoles, targetBranchId, targetUserId, targetUserNo, eventType);
+
         // 1. targetUserId 또는 targetUserNo가 있는 경우 단일 사용자에게 매핑된 토큰으로 발송 (예: 구매자)
         if (targetUserId != null && !targetUserId.isEmpty()) {
             OpUserVO user = opUserService.fetchFcmToken(targetUserId);

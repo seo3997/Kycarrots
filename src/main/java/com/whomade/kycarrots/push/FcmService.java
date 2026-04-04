@@ -176,19 +176,23 @@ public class FcmService {
             Map<String, String> data) {
         String sendStatus = "FAIL";
 
+        log.info("Attempting single push: targetUserNo={}, device={}, token={}", targetUserNo, deviceType, token);
+
         try {
             if ("ANDROID".equalsIgnoreCase(deviceType)) {
                 sendToAndroidToken(token, title, body, data);
             } else if ("IOS".equalsIgnoreCase(deviceType)) {
                 sendToIosToken(token, title, body, data);
             } else {
+                log.warn("Unknown device type for push: {}", deviceType);
                 throw new IllegalArgumentException("Unknown deviceType=" + deviceType);
             }
 
             sendStatus = "SUCCESS";
+            log.info("Push send SUCCESS: targetUserNo={}, eventType={}", targetUserNo, eventType);
 
         } catch (FirebaseMessagingException e) {
-            log.error("FCM Exception: code={}, message={}, targetUserNo={}, eventType={}",
+            log.error("FCM FirebaseMessagingException: [Code: {}] [Message: {}] [User: {}] [Event: {}]",
                     e.getMessagingErrorCode(), e.getMessage(), targetUserNo, eventType);
 
             // "Requested entity was not found" or "UNREGISTERED" error means the token is
@@ -200,14 +204,13 @@ public class FcmService {
                     u.setUserNo(targetUserNo);
                     u.setPushToken(null);
                     opUserService.updatePushToken(u);
-                    log.info("Cleared invalid FCM token for userNo={}", targetUserNo);
+                    log.info("Cleared invalid FCM token in DB for userNo={}", targetUserNo);
                 } catch (Exception ex) {
-                    log.error("Failed to clear invalid token for userNo={}", targetUserNo, ex);
+                    log.error("Failed to clear invalid token in DB for userNo={}", targetUserNo, ex);
                 }
             }
         } catch (Exception e) {
-            log.error("User push FAIL deviceType={}, targetUserNo={}, eventType={}", deviceType, targetUserNo,
-                    eventType, e);
+            log.error("Generic push Exception for targetUserNo={}, eventType={}", targetUserNo, eventType, e);
         } finally {
             String tid = targetId;
             savePushLog(
