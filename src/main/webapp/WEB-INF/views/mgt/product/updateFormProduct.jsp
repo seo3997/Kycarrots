@@ -186,7 +186,7 @@
 			}
 */
 			if($('[name=quantity]').val() == ''){
-				alert('남은수량을 입력해 주세요.');
+				alert('판매수량을 입력해 주세요.');
 				$('[name=quantity]').focus();
 				return false;
 			}
@@ -343,9 +343,9 @@
 					</div>
 
                     <div class="form-group row">
-                        <label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">남은수량</label>
+                        <label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">판매수량</label>
                         <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
-                            <input type="text" class="form-control numeric w-25" name="quantity" id="quantity" placeholder="남은수량" value="<%=StringUtil.setComma(param.getString("quantity", resultMap.getString("QUANTITY"))) %>" maxlength="10" />
+                            <input type="text" class="form-control numeric w-25" name="quantity" id="quantity" placeholder="판매수량" value="<%=StringUtil.setComma(param.getString("quantity", resultMap.getString("QUANTITY"))) %>" maxlength="10" />
                         </div>
                         <label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">단위</label>
                         <div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
