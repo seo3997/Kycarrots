@@ -201,7 +201,9 @@
 				data: data,
 				type: "POST",
 				success: function(res) {
-					$(editor).summernote('insertImage', res.url);
+					// 마운트 지연 대응을 위한 retry 로직이 포함된 HTML 삽입
+					var imgTag = '<img src="' + res.url + '" style="max-width:100%;" onerror="this.onerror=null; var self=this; setTimeout(function(){ self.src=res.url+\'?t=\'+new Date().getTime(); }, 1000);" />';
+					$(editor).summernote('pasteHTML', imgTag);
 				},
 				error: function(err) {
 					console.error(err);
