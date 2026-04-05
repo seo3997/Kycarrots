@@ -201,9 +201,27 @@
 				data: data,
 				type: "POST",
 				success: function(res) {
-					// 마운트 지연 대응을 위한 retry 로직이 포함된 HTML 삽입
-					var imgTag = '<img src="' + res.url + '" style="max-width:100%;" onerror="this.onerror=null; var self=this; setTimeout(function(){ self.src=res.url+\'?t=\'+new Date().getTime(); }, 1000);" />';
-					$(editor).summernote('pasteHTML', imgTag);
+					// 마운트 지연(NFS Sync) 대응: 서버(WEB)에 파일이 나타날 때까지 사전 로딩 시도 후 삽입
+					var count = 0;
+					var maxTries = 10;
+					var tryInsert = function() {
+						var img = new Image();
+						img.onload = function() {
+							$(editor).summernote('insertImage', res.url);
+						};
+						img.onerror = function() {
+							if (count < maxTries) {
+								count++;
+								setTimeout(tryInsert, 1000); // 1초 대기 후 재시도
+							} else {
+								// 실패 시에도 삽입은 시도
+								$(editor).summernote('insertImage', res.url);
+							}
+						};
+						// 캐시 방지용 타임스탬프
+						img.src = res.url + '?t=' + new Date().getTime();
+					};
+					tryInsert();
 				},
 				error: function(err) {
 					console.error(err);
