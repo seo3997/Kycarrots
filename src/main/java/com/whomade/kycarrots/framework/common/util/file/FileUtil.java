@@ -8,15 +8,29 @@ import java.io.IOException;
 public class FileUtil {
 
     /**
-     * 파일을 지정된 기본 경로 + productId 하위 폴더에 저장하고, 저장된 File 객체를 반환한다.
+     * 파일을 지정된 기본 경로 + productId 하위 폴더에 저장한다.
      *
      * @param file         저장할 MultipartFile
-     * @param baseDir      기본 디렉토리 경로 (예: C:/.../img/ad)
-     * @param productId    하위 폴더 이름 (예: 123)
+     * @param baseDir      기본 디렉토리 경로
+     * @param productId    하위 폴더 이름
      * @return 저장된 File 객체
      * @throws IOException 폴더 생성 또는 파일 저장 실패 시
      */
     public static File saveFile(MultipartFile file, String baseDir, String productId) throws IOException {
+        return saveFile(file, baseDir, productId, file.getOriginalFilename());
+    }
+
+    /**
+     * 파일을 지정된 기본 경로 + productId 하위 폴더에 지정된 파일명으로 저장한다.
+     *
+     * @param file           저장할 MultipartFile
+     * @param baseDir        기본 디렉토리 경로
+     * @param productId      하위 폴더 이름
+     * @param customFileName 저장할 파일명
+     * @return 저장된 File 객체
+     * @throws IOException 폴더 생성 또는 파일 저장 실패 시
+     */
+    public static File saveFile(MultipartFile file, String baseDir, String productId, String customFileName) throws IOException {
         String targetDirPath = baseDir + File.separator + productId;
         File targetDir = new File(targetDirPath);
 
@@ -27,8 +41,7 @@ public class FileUtil {
             }
         }
 
-        String fileName = file.getOriginalFilename();
-        File dest = new File(targetDir, fileName);
+        File dest = new File(targetDir, customFileName);
         file.transferTo(dest); // 실제 파일 저장
 
         return dest;

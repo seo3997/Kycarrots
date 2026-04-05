@@ -108,7 +108,7 @@ public class SysUtil {
 
 	public static boolean fileImgyn(String fileExmName) {
 		boolean retFlag = false;
-		String[] fileGif = { "bmp", "gif", "jpg", "png"};
+		String[] fileGif = { "bmp", "gif", "jpg", "jpeg", "png"};
 		
 		if (fileExmName == null || "".equals(fileExmName)) {
 			return retFlag;

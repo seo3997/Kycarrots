@@ -7,6 +7,7 @@ import com.whomade.kycarrots.framework.common.dao.CommonMybatisDao;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.page.util.pageNavigationUtil;
 import com.whomade.kycarrots.framework.common.util.StringUtil;
+import com.whomade.kycarrots.framework.common.util.SysUtil;
 import com.whomade.kycarrots.framework.common.util.file.AtFileMngUtil;
 import com.whomade.kycarrots.framework.common.util.file.FileUtil;
 import com.whomade.kycarrots.framework.common.util.file.dao.AtFileManageDAO;
@@ -401,8 +402,12 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 
 		// 물리 저장
 		String baseDir = fileStorageProperties.getProduct().getUploadDir();
-		java.io.File destFile = FileUtil.saveFile(file, baseDir, productIdStr);
-		String imageUrl = publicUrl + "/" + productIdStr + "/" + destFile.getName();
+		String originalFileName = file.getOriginalFilename();
+		String ext = SysUtil.getFileExtName(originalFileName);
+		String safeFileName = SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
+
+		java.io.File destFile = FileUtil.saveFile(file, baseDir, productIdStr, safeFileName);
+		String imageUrl = publicUrl + "/" + productIdStr + "/" + safeFileName;
 
 		// DB Insert (ImageCd 3 for Summernote images)
 		TnProductImageVo toInsert = new TnProductImageVo();
