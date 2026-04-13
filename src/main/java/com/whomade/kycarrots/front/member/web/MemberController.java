@@ -56,13 +56,17 @@ public class MemberController {
 			throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
 
-		if (!"Y".equals(param.getString("agree"))) {
-			model.addAttribute("param", param);
-			return "link/join_terms";
-		}
-
 		model.addAttribute("param", param);
 		return "front/registForm";
+	}
+
+	@RequestMapping(value = "/front/joinTerms.do")
+	public String joinTerms(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+			throws Exception {
+		DataMap param = RequestUtil.getDataMap(request);
+
+		model.addAttribute("param", param);
+		return "link/join_terms";
 	}
 
 	/**
