@@ -82,7 +82,7 @@
             </div>
             <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b;">변경 완료!</h2>
             <p class="text-muted mt-3 mb-4">비밀번호가 성공적으로 변경되었습니다.<br>새로운 비밀번호로 로그인해 주세요.</p>
-            <a href="${not empty domainUrl ? domainUrl : ''}/front/login.do" class="btn-login" style="display: block; width: 100%; height: 50px; line-height: 50px; font-size: 1.1rem;">로그인하러 가기</a>
+            <a href="${domainUrl}/front/login.do" class="btn-login" style="display: block; width: 100%; height: 50px; line-height: 50px; font-size: 1.1rem;">로그인하러 가기</a>
         </div>
     </div>
 </main>
