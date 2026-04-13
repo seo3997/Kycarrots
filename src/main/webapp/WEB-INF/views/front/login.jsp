@@ -96,7 +96,11 @@
             success: function(response) {
                 const res = JSON.parse(response);
                 if (res.resultStats.resultCode === 'ok') {
-                    location.href = '/shop/list.do';
+                    if (res.resultStats.domainUrl) {
+                        location.href = res.resultStats.domainUrl + '/shop/list.do';
+                    } else {
+                        location.href = '/shop/list.do';
+                    }
                 } else {
                     errorBox.text(res.resultStats.resultMsg).show();
                 }

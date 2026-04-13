@@ -122,6 +122,23 @@ public class FrontLoginController {
 
 				if (userInfoVo.getUserSttusCode().equals("10")) { // 활동상태일경우만 섹션을 만들어줌
 
+					// 지점 체크 추가 (3보다 작은 경우 본사/관리자로 간주하여 프론트 로그인 차단)
+					if (userInfoVo.getBranchId() != null) {
+						int branchId = Integer.parseInt(userInfoVo.getBranchId());
+						if (branchId < 3) {
+							returnMsg = "본사 및 관리자 계정은 여기서 로그인할 수 없습니다.";
+							resultStats.put("resultCode", "error");
+							resultStats.put("resultMsg", returnMsg);
+							resultJSON.put("resultStats", resultStats);
+							try {
+								response.getWriter().write(resultJSON.toString());
+							} catch (IOException e) {
+								log.error(e);
+							}
+							return;
+						}
+					}
+
 					// 지점 체크 추가
 					Long currentBranchId = (Long) request.getSession().getAttribute("BRANCH_ID");
 					if (currentBranchId != null && userInfoVo.getBranchId() != null) {
@@ -176,6 +193,7 @@ public class FrontLoginController {
 								SeedScrtyUtil.encryptText(param.getString("pwd")));
 					}
 					returnMsg = "로그인성공";
+					resultStats.put("domainUrl", userInfoVo.getDomainUrl());
 				} else {
 					returnMsg = "활동상태 아닙니다.";
 					resultStats.put("resultCode", "error");

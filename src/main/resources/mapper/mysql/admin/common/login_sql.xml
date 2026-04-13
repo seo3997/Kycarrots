@@ -16,6 +16,7 @@
 		<result property="areaCodeD"				column="AREA_SE_CODE_D"/>
 		<result property="branchId"					column="BRANCH_ID"/>
 		<result property="branchName"				column="BRANCH_NAME"/>
+		<result property="domainUrl"				column="DOMAIN_URL"/>
 	</resultMap>
 
 	<select id="selectUserInfo" parameterType="dataMap" resultMap="userInfoVo">
@@ -33,6 +34,7 @@
         ,MEMBER_CODE AS  AUTHOR_ID
         ,A.BRANCH_ID
         ,B.BRANCH_NAME
+        ,B.DOMAIN_URL
 	FROM op_user A
 	LEFT OUTER JOIN tb_branches B ON A.BRANCH_ID = B.BRANCH_ID
 	WHERE A.USER_ID = #{id}

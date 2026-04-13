@@ -189,4 +189,14 @@ public class UserInfoVo implements Serializable {
 		this.branchName = branchName;
 	}
 
+	private String domainUrl;
+
+	public String getDomainUrl() {
+		return domainUrl;
+	}
+
+	public void setDomainUrl(String domainUrl) {
+		this.domainUrl = domainUrl;
+	}
+
 }
