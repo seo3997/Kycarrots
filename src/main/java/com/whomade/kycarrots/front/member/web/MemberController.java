@@ -56,6 +56,11 @@ public class MemberController {
 			throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
 
+		if (!"Y".equals(param.getString("agree"))) {
+			model.addAttribute("param", param);
+			return "link/join_terms";
+		}
+
 		model.addAttribute("param", param);
 		return "front/registForm";
 	}

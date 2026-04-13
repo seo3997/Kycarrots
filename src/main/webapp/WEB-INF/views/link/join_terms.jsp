@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -51,6 +52,18 @@
                         <jsp:param name="fragment" value="Y"/>
                     </jsp:include>
                 </section>
+            </div>
+
+            <div style="padding: 30px 0; text-align: center; border-top: 1px solid #eee; margin-top: 20px;">
+                <form action="/front/registForm.do" method="get">
+                    <input type="hidden" name="agree" value="Y">
+                    <c:forEach var="p" items="${param}">
+                        <c:if test="${p.key != 'agree'}">
+                            <input type="hidden" name="${p.key}" value="<c:out value="${p.value}"/>">
+                        </c:if>
+                    </c:forEach>
+                    <button type="submit" style="background:#5F567E; color:#fff; border:none; padding:15px 40px; border-radius:12px; font-size:18px; font-weight:700; cursor:pointer; width:100%; max-width:400px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">이용약관 및 개인정보 동의하고 계속하기</button>
+                </form>
             </div>
 
         </div>
