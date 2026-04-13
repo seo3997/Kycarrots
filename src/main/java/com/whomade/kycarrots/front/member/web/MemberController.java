@@ -327,4 +327,12 @@ public class MemberController {
 		return "front/findMember";
 	}
 
+	@RequestMapping(value = "/front/resetPw.do")
+	public String resetPw(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+		DataMap param = RequestUtil.getDataMap(request);
+
+		model.addAttribute("param", param);
+		return "front/resetPw";
+	}
+
 }

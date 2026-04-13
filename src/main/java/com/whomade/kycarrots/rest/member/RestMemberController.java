@@ -313,18 +313,23 @@ public class RestMemberController {
 
     }
 
-    // GET /api/members/find-password?mail=abc@xyz.com
+    // GET /api/members/find-password?mail=abc@xyz.com&hp=010-1234-5678
     @GetMapping("/find-password")
-    public ResponseEntity<StringResponse> findPassword(@RequestParam("mail") String mail) {
+    public ResponseEntity<StringResponse> findPassword(
+            @RequestParam("mail") String mail,
+            @RequestParam("hp") String phone) {
         // 1) 파라미터 체크
         String email = mail == null ? "" : mail.trim().toLowerCase();
         if (email.isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {
-            // 잘못된 입력 → 앱 규격상 0(RESULT_CODE_ERR)로 통일
             return ResponseEntity.ok(new StringResponse(Const.RESULT_CODE_ERR));
         }
 
-        // 2) 사용자 존재 확인
-        OpUserVO user = opUserService.selectByEmail(email);
+        // 2) 사용자 존재 및 정보 일치 확인 (이메일 & 전화번호)
+        DataMap param = new DataMap();
+        param.put("userId", email);
+        param.put("cttpc", phone);
+        
+        OpUserVO user = opUserService.seelectUser(param);
         if (user == null) {
             return ResponseEntity.ok(new StringResponse(Const.RESULT_NO_USER)); // 601
         }
@@ -335,10 +340,9 @@ public class RestMemberController {
             return switch (result) {
                 case OK -> ResponseEntity.ok(new StringResponse(Const.RESULT_CODE_200)); // 200
                 case EMAIL_SEND_FAILED -> ResponseEntity.ok(new StringResponse(Const.RESULT_PWD_ERR)); // 602
-                case USER_NOT_FOUND -> ResponseEntity.ok(new StringResponse(Const.RESULT_NO_USER)); // double-check
+                case USER_NOT_FOUND -> ResponseEntity.ok(new StringResponse(Const.RESULT_NO_USER)); 
             };
         } catch (Exception e) {
-            // 예외는 0으로 통일
             return ResponseEntity.ok(new StringResponse(String.valueOf(Const.RESULT_CODE_ERR)));
         }
     }

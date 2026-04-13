@@ -59,7 +59,7 @@ public class PasswordResetService {
 
         log.debug("link: {}", link);
 
-        String subject = "[kyCarrots] Password reset";
+        String subject = "[asagong] Password reset";
         String html = """
             <p>안녕핫요 %s,</p>
             <p>아래 링크를 클릭하여 비밀번호를 재설정하세요( %d분 동안 유효):</p>

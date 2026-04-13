@@ -143,10 +143,20 @@
         <!-- 비밀번호 찾기 -->
         <div id="find-pw" class="tab-content">
             <form id="findPwForm">
-                <p class="text-sm text-muted mb-4">가입 시 등록한 이메일을 입력하시면 비밀번호 재설정 링크를 보내드립니다.</p>
+                <p class="text-sm text-muted mb-4">가입 시 등록한 이메일과 휴대폰 번호를 입력하시면 비밀번호 재설정 링크를 보내드립니다.</p>
                 <div class="form-group">
                     <label for="member_email">이메일</label>
                     <input type="email" id="member_email" name="member_email" class="form-control" placeholder="example@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>휴대폰 번호</label>
+                    <div class="phone-input-group">
+                        <input type="tel" id="pw_phone1" class="form-control" maxlength="3" value="010" readonly style="background-color: #f1f5f9; cursor: not-allowed; color: #64748b;">
+                        <span>-</span>
+                        <input type="tel" id="pw_phone2" class="form-control" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="1234" required>
+                        <span>-</span>
+                        <input type="tel" id="pw_phone3" class="form-control" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="5678" required>
+                    </div>
                 </div>
                 <button type="submit" class="btn-login" style="width:100%; height:50px; font-size:1.1rem; margin-top:1rem;">재설정 메일 발송</button>
             </form>
@@ -177,7 +187,7 @@
     });
 
     // Auto-focus logic for phone inputs
-    $('#phone1, #phone2').on('input', function() {
+    $('#phone1, #phone2, #pw_phone1, #pw_phone2').on('input', function() {
         if (this.value.length >= this.maxLength) {
             $(this).nextAll('input:first').focus();
         }
@@ -219,13 +229,17 @@
     $('#findPwForm').on('submit', function(e) {
         e.preventDefault();
         const email = $('#member_email').val();
+        const phone = $('#pw_phone1').val() + '-' + $('#pw_phone2').val() + '-' + $('#pw_phone3').val();
         
         $('#loadingOverlay').show();
         
         $.ajax({
             url: '/api/members/find-password',
             type: 'GET',
-            data: { mail: email },
+            data: { 
+                mail: email,
+                hp: phone
+            },
             success: function(res) {
                 $('#loadingOverlay').hide();
                 const code = (res && res.resultString ? (""+res.resultString).trim() : "0");
