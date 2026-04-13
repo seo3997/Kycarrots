@@ -96,8 +96,10 @@
             success: function(response) {
                 const res = JSON.parse(response);
                 if (res.resultStats.resultCode === 'ok') {
-                    if (res.resultStats.domainUrl) {
-                        location.href = res.resultStats.domainUrl + '/shop/list.do';
+                    const targetDomain = res.resultStats.domainUrl;
+                    if (targetDomain && !targetDomain.includes(location.host)) {
+                        const redirectUrl = targetDomain.startsWith('http') ? targetDomain : 'https://' + targetDomain;
+                        location.href = redirectUrl + '/shop/list.do';
                     } else {
                         location.href = '/shop/list.do';
                     }
