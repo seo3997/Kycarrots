@@ -51,7 +51,7 @@
                     <div class="logo" style="background: #fee2e2; color: #ef4444;"><i class="fas fa-exclamation-triangle"></i></div>
                     <h1 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 1.5rem;">접속 제한 안내</h1>
                     <p class="text-muted mt-3" style="line-height: 1.6;">
-                        본점 및 관리자 계정은 본 도메인에서<br>프론트 화면으로 접속할 수 없습니다.
+                        본점 및 관리자 계정은 본 도메인에서<br>로그인을 할수 없습니다.
                     </p>
                     <p class="text-sm text-muted mt-2">지점별 할당된 도메인을 통해 접속해 주세요.</p>
                 </div>
