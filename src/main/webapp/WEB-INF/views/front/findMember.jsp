@@ -143,7 +143,7 @@
         <!-- 비밀번호 찾기 -->
         <div id="find-pw" class="tab-content">
             <form id="findPwForm">
-                <p class="text-sm text-muted mb-4">가입 시 등록한 이메일을 입력하시면 비밀번호 재설정 링크를 보내드립니다.</p>
+                <p class="text-sm text-muted mb-4">가입시 등록한 이메일을 입력하시면 비밀번호 재설정 링크를 보내드립니다.</p>
                 <div class="form-group">
                     <label for="member_email">이메일</label>
                     <input type="email" id="member_email" name="member_email" class="form-control" placeholder="example@email.com" required>

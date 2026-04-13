@@ -42,7 +42,7 @@
     </div>
 
 <header class="header">
-    <a href="/shop/list.do" class="logo">
+    <a href="${domainUrl}/shop/list.do" class="logo">
         <div style="width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
             <i class="fas fa-shopping-bag" style="font-size: 0.9rem;"></i>
         </div>
