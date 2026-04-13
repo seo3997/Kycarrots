@@ -67,7 +67,7 @@
         </form>
 
         <div class="login-footer text-center">
-            아직 회원이 아니신가요? <a href="/front/registForm.do">회원가입</a>
+            아직 회원이 아니신가요? <a href="/front/joinTerms.do">회원가입</a>
         </div>
     </div>
 </main>
