@@ -97,7 +97,9 @@
                 const res = JSON.parse(response);
                 if (res.resultStats.resultCode === 'ok') {
                     const targetDomain = res.resultStats.domainUrl;
-                    location.href = (targetDomain.startsWith('http') ? targetDomain : 'https://' + targetDomain) + '/shop/list.do';
+                    // https 지원 전까지 http 사용
+                    const proto = targetDomain.startsWith('http') ? '' : 'http://';
+                    location.href = proto + targetDomain + '/shop/list.do';
                 } else {
                     errorBox.text(res.resultStats.resultMsg).show();
                 }
