@@ -330,6 +330,22 @@ public class MemberController {
 	@RequestMapping(value = "/front/resetPw.do")
 	public String resetPw(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
+		
+		// 사용자의 지점 도메인 정보 조회
+		String userId = param.getString("uid");
+		if (userId != null && !userId.isEmpty()) {
+			DataMap userParam = new DataMap();
+			userParam.put("userId", userId);
+			com.whomade.kycarrots.admin.common.vo.UserInfoVo user = memberService.selectUserInfo(userParam);
+			if (user != null && user.getDomainUrl() != null) {
+				String domainUrl = user.getDomainUrl();
+				// 프로토콜 보정
+				if (!domainUrl.startsWith("http")) {
+					domainUrl = "http://" + domainUrl;
+				}
+				model.addAttribute("domainUrl", domainUrl);
+			}
+		}
 
 		model.addAttribute("param", param);
 		return "front/resetPw";
