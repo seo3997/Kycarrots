@@ -174,6 +174,7 @@
         $('.tab-content').removeClass('active');
         $('#' + tabId).addClass('active');
         $('.result-box').hide();
+        $('form').show();
     });
 
     // Auto-focus logic for phone inputs
