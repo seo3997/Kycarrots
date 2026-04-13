@@ -90,4 +90,8 @@ public class MemberServiceImpl extends EgovAbstractServiceImpl implements Member
 		return (String) commonMybatisDao.selectOne("front.user.selectIdExistYn", param);
 	}
 
+	public com.whomade.kycarrots.admin.common.vo.UserInfoVo selectUserInfo(DataMap param) throws Exception {
+		return (com.whomade.kycarrots.admin.common.vo.UserInfoVo) commonMybatisDao.selectOne("login.selectUserInfo", param);
+	}
+
 }

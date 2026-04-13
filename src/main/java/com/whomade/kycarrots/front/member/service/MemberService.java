@@ -68,5 +68,21 @@ public interface MemberService {
 	 * @throws Exception
 	 */
 	String selectIdExistYn(DataMap param) throws Exception;
+	
+	/**
+	 * <PRE>
+	 * 1. MethodName 	: selectUserInfo
+	 * 2. ClassName  	: MemberService
+	 * 3. Comment   	: 사용자 정보 조회
+	 * 4. 작성자    		: 서수현
+	 * 5. 작성일    		: 2021.08.06. 오후 3:34:34
+	 * </PRE>
+	 * 
+	 * @return UserInfoVo
+	 * @param param
+	 * @return
+	 * @throws Exception
+	 */
+	com.whomade.kycarrots.admin.common.vo.UserInfoVo selectUserInfo(DataMap param) throws Exception;
 
 }
