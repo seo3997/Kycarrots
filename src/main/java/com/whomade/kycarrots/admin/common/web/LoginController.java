@@ -115,6 +115,11 @@ public class LoginController {
 					MessageUtil.setMessage(request, egovMessageSource.getMessage("error.pwd.wrong"));
 					return Const.jspLogin;
 				}
+
+				if(userInfoVo.getAuthorId().equals("ROLE_PUB")){
+					MessageUtil.setMessage(request, "구매자는 관리자에 접속 할 수 없습니다.");
+					return Const.jspLogin;
+				}
 				
 				if(userInfoVo.getUserSttusCode().equals("10")){											//활동상태일경우만 섹션을 만들어줌
 					//지역을 가져오자 
