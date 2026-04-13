@@ -128,7 +128,7 @@
     </select>
 
     <select id="selectByEmail" parameterType="string"  resultType="com.whomade.kycarrots.entity.member.OpUserVO">
-        SELECT USER_ID, USER_NM, EMAIL
+        SELECT USER_ID, USER_NM, EMAIL, BRANCH_ID
         FROM op_user
         WHERE EMAIL = #{email}
         LIMIT 1
