@@ -70,7 +70,17 @@
     </div>
 </div>
 
+<script src="/common/front/lib/jquery-3.6.0.min.js"></script>
 <script>
+    $(document).ready(function() {
+        const branchIdLoad = parseInt("${branchInfo.BRANCH_ID}");
+        if(isNaN(branchIdLoad) || branchIdLoad <= 2){
+            alert("판매지점이 선택되지 않았습니다. 도메인을 확인하세요.");
+            location.href = "/";
+            return;
+        }
+    });
+
     (function () {
         const navBtns = Array.from(document.querySelectorAll('.tab-btn'));
         const panels = {
