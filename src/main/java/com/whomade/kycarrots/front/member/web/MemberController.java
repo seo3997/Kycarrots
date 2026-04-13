@@ -335,7 +335,7 @@ public class MemberController {
 		String userId = param.getString("uid");
 		if (userId != null && !userId.isEmpty()) {
 			DataMap userParam = new DataMap();
-			userParam.put("userId", userId);
+			userParam.put("id", userId);
 			com.whomade.kycarrots.admin.common.vo.UserInfoVo user = memberService.selectUserInfo(userParam);
 			if (user != null && user.getDomainUrl() != null) {
 				String domainUrl = user.getDomainUrl();
