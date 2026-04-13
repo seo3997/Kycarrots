@@ -97,12 +97,7 @@
                 const res = JSON.parse(response);
                 if (res.resultStats.resultCode === 'ok') {
                     const targetDomain = res.resultStats.domainUrl;
-                    if (targetDomain && !targetDomain.includes(location.host)) {
-                        const redirectUrl = targetDomain.startsWith('http') ? targetDomain : 'https://' + targetDomain;
-                        location.href = redirectUrl + '/shop/list.do';
-                    } else {
-                        location.href = '/shop/list.do';
-                    }
+                    location.href = (targetDomain.startsWith('http') ? targetDomain : 'https://' + targetDomain) + '/shop/list.do';
                 } else {
                     errorBox.text(res.resultStats.resultMsg).show();
                 }
