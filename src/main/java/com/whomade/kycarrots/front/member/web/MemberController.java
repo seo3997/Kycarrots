@@ -1,20 +1,16 @@
 package com.whomade.kycarrots.front.member.web;
 
 import java.io.IOException;
-import java.util.List;
 
-import com.whomade.kycarrots.admin.common.vo.UserInfoVo;
 import com.whomade.kycarrots.common.service.CommonCodeService;
 import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.EgovFileScrty;
 import com.whomade.kycarrots.framework.common.util.EgovMessageSource;
 import com.whomade.kycarrots.framework.common.util.RequestUtil;
-import com.whomade.kycarrots.framework.common.util.SessionUtil;
 import com.whomade.kycarrots.front.member.service.MemberService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -85,17 +81,12 @@ public class MemberController {
 			throws Exception {
 
 		DataMap param = RequestUtil.getDataMap(request);
-		HttpSession session = request.getSession();
 
 		String endPassword = EgovFileScrty.encryptSHA512(param.getString("password"));
 		param.put("email", param.getString("user_id"));
 		param.put("enPwd", endPassword);
 
-		// 지점 ID 세팅 (BranchInterceptor에서 세션에 저장됨)
-		Long branchId = (Long) session.getAttribute("BRANCH_ID");
-		if (branchId != null) {
-			param.put("branch_id", branchId);
-		}
+		// 지점 ID는 RequestUtil.getDataMap(request)를 통해 화면에서 넘어온 값이 param에 이미 포함되어 있음
 
 		// 일반 사용자 권한 세팅
 		param.put("author_id", "ROLE_PUB");

@@ -84,6 +84,8 @@
                 <input type="tel" name="cttpc" id="cttpc" class="form-control" placeholder="010-0000-0000" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}" required maxlength="20">
             </div>
 
+            <input type="hidden" id="branch_id" name="branch_id" value="${branchInfo.BRANCH_ID}">
+
             <div id="regist-alert" class="alert-box" style="display:none; margin-top:1rem;"></div>
 
             <button type="button" class="btn-regist" id="btn_save" style="width:100%; height:50px; font-size:1.1rem; margin-top:1rem;">가입하기</button>
@@ -178,6 +180,12 @@
         if(phoneRegex.test(cttpc) === false) {
             alert("올바른 전화번호 형식이 아닙니다. (예: 010-0000-0000)");
             $("#cttpc").focus();
+            return;
+        }
+
+        const branchId = parseInt("${branchInfo.BRANCH_ID}");
+        if(isNaN(branchId) || branchId < 3){
+            alert("지점 코드가 3보다 작아 회원등록이 불가능합니다.");
             return;
         }
 
