@@ -25,8 +25,11 @@ public class PasswordResetService {
     private final EmailCafe24Service emailCafe24Service;
 
 
-    @Value("${mailreset.base-url}")
-    private String resetBaseUrl; // 예: https://your.app/reset
+    @Value("${mailreset.front-base-url}")
+    private String frontBaseUrl;
+
+    @Value("${mailreset.admin-base-url}")
+    private String adminBaseUrl;
 
     @Value("${mailreset.ttl-minutes:120}")
     private int ttlMinutes;
@@ -54,8 +57,14 @@ public class PasswordResetService {
         opUserMapper.upsertToken(token);
 
         // 3) 메일 발송 (uid + sel + ver 포함)
+        // 본사/관리자(branchId < 3)는 adminBaseUrl, 일반 지점 회원은 frontBaseUrl 사용
+        String baseUrl = frontBaseUrl;
+        if (user.getBranchId() == null || Integer.parseInt(user.getBranchId()) < 3) {
+            baseUrl = adminBaseUrl;
+        }
+
         String link = String.format("%s?uid=%s&sel=%s&ver=%s",
-                resetBaseUrl, url(user.getUserId()), url(selector), url(verifier));
+                baseUrl, url(user.getUserId()), url(selector), url(verifier));
 
         log.debug("link: {}", link);
 
