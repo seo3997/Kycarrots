@@ -40,9 +40,6 @@
         LEFT JOIN op_code C ON C.GROUP_ID='R010070'    AND C.CODE=A.AREA_CODE
         LEFT JOIN op_sclas_code D ON D.GROUP_ID='R010070' AND D.CODE=A.AREA_CODE AND D.SCLAS_CODE= A.AREA_SE_CODE_S
         WHERE USER_ID = #{userId}
-        <if test="cttpc != null and cttpc != ''">
-            AND CTTPC = #{cttpc}
-        </if>
     </select>
 
     <insert id="insertUser" parameterType="com.whomade.kycarrots.entity.member.OpUserVO" useGeneratedKeys="true" keyProperty="userNo">
