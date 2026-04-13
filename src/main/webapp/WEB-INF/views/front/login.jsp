@@ -67,6 +67,11 @@
         </form>
 
         <div class="login-footer text-center">
+            <div style="margin-bottom: 1rem; font-size: 0.9rem;">
+                <a href="/front/findMember.do" style="color: #64748b;">아이디 찾기</a>
+                <span style="margin: 0 10px; color: #cbd5e1;">|</span>
+                <a href="/front/findMember.do" style="color: #64748b;">비밀번호 찾기</a>
+            </div>
             아직 회원이 아니신가요? <a href="/front/joinTerms.do">회원가입</a>
         </div>
     </div>

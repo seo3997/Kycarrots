@@ -319,4 +319,12 @@ public class MemberController {
 		}
 	}
 
+	@RequestMapping(value = "/front/findMember.do")
+	public String findMember(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
+		DataMap param = RequestUtil.getDataMap(request);
+
+		model.addAttribute("param", param);
+		return "front/findMember";
+	}
+
 }
