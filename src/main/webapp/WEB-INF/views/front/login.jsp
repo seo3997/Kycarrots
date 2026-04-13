@@ -45,35 +45,52 @@
 
 <main class="main-content">
     <div class="login-card">
-        <div class="login-header text-center">
-            <div class="logo"><i class="fas fa-sign-in-alt"></i></div>
-            <h1 style="font-size: 1.75rem; font-weight: 700;">asagong 로그인</h1>
-            <p class="text-muted mt-2">서비스 이용을 위해 로그인해 주세요.</p>
-        </div>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="user_id">아이디</label>
-                <input type="text" id="user_id" name="user_id" class="form-control" placeholder="아이디를 입력하세요" required>
-            </div>
-            <div class="form-group">
-                <label for="user_pw">비밀번호</label>
-                <input type="password" id="user_pw" name="user_pw" class="form-control" placeholder="비밀번호를 입력하세요" required>
-            </div>
-            
-            <div id="error-box" class="error-msg" style="display:none;"></div>
+        <c:choose>
+            <c:when test="${isMainDomain}">
+                <div class="login-header text-center">
+                    <div class="logo" style="background: #fee2e2; color: #ef4444;"><i class="fas fa-exclamation-triangle"></i></div>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 1.5rem;">접속 제한 안내</h1>
+                    <p class="text-muted mt-3" style="line-height: 1.6;">
+                        본점 및 관리자 계정은 본 도메인에서<br>프론트 화면으로 접속할 수 없습니다.
+                    </p>
+                    <p class="text-sm text-muted mt-2">지점별 할당된 도메인을 통해 접속해 주세요.</p>
+                </div>
+                <div class="text-center mt-5">
+                    <a href="/admin/login.do" class="btn-login" style="display: block; width: 100%; height: 50px; line-height: 50px; background: #64748b;">관리자 로그인 바로가기</a>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <div class="login-header text-center">
+                    <div class="logo"><i class="fas fa-sign-in-alt"></i></div>
+                    <h1 style="font-size: 1.75rem; font-weight: 700;">asagong 로그인</h1>
+                    <p class="text-muted mt-2">서비스 이용을 위해 로그인해 주세요.</p>
+                </div>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="user_id">아이디</label>
+                        <input type="text" id="user_id" name="user_id" class="form-control" placeholder="아이디를 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user_pw">비밀번호</label>
+                        <input type="password" id="user_pw" name="user_pw" class="form-control" placeholder="비밀번호를 입력하세요" required>
+                    </div>
+                    
+                    <div id="error-box" class="error-msg" style="display:none;"></div>
 
-            <button type="submit" class="btn-login" style="width:100%; height:50px; font-size:1.1rem; margin-top:1rem;">로그인</button>
-        </form>
+                    <button type="submit" class="btn-login" style="width:100%; height:50px; font-size:1.1rem; margin-top:1rem;">로그인</button>
+                </form>
 
-        <div class="login-footer text-center">
-            <div style="margin-bottom: 1rem; font-size: 0.9rem;">
-                <a href="/front/findMember.do" style="color: #64748b;">아이디 찾기</a>
-                <span style="margin: 0 10px; color: #cbd5e1;">|</span>
-                <a href="/front/findMember.do" style="color: #64748b;">비밀번호 찾기</a>
-            </div>
-            아직 회원이 아니신가요? <a href="/front/joinTerms.do">회원가입</a>
-        </div>
+                <div class="login-footer text-center">
+                    <div style="margin-bottom: 1rem; font-size: 0.9rem;">
+                        <a href="/front/findMember.do" style="color: #64748b;">아이디 찾기</a>
+                        <span style="margin: 0 10px; color: #cbd5e1;">|</span>
+                        <a href="/front/findMember.do" style="color: #64748b;">비밀번호 찾기</a>
+                    </div>
+                    아직 회원이 아니신가요? <a href="/front/joinTerms.do">회원가입</a>
+                </div>
+            </c:otherwise>
+        </c:choose>
     </div>
 </main>
 

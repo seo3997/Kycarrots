@@ -54,6 +54,15 @@ public class FrontLoginController {
 	@RequestMapping(value = "/front/login.do")
 	public String loginForm(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 		DataMap param = RequestUtil.getDataMap(request);
+		
+		// 본 도메인(www.asagong.com) 접속 체크
+		String serverName = request.getServerName();
+		if ("www.asagong.com".equals(serverName) || "asagong.com".equals(serverName)) {
+			model.addAttribute("isMainDomain", true);
+		} else {
+			model.addAttribute("isMainDomain", false);
+		}
+
 		model.addAttribute("param", param);
 		return "front/login";
 	}
