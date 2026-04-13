@@ -21,7 +21,7 @@ import java.util.Base64;
 public class PasswordResetService {
 
     private final OpUserMapper opUserMapper;
-    private final EmailService emailService;
+    private final OciEmailService ociEmailService;
     private final EmailCafe24Service emailCafe24Service;
 
 
@@ -68,20 +68,11 @@ public class PasswordResetService {
             """.formatted(safe(user.getUserNm()), ttlMinutes, link, link);
 
         try {
-            // SendGrid 또는 Cafe24 중 하나 선택
-            String status = emailService.send(normalized, subject, html, "html");      // SendGrid
-            //String status = emailCafe24Service.send(normalized, subject, html, "html");   // Cafe24
-           int code;
-            try { code = Integer.parseInt(status.trim()); }
-            catch (NumberFormatException e) { code = 0; }
-
-            if (code == 200 || code == 202) {
-                return PasswordResetResult.OK;
-            } else {
-                return PasswordResetResult.EMAIL_SEND_FAILED;
-            }
+            // OCI Email Service 사용
+            ociEmailService.send(normalized, subject, html);
+            return PasswordResetResult.OK;
         } catch (Exception e) {
-            // SendGrid에서 4xx/5xx는 여기로 떨어짐
+            log.error("OCI SMTP send failed: {}", e.getMessage(), e);
             return PasswordResetResult.EMAIL_SEND_FAILED;
         }
     }
