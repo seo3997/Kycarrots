@@ -101,6 +101,15 @@
 <script src="/common/front/js/front_common.js?v=20240316"></script>
 <script type="text/javascript" src="/common/js/common.js?version=6.6"></script>
 <script>
+    $(document).ready(function() {
+        const branchIdLoad = parseInt("${branchInfo.BRANCH_ID}");
+        if(isNaN(branchIdLoad) || branchIdLoad <= 2){
+            alert("판매지점이 선택되지 않았습니다. 도메인을 확인하세요.");
+            location.href = "/";
+            return;
+        }
+    });
+
     function fnCheckId(){
         const userId = $('#user_id').val();
         const alertBox = $('#check-alert');
