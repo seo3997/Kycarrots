@@ -122,7 +122,7 @@
                 <div class="form-group">
                     <label>휴대폰 번호</label>
                     <div class="phone-input-group">
-                        <input type="tel" id="phone1" class="form-control" maxlength="3" inputmode="numeric" pattern="[0-9]*" placeholder="010" required>
+                        <input type="tel" id="phone1" class="form-control" maxlength="3" value="010" readonly style="background-color: #f1f5f9; cursor: not-allowed; color: #64748b;">
                         <span>-</span>
                         <input type="tel" id="phone2" class="form-control" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="1234" required>
                         <span>-</span>
