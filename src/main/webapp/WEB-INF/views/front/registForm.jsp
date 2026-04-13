@@ -184,8 +184,8 @@
         }
 
         const branchId = parseInt("${branchInfo.BRANCH_ID}");
-        if(isNaN(branchId) || branchId < 3){
-            alert("지점 코드가 3보다 작아 회원등록이 불가능합니다.");
+        if(isNaN(branchId) || branchId <= 2){
+            alert("판매지점이 선택되지 않았습니다. 도메인을 확인하세요.");
             return;
         }
 
