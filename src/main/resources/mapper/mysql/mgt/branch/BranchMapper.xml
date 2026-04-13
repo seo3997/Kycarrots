@@ -110,7 +110,9 @@
     <select id="selectListBranch" parameterType="dataMap" resultType="dataMap">
         SELECT BRANCH_ID,
                BRANCH_CODE,
-               BRANCH_NAME
+               BRANCH_NAME,
+               DOMAIN_URL,
+               LOGO_IMAGE_URL
         FROM tb_branches
         <where>
             <if test='excludeAdmin != null and excludeAdmin == "Y"'>

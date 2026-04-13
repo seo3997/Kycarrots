@@ -336,6 +336,76 @@
             .nav-links { display: none; } /* Could add a hamburger menu here */
             .btn-outline { margin-left: 0; margin-top: 15px; }
         }
+
+        /* Branch Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .branch-modal {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            border-radius: 20px;
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .branch-list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .branch-select-card {
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .branch-select-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.1);
+        }
+
+        .branch-select-card img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .branch-select-card h4 {
+            margin: 0;
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -347,7 +417,7 @@
             <div class="nav-links">
                 <a href="#about">브랜드 소개</a>
                 <a href="#features">핵심 가치</a>
-                <a href="/admin/login.do">지점 로그인</a>
+                <a href="javascript:void(0)" onclick="openBranchModal()">지점 선택하기</a>
             </div>
         </div>
     </header>
@@ -360,7 +430,7 @@
             <div>
                 <!-- /shop/list.do 로 가면 지점 권한 등 분기 처리에 걸릴 수 있으므로, 지점 가맹 문의나 서비스 소개 페이지로 유도 등을 할 수 있습니다. 
                      현재는 기획상 로그인이나 샵으로 유도 -->
-                <a href="/front/login.do" class="btn btn-primary">서비스 체험하기</a>
+                <a href="javascript:void(0)" onclick="openBranchModal()" class="btn btn-primary">우리동네 지점찾기</a>
                 <a href="#about" class="btn btn-outline">자세히 알아보기</a>
             </div>
         </div>
@@ -444,6 +514,52 @@
             &copy; 2026 asagong Co., Ltd. All rights reserved.
         </div>
     </footer>
+
+    <!-- Branch Selection Modal -->
+    <div class="modal-overlay" id="branchModal">
+        <div class="branch-modal">
+            <span class="close-modal" onclick="closeBranchModal()">&times;</span>
+            <h2 style="text-align:center; margin-bottom: 30px;">방문하실 지점을 선택해 주세요</h2>
+            <div class="branch-list-grid">
+                <c:forEach var="branch" items="${branchList}">
+                    <a href="http://${branch.DOMAIN_URL}" class="branch-select-card">
+                        <c:choose>
+                            <c:when test="${not empty branch.LOGO_IMAGE_URL}">
+                                <img src="${branch.LOGO_IMAGE_URL}" alt="${branch.BRANCH_NAME}">
+                            </c:when>
+                            <c:otherwise>
+                                <div style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: var(--primary);">
+                                    <i class="fas fa-shopping-bag"></i>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                        <h4>${branch.BRANCH_NAME}</h4>
+                    </a>
+                </c:forEach>
+            </div>
+        </div>
+    </div>
+
+    <script src="/common/front/lib/jquery-3.6.0.min.js"></script>
+    <script>
+        function openBranchModal() {
+            document.getElementById('branchModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBranchModal() {
+            document.getElementById('branchModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('branchModal');
+            if (event.target == modal) {
+                closeBranchModal();
+            }
+        }
+    </script>
 
 </body>
 </html>

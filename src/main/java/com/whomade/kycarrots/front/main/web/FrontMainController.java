@@ -26,9 +26,19 @@ public class FrontMainController {
 		return "redirect:/front_index.do";
 	}
 
+	@jakarta.annotation.Resource(name = "mgtBranchService")
+	private com.whomade.kycarrots.mgt.branch.service.MgtBranchService branchService;
+
 	@RequestMapping(value = "/front_index.do")
 	public String frontIndex(HttpServletRequest request, HttpServletResponse response, ModelMap model)
 			throws Exception {
+		
+		com.whomade.kycarrots.framework.common.object.DataMap param = new com.whomade.kycarrots.framework.common.object.DataMap();
+		param.put("excludeAdmin", "Y");
+		java.util.List<com.whomade.kycarrots.framework.common.object.DataMap> branchList = branchService.selectListBranch(param);
+		
+		model.addAttribute("branchList", branchList);
+		
 		return "front/front_index";
 	}
 
