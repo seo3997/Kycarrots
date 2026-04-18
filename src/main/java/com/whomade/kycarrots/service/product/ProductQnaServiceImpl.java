@@ -62,7 +62,7 @@ public class ProductQnaServiceImpl implements ProductQnaService {
             pushService.sendTargetPush(
                     actorUserNo,
                     roles,
-                    branchId,
+                    branchId, // 문의 작성자 지점 기준 발송
                     null,
                     null,
                     "새로운 상품 문의 등록",

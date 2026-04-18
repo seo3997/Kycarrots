@@ -14,7 +14,7 @@
         </if>
         <if test="ssAuthorId == 'ROLE_PUB' or ssAuthorId == 'ROLE_PROJ'">
             <if test="ss_branch_id != null and ss_branch_id != ''">
-                AND EXISTS (SELECT 1 FROM op_user OU WHERE OU.USER_NO = (SELECT P.USER_NO FROM tb_product P WHERE P.PRODUCT_ID = A.PRODUCT_ID) AND OU.BRANCH_ID = #{ss_branch_id})
+                AND EXISTS (SELECT 1 FROM op_user OU WHERE OU.USER_NO = A.USER_NO AND OU.BRANCH_ID = #{ss_branch_id})
             </if>
         </if>
     </select>
@@ -48,7 +48,7 @@
         </if>
         <if test="ssAuthorId == 'ROLE_PUB' or ssAuthorId == 'ROLE_PROJ'">
             <if test="ss_branch_id != null and ss_branch_id != ''">
-                AND EXISTS (SELECT 1 FROM op_user OU WHERE OU.USER_NO = P.USER_NO AND OU.BRANCH_ID = #{ss_branch_id})
+                AND U.BRANCH_ID = #{ss_branch_id}
             </if>
         </if>
         ORDER BY A.REGIST_DT DESC
