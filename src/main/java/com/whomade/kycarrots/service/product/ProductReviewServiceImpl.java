@@ -44,8 +44,8 @@ public class ProductReviewServiceImpl implements ProductReviewService {
             if (product != null) {
                 productName = product.getString("TITLE");
             }
-            // [Fix] 수신 대상 지점은 상품의 지점이어야 함 (현재 세션 지점이 아님)
-            String branchId = product != null ? product.getString("BRANCH_ID") : param.getString("ss_branch_id");
+            // [수정] 상품문의와 동일하게 작성자(구매자)의 지점 정보를 기준으로 발송
+            String branchId = param.getString("ss_branch_id");
 
             List<String> roles = java.util.Arrays.asList("ROLE_ADMIN", "ROLE_SELL", "ROLE_PROJ");
             Long actorUserNo = param.getLong("ss_user_no");
