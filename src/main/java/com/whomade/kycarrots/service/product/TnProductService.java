@@ -83,7 +83,7 @@ public class TnProductService {
 
     @Transactional
     public void insertProductWithImages(TnProductVo productVo, List<TnProductImageVo> imageMetas,
-            List<MultipartFile> files) throws IOException {
+            List<MultipartFile> files) throws Exception {
         tnProductRepository.insertTbProduct(productVo);
 
         for (int i = 0; i < files.size(); i++) {
@@ -162,7 +162,7 @@ public class TnProductService {
     @Transactional
     public void updateProductWithImages(TnProductVo productVo,
             List<TnProductImageVo> imageMetas,
-            List<MultipartFile> images) throws IOException {
+            List<MultipartFile> images) throws Exception {
 
         // 1. 상품 정보 수정
         tnProductRepository.updateTbProduct(productVo);
