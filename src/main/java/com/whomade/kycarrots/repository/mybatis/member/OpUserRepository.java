@@ -101,4 +101,12 @@ public class OpUserRepository {
     public List<OpUserVO> selectUsersByBranchAndRole(String branchId, String memberCode) {
         return opUserMapper.selectUsersByBranchAndRole(branchId, memberCode);
     }
+
+    public List<OpUserVO> selectUsersByRole(String memberCode) {
+        return opUserMapper.selectUsersByRole(memberCode);
+    }
+
+    public List<OpUserVO> selectAllActiveUsers() {
+        return opUserMapper.selectAllActiveUsers();
+    }
 }

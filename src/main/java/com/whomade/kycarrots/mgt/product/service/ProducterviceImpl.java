@@ -211,10 +211,8 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 					"type", "product",
 					"title", title,
 					"body", body);
-			pushService.sendTargetPush(
+			pushService.sendBroadcastPush(
 					param.getLong("ss_user_no"),
-					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
-					null, null, null,
 					title, body, "PRODUCT_REGISTER", payload);
 		}
 
@@ -249,10 +247,8 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 					"type", "product",
 					"title", title,
 					"body", body);
-			pushService.sendTargetPush(
+			pushService.sendBroadcastPush(
 					param.getLong("ss_user_no"),
-					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
-					null, null, null,
 					title, body, "PRODUCT_REGISTER", payload);
 		}
 
@@ -597,10 +593,8 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 					"type", "product",
 					"title", title,
 					"body", body);
-			pushService.sendTargetPush(
+			pushService.sendBroadcastPush(
 					param.getLong("ss_user_no"),
-					java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL"),
-					null, null, null,
 					title, body, "PRODUCT_REGISTER", payload);
 		}
 	}

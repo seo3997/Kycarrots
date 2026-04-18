@@ -60,4 +60,8 @@ public interface OpUserMapper {
         List<OpUserVO> selectUsersByBranchAndRole(@Param("branchId") String branchId,
                         @Param("memberCode") String memberCode);
 
+        List<OpUserVO> selectUsersByRole(@Param("memberCode") String memberCode);
+
+        List<OpUserVO> selectAllActiveUsers();
+
 }

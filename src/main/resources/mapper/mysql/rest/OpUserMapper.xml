@@ -275,4 +275,19 @@
           AND MEMBER_CODE = #{memberCode}
           AND USER_STTUS_CODE = '10'
     </select>
+
+    <select id="selectUsersByRole" parameterType="string" resultType="com.whomade.kycarrots.entity.member.OpUserVO">
+        SELECT USER_NO, USER_ID, DEVICE_TYPE, PUSH_TOKEN
+        FROM op_user
+        WHERE MEMBER_CODE = #{memberCode}
+          AND USER_STTUS_CODE = '10'
+          AND PUSH_TOKEN IS NOT NULL
+    </select>
+
+    <select id="selectAllActiveUsers" resultType="com.whomade.kycarrots.entity.member.OpUserVO">
+        SELECT USER_NO, USER_ID, DEVICE_TYPE, PUSH_TOKEN
+        FROM op_user
+        WHERE USER_STTUS_CODE = '10'
+          AND PUSH_TOKEN IS NOT NULL
+    </select>
 </mapper>

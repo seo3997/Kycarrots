@@ -145,6 +145,14 @@ public class OpUserService {
         return opUserRepository.selectUsersByBranchAndRole(branchId, memberCode);
     }
 
+    public List<OpUserVO> selectUsersByRole(String memberCode) {
+        return opUserRepository.selectUsersByRole(memberCode);
+    }
+
+    public List<OpUserVO> selectAllActiveUsers() {
+        return opUserRepository.selectAllActiveUsers();
+    }
+
     public String changePassword(String userId, String currentPw, String newPw) {
         try {
             DataMap param = new DataMap();

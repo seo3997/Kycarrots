@@ -27,6 +27,21 @@ public class PushService {
     }
 
     /**
+     * 전체 활성 사용자 브로드캐스트 푸시 (토픽 발송 방식)
+     */
+    public void sendBroadcastPush(Long actorUserNo, String messageTitle, String messageBody, String eventType, 
+            Map<String, String> dataPayload) {
+        log.info("sendBroadcastPush (Topic): actor={}, event={}", actorUserNo, eventType);
+        
+        // 앱에서 구독 중인 3개 권한 토픽으로 발송
+        List<String> broadcastTopics = java.util.Arrays.asList("ROLE_PUB", "ROLE_PROJ", "ROLE_SELL");
+
+        for (String topic : broadcastTopics) {
+            fcmService.sendPushToTopicAndLog(actorUserNo, topic, messageTitle, messageBody, dataPayload, eventType);
+        }
+    }
+
+    /**
      * 공통 푸시 발송 서비스
      *
      * @param actorUserNo    푸시 발생 주체 (발송자 본인 제외용)
@@ -61,17 +76,33 @@ public class PushService {
             return;
         }
 
-        // 2. target_roles가 있는 경우 복수 발송 (지점 관리자, 본사 관리자 등)
+        // 2. target_roles가 있는 경우 복수 발송 (전제 발송 또는 본사+지점 발송)
         if (targetRoles != null && !targetRoles.isEmpty()) {
             Set<String> processedUserNos = new HashSet<>();
             Set<String> processedTokens = new HashSet<>();
 
-            // 2-1. 본사 (BRANCH_ID=Const.CENTER_BRANCH_ID) 전송
-            List<String> targetRolesFiltered = targetRoles.stream()
-                    .collect(java.util.stream.Collectors.toList());
+            if (targetBranchId == null || targetBranchId.isEmpty()) {
+                // 2-1. 지점이 지정되지 않은 경우: 전체(Global) 전송
+                for (String role : targetRoles) {
+                    List<OpUserVO> allUsers = opUserService.selectUsersByRole(role);
+                    for (OpUserVO user : allUsers) {
+                        if (user != null && user.getUserNo() != null && user.getPushToken() != null) {
+                            if (processedUserNos.contains(user.getUserNo()) || processedTokens.contains(user.getPushToken()))
+                                continue;
+                            if (isSameUser(actorUserNo, user.getUserNo()))
+                                continue;
+                                
+                            sendToSingleUser(actorUserNo, user, messageTitle, messageBody, eventType, dataPayload);
+                            processedUserNos.add(user.getUserNo());
+                            processedTokens.add(user.getPushToken());
+                        }
+                    }
+                }
+            } else {
+                // 2-2. 본사 (BRANCH_ID=Const.CENTER_BRANCH_ID) 전송
+                List<String> targetRolesFiltered = targetRoles.stream()
+                        .collect(java.util.stream.Collectors.toList());
 
-            if (!targetRolesFiltered.isEmpty()) {
-                // 본사(Center) 대상 전송
                 for (String role : targetRolesFiltered) {
                     List<OpUserVO> hqUsers = opUserService.selectUsersByBranchAndRole(Const.CENTER_BRANCH_ID, role);
                     for (OpUserVO user : hqUsers) {
@@ -88,9 +119,8 @@ public class PushService {
                     }
                 }
 
-                // 2-2. 판매지점 (targetBranchId) 전송 - 본사(Const.CENTER_BRANCH_ID)가 아닐 경우에만 추가 전송
-                if (targetBranchId != null && !targetBranchId.isEmpty()
-                        && !Const.CENTER_BRANCH_ID.equals(targetBranchId)) {
+                // 2-3. 특정 판매지점(targetBranchId) 전송 - 본사가 아닐 경우에만 추가 전송
+                if (!Const.CENTER_BRANCH_ID.equals(targetBranchId)) {
                     for (String role : targetRolesFiltered) {
                         List<OpUserVO> branchUsers = opUserService.selectUsersByBranchAndRole(targetBranchId, role);
                         for (OpUserVO user : branchUsers) {
