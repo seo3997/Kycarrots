@@ -152,11 +152,22 @@
 
 			// Editor Mode 변경 시
 			$('#editorMode').on('change', function() {
-				if (this.value === '1') {
-					initSummernote();
-				} else {
+				var prevMode = $(this).data('prev') || '<%=currentEditorMode%>';
+				var nextMode = this.value;
+
+				if (prevMode === '1') {
+					// 기존이 Summernote였으면 내용을 textarea에 동기화 후 파괴
+					var content = $('#description').summernote('code');
 					$('#description').summernote('destroy');
+					$('#description').val(content);
 				}
+
+				if (nextMode === '1') {
+					// 새 모드가 Summernote이면 초기화 (textarea 내용 자동 로드)
+					initSummernote();
+				}
+				
+				$(this).data('prev', nextMode);
 			});
 		});
 
