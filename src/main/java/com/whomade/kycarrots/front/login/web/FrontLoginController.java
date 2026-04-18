@@ -148,41 +148,52 @@ public class FrontLoginController {
 						}
 					}
 
+					// 권한 체크: ROLE_PUB 권한이 있는 경우에만 로그인 허용
+					List authList = frontLoginService.selectListUserauth(userInfoVo.getUserNo());
+					boolean isPub = false;
+					for (int i = 0; i < authList.size(); i++) {
+						DataMap authMap = (DataMap) authList.get(i);
+						if ("ROLE_PUB".equals(authMap.getString("AUTHOR_ID"))) {
+							isPub = true;
+							break;
+						}
+					}
+
+					if (!isPub) {
+						returnMsg = "로그인 권한이 없습니다.";
+						resultStats.put("resultCode", "error");
+						resultStats.put("resultMsg", returnMsg);
+						resultJSON.put("resultStats", resultStats);
+						try {
+							response.getWriter().write(resultJSON.toString());
+						} catch (IOException e) {
+							log.error(e);
+						}
+						return;
+					}
+
 					// 지점 체크 추가
 					Long currentBranchId = (Long) request.getSession().getAttribute("BRANCH_ID");
 					if (currentBranchId != null && userInfoVo.getBranchId() != null) {
 						if (!currentBranchId.toString().equals(userInfoVo.getBranchId())) {
-							// ROLE_PUB 권한을 가진 경우 다른 지점 로그인을 막음
-							List authList = frontLoginService.selectListUserauth(userInfoVo.getUserNo());
-							boolean isPub = false;
-							for (int i = 0; i < authList.size(); i++) {
-								DataMap authMap = (DataMap) authList.get(i);
-								if ("ROLE_PUB".equals(authMap.getString("AUTHOR_ID"))) {
-									isPub = true;
-									break;
-								}
+							// ROLE_PUB 권한인 경우 가입한 지점에서만 로그인 가능
+							returnMsg = "가입하신 지점에서만 로그인이 가능합니다.";
+							resultStats.put("resultCode", "error");
+							resultStats.put("resultMsg", returnMsg);
+							resultJSON.put("resultStats", resultStats);
+							try {
+								response.getWriter().write(resultJSON.toString());
+							} catch (IOException e) {
+								log.error(e);
 							}
-
-							if (isPub) {
-								returnMsg = "가입하신 지점에서만 로그인이 가능합니다.";
-								resultStats.put("resultCode", "error");
-								resultStats.put("resultMsg", returnMsg);
-								resultJSON.put("resultStats", resultStats);
-								try {
-									response.getWriter().write(resultJSON.toString());
-								} catch (IOException e) {
-									log.error(e);
-								}
-								return;
-							}
+							return;
 						}
 					}
 
-					// 권한을 가져오자
-					List resultList = frontLoginService.selectListUserauth(userInfoVo.getUserNo());
+					// 권한을 설정하자
 					String sAuthorId = "";
-					for (int i = 0; i < resultList.size(); i++) {
-						DataMap dataMap = (DataMap) resultList.get(i);
+					for (int i = 0; i < authList.size(); i++) {
+						DataMap dataMap = (DataMap) authList.get(i);
 						if (i == 0)
 							sAuthorId = dataMap.getString("AUTHOR_ID");
 						else
