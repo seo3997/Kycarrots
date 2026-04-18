@@ -204,6 +204,9 @@
 			// product id가 아직 없으면 "0"으로 전송
 			data.append("productId", $('#productId').val() || "0");
 
+			$('#uploadProgressBar').css('width', '0%').attr('aria-valuenow', 0).text('0%');
+			$('#uploadProgressBarContainer').show();
+
 			$.ajax({
 				url: '/mgt/product/uploadSummernoteImage.do',
 				cache: false,
@@ -211,13 +214,28 @@
 				processData: false,
 				data: data,
 				type: "POST",
+				xhr: function() {
+					var xhr = new window.XMLHttpRequest();
+					xhr.upload.addEventListener("progress", function(evt) {
+						if (evt.lengthComputable) {
+							var percentComplete = (evt.loaded / evt.total) * 100;
+							var percentStr = Math.round(percentComplete) + '%';
+							$('#uploadProgressBar').css('width', percentStr).attr('aria-valuenow', percentComplete).text(percentStr);
+						}
+					}, false);
+					return xhr;
+				},
 				success: function(res) {
 					// OCI 환경이므로 즉시 이미지 삽입
 					$(editor).summernote('insertImage', res.url);
+					setTimeout(function(){
+						$('#uploadProgressBarContainer').fadeOut();
+					}, 1000);
 				},
 				error: function(err) {
 					console.error(err);
 					alert("이미지 업로드에 실패했습니다.");
+					$('#uploadProgressBarContainer').hide();
 				}
 			});
 		}
@@ -463,6 +481,9 @@
 							<button type="button" class="btn btn-info btn-xs ml-2" onclick="fnPreview(); return false;">미리보기</button>
 						</label>
 						<div class="checkbox col-xs-12 col-sm-9 col-md-9 col-lg-10">
+							<div class="progress mb-2" id="uploadProgressBarContainer" style="display:none; height: 20px;">
+								<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" id="uploadProgressBar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+							</div>
 							<textarea class="form-control" rows="10" name="description" id="description"><%=param.getString("description") %></textarea>
 						</div>
 					</div>
