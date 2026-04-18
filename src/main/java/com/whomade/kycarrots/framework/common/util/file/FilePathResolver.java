@@ -1,35 +1,64 @@
 package com.whomade.kycarrots.framework.common.util.file;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-import java.nio.file.Paths;
 
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 파일 경로 리졸버 (동적 개선판)
+ * YAML의 'file.paths' 하위에 정의된 모든 카테고리를 자동으로 인식합니다.
+ * 신규 업무(카테고리) 추가 시 소스 수정 없이 YAML 설정만으로 동작합니다.
+ */
 @Component
+@ConfigurationProperties(prefix = "file")
 public class FilePathResolver {
 
-    @Value("${file.product.upload-dir}")
-    private String productUploadDir;
+    private Map<String, PathConfig> paths = new HashMap<>();
+    private StorageConfig storage = new StorageConfig();
+    private OciConfig oci = new OciConfig();
 
-    @Value("${file.product.public-url}")
-    private String productPublicUrl;
+    // Getters and Setters for Spring Boot Binding
+    public Map<String, PathConfig> getPaths() { return paths; }
+    public void setPaths(Map<String, PathConfig> paths) { this.paths = paths; }
+    public StorageConfig getStorage() { return storage; }
+    public void setStorage(StorageConfig storage) { this.storage = storage; }
+    public OciConfig getOci() { return oci; }
+    public void setOci(OciConfig oci) { this.oci = oci; }
 
-    @Value("${file.board.upload-dir}")
-    private String boardUploadDir;
+    public static class PathConfig {
+        private String uploadDir;
+        private String publicUrl;
+        private String resourcePath;
 
-    @Value("${file.board.public-url}")
-    private String boardPublicUrl;
+        public String getUploadDir() { return uploadDir; }
+        public void setUploadDir(String uploadDir) { this.uploadDir = uploadDir; }
+        public String getPublicUrl() { return publicUrl; }
+        public void setPublicUrl(String publicUrl) { this.publicUrl = publicUrl; }
+        public String getResourcePath() { return resourcePath; }
+        public void setResourcePath(String resourcePath) { this.resourcePath = resourcePath; }
+    }
 
-    @Value("${file.storage.type:N}")
-    private String storageType;
+    public static class StorageConfig {
+        private String type = "N";
+        public String getType() { return type; }
+        public void setType(String type) { this.type = type; }
+    }
 
-    @Value("${file.oci.bucket-name:}")
-    private String bucketName;
+    public static class OciConfig {
+        private String bucketName;
+        private String namespace;
+        private String publicUrl;
 
-    @Value("${file.oci.namespace:}")
-    private String namespace;
-
-    @Value("${file.oci.public-url:}")
-    private String ociPublicUrl;
+        public String getBucketName() { return bucketName; }
+        public void setBucketName(String bucketName) { this.bucketName = bucketName; }
+        public String getNamespace() { return namespace; }
+        public void setNamespace(String namespace) { this.namespace = namespace; }
+        public String getPublicUrl() { return publicUrl; }
+        public void setPublicUrl(String publicUrl) { this.publicUrl = publicUrl; }
+    }
 
     public Storage resolve(String pathKey) {
         String baseKey = pathKey;
@@ -41,43 +70,44 @@ public class FilePathResolver {
             subPath = pathKey.substring(idx + 1);
         }
 
-        String dir = null;
-        String url = null;
-
-        if ("product".equalsIgnoreCase(baseKey)) {
-            dir = productUploadDir;
-            url = productPublicUrl;
-        } else if ("board".equalsIgnoreCase(baseKey)) {
-            dir = boardUploadDir;
-            url = boardPublicUrl;
+        PathConfig config = paths.get(baseKey);
+        if (config == null) {
+            // Case-insensitive lookup fallback
+            for (String key : paths.keySet()) {
+                if (key.equalsIgnoreCase(baseKey)) {
+                    config = paths.get(key);
+                    break;
+                }
+            }
         }
 
-        if (dir != null) {
+        if (config != null) {
+            String dir = config.getUploadDir();
+            String url = config.getPublicUrl();
             String finalUrl = url;
-            if ("Y".equalsIgnoreCase(storageType) && ociPublicUrl != null && !ociPublicUrl.isEmpty()) {
-                finalUrl = ociPublicUrl;
+
+            String storageType = storage.getType();
+            if ("Y".equalsIgnoreCase(storageType) && oci.getPublicUrl() != null && !oci.getPublicUrl().isEmpty()) {
+                finalUrl = oci.getPublicUrl();
             }
 
             if (!subPath.isEmpty()) {
-                // 하위 경로가 있으면 OS별 경로 구분자를 처리하여 결합
                 dir = Paths.get(dir, subPath).toString();
-                // URL도 하위 경로를 포함하도록 결합
                 finalUrl = ensureUrl(finalUrl) + subPath + "/";
             }
-            return new Storage(ensureDir(dir), ensureUrl(finalUrl), storageType, bucketName, namespace, pathKey);
+            return new Storage(ensureDir(dir), ensureUrl(finalUrl), storageType, oci.getBucketName(), oci.getNamespace(), pathKey);
         }
 
-        throw new IllegalArgumentException("Unknown pathKey: " + pathKey + " (root must be 'product' or 'board')");
+        throw new IllegalArgumentException("Unknown pathKey: " + pathKey + ". 등록된 카테고리: " + paths.keySet());
     }
 
     public Storage getGlobalConfig() {
-        return new Storage("", "", storageType, bucketName, namespace, "");
+        return new Storage("", "", storage.getType(), oci.getBucketName(), oci.getNamespace(), "");
     }
 
     private String ensureDir(String dir) {
         if (dir == null || dir.isEmpty())
             return dir;
-        // Windows/Unix 모두 안전: 마지막 구분자 강제 제거 (Paths로 합칠 것이므로)
         if (dir.endsWith("/") || dir.endsWith("\\")) {
             return dir.substring(0, dir.length() - 1);
         }
@@ -115,24 +145,10 @@ public class FilePathResolver {
             return (pathPrefix != null && !pathPrefix.isEmpty()) ? pathPrefix + "/" : "";
         }
 
-        public String getUploadDir() {
-            return uploadDir;
-        }
-
-        public String getPublicUrl() {
-            return publicUrl;
-        }
-
-        public String getStorageType() {
-            return storageType;
-        }
-
-        public String getBucketName() {
-            return bucketName;
-        }
-
-        public String getNamespace() {
-            return namespace;
-        }
+        public String getUploadDir() { return uploadDir; }
+        public String getPublicUrl() { return publicUrl; }
+        public String getStorageType() { return storageType; }
+        public String getBucketName() { return bucketName; }
+        public String getNamespace() { return namespace; }
     }
 }

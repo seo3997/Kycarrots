@@ -34,7 +34,7 @@ import com.whomade.kycarrots.framework.common.util.file.vo.AtFileVO;
 
 /**
  * 파일 저장 유틸(개편판)
- * - pathKey: "product" 또는 "board"
+ * - pathKey: "product", "board" 또는 "review"
  * - Spring 설정(file.*)과 FilePathResolver를 사용
  */
 @Component("AtFileMngUtil")
