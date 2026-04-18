@@ -29,7 +29,7 @@ import java.util.Map;
 @Slf4j
 public class TnProductService {
 
-    @Resource
+    @Autowired
     private com.whomade.kycarrots.framework.common.util.file.FilePathResolver filePathResolver;
 
     private final TnProductRepository tnProductRepository;
