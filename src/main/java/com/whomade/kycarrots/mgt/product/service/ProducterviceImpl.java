@@ -44,6 +44,12 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 	@Resource(name = "AtFileMngUtil")
 	private AtFileMngUtil atFileMngUtil;
 
+	@Resource
+	private com.whomade.kycarrots.framework.common.util.file.OciObjectStorageService ociService;
+
+	@Resource
+	private com.whomade.kycarrots.framework.common.util.file.FilePathResolver resolver;
+
 	@Autowired
 	private com.whomade.kycarrots.push.PushService pushService;
 
@@ -156,9 +162,20 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			}
 
 			// 2-1) 물리 저장
-			String baseDir = fileStorageProperties.getProduct().getUploadDir();
-			java.io.File destFile = FileUtil.saveFile(file, baseDir, productIdStr);
-			String imageUrl = publicUrl + "/" + productIdStr + "/" + destFile.getName();
+			com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product");
+			String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
+			String ext = SysUtil.getFileExtName(file.getOriginalFilename());
+			String storeName = SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
+			String imageUrl;
+
+			if ("Y".equalsIgnoreCase(storage.getStorageType())) {
+				String objectName = dateFolder + "/" + storeName;
+				ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
+				imageUrl = storage.getPublicUrl() + objectName;
+			} else {
+				java.io.File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
+				imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();
+			}
 
 			// 2-2) DB insert (useGeneratedKeys → imageId 세팅)
 			TnProductImageVo toInsert = new TnProductImageVo();
@@ -279,9 +296,20 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 					continue;
 
 				// 물리 저장
-				String baseDir = fileStorageProperties.getProduct().getUploadDir();
-				java.io.File destFile = FileUtil.saveFile(file, baseDir, String.valueOf(productId));
-				String imageUrl = publicUrl + "/" + productId + "/" + destFile.getName();
+				com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product");
+				String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
+				String ext = SysUtil.getFileExtName(file.getOriginalFilename());
+				String storeName = SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
+				String imageUrl;
+
+				if ("Y".equalsIgnoreCase(storage.getStorageType())) {
+					String objectName = dateFolder + "/" + storeName;
+					ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
+					imageUrl = storage.getPublicUrl() + objectName;
+				} else {
+					java.io.File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
+					imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();
+				}
 
 				// 서버에서 MAIN/SUB 계산(대표=MAIN)
 				boolean isRep = Integer.valueOf(1).equals(m.getRepresent());
@@ -401,20 +429,27 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		int userNo = (userNoStr == null || userNoStr.isEmpty()) ? 0 : Integer.parseInt(userNoStr);
 
 		// 물리 저장
-		String baseDir = fileStorageProperties.getProduct().getUploadDir();
-		String originalFileName = file.getOriginalFilename();
-		String ext = SysUtil.getFileExtName(originalFileName);
-		String safeFileName = SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
+		com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product");
+		String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
+		String ext = SysUtil.getFileExtName(file.getOriginalFilename());
+		String storeName = SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
+		String imageUrl;
 
-		java.io.File destFile = FileUtil.saveFile(file, baseDir, productIdStr, safeFileName);
-		String imageUrl = publicUrl + "/" + productIdStr + "/" + safeFileName;
+		if ("Y".equalsIgnoreCase(storage.getStorageType())) {
+			String objectName = dateFolder + "/" + storeName;
+			ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
+			imageUrl = storage.getPublicUrl() + objectName;
+		} else {
+			java.io.File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
+			imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();
+		}
 
 		// DB Insert (ImageCd 3 for Summernote images)
 		TnProductImageVo toInsert = new TnProductImageVo();
 		toInsert.setProductId(productId);
 		toInsert.setImageCd("3"); // 1: 상품이미지, 3: 에디터이미지
 		toInsert.setImageUrl(imageUrl);
-		toInsert.setImageName(destFile.getName());
+		toInsert.setImageName(storeName);
 		toInsert.setImageSize(file.getSize());
 		toInsert.setImageType(file.getContentType());
 		toInsert.setRepresent(0);
@@ -463,9 +498,19 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			TnProductImageVo img = (TnProductImageVo) commonMybatisDao
 					.selectOne("mgt.product.selectProductImageByImageId", imageId);
 			if (img != null) {
-				// 물리 파일 삭제
-				String baseDir = fileStorageProperties.getProduct().getUploadDir();
-				FileUtil.deleteFile(baseDir, String.valueOf(img.getProductId()), img.getImageName());
+				com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product");
+				if ("Y".equalsIgnoreCase(storage.getStorageType())) {
+					String imageUrl = img.getImageUrl();
+					String publicUrl = storage.getPublicUrl();
+					if (imageUrl != null && imageUrl.startsWith(publicUrl)) {
+						String objectName = imageUrl.substring(publicUrl.length());
+						ociService.deleteFile(storage.getNamespace(), storage.getBucketName(), objectName);
+					}
+				} else {
+					// 물리 파일 삭제
+					String baseDir = storage.getUploadDir();
+					FileUtil.deleteFile(baseDir, String.valueOf(img.getProductId()), img.getImageName());
+				}
 				// DB 삭제
 				commonMybatisDao.delete("mgt.product.deleteProductImageByImageId", imageId);
 			}
@@ -497,18 +542,26 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 				productId);
 
 		// 2) 물리 파일 삭제
-		String baseDir = fileStorageProperties.getProduct().getUploadDir(); // 예: /data/uploads
+		com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product");
 		for (TnProductImageVo img : images) {
 			try {
-				boolean deleted = FileUtil.deleteFile(baseDir, productIdStr, img.getImageName());
-				if (!deleted) {
-					String targetPath = baseDir + java.io.File.separator + productIdStr + java.io.File.separator
-							+ img.getImageName();
-					// 파일이 이미 없을 수 있으니 강하게 막지 않음(로그만)
-					log.warn("파일 삭제 실패 또는 존재하지 않음: {}", targetPath);
+				if ("Y".equalsIgnoreCase(storage.getStorageType())) {
+					String imageUrl = img.getImageUrl();
+					String publicUrl = storage.getPublicUrl();
+					if (imageUrl != null && imageUrl.startsWith(publicUrl)) {
+						String objectName = imageUrl.substring(publicUrl.length());
+						ociService.deleteFile(storage.getNamespace(), storage.getBucketName(), objectName);
+					}
+				} else {
+					String baseDir = storage.getUploadDir();
+					boolean deleted = FileUtil.deleteFile(baseDir, productIdStr, img.getImageName());
+					if (!deleted) {
+						String targetPath = baseDir + java.io.File.separator + productIdStr + java.io.File.separator
+								+ img.getImageName();
+						log.warn("파일 삭제 실패 또는 존재하지 않음: {}", targetPath);
+					}
 				}
 			} catch (Exception e) {
-				// 파일 삭제 실패 시 트랜잭션 롤백을 원하면 throw, 아니면 경고 로그만
 				log.warn("파일 삭제 중 오류(imageId={}): {}", img.getImageId(), e.getMessage());
 			}
 		}

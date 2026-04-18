@@ -19,6 +19,15 @@ public class FilePathResolver {
     @Value("${file.board.public-url}")
     private String boardPublicUrl;
 
+    @Value("${file.storage.type:N}")
+    private String storageType;
+
+    @Value("${file.oci.bucket-name:}")
+    private String bucketName;
+
+    @Value("${file.oci.namespace:}")
+    private String namespace;
+
     public Storage resolve(String pathKey) {
         String baseKey = pathKey;
         String subPath = "";
@@ -47,10 +56,14 @@ public class FilePathResolver {
                 // URL도 하위 경로를 포함하도록 결합
                 url = ensureUrl(url) + subPath + "/";
             }
-            return new Storage(ensureDir(dir), ensureUrl(url));
+            return new Storage(ensureDir(dir), ensureUrl(url), storageType, bucketName, namespace);
         }
 
         throw new IllegalArgumentException("Unknown pathKey: " + pathKey + " (root must be 'product' or 'board')");
+    }
+
+    public Storage getGlobalConfig() {
+        return new Storage("", "", storageType, bucketName, namespace);
     }
 
     private String ensureDir(String dir) {
@@ -72,10 +85,16 @@ public class FilePathResolver {
     public static class Storage {
         private final String uploadDir;
         private final String publicUrl;
+        private final String storageType;
+        private final String bucketName;
+        private final String namespace;
 
-        public Storage(String uploadDir, String publicUrl) {
+        public Storage(String uploadDir, String publicUrl, String storageType, String bucketName, String namespace) {
             this.uploadDir = uploadDir;
             this.publicUrl = publicUrl;
+            this.storageType = storageType;
+            this.bucketName = bucketName;
+            this.namespace = namespace;
         }
 
         public String getUploadDir() {
@@ -84,6 +103,18 @@ public class FilePathResolver {
 
         public String getPublicUrl() {
             return publicUrl;
+        }
+
+        public String getStorageType() {
+            return storageType;
+        }
+
+        public String getBucketName() {
+            return bucketName;
+        }
+
+        public String getNamespace() {
+            return namespace;
         }
     }
 }

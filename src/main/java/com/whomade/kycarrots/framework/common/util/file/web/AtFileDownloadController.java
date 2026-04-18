@@ -38,6 +38,12 @@ public class AtFileDownloadController {
 
 	@Resource(name = "AtFileMngService")
 	private AtFileMngService fileService;
+
+	@Resource
+	private com.whomade.kycarrots.framework.common.util.file.OciObjectStorageService ociService;
+
+	@Resource
+	private com.whomade.kycarrots.framework.common.util.file.FilePathResolver resolver;
 	
 	private int BUFFER_SIZE = 8192;
 
@@ -137,23 +143,65 @@ public class AtFileDownloadController {
 	    	}
 			
 			// type 별 다운로드 방식 다름
+			String storeName;
 			// 원래파일이름, 확장자
 			if(param.getString("d_type").equals("O")){
-				uFile = new File(fvo.getFile_aslt_path(), fvo.getFile_nm());
+				storeName = fvo.getFile_nm();
 			}
 			// 변환 이름, 원래 확장자
 			else if(param.getString("d_type").equals("I")){
-				uFile = new File(fvo.getFile_aslt_path(), fvo.getFile_id() + "."+fvo.getFile_ext_nm());
+				storeName = fvo.getFile_id() + "."+fvo.getFile_ext_nm();
 			}
 			// 변환 이름, 확장자
 			else {
-				uFile = new File(fvo.getFile_aslt_path(), fvo.getFile_id() + Globals.FILE_EXT_C);
+				storeName = fvo.getFile_id() + Globals.FILE_EXT_C;
+			}
+			
+			com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.getGlobalConfig();
+			boolean isOci = "Y".equalsIgnoreCase(storage.getStorageType());
+			
+			java.io.InputStream inputStream = null;
+			long fSize = 0;
+			
+			if (isOci) {
+				// ObjectName is everything after the bucket base URL or we can parse fvo.getFile_rltv_path()
+				// Better yet, just get it from the relative path by removing public URL
+				String rltvPath = fvo.getFile_rltv_path();
+				String publicUrl = storage.getPublicUrl();
+				String objectName;
+				if (rltvPath.startsWith(publicUrl)) {
+					objectName = rltvPath.substring(publicUrl.length());
+				} else {
+					// Fallback to old parsing if needed
+					String fullPath = fvo.getFile_aslt_path().replace("\\", "/");
+					if (fullPath.endsWith("/")) fullPath = fullPath.substring(0, fullPath.length()-1);
+					String dateFolder = fullPath.substring(fullPath.lastIndexOf("/") + 1);
+					objectName = dateFolder + "/" + storeName;
+				}
+				
+				try {
+					inputStream = ociService.getFile(storage.getNamespace(), storage.getBucketName(), objectName);
+					fSize = fvo.getFile_size();
+				} catch (Exception e) {
+					log.error("OCI download failed: " + e.getMessage());
+				}
+			} else {
+				// Local path. Check if it's already a full path or just a directory
+				File pathObj = new File(fvo.getFile_aslt_path());
+				if (pathObj.isFile()) {
+					uFile = pathObj;
+				} else {
+					uFile = new File(pathObj, storeName);
+				}
+				fSize = uFile.length();
+				if (uFile.exists()) {
+					inputStream = new java.io.FileInputStream(uFile);
+				}
 			}
 			// .file 을 사용하기에 file확장자로 파일을 검색한다
 //			File uFile = new File(fvo.getFile_path(), fvo.getFile_id() + "."+fvo.getFile_ext());
 			
 //			uFile = new File(fvo.getFile_path(), fvo.getFile_id() + Globals.FILE_EXT_C);
-			int fSize = (int) uFile.length();
 //			String file_ext = "." + fvo.getFile_ext();
 
 			if (fSize > 0) {
@@ -203,7 +251,7 @@ public class AtFileDownloadController {
 				response.setContentType(mimetype);
 				//response.setHeader("Content-Disposition", "attachment; filename=\"" + URLEncoder.encode(fvo.getOrignlFileNm(), "utf-8") + "\"");
 				setDisposition(fvo.getFile_nm(), request, response);
-				response.setContentLength(fSize);
+				response.setContentLengthLong(fSize);
 
 				/*
 				 * FileCopyUtils.copy(in, response.getOutputStream());
@@ -215,7 +263,7 @@ public class AtFileDownloadController {
 				BufferedOutputStream out = null;
 
 				try {
-					in = new BufferedInputStream(new FileInputStream(uFile));
+					in = new BufferedInputStream(inputStream);
 					out = new BufferedOutputStream(response.getOutputStream());
 
 					FileCopyUtils.copy(in, out);

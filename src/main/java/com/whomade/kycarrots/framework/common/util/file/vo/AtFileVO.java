@@ -75,6 +75,11 @@ public class AtFileVO implements Serializable {
 	 */
 	public String	content_type;
 	
+	/**
+	 * 이미지 URL (FILE_PARTN_COURS)
+	 */
+	public String image_url;
+	
 	
 	
 	public String getContent_type() {
@@ -152,6 +157,14 @@ public class AtFileVO implements Serializable {
 	
 	public void setFile_id(String file_id) {
 		this.file_id = file_id;
+	}
+
+	public String getImage_url() {
+		return image_url;
+	}
+
+	public void setImage_url(String image_url) {
+		this.image_url = image_url;
 	}
 	
 }

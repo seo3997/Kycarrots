@@ -75,7 +75,7 @@ public class EditorController {
 				// 파일 정보
 				AtFileVO fileInfo = (AtFileVO)param.get("fileInfo");
 				
-				String imgPath = fileInfo.getFile_rltv_path() + fileInfo.getFile_id() + "." + fileInfo.getFile_ext_nm();
+				String imgPath = fileInfo.getFile_rltv_path();
 				// 해당 창이 iframe으로 되어있기때문에 상위 윈도우창을 타겟으로 스크립트문을 작성하여 준다.
 				returnStr += "<script type=\"text/javascript\">window.parent.fnEditorFileUploadCallback.apply(window.parent, ['" + param.getString("CKEditorFuncNum") + "', '" + imgPath + "', true, '']);</script>";
 			} catch (Exception e1) {

@@ -47,9 +47,11 @@ public class AtFileMngUtil {
 	private EgovMessageSource egovMessageSource;
 
 	private final FilePathResolver resolver;
+	private final OciObjectStorageService ociService;
 
-	public AtFileMngUtil(FilePathResolver resolver) {
+	public AtFileMngUtil(FilePathResolver resolver, OciObjectStorageService ociService) {
 		this.resolver = resolver;
+		this.ociService = ociService;
 	}
 
 	/* ========= 업로드 용량 제한 (Spring 설정) ========= */
@@ -157,9 +159,16 @@ public class AtFileMngUtil {
 		}
 
 		// 저장
-		Path target = absDir.resolve(storeName);
-		try (InputStream in = file.getInputStream()) {
-			Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+		if ("Y".equalsIgnoreCase(storage.getStorageType())) {
+			// Bucket Upload
+			String objectName = dateFolder + "/" + storeName;
+			ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
+		} else {
+			// Local Save
+			Path target = absDir.resolve(storeName);
+			try (InputStream in = file.getInputStream()) {
+				Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+			}
 		}
 
 		// VO 세팅
@@ -168,8 +177,8 @@ public class AtFileMngUtil {
 		fvo.setDoc_id(atchDocId);
 		fvo.setFile_rmk(file_rmk);
 		fvo.setFile_nm(originalName);
-		fvo.setFile_aslt_path(absDir.toString() + File.separator);          // 절대 경로(끝에 / 유지)
-		fvo.setFile_rltv_path(storage.getPublicUrl() + dateFolder + "/");   // 공개 URL(끝에 / 유지)
+		fvo.setFile_aslt_path(absDir.toString() + File.separator + storeName);  // 절대 경로(파일명 포함)
+		fvo.setFile_rltv_path(storage.getPublicUrl() + dateFolder + "/" + storeName);   // 공개 URL(파일명 포함)
 		fvo.setFile_size(size);
 		fvo.setSs_user_id(ss_user_id);
 		fvo.setContent_type(contentType);
@@ -223,8 +232,40 @@ public class AtFileMngUtil {
 		}
 
 		try {
-			return Files.deleteIfExists(target);
-		} catch (IOException e) {
+			// AtFileVO에 storage_type이 없으므로 현재 global 설정을 따르거나 
+			// file_rltv_path가 http로 시작하는지 등으로 판단할 수도 있음.
+			// 여기서는 resolver를 통해 현재 설정을 가져와서 처리함.
+			// 주의: 과거 파일이 로컬에 있고 현재 설정이 Y라면 로컬 삭제가 안될 수 있음.
+			
+			// 일단 global 설정을 따름
+			FilePathResolver.Storage storage = resolver.getGlobalConfig(); // Need to add this method or similar
+
+			if ("Y".equalsIgnoreCase(storage.getStorageType())) {
+				String rltvPath = fvo.getFile_rltv_path();
+				String publicUrl = storage.getPublicUrl();
+				String objectName;
+				if (rltvPath.startsWith(publicUrl)) {
+					objectName = rltvPath.substring(publicUrl.length());
+				} else {
+					// Fallback to legacy parsing
+					String fullPath = fvo.getFile_aslt_path().replace("\\", "/");
+					if (fullPath.endsWith("/")) fullPath = fullPath.substring(0, fullPath.length()-1);
+					String dateFolder = fullPath.substring(fullPath.lastIndexOf("/") + 1);
+					objectName = dateFolder + "/" + target.getFileName().toString();
+				}
+				
+				ociService.deleteFile(storage.getNamespace(), storage.getBucketName(), objectName);
+				return true;
+			} else {
+				if (target.toFile().exists()) {
+					return Files.deleteIfExists(target);
+				} else {
+					// Check if fvo.getFile_aslt_path() is the full path
+					Path asltPath = Paths.get(fvo.getFile_aslt_path());
+					return Files.deleteIfExists(asltPath);
+				}
+			}
+		} catch (Exception e) {
 			log.warn("Delete failed: " + target + " - " + e.getMessage());
 			return false;
 		}

@@ -14,12 +14,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${file.board.resource-path}")
     private String boardResourcePath;
 
+    @Value("${file.storage.type:N}")
+    private String storageType;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/common/img/product/**")
-                .addResourceLocations(resourcePath);
-        registry.addResourceHandler("/common/img/board/**")
-                .addResourceLocations(boardResourcePath);
+        if (!"Y".equalsIgnoreCase(storageType)) {
+            registry.addResourceHandler("/common/img/product/**")
+                    .addResourceLocations(resourcePath);
+            registry.addResourceHandler("/common/img/board/**")
+                    .addResourceLocations(boardResourcePath);
+        }
     }
 
     @org.springframework.context.annotation.Bean

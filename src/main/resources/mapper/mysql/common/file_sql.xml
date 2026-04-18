@@ -15,6 +15,7 @@
 		<result property="file_aslt_path" 	column="FILE_ASLT_PATH"/>
 		<result property="content_type"  	column="CONTENT_TYPE"/>
 		<result property="srt_ord"       	column="SRT_ORD"/>
+		<result property="image_url"       	column="IMAGE_URL"/>
 	</resultMap>
 
 	<select id="selectAttchFile" parameterType="atFileVO" resultMap="AtFileResultMap">
@@ -33,6 +34,7 @@
 			, SORT_ORDR AS SRT_ORD
 			, REGISTER_NO AS RGSTP_ID
 			, REGIST_DT AS RGST_DTTM
+			, FILE_PARTN_COURS AS IMAGE_URL
 		FROM tb_file
 		WHERE FILE_ID = #{file_id}
 		ORDER BY SORT_ORDR
@@ -55,6 +57,7 @@
 			, SORT_ORDR AS SRT_ORD
 			, REGISTER_NO AS RGSTP_ID
 			, REGIST_DT AS RGST_DTTM
+			, FILE_PARTN_COURS AS IMAGE_URL
 		FROM tb_file
 		WHERE DOC_ID = #{doc_id}
 		ORDER BY SORT_ORDR
