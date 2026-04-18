@@ -372,6 +372,13 @@ public class MemberController {
 
 		if (userInfoVo != null) {
 			param.put("user_no", userInfoVo.getUserNo());
+			
+			// 비밀번호 처리
+			String password = param.getString("password");
+			if (password != null && !password.isEmpty()) {
+				param.put("enPwd", com.whomade.kycarrots.framework.common.util.EgovFileScrty.encryptSHA512(password));
+			}
+
 			try {
 				memberService.updateUser(param);
 				bUpdateresult = true;

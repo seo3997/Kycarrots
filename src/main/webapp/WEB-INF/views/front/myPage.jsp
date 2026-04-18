@@ -57,6 +57,20 @@
                 <input type="tel" name="cttpc" id="cttpc" class="form-control" value="${userInfoVo.cttpc}" placeholder="010-0000-0000" required>
             </div>
 
+            <div style="margin-top: 3rem; margin-bottom: 2rem; padding-top: 2rem; border-top: 1px solid #f1f5f9;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text);">비밀번호 수정 <span style="font-size: 0.8rem; font-weight: 400; color: #94a3b8; margin-left: 0.5rem;">(변경 시에만 입력)</span></h3>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="password" class="form-label">새 비밀번호</label>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="새 비밀번호를 입력하세요">
+                </div>
+
+                <div class="form-group">
+                    <label for="password_con" class="form-label">새 비밀번호 확인</label>
+                    <input type="password" name="password_con" id="password_con" class="form-control" placeholder="비밀번호를 한번 더 입력하세요">
+                </div>
+            </div>
+
             <button type="button" id="btn_update" class="btn-pay" style="width: 100%; padding: 1rem; font-size: 1.1rem; border-radius: 12px; font-weight: 600;">
                 저장하기
             </button>
@@ -88,6 +102,8 @@
         $('#btn_update').on('click', function() {
             const userNm = $('#user_nm').val().trim();
             const cttpc = $('#cttpc').val().trim();
+            const password = $('#password').val();
+            const passwordCon = $('#password_con').val();
 
             if (!userNm) {
                 alert('이름을 입력해주세요.');
@@ -108,6 +124,19 @@
                 return;
             }
 
+            if (password || passwordCon) {
+                if (password !== passwordCon) {
+                    alert('새 비밀번호가 일치하지 않습니다.');
+                    $('#password_con').focus();
+                    return;
+                }
+                if (password.length < 4) {
+                    alert('비밀번호는 4자 이상 입력해주세요.');
+                    $('#password').focus();
+                    return;
+                }
+            }
+
             if (confirm('회원 정보를 수정하시겠습니까?')) {
                 $('#loadingOverlay').show();
                 
@@ -116,7 +145,8 @@
                     type: 'POST',
                     data: {
                         user_nm: userNm,
-                        cttpc: cttpc
+                        cttpc: cttpc,
+                        password: password
                     },
                     dataType: 'json',
                     success: function(res) {

@@ -64,6 +64,9 @@
 	SET
 		USER_NM = #{user_nm}
 		, CTTPC = #{cttpc}
+		<if test="enPwd != null and enPwd != ''">
+		, PASSWORD = #{enPwd}
+		</if>
 		, UPDT_DT = CURRENT_TIMESTAMP
 	WHERE USER_NO = #{user_no}
 	</update>
