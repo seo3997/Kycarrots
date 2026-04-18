@@ -94,4 +94,21 @@ public class MemberServiceImpl extends EgovAbstractServiceImpl implements Member
 		return (com.whomade.kycarrots.admin.common.vo.UserInfoVo) commonMybatisDao.selectOne("login.selectUserInfo", param);
 	}
 
+	/**
+	 * <PRE>
+	 * 1. MethodName 	: updateUser
+	 * 2. ClassName  	: MemberServiceImpl
+	 * 3. Comment   	: 사용자 정보 수정
+	 * 4. 작성자    		: 서수현
+	 * 5. 작성일    		: 2026.04.18.
+	 * </PRE>
+	 * 
+	 * @param param
+	 * @throws Exception
+	 */
+	@Transactional
+	public void updateUser(DataMap param) throws Exception {
+		commonMybatisDao.update("front.user.updateUser", param);
+	}
+
 }

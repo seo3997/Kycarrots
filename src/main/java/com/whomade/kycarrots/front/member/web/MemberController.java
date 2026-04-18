@@ -351,4 +351,54 @@ public class MemberController {
 		return "front/resetPw";
 	}
 
+	/**
+	 * <PRE>
+	 * 1. MethodName 	: memberUpdateAjax
+	 * 2. ClassName  	: MemberController
+	 * 3. Comment   	: 회원 정보 수정
+	 * 4. 작성자    		: Antigravity
+	 * 5. 작성일    		: 2026. 04. 18.
+	 * </PRE>
+	 */
+	@RequestMapping(value = "/front/memberUpdateAjax.do")
+	public @ResponseBody void memberUpdateAjax(HttpServletRequest request, HttpServletResponse response, ModelMap model)
+			throws Exception {
+
+		DataMap param = RequestUtil.getDataMap(request);
+		com.whomade.kycarrots.admin.common.vo.UserInfoVo userInfoVo = (com.whomade.kycarrots.admin.common.vo.UserInfoVo) request.getSession().getAttribute("userInfoVo");
+
+		Boolean bUpdateresult = false;
+		String returnMsg = "";
+
+		if (userInfoVo != null) {
+			param.put("user_no", userInfoVo.getUserNo());
+			try {
+				memberService.updateUser(param);
+				bUpdateresult = true;
+				
+				// 세션 정보 갱신
+				userInfoVo.setUserNm(param.getString("user_nm"));
+				userInfoVo.setCttpc(param.getString("cttpc"));
+				request.getSession().setAttribute("userInfoVo", userInfoVo);
+			} catch (Exception e) {
+				log.error(e);
+				bUpdateresult = false;
+				returnMsg = "정보 수정 중 오류가 발생했습니다.";
+			}
+		} else {
+			returnMsg = "세션이 만료되었습니다. 다시 로그인해주세요.";
+		}
+
+		JSONObject resultJSON = new JSONObject();
+		resultJSON.put("resultMap", bUpdateresult ? "Y" : "N");
+
+		DataMap resultStats = new DataMap();
+		resultStats.put("resultCode", "ok");
+		resultStats.put("resultMsg", returnMsg);
+		resultJSON.put("resultStats", resultStats);
+
+		response.setContentType("text/html; charset=utf-8");
+		response.getWriter().write(resultJSON.toString());
+	}
+
 }

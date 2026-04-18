@@ -58,4 +58,14 @@
 	WHERE A.USER_ID = #{user_id}
 	</select>
 
+	<update id="updateUser" parameterType="dataMap">
+	/* front.user.updateUser */
+	UPDATE op_user
+	SET
+		USER_NM = #{user_nm}
+		, CTTPC = #{cttpc}
+		, UPDT_DT = CURRENT_TIMESTAMP
+	WHERE USER_NO = #{user_no}
+	</update>
+
 </mapper>

@@ -84,5 +84,20 @@ public interface MemberService {
 	 * @throws Exception
 	 */
 	com.whomade.kycarrots.admin.common.vo.UserInfoVo selectUserInfo(DataMap param) throws Exception;
+	
+	/**
+	 * <PRE>
+	 * 1. MethodName 	: updateUser
+	 * 2. ClassName  	: MemberService
+	 * 3. Comment   	: 사용자 정보 수정
+	 * 4. 작성자    		: 서수현
+	 * 5. 작성일    		: 2021.08.06. 오후 3:34:34
+	 * </PRE>
+	 * 
+	 * @return void
+	 * @param param
+	 * @throws Exception
+	 */
+	void updateUser(DataMap param) throws Exception;
 
 }
