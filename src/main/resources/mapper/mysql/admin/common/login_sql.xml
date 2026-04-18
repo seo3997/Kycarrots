@@ -17,6 +17,7 @@
 		<result property="branchId"					column="BRANCH_ID"/>
 		<result property="branchName"				column="BRANCH_NAME"/>
 		<result property="domainUrl"				column="DOMAIN_URL"/>
+		<result property="cttpc"					column="CTTPC"/>
 	</resultMap>
 
 	<select id="selectUserInfo" parameterType="dataMap" resultMap="userInfoVo">
@@ -35,6 +36,7 @@
         ,A.BRANCH_ID
         ,B.BRANCH_NAME
         ,B.DOMAIN_URL
+        ,A.CTTPC
 	FROM op_user A
 	LEFT OUTER JOIN tb_branches B ON A.BRANCH_ID = B.BRANCH_ID
 	WHERE A.USER_ID = #{id}
