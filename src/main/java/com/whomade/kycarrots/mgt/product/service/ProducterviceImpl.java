@@ -157,7 +157,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			}
 
 			// 2-1) 물리 저장
-			com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product");
+			com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product/main");
 			String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
 			String ext = SysUtil.getFileExtName(file.getOriginalFilename());
 			String storeName = SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
@@ -291,7 +291,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 					continue;
 
 				// 물리 저장
-				com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product");
+				com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product/main");
 				String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
 				String ext = SysUtil.getFileExtName(file.getOriginalFilename());
 				String storeName = SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
@@ -537,7 +537,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 				productId);
 
 		// 2) 물리 파일 삭제
-		com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product");
+		com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product/main");
 		for (TnProductImageVo img : images) {
 			try {
 				if ("Y".equalsIgnoreCase(storage.getStorageType())) {

@@ -92,7 +92,7 @@ public class TnProductService {
 
             if (!file.isEmpty()) {
 
-                com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = filePathResolver.resolve("product");
+                com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = filePathResolver.resolve("product/main");
                 String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
                 String ext = com.whomade.kycarrots.framework.common.util.SysUtil.getFileExtName(file.getOriginalFilename());
                 String storeName = com.whomade.kycarrots.framework.common.util.SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
@@ -177,7 +177,7 @@ public class TnProductService {
 
             // 새 이미지 추가
             if (isNew && file != null && !file.isEmpty()) {
-                com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = filePathResolver.resolve("product");
+                com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = filePathResolver.resolve("product/main");
                 String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
                 String ext = com.whomade.kycarrots.framework.common.util.SysUtil.getFileExtName(file.getOriginalFilename());
                 String storeName = com.whomade.kycarrots.framework.common.util.SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
@@ -207,7 +207,7 @@ public class TnProductService {
             // 기존 이미지 수정
             else if (meta.getImageId() != null) {
                 if (file != null && !file.isEmpty()) {
-                    com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = filePathResolver.resolve("product");
+                    com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = filePathResolver.resolve("product/main");
                     String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
                     String ext = com.whomade.kycarrots.framework.common.util.SysUtil.getFileExtName(file.getOriginalFilename());
                     String storeName = com.whomade.kycarrots.framework.common.util.SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
