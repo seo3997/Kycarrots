@@ -43,6 +43,12 @@ public class ProductReviewRestController {
         DataMap param = RequestUtil.getDataMap(request);
         Map<String, Object> result = new HashMap<>();
 
+        UserInfoVo userInfoVo = getUserInfo(request);
+        if (userInfoVo != null) {
+            param.put("ssAuthorId", userInfoVo.getAuthorId());
+            param.put("ss_branch_id", userInfoVo.getBranchId());
+        }
+
         int totalCount = productReviewService.selectTotCntReview(param);
         List<DataMap> list = productReviewService.selectPageListReview(param);
 

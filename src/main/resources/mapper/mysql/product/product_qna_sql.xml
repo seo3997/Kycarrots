@@ -9,6 +9,11 @@
             <if test="productId != null and productId != ''">
                 AND A.PRODUCT_ID = #{productId}
             </if>
+            <if test="ssAuthorId == 'ROLE_PUB' or ssAuthorId == 'ROLE_PROJ'">
+                <if test="ss_branch_id != null and ss_branch_id != ''">
+                    AND A.BRANCH_ID = #{ss_branch_id}
+                </if>
+            </if>
         </where>
     </select>
 
@@ -39,6 +44,11 @@
         <where>
             <if test="productId != null and productId != ''">
                 AND A.PRODUCT_ID = #{productId}
+            </if>
+            <if test="ssAuthorId == 'ROLE_PUB' or ssAuthorId == 'ROLE_PROJ'">
+                <if test="ss_branch_id != null and ss_branch_id != ''">
+                    AND A.BRANCH_ID = #{ss_branch_id}
+                </if>
             </if>
         </where>
         ORDER BY A.REGIST_DT DESC

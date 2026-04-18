@@ -26,6 +26,12 @@ public class MgtQnaController {
     public String selectPageListQna(HttpServletRequest request, ModelMap model) throws Exception {
         DataMap param = RequestUtil.getDataMap(request);
 
+        com.whomade.kycarrots.admin.common.vo.UserInfoVo userInfoVo = com.whomade.kycarrots.framework.common.util.SessionUtil.getSessionUserInfoVo(request);
+        if (userInfoVo != null) {
+            param.put("ssAuthorId", userInfoVo.getAuthorId());
+            param.put("ss_branch_id", userInfoVo.getBranchId());
+        }
+
         int totalCount = productQnaService.selectTotCntQna(param);
         param.put("totalCount", totalCount);
         param = pageNavigationUtil.createNavigationInfo(model, param);

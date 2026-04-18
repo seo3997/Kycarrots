@@ -27,6 +27,12 @@ public class MgtReviewController {
         DataMap param = RequestUtil.getDataMap(request);
         param.put("mgtYn", "Y");
 
+        com.whomade.kycarrots.admin.common.vo.UserInfoVo userInfoVo = com.whomade.kycarrots.framework.common.util.SessionUtil.getSessionUserInfoVo(request);
+        if (userInfoVo != null) {
+            param.put("ssAuthorId", userInfoVo.getAuthorId());
+            param.put("ss_branch_id", userInfoVo.getBranchId());
+        }
+
         int totalCount = productReviewService.selectTotCntReview(param);
         param.put("totalCount", totalCount);
         param = pageNavigationUtil.createNavigationInfo(model, param);
