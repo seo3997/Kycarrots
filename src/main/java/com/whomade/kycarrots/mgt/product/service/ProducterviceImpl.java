@@ -205,7 +205,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		// 4) 판매중(1) 상태로 등록될 경우 푸시 발송
 		if ("1".equals(tnProductVo.getSaleStatus())) {
 			String title = "신규 상품 등록";
-			String body = "[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!";
+			String body = String.format("[신상품] '%s'이(가) 등록되었습니다. 지금 확인해보세요!", tnProductVo.getTitle());
 			java.util.Map<String, String> payload = java.util.Map.of(
 					"targetId", String.valueOf(productId),
 					"type", "product",
@@ -241,7 +241,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		// 상태가 '판매중(1)'으로 변경된 경우에만 푸시 발송
 		if ("1".equals(tnProductVo.getSaleStatus()) && !"1".equals(oldStatus)) {
 			String title = "신규 상품 등록";
-			String body = "[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!";
+			String body = String.format("[신상품] '%s'이(가) 등록되었습니다. 지금 확인해보세요!", tnProductVo.getTitle());
 			java.util.Map<String, String> payload = java.util.Map.of(
 					"targetId", tnProductVo.getProductId(),
 					"type", "product",
@@ -587,7 +587,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		// [추가] 상태가 '판매중(1)'으로 변경될 경우 알림 발송
 		if ("1".equals(tnProductVo.getSaleStatus())) {
 			String title = "신규 상품 등록";
-			String body = "[신상품] 새로운 상품이 등록되었습니다. 지금 확인해보세요!";
+			String body = String.format("[신상품] '%s'이(가) 등록되었습니다. 지금 확인해보세요!", tnProductVo.getTitle());
 			java.util.Map<String, String> payload = java.util.Map.of(
 					"targetId", tnProductVo.getProductId(),
 					"type", "product",

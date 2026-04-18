@@ -60,6 +60,7 @@ public class FcmService {
 
             Message.Builder builder = Message.builder()
                     .setCondition(condition)
+                    .setNotification(notification)
                     .setAndroidConfig(androidConfig)
                     .setApnsConfig(apnsConfig);
 
@@ -67,7 +68,7 @@ public class FcmService {
                 builder.putAllData(data);
             }
             
-            // ✅ 알림 페이로드 대신 데이터 페이로드만 사용하여 백그라운드에서도 onMessageReceived가 실행되도록 함
+            // ✅ 알림 페이로드와 별개로 데이터 페이로드에도 제목/내용 포함 (백그라운드 처리용)
             if (title != null) builder.putData("title", title);
             if (body != null) builder.putData("body", body);
 
@@ -127,6 +128,7 @@ public class FcmService {
 
             Message.Builder builder = Message.builder()
                     .setTopic(topic)
+                    .setNotification(notification)
                     .setAndroidConfig(androidConfig)
                     .setApnsConfig(apnsConfig);
 
@@ -134,7 +136,7 @@ public class FcmService {
                 builder.putAllData(data);
             }
             
-            // ✅ 알림 페이로드 대신 데이터 페이로드만 사용하여 백그라운드에서도 onMessageReceived가 실행되도록 함
+            // ✅ 알림 페이로드와 별개로 데이터 페이로드에도 제목/내용 포함 (백그라운드 처리용)
             if (title != null) builder.putData("title", title);
             if (body != null) builder.putData("body", body);
 
