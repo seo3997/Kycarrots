@@ -28,6 +28,9 @@ public class FilePathResolver {
     @Value("${file.oci.namespace:}")
     private String namespace;
 
+    @Value("${file.oci.public-url:}")
+    private String ociPublicUrl;
+
     public Storage resolve(String pathKey) {
         String baseKey = pathKey;
         String subPath = "";
@@ -50,13 +53,18 @@ public class FilePathResolver {
         }
 
         if (dir != null) {
+            String finalUrl = url;
+            if ("Y".equalsIgnoreCase(storageType) && ociPublicUrl != null && !ociPublicUrl.isEmpty()) {
+                finalUrl = ociPublicUrl;
+            }
+
             if (!subPath.isEmpty()) {
                 // 하위 경로가 있으면 OS별 경로 구분자를 처리하여 결합
                 dir = Paths.get(dir, subPath).toString();
                 // URL도 하위 경로를 포함하도록 결합
-                url = ensureUrl(url) + subPath + "/";
+                finalUrl = ensureUrl(finalUrl) + subPath + "/";
             }
-            return new Storage(ensureDir(dir), ensureUrl(url), storageType, bucketName, namespace);
+            return new Storage(ensureDir(dir), ensureUrl(finalUrl), storageType, bucketName, namespace);
         }
 
         throw new IllegalArgumentException("Unknown pathKey: " + pathKey + " (root must be 'product' or 'board')");
