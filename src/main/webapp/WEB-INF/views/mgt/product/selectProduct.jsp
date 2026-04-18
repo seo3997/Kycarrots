@@ -22,14 +22,6 @@
   String saleStatusNm = resultMap.getString("SALE_STATUS_NM","");
   boolean saleStatusEnable  = true;
 
-  if("ROLE_SELL".equals(role)) {
-	  if ("0".equals(saleStatus) || "98".equals(saleStatus)) {
-	     saleStatusEnable = true;
-	  } else {
-	     saleStatusEnable = false;
-	  }
-  }
-
   // Handle EDITOR_MODE extraction with boolean check
   String currentEditorMode = resultMap.getString("EDITOR_MODE");
   if (currentEditorMode.equals("")) currentEditorMode = resultMap.getString("editorMode");
@@ -65,11 +57,7 @@
 				}
 			});
 			function refreshStatusChangeBtn() {
-			  var cur = $('#curSaleStatus').val();   // 서버에서 내려온 현재 상태
-			  var now = $('#saleStatus').val();      // 사용자가 선택한 상태(혹은 hidden값)
-			  var changed = now && (cur !== now);
-			  $('#btnStatusChange').prop('disabled', !changed)
-								   .toggleClass('disabled', !changed);
+			  $('#btnStatusChange').prop('disabled', false).removeClass('disabled');
 			}
 			$(document).on('change', '#saleStatus', refreshStatusChangeBtn);
 
@@ -179,14 +167,9 @@
 					<div class="form-group row">
 						<label  class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">판매상태</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
-					        <% if (saleStatusEnable) { %>
-					        <select id="saleStatus" name="saleStatus" class="form-control input-sm w-100" >
+							<select id="saleStatus" name="saleStatus" class="form-control input-sm w-100" >
 								<%=CommboUtil.getComboStr(saleStatusComboStr, "CODE", "CODE_NM", resultMap.getString("SALE_STATUS") , "C")%>
 							</select>
-							<% } else { %>
-								<input type="hidden" name="saleStatus" id="saleStatus" value="<%=resultMap.getString("SALE_STATUS") %>"/>
-					            <%=resultMap.getString("SALE_STATUS_NM")%>
-					        <% } %>
 						</div>
 						<label class="control-label col-xs-12 col-sm-3 col-md-3 col-lg-2">상품명</label>
 						<div class="col-xs-5 col-sm-3 col-md-3 col-lg-4">
@@ -319,8 +302,8 @@
 						<button type="button" class="btn btn-modify" onclick="fnGoUpdateForm(); return false;"><i class="fa fa-eraser"></i> 수정</button>
 
                         <button type="button" class="btn btn-delete" onclick="fnGoDelete(); return false;"><i class="fa fa-trash"></i> 삭제</button>
-						<% if( (Const.ROLE_ADMIN.equals(ssAuthorId) || Const.ROLE_SELL.equals(ssAuthorId)|| Const.ROLE_PROJ.equals(ssAuthorId)) && (saleStatusEnable=true)){ %>
-						<button type="button" class="btn btn-write" id="btnStatusChange" onclick="fnUpdateStatus(); return false;" disabled><i class="fa fa-sync"></i> 상태변경</button>
+						<% if( (Const.ROLE_ADMIN.equals(ssAuthorId) || Const.ROLE_SELL.equals(ssAuthorId)|| Const.ROLE_PROJ.equals(ssAuthorId)) ){ %>
+						<button type="button" class="btn btn-write" id="btnStatusChange" onclick="fnUpdateStatus(); return false;"><i class="fa fa-sync"></i> 상태변경</button>
 						<% } %>
 
 					</div>
