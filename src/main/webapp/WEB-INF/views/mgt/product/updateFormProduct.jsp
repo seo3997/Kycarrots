@@ -163,9 +163,9 @@
 			});
 		}
 		
-		// 상세
-		function fnDetail(){
-			$('#aform').attr({ action : '/mgt/product/selectProduct.do', method : 'get' }).submit();
+		// 목록
+		function fnGoList(){
+			$('#aform').attr({ action : '/mgt/product/selectPageListProduct.do', method : 'post' }).submit();
 		}
 
 		// 미리보기
@@ -492,7 +492,7 @@
 
 				<div class="box-footer">
              		<div class="text-center">
-						<button type="button" class="btn btn-reset" onclick="fnDetail(); return false;"><i class="fa fa-reply"></i> 취소</button>
+						<button type="button" class="btn btn-reset" onclick="fnGoList(); return false;"><i class="fa fa-reply"></i> 취소</button>
 						<button type="button" class="btn btn-write" onclick="fnGoUpdate(); return false;"><i class="fa fa-pen"></i> 확인</button>
 					</div>
 				</div>
