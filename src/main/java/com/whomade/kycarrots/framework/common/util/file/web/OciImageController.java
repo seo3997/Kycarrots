@@ -21,11 +21,11 @@ public class OciImageController {
     @Resource
     private OciObjectStorageService ociService;
 
-    @RequestMapping("/common/img/{pathKey}/{dateFolder}/{filename}")
+    @RequestMapping("/common/img/{pathKey}/{dateFolder}/{filename:.+}")
     public void serveImage(
             @PathVariable String pathKey,
             @PathVariable String dateFolder,
-            @PathVariable String filename,
+            @PathVariable("filename") String filename,
             HttpServletResponse response) {
 
         FilePathResolver.Storage storage = resolver.resolve(pathKey);
