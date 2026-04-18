@@ -369,7 +369,7 @@
 		<!-- Main content -->
 		<section class="content container-fluid vw-page">
 			<form role="form" id="aform" method="post" action="/mgt/product/insertProduct.do" enctype="multipart/form-data" class="form-horizontal">
-            	<input type="hidden" id="productId"             name="productId" 				 />
+            	<input type="hidden" id="productId"             name="productId" 			    value="<%=param.getString("productId")%>" />
                 <input type="hidden" id="categoryGroup"         name="categoryGroup" 			value="R010610" />
 				<input type="hidden" id="areaGroup"             name="areaGroup" 			    value="R010070" />
 				<input type="hidden" id="unitGroup"             name="unitGroup" 			    value="R010620" />

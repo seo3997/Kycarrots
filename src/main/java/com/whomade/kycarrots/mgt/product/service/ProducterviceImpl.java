@@ -605,4 +605,9 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		}
 	}
 
+	@Override
+	public long selectNextProductId() throws Exception {
+		return commonMybatisDao.selectOne("mgt.product.selectNextProductId");
+	}
+
 }

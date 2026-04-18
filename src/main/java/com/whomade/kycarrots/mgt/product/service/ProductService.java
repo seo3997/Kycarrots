@@ -27,5 +27,7 @@ public interface ProductService {
 	DataMap uploadSummernoteImage(DataMap param, MultipartFile file) throws Exception;
 
 	void deleteSummernoteImage(DataMap param) throws Exception;
+	
+	long selectNextProductId() throws Exception;
 
 }

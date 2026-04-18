@@ -195,6 +195,10 @@ public class ProdcutController {
 		UserInfoVo userInfoVo = SessionUtil.getSessionUserInfoVo(request);
 		param.put("ss_user_no", userInfoVo.getUserNo());
 
+		// 상품 ID 미리 발급
+		long nextProductId = productService.selectNextProductId();
+		param.put("productId", nextProductId);
+
 		model.addAttribute("param", param);
 
 		return "mgt/product/insertFormProduct";
