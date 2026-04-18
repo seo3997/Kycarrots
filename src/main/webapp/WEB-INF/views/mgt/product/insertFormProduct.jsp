@@ -212,27 +212,8 @@
 				data: data,
 				type: "POST",
 				success: function(res) {
-					// 마운트 지연(NFS Sync) 대응: 서버(WEB)에 파일이 나타날 때까지 사전 로딩 시도 후 삽입
-					var count = 0;
-					var maxTries = 10;
-					var tryInsert = function() {
-						var img = new Image();
-						img.onload = function() {
-							$(editor).summernote('insertImage', res.url);
-						};
-						img.onerror = function() {
-							if (count < maxTries) {
-								count++;
-								setTimeout(tryInsert, 1000); // 1초 대기 후 재시도
-							} else {
-								// 실패 시에도 삽입은 시도
-								$(editor).summernote('insertImage', res.url);
-							}
-						};
-						// 캐시 방지용 타임스탬프
-						img.src = res.url + '?t=' + new Date().getTime();
-					};
-					tryInsert();
+					// OCI 환경이므로 즉시 이미지 삽입
+					$(editor).summernote('insertImage', res.url);
 				},
 				error: function(err) {
 					console.error(err);
