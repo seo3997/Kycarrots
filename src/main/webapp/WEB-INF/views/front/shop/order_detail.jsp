@@ -18,33 +18,7 @@
         <div class="spinner"></div>
     </div>
 
-<header class="header">
-    <a href="/shop/list.do" class="logo">
-        <c:choose>
-            <c:when test="${not empty branchInfo.LOGO_IMAGE_URL}">
-                <img src="${branchInfo.LOGO_IMAGE_URL}" alt="Logo">
-            </c:when>
-            <c:otherwise>
-                <div style="width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-                    <i class="fas fa-shopping-bag" style="font-size: 0.9rem;"></i>
-                </div>
-            </c:otherwise>
-        </c:choose>
-        <span>${branchInfo.BRANCH_NAME}</span>
-    </a>
-    <nav class="nav-links">
-        <a href="/shop/list.do">상품목록</a>
-        <a href="/shop/orderList.do">주문현황</a>
-        <c:choose>
-            <c:when test="${empty userInfoVo}">
-                <a href="/front/login.do" class="btn-login">로그인</a>
-            </c:when>
-            <c:otherwise>
-                <a href="/front/logout.do">로그아웃</a>
-            </c:otherwise>
-        </c:choose>
-    </nav>
-</header>
+<%@ include file="/common/frontinc/shop_header.jspf" %>
 
 <main class="container" style="max-width: 800px; margin: 2rem auto;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
@@ -230,6 +204,8 @@
     }
 </script>
 
+
+<%@ include file="/common/frontinc/shop_footer.jspf" %>
 
 <script src="/common/front/lib/jquery-3.6.0.min.js"></script>
 <script src="/common/front/js/front_common.js?v=20240316"></script>

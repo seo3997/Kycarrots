@@ -50,14 +50,7 @@
         <div class="spinner"></div>
     </div>
 
-<header class="header">
-    <a href="/shop/list.do" class="logo">
-        <div style="width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-            <i class="fas fa-shopping-bag" style="font-size: 0.9rem;"></i>
-        </div>
-        <span>${branchInfo.BRANCH_NAME}</span>
-    </a>
-</header>
+<%@ include file="/common/frontinc/shop_header.jspf" %>
 
 <main class="container" style="max-width: 700px; padding: 1.5rem 1rem;">
     <div class="checkout-card" style="padding: 1.5rem; border-radius: var(--radius-lg);">
@@ -430,6 +423,8 @@
     });
 </script>
 
+
+<%@ include file="/common/frontinc/shop_footer.jspf" %>
 
 <script src="/common/front/lib/jquery-3.6.0.min.js"></script>
 <script src="/common/front/js/front_common.js?v=20240316"></script>

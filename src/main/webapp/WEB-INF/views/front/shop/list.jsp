@@ -18,33 +18,7 @@
         <div class="spinner"></div>
     </div>
 
-<header class="header">
-    <a href="/shop/list.do" class="logo">
-        <c:choose>
-            <c:when test="${not empty branchInfo.LOGO_IMAGE_URL}">
-                <img src="${branchInfo.LOGO_IMAGE_URL}" alt="Logo">
-            </c:when>
-            <c:otherwise>
-                <div style="width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-                    <i class="fas fa-shopping-bag" style="font-size: 0.9rem;"></i>
-                </div>
-            </c:otherwise>
-        </c:choose>
-        <span>${branchInfo.BRANCH_NAME}</span>
-    </a>
-    <nav class="nav-links">
-        <a href="/shop/list.do">상품목록</a>
-        <a href="/shop/orderList.do">주문현황</a>
-        <c:choose>
-            <c:when test="${empty userInfoVo}">
-                <a href="/front/login.do" class="btn-login">로그인</a>
-            </c:when>
-            <c:otherwise>
-                <a href="/front/logout.do">로그아웃</a>
-            </c:otherwise>
-        </c:choose>
-    </nav>
-</header>
+<%@ include file="/common/frontinc/shop_header.jspf" %>
 
 <section class="hero">
     <div style="max-width: 800px; margin: 0 auto;">
@@ -104,15 +78,7 @@
     </div>
 </main>
 
-<footer class="footer">
-    <div class="footer-info">
-        <p><strong>(주)${branchInfo.COMPANY_NAME} | 대표자: ${branchInfo.REPRESENTATIVE_NAME}</strong></p>
-        <p>사업자등록번호: ${branchInfo.BUSINESS_NUMBER} | 통신판매업신고: ${branchInfo.TONGSIN_NUMBER}</p>
-        <p>주소: ${branchInfo.ADDRESS}</p>
-        <p>고객센터: ${branchInfo.CS_PHONE} | 도메인: ${branchInfo.DOMAIN_URL}</p>
-        <p style="margin-top: 2rem; opacity: 0.6;">&copy; 2024 asagong. All rights reserved.</p>
-    </div>
-</footer>
+<%@ include file="/common/frontinc/shop_footer.jspf" %>
 
 
 <script src="/common/front/lib/jquery-3.6.0.min.js"></script>
