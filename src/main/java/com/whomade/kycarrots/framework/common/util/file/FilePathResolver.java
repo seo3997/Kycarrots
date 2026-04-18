@@ -93,7 +93,10 @@ public class FilePathResolver {
 
             if (!subPath.isEmpty()) {
                 dir = Paths.get(dir, subPath).toString();
-                finalUrl = ensureUrl(finalUrl) + subPath + "/";
+                // OCI가 아닐 때만(로컬일 때만) URL에 subPath를 추가. OCI는 pathPrefix가 전체 경로를 담당함.
+                if (!"Y".equalsIgnoreCase(storageType)) {
+                    finalUrl = ensureUrl(finalUrl) + subPath + "/";
+                }
             }
             return new Storage(ensureDir(dir), ensureUrl(finalUrl), storageType, oci.getBucketName(), oci.getNamespace(), pathKey);
         }
