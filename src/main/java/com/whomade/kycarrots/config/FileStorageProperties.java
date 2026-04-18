@@ -4,8 +4,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.unit.DataSize;
 
-@Component
-@ConfigurationProperties(prefix = "file")
+/**
+ * @deprecated Use FilePathResolver for dynamic path management.
+ */
 public class FileStorageProperties {
 
     // file.max-size-total, file.max-size-each

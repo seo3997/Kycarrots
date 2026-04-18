@@ -1,6 +1,5 @@
 package com.whomade.kycarrots.mgt.product.service;
 
-import com.whomade.kycarrots.config.FileStorageProperties;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.dao.CommonMybatisDao;
@@ -27,11 +26,7 @@ import java.util.List;
 @Service("procuctService")
 public class ProducterviceImpl extends EgovAbstractServiceImpl implements ProductService {
 
-	@Autowired
-	private FileStorageProperties fileStorageProperties;
 
-	@Value("${file.product.public-url}")
-	private String publicUrl;
 
 	/** commonDao */
 	@Resource(name = "commonMybatisDao")

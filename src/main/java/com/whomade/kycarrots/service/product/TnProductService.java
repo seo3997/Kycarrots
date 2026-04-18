@@ -1,6 +1,5 @@
 package com.whomade.kycarrots.service.product;
 
-import com.whomade.kycarrots.config.FileStorageProperties;
 import com.whomade.kycarrots.entity.product.TnProductImageVo;
 import com.whomade.kycarrots.entity.product.TnProductVo;
 import com.whomade.kycarrots.framework.common.object.DataMap;
@@ -30,12 +29,10 @@ import java.util.Map;
 @Slf4j
 public class TnProductService {
 
-    @Value("${file.product.public-url}")
-    private String publicUrl;
+    @Resource
+    private com.whomade.kycarrots.framework.common.util.file.FilePathResolver filePathResolver;
 
     private final TnProductRepository tnProductRepository;
-    @Autowired
-    private FileStorageProperties fileStorageProperties;
 
     @Autowired
     private com.whomade.kycarrots.push.PushService pushService;
@@ -92,14 +89,14 @@ public class TnProductService {
 
             if (!file.isEmpty()) {
 
-                String baseDir = fileStorageProperties.getProduct().getUploadDir();
+                String baseDir = filePathResolver.resolve("product").getUploadDir();
                 String productId = productVo.getProductId(); // 예: "123"
                 String imageUrl = "";
 
                 try {
                     File destFile = FileUtil.saveFile(file, baseDir, productId);
                     // DB에 저장할 경로:
-                    imageUrl = publicUrl + "/" + productId + "/" + destFile.getName();
+                    imageUrl = filePathResolver.resolve("product").getPublicUrl() + "/" + productId + "/" + destFile.getName();
                     meta.setImageUrl(imageUrl);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -170,9 +167,9 @@ public class TnProductService {
 
             // 새 이미지 추가
             if (isNew && file != null && !file.isEmpty()) {
-                File destFile = FileUtil.saveFile(file, fileStorageProperties.getProduct().getUploadDir(),
+                File destFile = FileUtil.saveFile(file, filePathResolver.resolve("product").getUploadDir(),
                         productVo.getProductId());
-                String imageUrl = publicUrl + "/" + productVo.getProductId() + "/" + destFile.getName();
+                String imageUrl = filePathResolver.resolve("product").getPublicUrl() + "/" + productVo.getProductId() + "/" + destFile.getName();
 
                 meta.setImageUrl(imageUrl);
                 meta.setProductId(Long.valueOf(productVo.getProductId()));
@@ -189,9 +186,9 @@ public class TnProductService {
             // 기존 이미지 수정
             else if (meta.getImageId() != null) {
                 if (file != null && !file.isEmpty()) {
-                    File destFile = FileUtil.saveFile(file, fileStorageProperties.getProduct().getUploadDir(),
+                    File destFile = FileUtil.saveFile(file, filePathResolver.resolve("product").getUploadDir(),
                             productVo.getProductId());
-                    String imageUrl = publicUrl + "/" + productVo.getProductId() + "/" + destFile.getName();
+                    String imageUrl = filePathResolver.resolve("product").getPublicUrl() + "/" + productVo.getProductId() + "/" + destFile.getName();
                     meta.setImageUrl(imageUrl);
                     meta.setImageName(file.getOriginalFilename());
                     meta.setImageSize(file.getSize());
