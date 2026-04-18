@@ -161,8 +161,7 @@ public class AtFileMngUtil {
 		// 저장
 		if ("Y".equalsIgnoreCase(storage.getStorageType())) {
 			// Bucket Upload - DB 경로와 일치하도록 pathKey/dateFolder/fileName 구조로 업로드
-			String pathPrefix = (subPath != null && !subPath.isEmpty()) ? subPath + "/" : "";
-			String objectName = pathPrefix + dateFolder + "/" + storeName;
+			String objectName = storage.getPathPrefix() + dateFolder + "/" + storeName;
 			ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
 		} else {
 			// Local Save

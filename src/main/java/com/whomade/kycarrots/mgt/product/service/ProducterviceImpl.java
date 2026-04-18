@@ -169,9 +169,9 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			String imageUrl;
 
 			if ("Y".equalsIgnoreCase(storage.getStorageType())) {
-				String objectName = "product/" + dateFolder + "/" + storeName;
+				String objectName = storage.getPathPrefix() + dateFolder + "/" + storeName;
 				ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
-				imageUrl = storage.getPublicUrl() + "product/" + dateFolder + "/" + storeName;
+				imageUrl = storage.getPublicUrl() + dateFolder + "/" + storeName;
 			} else {
 				java.io.File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
 				imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();
@@ -303,9 +303,9 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 				String imageUrl;
 
 				if ("Y".equalsIgnoreCase(storage.getStorageType())) {
-					String objectName = "product/" + dateFolder + "/" + storeName;
+					String objectName = storage.getPathPrefix() + dateFolder + "/" + storeName;
 					ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
-					imageUrl = storage.getPublicUrl() + "product/" + dateFolder + "/" + storeName;
+					imageUrl = storage.getPublicUrl() + dateFolder + "/" + storeName;
 				} else {
 					java.io.File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
 					imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();
@@ -436,9 +436,9 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		String imageUrl;
 
 		if ("Y".equalsIgnoreCase(storage.getStorageType())) {
-			String objectName = "product/" + dateFolder + "/" + storeName;
+			String objectName = storage.getPathPrefix() + dateFolder + "/" + storeName;
 			ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
-			imageUrl = storage.getPublicUrl() + "product/" + dateFolder + "/" + storeName;
+			imageUrl = storage.getPublicUrl() + dateFolder + "/" + storeName;
 		} else {
 			java.io.File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
 			imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();

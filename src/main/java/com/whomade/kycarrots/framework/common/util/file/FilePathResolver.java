@@ -64,14 +64,14 @@ public class FilePathResolver {
                 // URL도 하위 경로를 포함하도록 결합
                 finalUrl = ensureUrl(finalUrl) + subPath + "/";
             }
-            return new Storage(ensureDir(dir), ensureUrl(finalUrl), storageType, bucketName, namespace);
+            return new Storage(ensureDir(dir), ensureUrl(finalUrl), storageType, bucketName, namespace, pathKey);
         }
 
         throw new IllegalArgumentException("Unknown pathKey: " + pathKey + " (root must be 'product' or 'board')");
     }
 
     public Storage getGlobalConfig() {
-        return new Storage("", "", storageType, bucketName, namespace);
+        return new Storage("", "", storageType, bucketName, namespace, "");
     }
 
     private String ensureDir(String dir) {
@@ -96,8 +96,9 @@ public class FilePathResolver {
         private final String storageType;
         private final String bucketName;
         private final String namespace;
+        private final String pathPrefix;
 
-        public Storage(String uploadDir, String publicUrl, String storageType, String bucketName, String namespace) {
+        public Storage(String uploadDir, String publicUrl, String storageType, String bucketName, String namespace, String pathPrefix) {
             this.uploadDir = uploadDir;
             if (publicUrl != null && !publicUrl.isEmpty() && !publicUrl.endsWith("/")) {
                 this.publicUrl = publicUrl + "/";
@@ -107,6 +108,11 @@ public class FilePathResolver {
             this.storageType = storageType;
             this.bucketName = bucketName;
             this.namespace = namespace;
+            this.pathPrefix = pathPrefix;
+        }
+
+        public String getPathPrefix() {
+            return (pathPrefix != null && !pathPrefix.isEmpty()) ? pathPrefix + "/" : "";
         }
 
         public String getUploadDir() {
