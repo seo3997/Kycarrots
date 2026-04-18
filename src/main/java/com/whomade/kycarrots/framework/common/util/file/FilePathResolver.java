@@ -91,7 +91,11 @@ public class FilePathResolver {
 
         public Storage(String uploadDir, String publicUrl, String storageType, String bucketName, String namespace) {
             this.uploadDir = uploadDir;
-            this.publicUrl = publicUrl;
+            if (publicUrl != null && !publicUrl.isEmpty() && !publicUrl.endsWith("/")) {
+                this.publicUrl = publicUrl + "/";
+            } else {
+                this.publicUrl = publicUrl;
+            }
             this.storageType = storageType;
             this.bucketName = bucketName;
             this.namespace = namespace;
