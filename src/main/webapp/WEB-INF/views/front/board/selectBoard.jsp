@@ -116,7 +116,7 @@
                     for (int i=0; i<fileList.size(); i++) {
                         AtFileVO fvo = (AtFileVO) fileList.get(i);
                         String ext  = fvo.getFile_ext_nm()==null ? "" : fvo.getFile_ext_nm().toLowerCase();
-                        String src  = fvo.getFile_rltv_path() + fvo.getFile_id() + "." + fvo.getFile_ext_nm();
+                        String src  = fvo.getFile_rltv_path();
                         boolean isImg = ext.equals("jpg")||ext.equals("jpeg")||ext.equals("png")||ext.equals("gif")||ext.equals("bmp")||ext.equals("webp");
                         if (isImg) {
                             if (!hasImg) {

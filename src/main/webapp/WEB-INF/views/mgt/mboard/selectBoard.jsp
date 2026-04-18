@@ -201,9 +201,9 @@
 							<!-- 첨부파일을 화면에 표시하는경우 -->
 							<% if ("N".equals(resultMap.getString("ATCH_YN"))) { %>
 								<% if ("jpg".equals(fvo.getFile_ext_nm()) || "png".equals(fvo.getFile_ext_nm()) || "gif".equals(fvo.getFile_ext_nm()) || "bmp".equals(fvo.getFile_ext_nm())) { %>
-									<br><img src="<%=fvo.getFile_rltv_path() + fvo.getFile_id() + '.' + fvo.getFile_ext_nm() %>" style="max-width:100%; border:1px solid #999"><br>
+									<br><img src="<%=fvo.getFile_rltv_path() %>" style="max-width:100%; border:1px solid #999"><br>
 								<% } else if ("mp4".equals(fvo.getFile_ext_nm())) { %>
-									<br><div class="video"><video width="100%" height="auto" controls><source src="<%=fvo.getFile_rltv_path() + fvo.getFile_id() + '.' + fvo.getFile_ext_nm() %>" type="video/mp4"></video></div>
+									<br><div class="video"><video width="100%" height="auto" controls><source src="<%=fvo.getFile_rltv_path() %>" type="video/mp4"></video></div>
 								<% } %>
 							<!-- 첨부파일 다운로드인 경우 -->
 							<% } else { %>
