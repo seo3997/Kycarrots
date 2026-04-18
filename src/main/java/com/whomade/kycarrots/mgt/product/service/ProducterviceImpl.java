@@ -166,7 +166,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			if ("Y".equalsIgnoreCase(storage.getStorageType())) {
 				String objectName = storage.getPathPrefix() + dateFolder + "/" + storeName;
 				ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
-				imageUrl = storage.getPublicUrl() + dateFolder + "/" + storeName;
+				imageUrl = storage.getPublicUrl() + objectName;
 			} else {
 				java.io.File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
 				imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();
@@ -300,7 +300,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 				if ("Y".equalsIgnoreCase(storage.getStorageType())) {
 					String objectName = storage.getPathPrefix() + dateFolder + "/" + storeName;
 					ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
-					imageUrl = storage.getPublicUrl() + dateFolder + "/" + storeName;
+					imageUrl = storage.getPublicUrl() + objectName;
 				} else {
 					java.io.File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
 					imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();
@@ -424,7 +424,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		int userNo = (userNoStr == null || userNoStr.isEmpty()) ? 0 : Integer.parseInt(userNoStr);
 
 		// 물리 저장
-		com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product");
+		com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product/editor");
 		String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
 		String ext = SysUtil.getFileExtName(file.getOriginalFilename());
 		String storeName = SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
@@ -433,7 +433,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 		if ("Y".equalsIgnoreCase(storage.getStorageType())) {
 			String objectName = storage.getPathPrefix() + dateFolder + "/" + storeName;
 			ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
-			imageUrl = storage.getPublicUrl() + dateFolder + "/" + storeName;
+			imageUrl = storage.getPublicUrl() + objectName;
 		} else {
 			java.io.File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
 			imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();
@@ -493,7 +493,7 @@ public class ProducterviceImpl extends EgovAbstractServiceImpl implements Produc
 			TnProductImageVo img = (TnProductImageVo) commonMybatisDao
 					.selectOne("mgt.product.selectProductImageByImageId", imageId);
 			if (img != null) {
-				com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product");
+				com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = resolver.resolve("product/editor");
 				if ("Y".equalsIgnoreCase(storage.getStorageType())) {
 					String imageUrl = img.getImageUrl();
 					String publicUrl = storage.getPublicUrl();

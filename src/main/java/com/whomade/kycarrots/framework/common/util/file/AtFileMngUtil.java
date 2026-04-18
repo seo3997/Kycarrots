@@ -178,7 +178,17 @@ public class AtFileMngUtil {
 		fvo.setFile_rmk(file_rmk);
 		fvo.setFile_nm(originalName);
 		fvo.setFile_aslt_path(absDir.toString() + File.separator + storeName);  // 절대 경로(파일명 포함)
-		fvo.setFile_rltv_path(storage.getPublicUrl() + dateFolder + "/" + storeName);   // 공개 URL(파일명 포함)
+
+		// 공개 URL 세팅 (OCI인 경우 pathPrefix 포함)
+		String relativePath;
+		if ("Y".equalsIgnoreCase(storage.getStorageType())) {
+			String objectName = storage.getPathPrefix() + dateFolder + "/" + storeName;
+			relativePath = storage.getPublicUrl() + objectName;
+		} else {
+			relativePath = storage.getPublicUrl() + dateFolder + "/" + storeName;
+		}
+		fvo.setFile_rltv_path(relativePath);
+
 		fvo.setFile_size(size);
 		fvo.setSs_user_id(ss_user_id);
 		fvo.setContent_type(contentType);

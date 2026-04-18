@@ -35,6 +35,9 @@ public class TnProductService {
     private final TnProductRepository tnProductRepository;
 
     @Autowired
+    private com.whomade.kycarrots.framework.common.util.file.OciObjectStorageService ociService;
+
+    @Autowired
     private com.whomade.kycarrots.push.PushService pushService;
 
     // SELECT
@@ -89,17 +92,24 @@ public class TnProductService {
 
             if (!file.isEmpty()) {
 
-                String baseDir = filePathResolver.resolve("product").getUploadDir();
-                String productId = productVo.getProductId(); // 예: "123"
+                com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = filePathResolver.resolve("product");
+                String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
+                String ext = com.whomade.kycarrots.framework.common.util.SysUtil.getFileExtName(file.getOriginalFilename());
+                String storeName = com.whomade.kycarrots.framework.common.util.SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
                 String imageUrl = "";
 
                 try {
-                    File destFile = FileUtil.saveFile(file, baseDir, productId);
-                    // DB에 저장할 경로:
-                    imageUrl = filePathResolver.resolve("product").getPublicUrl() + "/" + productId + "/" + destFile.getName();
+                    if ("Y".equalsIgnoreCase(storage.getStorageType())) {
+                        String objectName = storage.getPathPrefix() + dateFolder + "/" + storeName;
+                        ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
+                        imageUrl = storage.getPublicUrl() + objectName;
+                    } else {
+                        File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
+                        imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();
+                    }
                     meta.setImageUrl(imageUrl);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    log.error("파일 저장 중 오류 발생", e);
                     continue;
                 }
 
@@ -167,9 +177,20 @@ public class TnProductService {
 
             // 새 이미지 추가
             if (isNew && file != null && !file.isEmpty()) {
-                File destFile = FileUtil.saveFile(file, filePathResolver.resolve("product").getUploadDir(),
-                        productVo.getProductId());
-                String imageUrl = filePathResolver.resolve("product").getPublicUrl() + "/" + productVo.getProductId() + "/" + destFile.getName();
+                com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = filePathResolver.resolve("product");
+                String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
+                String ext = com.whomade.kycarrots.framework.common.util.SysUtil.getFileExtName(file.getOriginalFilename());
+                String storeName = com.whomade.kycarrots.framework.common.util.SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
+                String imageUrl = "";
+
+                if ("Y".equalsIgnoreCase(storage.getStorageType())) {
+                    String objectName = storage.getPathPrefix() + dateFolder + "/" + storeName;
+                    ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
+                    imageUrl = storage.getPublicUrl() + objectName;
+                } else {
+                    File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
+                    imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();
+                }
 
                 meta.setImageUrl(imageUrl);
                 meta.setProductId(Long.valueOf(productVo.getProductId()));
@@ -186,9 +207,20 @@ public class TnProductService {
             // 기존 이미지 수정
             else if (meta.getImageId() != null) {
                 if (file != null && !file.isEmpty()) {
-                    File destFile = FileUtil.saveFile(file, filePathResolver.resolve("product").getUploadDir(),
-                            productVo.getProductId());
-                    String imageUrl = filePathResolver.resolve("product").getPublicUrl() + "/" + productVo.getProductId() + "/" + destFile.getName();
+                    com.whomade.kycarrots.framework.common.util.file.FilePathResolver.Storage storage = filePathResolver.resolve("product");
+                    String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
+                    String ext = com.whomade.kycarrots.framework.common.util.SysUtil.getFileExtName(file.getOriginalFilename());
+                    String storeName = com.whomade.kycarrots.framework.common.util.SysUtil.getFileId() + (ext.isEmpty() ? "" : "." + ext);
+                    String imageUrl = "";
+
+                    if ("Y".equalsIgnoreCase(storage.getStorageType())) {
+                        String objectName = storage.getPathPrefix() + dateFolder + "/" + storeName;
+                        ociService.uploadFile(storage.getNamespace(), storage.getBucketName(), objectName, file);
+                        imageUrl = storage.getPublicUrl() + objectName;
+                    } else {
+                        File destFile = FileUtil.saveFile(file, storage.getUploadDir(), dateFolder, storeName);
+                        imageUrl = storage.getPublicUrl() + dateFolder + "/" + destFile.getName();
+                    }
                     meta.setImageUrl(imageUrl);
                     meta.setImageName(file.getOriginalFilename());
                     meta.setImageSize(file.getSize());
