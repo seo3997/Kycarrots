@@ -26,6 +26,28 @@
             accent-color: var(--primary);
             cursor: pointer;
         }
+
+        /* Login Progress Bar */
+        .login-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+            display: none;
+        }
+        .login-card { position: relative; overflow: hidden; }
+        .loading .login-progress {
+            display: block;
+            animation: login-progress-ani 2s infinite linear;
+        }
+        @keyframes login-progress-ani {
+            0% { width: 0; left: 0; }
+            50% { width: 70%; left: 15%; }
+            100% { width: 0; left: 100%; }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -79,6 +101,7 @@
             </c:when>
             <c:otherwise>
                 <div class="login-header text-center">
+                    <div class="login-progress"></div>
                     <div class="logo"><i class="fas fa-sign-in-alt"></i></div>
                     <h1 style="font-size: 1.75rem; font-weight: 700;">asagong 로그인</h1>
                     <p class="text-muted mt-2">서비스 이용을 위해 로그인해 주세요.</p>
@@ -154,6 +177,12 @@
         const userId = $('#user_id').val();
         const userPw = $('#user_pw').val();
         const errorBox = $('#error-box');
+        const $card = $('.login-card');
+
+        // Show Progress
+        showLoading();
+        $card.addClass('loading');
+        $('.btn-login').prop('disabled', true).text('로그인 중...');
 
         $.ajax({
             url: '/front/loginAjax.do',
@@ -176,11 +205,17 @@
                     const proto = targetDomain.startsWith('http') ? '' : 'http://';
                     location.href = proto + targetDomain + '/shop/list.do';
                 } else {
-                    errorBox.text(res.resultStats.resultMsg).show();
+                    hideLoading();
+                    $card.removeClass('loading');
+                    $('.btn-login').prop('disabled', false).text('로그인');
+                    alert(res.resultStats.resultMsg);
                 }
             },
             error: function() {
-                errorBox.text('로그인 처리 중 오류가 발생했습니다.').show();
+                hideLoading();
+                $card.removeClass('loading');
+                $('.btn-login').prop('disabled', false).text('로그인');
+                alert('로그인 처리 중 오류가 발생했습니다.');
             }
         });
     });

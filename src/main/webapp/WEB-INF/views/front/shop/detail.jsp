@@ -612,10 +612,12 @@
                 if(confirm("구매를 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")) {
                     const currentPath = window.location.pathname + window.location.search;
                     const redirectUrl = encodeURIComponent(currentPath);
+                    if (typeof showLoading === 'function') showLoading();
                     location.href = "/front/login.do?redirectUrl=" + redirectUrl;
                 }
             </c:when>
             <c:otherwise>
+                if (typeof showLoading === 'function') showLoading();
                 location.href = "/shop/checkout.do?productId=" + productId + "&quantity=" + currentQty;
             </c:otherwise>
         </c:choose>
