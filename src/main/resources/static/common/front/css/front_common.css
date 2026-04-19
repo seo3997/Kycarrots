@@ -62,12 +62,65 @@ body {
 .nav-links a {
     text-decoration: none;
     color: var(--text);
-    font-weight: 500;
-    font-size: 1rem;
-    transition: color 0.2s;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
 }
 
 .nav-links a:hover { color: var(--primary); }
+
+/* Header User Section */
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding-right: 1rem;
+    border-right: 1px solid #e2e8f0;
+}
+
+.user-info i {
+    font-size: 1.1rem;
+    color: var(--primary);
+}
+
+.user-id {
+    font-weight: 700;
+    color: var(--text);
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-greeting {
+    color: var(--text-muted);
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-profile {
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.btn-logout {
+    color: #ef4444;
+    text-decoration: none;
+    font-weight: 500;
+}
 
 .nav-links .btn-login {
     background: var(--primary);
@@ -138,8 +191,15 @@ body {
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+@media (min-width: 480px) {
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+    }
 }
 
 @media (min-width: 768px) {
@@ -352,12 +412,50 @@ body {
 }
 
 /* Responsive Adjustments */
-@media (max-width: 640px) {
-    .header { padding: 0.75rem 1rem; }
-    .header .logo span { display: none; } /* Hide text on mobile logos if space is tight */
-    .nav-links { gap: 0.75rem; }
-    .nav-links a { font-size: 0.875rem; }
-    .nav-links .btn-login { padding: 0.4rem 0.8rem; font-size: 0.875rem; }
+@media (max-width: 768px) {
+    .header {
+        padding: 0.75rem 1rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .header .logo {
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    .nav-links {
+        justify-content: space-between;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.5rem 0;
+        border-top: 1px solid #f1f5f9;
+        flex-wrap: wrap;
+    }
+
+    .nav-links a { font-size: 0.85rem; }
+    
+    .header-user {
+        width: 100%;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .user-info {
+        border: none;
+        padding-right: 0;
+    }
+
+    .user-id {
+        max-width: 150px;
+    }
+
+    .user-actions {
+        gap: 0.75rem;
+    }
+
+    .nav-links .btn-login { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
 
     .hero { padding: 2rem 1rem; }
     .hero h1 { font-size: 1.75rem; }

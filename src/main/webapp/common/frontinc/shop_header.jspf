@@ -21,14 +21,17 @@
                 <a href="/front/login.do" class="btn-login">로그인</a>
             </c:when>
             <c:otherwise>
-                <div class="user-info" style="display: flex; align-items: center; gap: 0.75rem; margin-right: 0.5rem;">
-                    <span style="font-size: 0.85rem; color: var(--text-muted); border-right: 1px solid #e2e8f0; padding-right: 0.75rem;">
-                        <i class="fas fa-user-circle" style="margin-right: 0.25rem;"></i>
-                        <strong>${userInfoVo.id}</strong>님
-                    </span>
-                    <a href="/front/myPage.do" style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">정보수정</a>
+                <div class="header-user">
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-id">${userInfoVo.id}</span>
+                        <span class="user-greeting">님</span>
+                    </div>
+                    <div class="user-actions">
+                        <a href="/front/myPage.do" class="btn-profile">정보수정</a>
+                        <a href="/front/logout.do" class="btn-logout">로그아웃</a>
+                    </div>
                 </div>
-                <a href="/front/logout.do" class="logout-link" style="font-size: 0.85rem; color: #ef4444;">로그아웃</a>
             </c:otherwise>
         </c:choose>
     </nav>
