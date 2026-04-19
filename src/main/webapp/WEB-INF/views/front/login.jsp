@@ -9,6 +9,24 @@
     <link rel="stylesheet" href="/common/front/lib/font-awesome/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/common/front/css/front_common.css?v=20260419">
+    <style>
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #64748b;
+            cursor: pointer;
+            margin: 1rem 0;
+            user-select: none;
+        }
+        .checkbox-container input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
     <div id="loadingOverlay" class="loading-overlay" style="display: flex;">
@@ -76,9 +94,12 @@
                         <input type="password" id="user_pw" name="user_pw" class="form-control" placeholder="비밀번호를 입력하세요" required>
                     </div>
                     
-                    <div id="error-box" class="error-msg" style="display:none;"></div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="remember_id">
+                        <label for="remember_id">아이디 기억하기</label>
+                    </div>
 
-                    <button type="submit" class="btn-login" style="width:100%; height:50px; font-size:1.1rem; margin-top:1rem;">로그인</button>
+                    <button type="submit" class="btn-login" style="width:100%; height:50px; font-size:1.1rem; margin-top:0.5rem;">로그인</button>
                 </form>
 
                 <div class="login-footer text-center">
@@ -97,6 +118,37 @@
 <script src="/common/front/lib/jquery-3.6.0.min.js"></script>
 <script src="/common/front/js/front_common.js?v=20240316"></script>
 <script>
+    // Cookie functions
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    // Load saved ID
+    $(document).ready(function() {
+        const savedId = getCookie("saved_user_id");
+        if (savedId) {
+            $('#user_id').val(savedId);
+            $('#remember_id').prop('checked', true);
+        }
+    });
+
     $('#loginForm').on('submit', function(e) {
         e.preventDefault();
         const userId = $('#user_id').val();
@@ -113,8 +165,14 @@
             success: function(response) {
                 const res = JSON.parse(response);
                 if (res.resultStats.resultCode === 'ok') {
+                    // Remember ID logic
+                    if ($('#remember_id').is(':checked')) {
+                        setCookie("saved_user_id", userId, 30);
+                    } else {
+                        setCookie("saved_user_id", "", -1);
+                    }
+
                     const targetDomain = res.resultStats.domainUrl;
-                    // https 지원 전까지 http 사용
                     const proto = targetDomain.startsWith('http') ? '' : 'http://';
                     location.href = proto + targetDomain + '/shop/list.do';
                 } else {
