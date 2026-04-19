@@ -16,14 +16,25 @@
             --bg: #f8fafc;
             --text: #1e293b;
         }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--text); text-align: center; padding: 4rem 2rem; }
-        .success-card { background: white; max-width: 500px; margin: 0 auto; padding: 3rem; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--text); text-align: center; padding: 4rem 1rem; }
+        .success-card { background: white; width: 100%; max-width: 500px; margin: 0 auto; padding: 3rem; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .icon { font-size: 4rem; color: #10b981; margin-bottom: 1.5rem; }
-        h1 { font-size: 1.75rem; margin-bottom: 1rem; }
+        h1 { font-size: 1.75rem; margin-bottom: 1rem; line-height: 1.3; }
         p { color: #64748b; margin-bottom: 2rem; }
         .order-info { background: #f1f5f9; padding: 1.5rem; border-radius: 12px; text-align: left; margin-bottom: 2rem; }
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
-        .btn-home { display: inline-block; padding: 1rem 2rem; background: var(--primary); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 0.75rem; gap: 1rem; }
+        .info-row span { color: #64748b; font-size: 0.9rem; flex-shrink: 0; }
+        .info-row strong { word-break: break-all; text-align: right; }
+        .btn-home { display: block; width: 100%; padding: 1.125rem; background: var(--primary); color: white; text-decoration: none; border-radius: 14px; font-weight: 700; font-size: 1.1rem; transition: all 0.2s; }
+        .btn-home:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        
+        @media (max-width: 480px) {
+            body { padding: 2rem 1rem; }
+            .success-card { padding: 2rem 1.5rem; border-radius: 20px; }
+            .info-row { flex-direction: column; gap: 0.25rem; }
+            .info-row strong { text-align: left; font-size: 1rem; }
+            h1 { font-size: 1.5rem; }
+        }
         #loading { display: block; }
         #result { display: none; }
     </style>
