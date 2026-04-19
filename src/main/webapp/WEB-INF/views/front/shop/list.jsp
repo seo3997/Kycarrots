@@ -11,7 +11,7 @@
     <title>${branchInfo.BRANCH_NAME} - 전용 쇼핑몰</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20240316">
+    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20260419">
 </head>
 <body>
     <div id="loadingOverlay" class="loading-overlay" style="display: flex;">

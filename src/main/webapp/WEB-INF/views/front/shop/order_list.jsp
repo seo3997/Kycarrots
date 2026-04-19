@@ -11,7 +11,7 @@
     <title>주문 내역 - ${branchInfo.BRANCH_NAME}</title>
     <link rel="stylesheet" href="/common/front/lib/font-awesome/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20240316">
+    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20260419">
     <style>
         .btn-cancel {
             margin-top: 0.5rem;

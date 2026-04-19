@@ -14,7 +14,7 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20240316">
+    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20260419">
     <style>
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
         .total-row { border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 1rem; font-weight: 700; font-size: 1.25rem; color: var(--primary); }

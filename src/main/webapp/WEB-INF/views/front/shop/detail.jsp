@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>상품 상세 - ${branchInfo.BRANCH_NAME}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20240316">
+    <link rel="stylesheet" href="/common/front/css/front_common.css?v=20260419">
     <style>
         .detail-wrapper { display: flex; flex-direction: column; gap: 2rem; background: white; padding: 2rem; border-radius: 20px; box-shadow: var(--shadow); }
 
