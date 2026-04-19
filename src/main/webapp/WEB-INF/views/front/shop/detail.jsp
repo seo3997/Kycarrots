@@ -14,41 +14,132 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/common/front/css/front_common.css?v=20260419">
     <style>
-        .detail-wrapper { display: flex; flex-direction: column; gap: 2rem; background: white; padding: 2rem; border-radius: 20px; box-shadow: var(--shadow); }
+        .detail-wrapper { 
+            display: grid; 
+            grid-template-columns: 1.2fr 1fr; 
+            gap: 3rem; 
+            background: white; 
+            padding: 2.5rem; 
+            border-radius: 24px; 
+            box-shadow: var(--shadow-lg); 
+            margin-bottom: 2.5rem;
+        }
 
-        .product-img { width: 100%; border-radius: 12px; aspect-ratio: 16/9; background: #f1f5f9; background-size: cover; background-position: center; }
+        .product-img { 
+            width: 100%; 
+            border-radius: 16px; 
+            aspect-ratio: 1; 
+            background: #f8fafc; 
+            background-size: cover; 
+            background-position: center; 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
         
-        .product-info h1 { font-size: 1.75rem; margin-bottom: 0.75rem; }
-        .price-tag { font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 1.5rem; }
-        
-        .description-card { background: white; border-radius: 20px; padding: 2.5rem; box-shadow: var(--shadow); margin-top: 2rem; }
-        .description-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #f1f5f9; }
-        .description { color: var(--text-muted); line-height: 1.8; font-size: 1.05rem; }
-        
-        .additional-images { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
-        .additional-img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; cursor: zoom-in; }
-        .description img { max-width: 100%; height: auto; border-radius: 8px; margin: 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .description table { width: 100% !important; border-collapse: collapse; margin: 1.5rem 0; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
-        .description table th, .description table td { padding: 12px 16px; border: 1px solid #e2e8f0; }
-        .description table th { background: #f8fafc; font-weight: 600; color: var(--text); }
-        .description p { margin-bottom: 1rem; }
-        .description pre, .description code { background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; }
-        .description blockquote { border-left: 4px solid var(--primary); padding-left: 1rem; margin: 1.5rem 0; font-style: italic; color: var(--text); }
+        .product-info {
+            display: flex;
+            flex-direction: column;
+        }
 
-        .order-box { border-top: 1px solid #e2e8f0; padding-top: 2rem; }
-        .quantity-selector { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
-        .btn-qty { border: 1px solid #cbd5e1; background: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .product-info h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem; color: #0f172a; line-height: 1.2; }
+        .price-tag { font-size: 1.85rem; font-weight: 800; color: var(--primary); margin-bottom: 1.25rem; letter-spacing: -0.5px; }
         
-        .btn-order { width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 1.125rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-        .btn-order:hover { background: #1d4ed8; }
+        .description-card { background: white; border-radius: 24px; padding: 2rem; box-shadow: var(--shadow); margin-top: 2rem; }
+        .description-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; }
+        .description { color: #334155; line-height: 1.8; font-size: 1.05rem; }
+        
+        .additional-images { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+        .additional-img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; border: 1px solid #e2e8f0; cursor: zoom-in; transition: transform 0.2s; }
+        .additional-img:hover { transform: scale(1.02); }
+
+        .order-box { border-top: 1px solid #f1f5f9; padding-top: 1.5rem; margin-top: auto; }
+        .quantity-selector { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .btn-qty { 
+            border: 1px solid #e2e8f0; 
+            background: white; 
+            width: 38px; 
+            height: 38px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            transition: all 0.2s;
+            color: #475569;
+        }
+        .btn-qty:hover { background: #f8fafc; border-color: var(--primary); color: var(--primary); }
+        
+        .btn-order { 
+            width: 100%; 
+            padding: 1.25rem; 
+            background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 16px; 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+        }
+        .btn-order:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+            filter: brightness(1.1);
+        }
 
         .detail-tabs { 
             display: flex; 
-            border-bottom: 2px solid #f1f5f9; 
-            margin-top: 2rem;
+            border-bottom: 1px solid #e2e8f0; 
+            margin-top: 1rem;
             background: white;
             border-radius: 12px 12px 0 0;
             overflow: hidden;
+            position: sticky;
+            top: 72px;
+            z-index: 100;
+        }
+
+
+        /* Modal Styles */
+        .status-badge {
+            padding: 0.35rem 0.85rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .shipping-info { 
+            margin-bottom: 1.25rem; 
+            padding: 1.25rem; 
+            background: #f8fafc; 
+            border-radius: 20px; 
+            border: 1px solid #f1f5f9; 
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+        .info-row .label {
+            color: #64748b;
+            font-weight: 600;
+            width: 70px;
+            font-size: 0.85rem;
+        }
+        .info-row .label::after {
+            content: " :";
+        }
+        .info-row .value {
+            color: #1e293b;
+            font-weight: 600;
         }
 
         /* Modal Styles */
@@ -99,37 +190,48 @@
         .star-rating label:hover ~ label,
         .star-rating input:checked ~ label { color: var(--accent); }
 
-        @media (max-width: 768px) {
-            .detail-wrapper { grid-template-columns: 1fr; }
-            .header { padding: 0.75rem 1rem; }
-            .nav-links { gap: 0.75rem; }
-            .nav-links a { font-size: 0.85rem; }
-            .logo span { display: none; }
+        @media (max-width: 992px) {
+            .detail-wrapper { 
+                grid-template-columns: 1fr; 
+                gap: 1.5rem; 
+                padding: 1.5rem; 
+                border-radius: 0;
+                margin: -2rem -1rem 1rem -1rem;
+                box-shadow: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            .product-img { aspect-ratio: 1; border-radius: 12px; }
+            .product-info h1 { font-size: 1.75rem; }
+            .price-tag { font-size: 1.6rem; margin-bottom: 1rem; }
+            .detail-tabs { top: 60px; }
         }
+
         .detail-tab { 
             flex: 1; 
-            padding: 1.25rem 1rem; 
+            padding: 1rem; 
             text-align: center; 
             cursor: pointer; 
-            font-weight: 600; 
-            color: var(--text-muted);
+            font-weight: 700; 
+            font-size: 0.95rem;
+            color: #64748b;
             transition: all 0.2s;
+            border-bottom: 2px solid transparent;
         }
         .detail-tab.active { 
             color: var(--primary); 
-            border-bottom: 3px solid var(--primary); 
+            border-bottom: 2px solid var(--primary); 
             background: #f8faff;
         }
         
         .tab-content { 
             display: none; 
             background: white; 
-            padding: 2rem; 
+            padding: 2.5rem 0; 
             border-radius: 0 0 12px 12px;
-            box-shadow: var(--shadow);
             margin-bottom: 2rem;
         }
         .tab-content.active { display: block; }
+
         
         .review-item, .qna-item { 
             padding: 1.5rem 0; 
@@ -230,8 +332,7 @@
     <div class="detail-wrapper">
         <div class="product-img" style="background-image: url('${productInfo.IMAGE_URL}')"></div>
         <div class="product-info">
-            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-                <h1 style="margin-bottom: 0;">${productInfo.TITLE}</h1>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
                 <c:choose>
                     <c:when test="${productInfo.SALE_STATUS eq '0'}"><span class="status-badge" style="background: #f1f5f9; color: #94a3b8;">승인요청</span></c:when>
                     <c:when test="${productInfo.SALE_STATUS eq '10'}"><span class="status-badge" style="background: #eff6ff; color: #3b82f6;">예약중</span></c:when>
@@ -239,19 +340,26 @@
                     <c:when test="${productInfo.SALE_STATUS eq '30'}"><span class="status-badge" style="background: #fff7ed; color: #f59e0b;">판매중지</span></c:when>
                     <c:when test="${productInfo.SALE_STATUS eq '98'}"><span class="status-badge" style="background: #fef2f2; color: #dc2626;">반려</span></c:when>
                     <c:when test="${productInfo.SALE_STATUS eq '99'}"><span class="status-badge" style="background: #f8fafc; color: #64748b;">판매완료</span></c:when>
-                    <c:when test="${productInfo.SALE_STATUS ne '1'}"><span class="status-badge" style="background: #f1f5f9; color: #94a3b8;">준비중</span></c:when>
+                    <c:when test="${productInfo.SALE_STATUS eq '1'}"><span class="status-badge" style="background: rgba(37, 99, 235, 0.1); color: var(--primary);">● 판매중</span></c:when>
+                    <c:otherwise><span class="status-badge" style="background: #f1f5f9; color: #94a3b8;">준비중</span></c:otherwise>
                 </c:choose>
+                <h1 style="margin-bottom: 0; width: 100%; order: 2;">${productInfo.TITLE}</h1>
             </div>
             <p class="price-tag"><fmt:formatNumber value="${productInfo.PRICE}" type="number" maxFractionDigits="0"/>원</p>
             
-            <div class="shipping-info" style="margin-bottom: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; color: var(--text);">
-                    <i class="fas fa-truck" style="color: var(--primary);"></i>
-                    <span style="font-weight: 600;">배송비: </span>
-                    <span><fmt:formatNumber value="${branchInfo.BASE_SHIPPING_FEE}" type="number" maxFractionDigits="0"/>원</span>
+            <div class="shipping-info">
+                <div class="info-row">
+                    <span class="label">상품상태</span>
+                    <span class="value" style="color: var(--primary);">${productInfo.SALE_STATUS_NM}</span>
                 </div>
-                <div style="font-size: 0.85rem; color: var(--text-muted); margin-left: 1.7rem; margin-top: 0.25rem;">
-                    (<fmt:formatNumber value="${branchInfo.FREE_SHIPPING_THRESHOLD}" type="number" maxFractionDigits="0"/>원 이상 구매 시 무료)
+                <div class="info-row">
+                    <span class="label">배송정보</span>
+                    <div class="value">
+                        <span style="font-weight: 700;"><fmt:formatNumber value="${branchInfo.BASE_SHIPPING_FEE}" type="number" maxFractionDigits="0"/>원</span>
+                        <span style="font-size: 0.85rem; color: #94a3b8; font-weight: 500;">
+                            (<fmt:formatNumber value="${branchInfo.FREE_SHIPPING_THRESHOLD}" type="number" maxFractionDigits="0"/>원 이상 무료)
+                        </span>
+                    </div>
                 </div>
             </div>
             
@@ -298,7 +406,6 @@
 
     <!-- Tab 1: Description -->
     <div id="tab-desc" class="tab-content active">
-        <div class="description-title">상품 상세 설명</div>
         <div class="description">
             <c:set var="editorMode" value="${productInfo.EDITOR_MODE}" />
             <% 
