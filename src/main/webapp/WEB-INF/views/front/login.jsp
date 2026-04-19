@@ -203,7 +203,17 @@
 
                     const targetDomain = res.resultStats.domainUrl;
                     const proto = targetDomain.startsWith('http') ? '' : 'http://';
-                    location.href = proto + targetDomain + '/shop/list.do';
+                    
+                    // Get redirectUrl from URL parameters
+                    const urlParams = new URLSearchParams(window.location.search);
+                    let redirectUrl = urlParams.get('redirectUrl') || '/shop/list.do';
+                    
+                    // Ensure redirectUrl starts with /
+                    if (!redirectUrl.startsWith('/')) {
+                        redirectUrl = '/' + redirectUrl;
+                    }
+
+                    location.href = proto + targetDomain + redirectUrl;
                 } else {
                     hideLoading();
                     $card.removeClass('loading');
