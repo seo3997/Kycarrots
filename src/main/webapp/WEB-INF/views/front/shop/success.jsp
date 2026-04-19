@@ -16,32 +16,38 @@
             --bg: #f8fafc;
             --text: #1e293b;
         }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--text); text-align: center; padding: 4rem 1rem; }
-        .success-card { background: white; width: 100%; max-width: 500px; margin: 0 auto; padding: 3rem; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        .icon { font-size: 4rem; color: #10b981; margin-bottom: 1.5rem; }
-        h1 { font-size: 1.75rem; margin-bottom: 1rem; line-height: 1.3; }
-        p { color: #64748b; margin-bottom: 2rem; }
-        .order-info { background: #f1f5f9; padding: 1.5rem; border-radius: 12px; text-align: left; margin-bottom: 2rem; }
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 0.75rem; gap: 1rem; }
-        .info-row span { color: #64748b; font-size: 0.9rem; flex-shrink: 0; }
-        .info-row strong { word-break: break-all; text-align: right; }
-        .btn-home { display: block; width: 100%; padding: 1.125rem; background: var(--primary); color: white; text-decoration: none; border-radius: 14px; font-weight: 700; font-size: 1.1rem; transition: all 0.2s; }
-        .btn-home:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--text); padding: 4rem 1rem; margin: 0; }
+        .success-card { background: white; width: 100%; max-width: 500px; margin: 0 auto; padding: 4rem 2rem; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.06); box-sizing: border-box; }
+        .icon { font-size: 4.5rem; color: #10b981; margin-bottom: 2rem; }
+        h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1.25rem; line-height: 1.3; }
+        p { color: #64748b; margin-bottom: 2.5rem; line-height: 1.6; }
+        .order-info { background: #f8fafc; padding: 1.75rem; border-radius: 20px; text-align: left; margin-bottom: 2.5rem; border: 1px solid #f1f5f9; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 1rem; gap: 1rem; }
+        .info-row:last-child { margin-bottom: 0; }
+        .info-row span { color: #94a3b8; font-size: 0.9rem; font-weight: 500; }
+        .info-row strong { color: #1e293b; font-weight: 700; word-break: break-all; }
+        .btn-home { display: inline-block; min-width: 220px; padding: 1rem 2.5rem; background: var(--primary); color: white; text-decoration: none; border-radius: 16px; font-weight: 700; font-size: 1.05rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+        .btn-home:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); }
+        
+        #loading { padding: 3rem 0; }
         
         @media (max-width: 480px) {
             body { padding: 2rem 1rem; }
-            .success-card { padding: 2rem 1.5rem; border-radius: 20px; }
+            .success-card { padding: 3rem 1.5rem; border-radius: 24px; }
             .info-row { flex-direction: column; gap: 0.25rem; }
-            .info-row strong { text-align: left; font-size: 1rem; }
+            .info-row strong { text-align: left; font-size: 1.05rem; }
+            .btn-home { width: 100%; min-width: unset; box-sizing: border-box; }
+            .icon { font-size: 3.5rem; }
             h1 { font-size: 1.5rem; }
         }
-        #loading { display: block; }
         #result { display: none; }
     </style>
 </head>
 <body>
+<%@ include file="/common/frontinc/shop_header.jspf" %>
 
-<div class="success-card">
+<main class="container" style="padding: 4rem 1rem;">
+    <div class="success-card">
     <div id="loading">
         <i class="fas fa-spinner fa-spin icon" style="color: var(--primary);"></i>
         <h1>결제 승인 중...</h1>
@@ -79,6 +85,7 @@
         <a href="/shop/list.do" class="btn-home" style="background: #ef4444;">홈으로 가기</a>
     </div>
 </div>
+</main>
 
 <script>
     $(document).ready(function() {
