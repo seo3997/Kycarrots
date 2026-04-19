@@ -406,24 +406,64 @@
 
     <!-- Tab 1: Description -->
     <div id="tab-desc" class="tab-content active">
-        <div class="description">
-            <c:set var="editorMode" value="${productInfo.EDITOR_MODE}" />
-            <% 
-                com.whomade.kycarrots.framework.common.object.DataMap pInfo = (com.whomade.kycarrots.framework.common.object.DataMap)request.getAttribute("productInfo");
-                String mode = pInfo.getString("EDITOR_MODE");
-                if (mode.equalsIgnoreCase("true")) mode = "1";
-                else if (mode.equalsIgnoreCase("false")) mode = "0";
+        <div id="product-description-container" class="description">
+            <div id="raw-description-data" style="display:none;">
+                <c:set var="editorMode" value="${productInfo.EDITOR_MODE}" />
+                <% 
+                    com.whomade.kycarrots.framework.common.object.DataMap pInfo = (com.whomade.kycarrots.framework.common.object.DataMap)request.getAttribute("productInfo");
+                    String mode = pInfo.getString("EDITOR_MODE");
+                    if (mode.equalsIgnoreCase("true")) mode = "1";
+                    else if (mode.equalsIgnoreCase("false")) mode = "0";
 
-                String desc = pInfo.getStringOrgn("DESCRIPTION");
-                if (desc.equals("")) desc = pInfo.getStringOrgn("description");
+                    String desc = pInfo.getStringOrgn("DESCRIPTION");
+                    if (desc.equals("")) desc = pInfo.getStringOrgn("description");
 
-                if ("1".equals(mode) || "2".equals(mode)) {
-            %>
-                <%= desc %>
-            <% } else { %>
-                <%= StringUtil.getHtmlValue(desc) %>
-            <% } %>
+                    if ("1".equals(mode) || "2".equals(mode)) {
+                %>
+                    <%= desc %>
+                <% } else { %>
+                    <%= StringUtil.getHtmlValue(desc) %>
+                <% } %>
+            </div>
         </div>
+
+        <script>
+            (function() {
+                const raw = document.getElementById('raw-description-data');
+                const container = document.getElementById('product-description-container');
+                if (!raw || !container) return;
+
+                const content = raw.innerHTML;
+                
+                // Shadow DOM Isolation
+                if (container.attachShadow) {
+                    const shadow = container.attachShadow({mode: 'open'});
+                    shadow.innerHTML = `
+                        <style>
+                            :host { 
+                                display: block; 
+                                line-height: 1.8; 
+                                color: #334155; 
+                                font-size: 1.05rem;
+                                font-family: 'Outfit', sans-serif;
+                            }
+                            img { max-width: 100% !important; height: auto !important; margin: 1rem 0; }
+                            table { width: 100% !important; border-collapse: collapse; margin: 1.5rem 0; }
+                            table td, table th { border: 1px solid #e2e8f0; padding: 0.75rem; }
+                            iframe, video { max-width: 100% !important; border-radius: 12px; }
+                            p { margin-bottom: 1.25rem; }
+                            ul, ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+                            a { color: var(--primary, #2563eb); text-decoration: underline; }
+                        </style>
+                        <div class="description-content">\${content}</div>
+                    `;
+                    raw.remove();
+                } else {
+                    // Fallback
+                    raw.style.display = 'block';
+                }
+            })();
+        </script>
 
         <c:if test="${not empty imageList}">
             <div class="additional-images">
