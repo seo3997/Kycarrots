@@ -10,6 +10,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/common/front/css/front_common.css">
     <style>
         :root {
             --primary: #2563eb;
@@ -38,7 +39,7 @@
             .info-row strong { text-align: left; font-size: 1.05rem; }
             .btn-home { width: 100%; min-width: unset; box-sizing: border-box; }
             .icon { font-size: 3.5rem; }
-            h1 { font-size: 1.5rem; }
+            h1 { font-size: 1.35rem; word-break: keep-all; white-space: nowrap; }
         }
         #result { display: none; }
     </style>
