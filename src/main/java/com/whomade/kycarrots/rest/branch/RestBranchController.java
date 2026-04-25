@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,6 +29,19 @@ public class RestBranchController {
             return ResponseEntity.ok(list);
         } catch (Exception e) {
             log.error("지점 목록 조회 중 오류 발생", e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<DataMap> getBranchInfo(@RequestParam("branchId") String branchId) {
+        try {
+            DataMap param = new DataMap();
+            param.put("branchId", branchId);
+            DataMap info = mgtBranchService.selectBranch(param);
+            return ResponseEntity.ok(info);
+        } catch (Exception e) {
+            log.error("지점 정보 조회 중 오류 발생", e);
             return ResponseEntity.internalServerError().build();
         }
     }
