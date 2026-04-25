@@ -11,6 +11,7 @@ public class ChatMessageVo {
     private String roomId;
     private String senderId;
     private String senderGroup;
+    private String receiveGroup;
     private String message;
     private String createdAt;
     private Boolean isRead;

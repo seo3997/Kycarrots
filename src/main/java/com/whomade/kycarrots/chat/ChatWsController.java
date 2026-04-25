@@ -116,75 +116,44 @@ public class ChatWsController {
             // 클라이언트로 보낼 메시지에도 세팅
             message.setSenderGroup(senderGroup);
 
+            // DB 저장용 VO 생성 (수신 그룹 추가)
             ChatMessageVo chatMessageVo = ChatMessageVo.builder()
                     .roomId(roomId)
                     .senderId(message.getSenderId())
                     .senderGroup(senderGroup)
+                    .receiveGroup(message.getReceiveGroup()) // 명시적 수신 그룹 저장
                     .message(message.getMessage())
                     .build();
-            chatMessageService.insertChatMessage(chatMessageVo); // MyBatis 방식 저장
+            chatMessageService.insertChatMessage(chatMessageVo); 
 
-            // 1. ChatRoom 정보 조회 (roomId로 또는 productId, buyerId, sellerId로)
+            // 1. ChatRoom 정보 조회
             Optional<ChatRoomEntity> chatRoomOpt = chatRoomService.findByRoomId(roomId);
             if (!chatRoomOpt.isPresent()) {
                 log.warn("채팅방 정보가 없습니다. roomId: {}", roomId);
-                return null;
+                return message;
             }
 
-            String senderId = message.getSenderId();
             ChatRoomEntity chatRoom = chatRoomOpt.get();
-
-            String id1 = chatRoom.getBuyerId(); // Buyer or Branch
-            String id2 = chatRoom.getBranchId(); // Branch or HQ
-
-            log.info("채팅방 정보 확인 - roomId: {}, id1: {}, id2: {}, senderId: {}", roomId, id1, id2, senderId);
-
+            String id1 = chatRoom.getBuyerId();
+            String id2 = chatRoom.getBranchId();
             String targetTopic = null;
             OpUserVO singleReceiver = null;
-
-            log.info("[채팅푸시트레이스] roomId: {}, senderId: {}, receiveGroup: {}", roomId, senderId, message.getReceiveGroup());
-
             String receiveGroup = message.getReceiveGroup();
 
+            log.info("[채팅푸시트레이스] roomId: {}, senderId: {}, receiveGroup: {}", roomId, senderId, receiveGroup);
+
+            // 2. 푸시 타겟 및 토픽 결정
             if (Const.ROLE_SELL.equals(receiveGroup)) {
-                // 본사 타겟
-                log.info("[채팅푸시트레이스] receiveGroup이 본사(ROLE_SELL)입니다.");
                 targetTopic = Const.ROLE_SELL;
             } else if (Const.ROLE_PROJ.equals(receiveGroup)) {
-                // 특정 지점 타겟 (지점 아이디는 여전히 RoomID에서 추출해야 함)
                 String targetBranchId = senderId.equals(id1) ? id2 : id1;
                 targetTopic = "BRANCH_" + targetBranchId + "_" + Const.ROLE_PROJ;
-                log.info("[채팅푸시트레이스] receiveGroup이 지점(ROLE_PROJ)입니다. 타켓지점: {}", targetBranchId);
             } else if (Const.ROLE_PUB.equals(receiveGroup)) {
-                // 단일 구매자 타겟
                 String targetBuyerId = senderId.equals(id1) ? id2 : id1;
-                log.info("[채팅푸시트레이스] receiveGroup이 구매자(ROLE_PUB)입니다. 타켓ID: {}", targetBuyerId);
                 singleReceiver = opUserService.fetchFcmToken(targetBuyerId);
-            } else {
-                // 명시적인 그룹이 없는 경우 (기본 로직 유지)
-                log.warn("[채팅푸시트레이스] receiveGroup이 없거나 유효하지 않습니다. 기본 로직을 시도합니다.");
-                if (Const.CENTER_BRANCH_ID.equals(id1) || Const.CENTER_BRANCH_ID.equals(id2)) {
-                    if (!Const.CENTER_BRANCH_ID.equals(senderId)) {
-                        targetTopic = Const.ROLE_SELL;
-                    }
-                }
             }
 
-            Long productId = chatRoom.getProductId();
-            DataMap param = new DataMap();
-            param.put("productId", productId);
-            param.put("userNo", "0");
-            TnProductVo product = tnProductService.getProduct(param);
-            String messageTitle = (product != null ? product.getTitle() : "알림") + " 채팅메시지";
-
-            Map<String, String> data = new HashMap<>();
-            data.put("targetId", roomId);
-            data.put("type", "chat");
-            data.put("msg", message.getMessage());
-            data.put("title", messageTitle);
-            data.put("body", message.getMessage());
-
-            // 3. 온라인 상태 체크
+            // 3. 온라인 상태 체크 (타켓 그룹 중 한 명이라도 온라인이면 푸시 억제)
             boolean isTargetGroupOnline = false;
             if (Const.ROLE_SELL.equals(receiveGroup)) {
                 isTargetGroupOnline = userTracker.isAnyHqOnline();
@@ -193,24 +162,36 @@ public class ChatWsController {
                 isTargetGroupOnline = userTracker.isAnyBranchStaffOnline(targetBranchId);
             } else if (singleReceiver != null) {
                 isTargetGroupOnline = userTracker.isUserOnline(singleReceiver.getUserId());
-                log.info("[채팅푸시트레이스] 단일 사용자({}) 온라인 상태 체크 결과: {}", singleReceiver.getUserId(), isTargetGroupOnline);
             }
 
             if (isTargetGroupOnline) {
-                log.info("[채팅푸시트레이스] 타겟 그룹/사용자가 온라인 상태이므로 푸시를 발송하지 않습니다.");
+                log.info("[채팅푸시트레이스] 타겟이 온라인 상태이므로 푸시 발송을 하지 않습니다.");
             } else {
-                // 4. 전송 (토픽 또는 개인)
+                // 4. 푸시 발송 (토픽 또는 개인)
+                Long productId = chatRoom.getProductId();
+                DataMap param = new DataMap();
+                param.put("productId", productId);
+                param.put("userNo", "0");
+                TnProductVo product = tnProductService.getProduct(param);
+                String messageTitle = (product != null ? product.getTitle() : "알림") + " 채팅메시지";
+
+                Map<String, String> data = new HashMap<>();
+                data.put("targetId", roomId);
+                data.put("type", "chat");
+                data.put("msg", message.getMessage());
+                data.put("title", messageTitle);
+                data.put("body", message.getMessage());
+
+                OpUserVO sender = opUserService.fetchFcmToken(senderId);
+                Long actorNo = (sender != null && sender.getUserNo() != null) ? Long.parseLong(sender.getUserNo()) : 0L;
+
                 if (targetTopic != null) {
-                    log.info("[채팅푸시트레이스] 토픽 전송 시작: {}", targetTopic);
-                    OpUserVO sender = opUserService.fetchFcmToken(senderId);
-            else if (singleReceiver != null) {
-                String rcvUserId = singleReceiver.getUserId();
-                if (!userTracker.isUserOnline(rcvUserId)) {
-                    log.info("구매자 오프라인 - 단일 푸시 발송: {}", rcvUserId);
-                    fcmService.sendPushToUserAndLog(0L, singleReceiver.getDeviceType(), singleReceiver.getUserNo(),
-                            singleReceiver.getPushToken(), messageTitle, message.getMessage(), roomId, "chat", data);
-                } else {
-                    log.info("구매자가 온라인 상태여서 푸시를 건너뜁니다: {}", rcvUserId);
+                    log.info("[채팅푸시트레이스] 토픽({}) 푸시 발송", targetTopic);
+                    fcmService.sendPushToTopicAndLog(actorNo, targetTopic, messageTitle, message.getMessage(), data, "chat");
+                } else if (singleReceiver != null) {
+                    log.info("[채팅푸시트레이스] 개인({}) 푸시 발송", singleReceiver.getUserId());
+                    fcmService.sendPushToTokenAndLog(actorNo, singleReceiver.getUserId(), singleReceiver.getPushToken(), 
+                            messageTitle, message.getMessage(), singleReceiver.getDeviceType(), data, "chat");
                 }
             }
 
