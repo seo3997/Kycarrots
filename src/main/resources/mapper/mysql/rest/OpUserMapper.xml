@@ -290,4 +290,12 @@
         WHERE USER_STTUS_CODE = '10'
           AND PUSH_TOKEN IS NOT NULL
     </select>
+    <select id="selectBranchSimple" resultType="dataMap" parameterType="long">
+        SELECT
+            BRANCH_ID,
+            BRANCH_CODE,
+            BRANCH_NAME
+        FROM tb_branches
+        WHERE BRANCH_ID = #{branchId}
+    </select>
 </mapper>

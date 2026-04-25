@@ -63,5 +63,7 @@ public interface OpUserMapper {
         List<OpUserVO> selectUsersByRole(@Param("memberCode") String memberCode);
 
         List<OpUserVO> selectAllActiveUsers();
+        
+        DataMap selectBranchSimple(@Param("branchId") Long branchId);
 
 }

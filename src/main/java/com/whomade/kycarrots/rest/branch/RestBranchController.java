@@ -19,6 +19,7 @@ import java.util.List;
 public class RestBranchController {
 
     private final MgtBranchService mgtBranchService;
+    private final com.whomade.kycarrots.repository.mybatis.member.OpUserMapper opUserMapper;
 
     @GetMapping("/list")
     public ResponseEntity<List<DataMap>> getBranchList() {
@@ -36,9 +37,7 @@ public class RestBranchController {
     @GetMapping("/info")
     public ResponseEntity<DataMap> getBranchInfo(@RequestParam("branchId") String branchId) {
         try {
-            DataMap param = new DataMap();
-            param.put("branchId", branchId);
-            DataMap info = mgtBranchService.selectBranch(param);
+            DataMap info = opUserMapper.selectBranchSimple(Long.parseLong(branchId));
             return ResponseEntity.ok(info);
         } catch (Exception e) {
             log.error("지점 정보 조회 중 오류 발생", e);
