@@ -47,14 +47,14 @@ public class ChatWsController {
     @MessageMapping("/chat.exit.{roomId}")
     public void exitRoom(@DestinationVariable String roomId, ChatMessage message) {
         log.info("채팅방 퇴장 신호 수신 - roomId: {}, userId: {}", roomId, message.getSenderId());
-        
+
         // 1. 퇴장하는 유저 정보 조회
         OpUserVO senderInfo = opUserService.fetchFcmToken(message.getSenderId());
-        
+
         if (senderInfo != null) {
             String role = senderInfo.getMemberCode();
             String branchId = senderInfo.getBranchId();
-            
+
             // ROLE_PROJ (본사/센터관리)인 경우: 본사 지점 전체 관련자 오프라인 처리
             if (Const.ROLE_PROJ.equals(role)) {
                 List<OpUserVO> hqStaff = opUserService.selectUsersByBranchAndRole(branchId, Const.ROLE_PROJ);
@@ -62,7 +62,7 @@ public class ChatWsController {
                     userTracker.removeChatter(staff.getUserId());
                 }
                 log.info("퇴장으로 인해 본사(ROLE_PROJ) 그룹의 모든 관련자 채팅 상태를 해제했습니다. (Branch: {})", branchId);
-            } 
+            }
             // ROLE_SELL (판매지점 직원)인 경우: 해당 지점 전체 관련자 오프라인 처리
             else if (Const.ROLE_SELL.equals(role)) {
                 List<OpUserVO> branchStaff = opUserService.selectUsersByBranchAndRole(branchId, Const.ROLE_SELL);
@@ -70,8 +70,7 @@ public class ChatWsController {
                     userTracker.removeChatter(staff.getUserId());
                 }
                 log.info("퇴장으로 인해 판매점(ROLE_SELL) 그룹의 모든 관련자 채팅 상태를 해제했습니다. (Branch: {})", branchId);
-            } 
-            else {
+            } else {
                 // 일반 구매자 권한 등은 본인만 오프라인 처리
                 userTracker.removeChatter(message.getSenderId());
             }
@@ -113,7 +112,7 @@ public class ChatWsController {
             OpUserVO senderInfo = opUserService.fetchFcmToken(message.getSenderId());
             String senderGroup = (senderInfo != null) ? senderInfo.getMemberCode() : "ROLE_PUB";
             log.info("발신자 정보 조회 - ID: {}, Group: {}", message.getSenderId(), senderGroup);
-            
+
             // 클라이언트로 보낼 메시지에도 세팅
             message.setSenderGroup(senderGroup);
 
@@ -143,23 +142,31 @@ public class ChatWsController {
             String targetTopic = null;
             OpUserVO singleReceiver = null;
 
-            if (senderId.equals(id1)) {
-                log.info("발신자가 id1({})입니다. 타겟은 id2({})", id1, id2);
-                if (Const.CENTER_BRANCH_ID.equals(id2)) {
-                    log.info("id2가 본사입니다. 본사(ROLE_SELL) 전용 토픽으로 발송합니다.");
-                    targetTopic = Const.ROLE_SELL;
-                } else {
-                    log.info("id2가 지점({})입니다. 지점(ROLE_PROJ) 전용 토픽으로 발송합니다.", id2);
-                    targetTopic = "BRANCH_" + id2 + "_" + Const.ROLE_PROJ;
-                }
+            log.info("[채팅푸시트레이스] roomId: {}, senderId: {}, receiveGroup: {}", roomId, senderId, message.getReceiveGroup());
+
+            String receiveGroup = message.getReceiveGroup();
+
+            if (Const.ROLE_SELL.equals(receiveGroup)) {
+                // 본사 타겟
+                log.info("[채팅푸시트레이스] receiveGroup이 본사(ROLE_SELL)입니다.");
+                targetTopic = Const.ROLE_SELL;
+            } else if (Const.ROLE_PROJ.equals(receiveGroup)) {
+                // 특정 지점 타겟 (지점 아이디는 여전히 RoomID에서 추출해야 함)
+                String targetBranchId = senderId.equals(id1) ? id2 : id1;
+                targetTopic = "BRANCH_" + targetBranchId + "_" + Const.ROLE_PROJ;
+                log.info("[채팅푸시트레이스] receiveGroup이 지점(ROLE_PROJ)입니다. 타켓지점: {}", targetBranchId);
+            } else if (Const.ROLE_PUB.equals(receiveGroup)) {
+                // 단일 구매자 타겟
+                String targetBuyerId = senderId.equals(id1) ? id2 : id1;
+                log.info("[채팅푸시트레이스] receiveGroup이 구매자(ROLE_PUB)입니다. 타켓ID: {}", targetBuyerId);
+                singleReceiver = opUserService.fetchFcmToken(targetBuyerId);
             } else {
-                log.info("발신자가 id2({})입니다. 타겟은 id1({})", id2, id1);
-                if (Const.CENTER_BRANCH_ID.equals(id1)) {
-                    log.info("발신자 id2가 지점입니다. 타겟 본사(ROLE_SELL) 전용 토픽으로 발송합니다.");
-                    targetTopic = Const.ROLE_SELL;
-                } else {
-                    log.info("발신자 id2가 본사/지점입니다. 타겟 단일 구매자({})의 FCM 토큰을 검색합니다.", id1);
-                    singleReceiver = opUserService.fetchFcmToken(id1);
+                // 명시적인 그룹이 없는 경우 (기본 로직 유지)
+                log.warn("[채팅푸시트레이스] receiveGroup이 없거나 유효하지 않습니다. 기본 로직을 시도합니다.");
+                if (Const.CENTER_BRANCH_ID.equals(id1) || Const.CENTER_BRANCH_ID.equals(id2)) {
+                    if (!Const.CENTER_BRANCH_ID.equals(senderId)) {
+                        targetTopic = Const.ROLE_SELL;
+                    }
                 }
             }
 
@@ -206,17 +213,19 @@ public class ChatWsController {
                 } else {
                     log.info("온라인 담당자가 없어 토픽 푸시를 발송합니다. topic: {}", targetTopic);
                     OpUserVO sender = opUserService.fetchFcmToken(senderId);
-                    Long actorNo = (sender != null && sender.getUserNo() != null) ? Long.parseLong(sender.getUserNo()) : 0L;
-                    fcmService.sendPushToTopicAndLog(actorNo, targetTopic, messageTitle, message.getMessage(), data, "chat");
+                    Long actorNo = (sender != null && sender.getUserNo() != null) ? Long.parseLong(sender.getUserNo())
+                            : 0L;
+                    fcmService.sendPushToTopicAndLog(actorNo, targetTopic, messageTitle, message.getMessage(), data,
+                            "chat");
                 }
-            } 
+            }
             // 2. 단일 발송 (구매자)
             else if (singleReceiver != null) {
                 String rcvUserId = singleReceiver.getUserId();
                 if (!userTracker.isUserOnline(rcvUserId)) {
                     log.info("구매자 오프라인 - 단일 푸시 발송: {}", rcvUserId);
-                    fcmService.sendPushToUserAndLog(0L, singleReceiver.getDeviceType(), singleReceiver.getUserNo(), 
-                        singleReceiver.getPushToken(), messageTitle, message.getMessage(), roomId, "chat", data);
+                    fcmService.sendPushToUserAndLog(0L, singleReceiver.getDeviceType(), singleReceiver.getUserNo(),
+                            singleReceiver.getPushToken(), messageTitle, message.getMessage(), roomId, "chat", data);
                 } else {
                     log.info("구매자가 온라인 상태여서 푸시를 건너뜁니다: {}", rcvUserId);
                 }
