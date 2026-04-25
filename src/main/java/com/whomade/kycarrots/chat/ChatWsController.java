@@ -56,9 +56,17 @@ public class ChatWsController {
         }
 
         try {
+            // 발신자의 권한(Group) 정보 가져오기
+            OpUserVO senderInfo = opUserService.fetchFcmToken(message.getSenderId());
+            String senderGroup = (senderInfo != null) ? senderInfo.getMemberCode() : "ROLE_PUB";
+            
+            // 클라이언트로 보낼 메시지에도 세팅
+            message.setSenderGroup(senderGroup);
+
             ChatMessageVo chatMessageVo = ChatMessageVo.builder()
                     .roomId(roomId)
                     .senderId(message.getSenderId())
+                    .senderGroup(senderGroup)
                     .message(message.getMessage())
                     .build();
             chatMessageService.insertChatMessage(chatMessageVo); // MyBatis 방식 저장

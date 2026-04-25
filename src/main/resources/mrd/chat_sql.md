@@ -17,6 +17,7 @@ CREATE TABLE `tb_chat_message` (
 `ID` bigint NOT NULL AUTO_INCREMENT,
 `ROOM_ID` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 `SENDER_ID` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+`SENDER_GROUP` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 `MESSAGE` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
 `CREATED_AT` datetime DEFAULT CURRENT_TIMESTAMP,
 `IS_READ` tinyint(1) DEFAULT '0',

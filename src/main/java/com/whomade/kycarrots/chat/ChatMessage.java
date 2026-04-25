@@ -16,6 +16,7 @@ public class ChatMessage {
     private String roomId;
     private String type; // "text", "image" 등
     private String time;
+    private String senderGroup; // ROLE_PUB, ROLE_SELL, ROLE_PROJ
 
     // 생성자
     public ChatMessage(String senderId, String message, String roomId, String type, String time) {

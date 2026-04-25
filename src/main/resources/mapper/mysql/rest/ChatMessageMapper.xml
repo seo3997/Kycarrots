@@ -7,12 +7,14 @@
         INSERT INTO tb_chat_message (
             ROOM_ID,
             SENDER_ID,
+            SENDER_GROUP,
             MESSAGE,
             CREATED_AT,
             IS_READ
         ) VALUES (
                      #{roomId},
                      #{senderId},
+                     #{senderGroup},
                      #{message},
                      NOW(),
                      0
@@ -20,7 +22,7 @@
     </insert>
 
     <select id="findMessagesByRoomId" resultType="com.whomade.kycarrots.entity.chat.ChatMessageVo">
-        SELECT ID, ROOM_ID, SENDER_ID, MESSAGE, CREATED_AT, IS_READ, DATE_FORMAT(CREATED_AT, '%Y-%m-%d %H:%i') AS time
+        SELECT ID, ROOM_ID, SENDER_ID, SENDER_GROUP, MESSAGE, CREATED_AT, IS_READ, DATE_FORMAT(CREATED_AT, '%Y-%m-%d %H:%i') AS time
         FROM tb_chat_message
         WHERE room_id = #{roomId}
         ORDER BY created_at ASC
