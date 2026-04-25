@@ -88,9 +88,9 @@ public class Const {
 
 	// 권한
 	public static final String ROLE_ADMIN = "ROLE_ADMIN"; // 관리자
-	public static final String ROLE_SELL = "ROLE_SELL"; // 판매자
+	public static final String ROLE_SELL = "ROLE_SELL"; // 본사(HQ)
 	public static final String ROLE_PUB = "ROLE_PUB"; // 구매자
-	public static final String ROLE_PROJ = "ROLE_PROJ"; // 센터관리
+	public static final String ROLE_PROJ = "ROLE_PROJ"; // 지점(Branch)
 
 	// 접근 구분
 	public static final String accesSeAdmin = "10"; // 관리자
