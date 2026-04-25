@@ -196,8 +196,8 @@ public class ChatWsController {
                     fcmService.sendPushToTopicAndLog(actorNo, targetTopic, messageTitle, message.getMessage(), data, "chat");
                 } else if (singleReceiver != null) {
                     log.info("[채팅푸시트레이스] 개인({}) 푸시 발송", singleReceiver.getUserId());
-                    fcmService.sendPushToTokenAndLog(actorNo, singleReceiver.getUserId(), singleReceiver.getPushToken(), 
-                            messageTitle, message.getMessage(), singleReceiver.getDeviceType(), data, "chat");
+                    fcmService.sendPushToUserAndLog(actorNo, singleReceiver.getDeviceType(), singleReceiver.getUserNo(), 
+                            singleReceiver.getPushToken(), messageTitle, message.getMessage(), roomId, "chat", data);
                 }
             }
 
