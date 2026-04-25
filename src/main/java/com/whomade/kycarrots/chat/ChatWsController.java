@@ -145,20 +145,20 @@ public class ChatWsController {
 
             if (senderId.equals(id1)) {
                 log.info("발신자가 id1({})입니다. 타겟은 id2({})", id1, id2);
-                if ("2".equals(id2)) {
-                    log.info("id2가 본사(2)입니다. 본사(ROLE_SELL) 토픽으로 발송합니다.");
-                    targetTopic = "ROLE_SELL";
+                if (Const.CENTER_BRANCH_ID.equals(id2)) {
+                    log.info("id2가 본사입니다. 본사(ROLE_PROJ) 전용 토픽으로 발송합니다.");
+                    targetTopic = Const.ROLE_PROJ;
                 } else {
-                    log.info("id2가 지점({})입니다. 지점(ROLE_PROJ) 토픽으로 발송합니다.", id2);
-                    targetTopic = "BRANCH_" + id2 + "_ROLE_PROJ";
+                    log.info("id2가 지점({})입니다. 지점(ROLE_SELL) 전용 토픽으로 발송합니다.", id2);
+                    targetTopic = "BRANCH_" + id2 + "_" + Const.ROLE_SELL;
                 }
             } else {
                 log.info("발신자가 id2({})입니다. 타겟은 id1({})", id2, id1);
-                if ("2".equals(id2)) {
-                    log.info("발신자 id2가 본사(2)입니다. 타겟 지점({})의 (ROLE_PROJ) 토픽으로 발송합니다.", id1);
-                    targetTopic = "BRANCH_" + id1 + "_ROLE_PROJ";
+                if (Const.CENTER_BRANCH_ID.equals(id1)) {
+                    log.info("발신자 id2가 지점입니다. 타겟 본사(ROLE_PROJ) 전용 토픽으로 발송합니다.");
+                    targetTopic = Const.ROLE_PROJ;
                 } else {
-                    log.info("발신자 id2가 지점입니다. 타겟 단일 구매자({})의 FCM 토큰을 검색합니다.", id1);
+                    log.info("발신자 id2가 본사/지점입니다. 타겟 단일 구매자({})의 FCM 토큰을 검색합니다.", id1);
                     singleReceiver = opUserService.fetchFcmToken(id1);
                 }
             }
@@ -182,13 +182,14 @@ public class ChatWsController {
                 boolean anyStaffOnline = false;
                 List<OpUserVO> staffList;
 
-                if ("ROLE_SELL".equals(targetTopic)) {
-                    // 본사 담당자 리스트
-                    staffList = opUserService.selectUsersByRole("ROLE_SELL");
+                if (Const.ROLE_PROJ.equals(targetTopic)) {
+                    // 본사 담당자 리스트 (BRANCH_ID가 '2'인 ROLE_PROJ)
+                    staffList = opUserService.selectUsersByBranchAndRole(Const.CENTER_BRANCH_ID, Const.ROLE_PROJ);
                 } else {
-                    // 지점 담당자 리스트 (BRANCH_ID_ROLE_PROJ 형식에서 ID 추출)
-                    String branchId = targetTopic.split("_")[1];
-                    staffList = opUserService.selectUsersByBranchAndRole(branchId, "ROLE_PROJ");
+                    // 지점 담당자 리스트 (BRANCH_ID_ROLE_SELL 형식에서 ID 추출)
+                    String[] parts = targetTopic.split("_");
+                    String targetBranchId = parts[1];
+                    staffList = opUserService.selectUsersByBranchAndRole(targetBranchId, Const.ROLE_SELL);
                 }
 
                 if (staffList != null) {
