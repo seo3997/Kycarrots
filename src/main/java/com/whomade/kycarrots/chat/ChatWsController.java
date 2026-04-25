@@ -37,6 +37,18 @@ public class ChatWsController {
     @Autowired
     private TnProductService tnProductService;
 
+    @MessageMapping("/chat.enter.{roomId}")
+    public void enterRoom(@DestinationVariable String roomId, ChatMessage message) {
+        log.info("채팅방 진입 - roomId: {}, userId: {}", roomId, message.getSenderId());
+        userTracker.addChatter(message.getSenderId(), roomId);
+    }
+
+    @MessageMapping("/chat.exit.{roomId}")
+    public void exitRoom(@DestinationVariable String roomId, ChatMessage message) {
+        log.info("채팅방 퇴장 - roomId: {}, userId: {}", roomId, message.getSenderId());
+        userTracker.removeChatter(message.getSenderId());
+    }
+
     @MessageMapping("/chat.sendsample")
     @SendTo("/topic/room1sample")
     public ChatMessage send(ChatMessage message) {
