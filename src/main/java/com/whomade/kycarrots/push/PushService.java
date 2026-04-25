@@ -76,67 +76,17 @@ public class PushService {
             return;
         }
 
-        // 2. target_roles가 있는 경우 복수 발송 (전제 발송 또는 본사+지점 발송)
+        // 2. targetRoles가 있는 경우 복수 발송 (토픽 기반)
         if (targetRoles != null && !targetRoles.isEmpty()) {
-            Set<String> processedUserNos = new HashSet<>();
-            Set<String> processedTokens = new HashSet<>();
-
-            if (targetBranchId == null || targetBranchId.isEmpty()) {
-                // 2-1. 지점이 지정되지 않은 경우: 전체(Global) 전송
-                for (String role : targetRoles) {
-                    List<OpUserVO> allUsers = opUserService.selectUsersByRole(role);
-                    for (OpUserVO user : allUsers) {
-                        if (user != null && user.getUserNo() != null && user.getPushToken() != null) {
-                            if (processedUserNos.contains(user.getUserNo()) || processedTokens.contains(user.getPushToken()))
-                                continue;
-                            if (isSameUser(actorUserNo, user.getUserNo()))
-                                continue;
-                                
-                            sendToSingleUser(actorUserNo, user, messageTitle, messageBody, eventType, dataPayload);
-                            processedUserNos.add(user.getUserNo());
-                            processedTokens.add(user.getPushToken());
-                        }
-                    }
+            for (String role : targetRoles) {
+                String topic = role;
+                
+                // ROLE_PROJ(지점 담당자)이면서 유효한 지점ID가 있는 경우에만 지점 토픽 사용
+                if ("ROLE_PROJ".equals(role) && targetBranchId != null && !targetBranchId.isEmpty() && !Const.CENTER_BRANCH_ID.equals(targetBranchId)) {
+                    topic = "BRANCH_" + targetBranchId + "_ROLE_PROJ";
                 }
-            } else {
-                // 2-2. 본사 (BRANCH_ID=Const.CENTER_BRANCH_ID) 전송
-                List<String> targetRolesFiltered = targetRoles.stream()
-                        .collect(java.util.stream.Collectors.toList());
-
-                for (String role : targetRolesFiltered) {
-                    List<OpUserVO> hqUsers = opUserService.selectUsersByBranchAndRole(Const.CENTER_BRANCH_ID, role);
-                    for (OpUserVO user : hqUsers) {
-                        if (user != null && user.getUserNo() != null && user.getPushToken() != null) {
-                            if (processedUserNos.contains(user.getUserNo()) || processedTokens.contains(user.getPushToken()))
-                                continue;
-                            if (isSameUser(actorUserNo, user.getUserNo()))
-                                continue;
-                                
-                            sendToSingleUser(actorUserNo, user, messageTitle, messageBody, eventType, dataPayload);
-                            processedUserNos.add(user.getUserNo());
-                            processedTokens.add(user.getPushToken());
-                        }
-                    }
-                }
-
-                // 2-3. 특정 판매지점(targetBranchId) 전송 - 본사가 아닐 경우에만 추가 전송
-                if (!Const.CENTER_BRANCH_ID.equals(targetBranchId)) {
-                    for (String role : targetRolesFiltered) {
-                        List<OpUserVO> branchUsers = opUserService.selectUsersByBranchAndRole(targetBranchId, role);
-                        for (OpUserVO user : branchUsers) {
-                            if (user != null && user.getUserNo() != null && user.getPushToken() != null) {
-                                if (processedUserNos.contains(user.getUserNo()) || processedTokens.contains(user.getPushToken()))
-                                    continue;
-                                if (isSameUser(actorUserNo, user.getUserNo()))
-                                    continue;
-                                    
-                                sendToSingleUser(actorUserNo, user, messageTitle, messageBody, eventType, dataPayload);
-                                processedUserNos.add(user.getUserNo());
-                                processedTokens.add(user.getPushToken());
-                            }
-                        }
-                    }
-                }
+                
+                fcmService.sendPushToTopicAndLog(actorUserNo, topic, messageTitle, messageBody, dataPayload, eventType);
             }
         }
     }

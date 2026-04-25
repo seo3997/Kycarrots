@@ -76,87 +76,59 @@ public class ChatWsController {
             String id1 = chatRoom.getBuyerId(); // Buyer or Branch
             String id2 = chatRoom.getBranchId(); // Branch or HQ
 
-            log.info("채팅방 정보 확인 - roomId: {}, id1(Buyer/Branch): {}, id2(Branch/HQ): {}, senderId: {}", roomId, id1,
-                    id2, senderId);
+            log.info("채팅방 정보 확인 - roomId: {}, id1: {}, id2: {}, senderId: {}", roomId, id1, id2, senderId);
 
-            List<OpUserVO> receivers = new java.util.ArrayList<>();
-            String messageTitle = "";
+            String targetTopic = null;
+            OpUserVO singleReceiver = null;
 
             if (senderId.equals(id1)) {
                 log.info("발신자가 id1({})입니다. 타겟은 id2({})", id1, id2);
-                // Sender is id1 (Buyer or Branch). Target is id2.
-                // If id2 is HQ ("2"), target role is ROLE_SELL.
-                // Otherwise, target role is ROLE_PROJ.
                 if ("2".equals(id2)) {
-                    log.info("id2가 본사(2)입니다. 본사(ROLE_SELL) 유저를 검색합니다.");
-                    receivers = opUserService.selectUsersByBranchAndRole(id2, "ROLE_SELL");
+                    log.info("id2가 본사(2)입니다. 본사(ROLE_SELL) 토픽으로 발송합니다.");
+                    targetTopic = "ROLE_SELL";
                 } else {
-                    log.info("id2가 지점({})입니다. 지점(ROLE_PROJ) 유저를 검색합니다.", id2);
-                    receivers = opUserService.selectUsersByBranchAndRole(id2, "ROLE_PROJ");
+                    log.info("id2가 지점({})입니다. 지점(ROLE_PROJ) 토픽으로 발송합니다.", id2);
+                    targetTopic = "BRANCH_" + id2 + "_ROLE_PROJ";
                 }
             } else {
                 log.info("발신자가 id2({})입니다. 타겟은 id1({})", id2, id1);
-                // Sender is id2 (Branch or HQ). Target is id1.
-                // If id2 is HQ ("2"), id1 is a branch, target role is ROLE_PROJ.
-                // Otherwise, it's a single buyer.
                 if ("2".equals(id2)) {
-                    log.info("발신자 id2가 본사(2)입니다. 타겟 지점({})의 (ROLE_PROJ) 유저를 검색합니다.", id1);
-                    receivers = opUserService.selectUsersByBranchAndRole(id1, "ROLE_PROJ");
+                    log.info("발신자 id2가 본사(2)입니다. 타겟 지점({})의 (ROLE_PROJ) 토픽으로 발송합니다.", id1);
+                    targetTopic = "BRANCH_" + id1 + "_ROLE_PROJ";
                 } else {
                     log.info("발신자 id2가 지점입니다. 타겟 단일 구매자({})의 FCM 토큰을 검색합니다.", id1);
-                    OpUserVO buyer = opUserService.fetchFcmToken(id1);
-                    if (buyer != null) {
-                        log.info("구매자({}) 정보가 존재하여 수신자에 추가합니다.", id1);
-                        receivers.add(buyer);
-                    } else {
-                        log.warn("구매자({}) 정보를 찾을 수 없습니다.", id1);
-                    }
+                    singleReceiver = opUserService.fetchFcmToken(id1);
                 }
             }
-
-            log.info("메시지 저장 성공, 검색된 총 수신자 수: {}", receivers.size());
 
             Long productId = chatRoom.getProductId();
             DataMap param = new DataMap();
             param.put("productId", productId);
             param.put("userNo", "0");
             TnProductVo product = tnProductService.getProduct(param);
-            messageTitle = (product != null ? product.getTitle() : "알림") + " 채팅메시지";
-            log.info("푸시 알림 타이틀: {}", messageTitle);
+            String messageTitle = (product != null ? product.getTitle() : "알림") + " 채팅메시지";
 
-            for (OpUserVO receiver : receivers) {
-                if (receiver == null) {
-                    log.warn("수신자(receiver) 객체가 null입니다. 건너뜁니다.");
-                    continue;
-                }
+            Map<String, String> data = new HashMap<>();
+            data.put("targetId", roomId);
+            data.put("type", "chat");
+            data.put("msg", message.getMessage());
+            data.put("title", messageTitle);
+            data.put("body", message.getMessage());
 
-                String rcvUserId = receiver.getUserId();
-                boolean isSender = rcvUserId.equals(senderId);
-                boolean isOnline = userTracker.isUserOnline(rcvUserId);
-                log.info("수신자 검사 - userId: {}, isSender: {}, isOnline: {}", rcvUserId, isSender, isOnline);
-
-                if (!isSender && !isOnline) {
-                    log.info("조건 만족: 수신자({})에게 푸시 발송 준비", rcvUserId);
-                    String pushId = UUID.randomUUID().toString();
-                    Map<String, String> data = new HashMap<>();
-                    data.put("id", pushId);
-                    data.put("targetId", roomId);
-                    data.put("type", "chat");
-                    data.put("msg", message.getMessage());
-                    data.put("title", messageTitle);
-                    data.put("body", message.getMessage());
-
-                    String fcmToken = receiver.getPushToken();
-                    String deviceType = receiver.getDeviceType();
-
-                    if (fcmToken != null && !fcmToken.isEmpty()) {
-                        log.info("푸시 발송 - userId: {}, token: {}, deviceType: {}", rcvUserId, fcmToken, deviceType);
-                        fcmService.sendPushToUser(deviceType, fcmToken, messageTitle, message.getMessage(), data);
-                    } else {
-                        log.warn("푸시 발송 실패 - 수신자({})의 FCM 토큰이 없거나 비어있습니다.", rcvUserId);
-                    }
-                } else {
-                    log.info("푸시 발송 제외 - userId: {} (isSender: {}, isOnline: {})", rcvUserId, isSender, isOnline);
+            // 1. 토픽 발송 (본사 또는 지점 담당자들들)
+            if (targetTopic != null) {
+                log.info("토픽 푸시 발송 - topic: {}", targetTopic);
+                OpUserVO sender = opUserService.fetchFcmToken(senderId);
+                Long actorNo = (sender != null && sender.getUserNo() != null) ? Long.parseLong(sender.getUserNo()) : 0L;
+                fcmService.sendPushToTopicAndLog(actorNo, targetTopic, messageTitle, message.getMessage(), data, "chat");
+            } 
+            // 2. 단일 발송 (구매자)
+            else if (singleReceiver != null) {
+                String rcvUserId = singleReceiver.getUserId();
+                if (!userTracker.isUserOnline(rcvUserId)) {
+                    log.info("단일 푸시 발송 - userId: {}", rcvUserId);
+                    fcmService.sendPushToUserAndLog(0L, singleReceiver.getDeviceType(), singleReceiver.getUserNo(), 
+                        singleReceiver.getPushToken(), messageTitle, message.getMessage(), roomId, "chat", data);
                 }
             }
 
