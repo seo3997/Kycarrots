@@ -140,16 +140,16 @@ public class ChatWsController {
             OpUserVO singleReceiver = null;
             String receiveGroup = message.getReceiveGroup();
 
-            log.info("[채팅푸시트레이스] roomId: {}, senderId: {}, receiveGroup: {}", roomId, senderId, receiveGroup);
+            log.info("[채팅푸시트레이스] roomId: {}, senderId: {}, receiveGroup: {}", roomId, message.getSenderId(), receiveGroup);
 
             // 2. 푸시 타겟 및 토픽 결정
             if (Const.ROLE_SELL.equals(receiveGroup)) {
                 targetTopic = Const.ROLE_SELL;
             } else if (Const.ROLE_PROJ.equals(receiveGroup)) {
-                String targetBranchId = senderId.equals(id1) ? id2 : id1;
+                String targetBranchId = message.getSenderId().equals(id1) ? id2 : id1;
                 targetTopic = "BRANCH_" + targetBranchId + "_" + Const.ROLE_PROJ;
             } else if (Const.ROLE_PUB.equals(receiveGroup)) {
-                String targetBuyerId = senderId.equals(id1) ? id2 : id1;
+                String targetBuyerId = message.getSenderId().equals(id1) ? id2 : id1;
                 singleReceiver = opUserService.fetchFcmToken(targetBuyerId);
             }
 
@@ -158,7 +158,7 @@ public class ChatWsController {
             if (Const.ROLE_SELL.equals(receiveGroup)) {
                 isTargetGroupOnline = userTracker.isAnyHqOnline();
             } else if (Const.ROLE_PROJ.equals(receiveGroup)) {
-                String targetBranchId = senderId.equals(id1) ? id2 : id1;
+                String targetBranchId = message.getSenderId().equals(id1) ? id2 : id1;
                 isTargetGroupOnline = userTracker.isAnyBranchStaffOnline(targetBranchId);
             } else if (singleReceiver != null) {
                 isTargetGroupOnline = userTracker.isUserOnline(singleReceiver.getUserId());
@@ -182,13 +182,13 @@ public class ChatWsController {
                 data.put("title", messageTitle);
                 data.put("body", message.getMessage());
 
-                OpUserVO sender = opUserService.fetchFcmToken(senderId);
+                OpUserVO sender = opUserService.fetchFcmToken(message.getSenderId());
                 Long actorNo = (sender != null && sender.getUserNo() != null) ? Long.parseLong(sender.getUserNo()) : 0L;
 
                 // 본인에게 푸시가 가지 않도록 방어 로직 추가
-                if (singleReceiver != null && singleReceiver.getUserId().equals(senderId)) {
+                if (singleReceiver != null && singleReceiver.getUserId().equals(message.getSenderId())) {
                     log.info("[채팅푸시트레이스] 타겟이 발신자 본인이므로 푸시를 취소합니다.");
-                    return;
+                    return message;
                 }
 
                 if (targetTopic != null) {
