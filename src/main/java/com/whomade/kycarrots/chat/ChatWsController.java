@@ -60,7 +60,7 @@ public class ChatWsController {
                 for (OpUserVO staff : hqStaff) {
                     userTracker.removeChatter(staff.getUserId());
                 }
-                log.info("본사(ROLE_PROJ) 그룹 전체 오프라인 처리 완료 - Branch: {}", branchId);
+                log.info("퇴장으로 인해 본사(ROLE_PROJ) 그룹의 모든 관련자 채팅 상태를 해제했습니다. (Branch: {})", branchId);
             } 
             // ROLE_SELL (판매지점 직원)인 경우: 해당 지점 전체 인원 오프라인 처리
             else if (com.whomade.kycarrots.framework.common.constant.Const.ROLE_SELL.equals(role)) {
@@ -68,7 +68,7 @@ public class ChatWsController {
                 for (OpUserVO staff : branchStaff) {
                     userTracker.removeChatter(staff.getUserId());
                 }
-                log.info("판매점(ROLE_SELL) 그룹 전체 오프라인 처리 완료 - Branch: {}", branchId);
+                log.info("퇴장으로 인해 판매점(ROLE_SELL) 그룹의 모든 관련자 채팅 상태를 해제했습니다. (Branch: {})", branchId);
             } 
             else {
                 // 일반 구매자 권한 등은 본인만 오프라인 처리
