@@ -36,11 +36,13 @@ public class RestBranchController {
 
     @GetMapping("/info")
     public ResponseEntity<DataMap> getBranchInfo(@RequestParam("branchId") String branchId) {
+        log.info("[지점조회트레이스] 요청 branchId: {}", branchId);
         try {
             DataMap info = opUserMapper.selectBranchSimple(Long.parseLong(branchId));
+            log.info("[지점조회트레이스] 조회 결과: {}", info);
             return ResponseEntity.ok(info);
         } catch (Exception e) {
-            log.error("지점 정보 조회 중 오류 발생", e);
+            log.error("지점 정보 조회 중 오류 발생 branchId={}", branchId, e);
             return ResponseEntity.internalServerError().build();
         }
     }
