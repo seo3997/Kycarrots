@@ -45,8 +45,38 @@ public class ChatWsController {
 
     @MessageMapping("/chat.exit.{roomId}")
     public void exitRoom(@DestinationVariable String roomId, ChatMessage message) {
-        log.info("채팅방 퇴장 - roomId: {}, userId: {}", roomId, message.getSenderId());
-        userTracker.removeChatter(message.getSenderId());
+        log.info("채팅방 퇴장 신호 수신 - roomId: {}, userId: {}", roomId, message.getSenderId());
+        
+        // 1. 퇴장하는 유저 정보 조회
+        OpUserVO senderInfo = opUserService.fetchFcmToken(message.getSenderId());
+        
+        if (senderInfo != null) {
+            String role = senderInfo.getMemberCode();
+            String branchId = senderInfo.getBranchId();
+            
+            // ROLE_PROJ (본사/센터관리)인 경우: 본사 지점 전체 인원 오프라인 처리
+            if (com.whomade.kycarrots.framework.common.constant.Const.ROLE_PROJ.equals(role)) {
+                List<OpUserVO> hqStaff = opUserService.selectUsersByBranchAndRole(branchId, com.whomade.kycarrots.framework.common.constant.Const.ROLE_PROJ);
+                for (OpUserVO staff : hqStaff) {
+                    userTracker.removeChatter(staff.getUserId());
+                }
+                log.info("본사(ROLE_PROJ) 그룹 전체 오프라인 처리 완료 - Branch: {}", branchId);
+            } 
+            // ROLE_SELL (판매지점 직원)인 경우: 해당 지점 전체 인원 오프라인 처리
+            else if (com.whomade.kycarrots.framework.common.constant.Const.ROLE_SELL.equals(role)) {
+                List<OpUserVO> branchStaff = opUserService.selectUsersByBranchAndRole(branchId, com.whomade.kycarrots.framework.common.constant.Const.ROLE_SELL);
+                for (OpUserVO staff : branchStaff) {
+                    userTracker.removeChatter(staff.getUserId());
+                }
+                log.info("판매점(ROLE_SELL) 그룹 전체 오프라인 처리 완료 - Branch: {}", branchId);
+            } 
+            else {
+                // 일반 구매자 권한 등은 본인만 오프라인 처리
+                userTracker.removeChatter(message.getSenderId());
+            }
+        } else {
+            userTracker.removeChatter(message.getSenderId());
+        }
     }
 
     @MessageMapping("/chat.sendsample")
