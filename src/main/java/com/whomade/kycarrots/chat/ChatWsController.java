@@ -80,6 +80,16 @@ public class ChatWsController {
         }
     }
 
+    /**
+     * 나만 오프라인 처리 (인트로/메인 진입 시 본인 상태 초기화용)
+     * 그룹 전체에 영향을 주지 않고 본인 세션만 제거합니다.
+     */
+    @MessageMapping("/chat.me.exit")
+    public void exitMe(ChatMessage message) {
+        log.info("본인 상태 초기화 신호 수신 - userId: {}", message.getSenderId());
+        userTracker.removeChatter(message.getSenderId());
+    }
+
     @MessageMapping("/chat.sendsample")
     @SendTo("/topic/room1sample")
     public ChatMessage send(ChatMessage message) {
