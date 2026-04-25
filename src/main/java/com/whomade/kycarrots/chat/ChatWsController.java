@@ -184,42 +184,25 @@ public class ChatWsController {
             data.put("title", messageTitle);
             data.put("body", message.getMessage());
 
-            // 1. 토픽 발송 (본사 또는 지점 담당자들)
-            if (targetTopic != null) {
-                boolean anyStaffOnline = false;
-                List<OpUserVO> staffList;
-
-                if (Const.ROLE_SELL.equals(targetTopic)) {
-                    // 본사 담당자 리스트 (ROLE_SELL 권한이 본사)
-                    staffList = opUserService.selectUsersByRole(Const.ROLE_SELL);
-                } else {
-                    // 지점 담당자 리스트 (BRANCH_ID_ROLE_PROJ 형식에서 ID 추출, ROLE_PROJ가 지점)
-                    String[] parts = targetTopic.split("_");
-                    String targetBranchId = parts[1];
-                    staffList = opUserService.selectUsersByBranchAndRole(targetBranchId, Const.ROLE_PROJ);
-                }
-
-                if (staffList != null) {
-                    for (OpUserVO staff : staffList) {
-                        if (userTracker.isUserOnline(staff.getUserId())) {
-                            anyStaffOnline = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (anyStaffOnline) {
-                    log.info("채팅방에 접속 중인 담당자가 있어 토픽 푸시를 건너뜁니다. topic: {}", targetTopic);
-                } else {
-                    log.info("온라인 담당자가 없어 토픽 푸시를 발송합니다. topic: {}", targetTopic);
-                    OpUserVO sender = opUserService.fetchFcmToken(senderId);
-                    Long actorNo = (sender != null && sender.getUserNo() != null) ? Long.parseLong(sender.getUserNo())
-                            : 0L;
-                    fcmService.sendPushToTopicAndLog(actorNo, targetTopic, messageTitle, message.getMessage(), data,
-                            "chat");
-                }
+            // 3. 온라인 상태 체크
+            boolean isTargetGroupOnline = false;
+            if (Const.ROLE_SELL.equals(receiveGroup)) {
+                isTargetGroupOnline = userTracker.isAnyHqOnline();
+            } else if (Const.ROLE_PROJ.equals(receiveGroup)) {
+                String targetBranchId = senderId.equals(id1) ? id2 : id1;
+                isTargetGroupOnline = userTracker.isAnyBranchStaffOnline(targetBranchId);
+            } else if (singleReceiver != null) {
+                isTargetGroupOnline = userTracker.isUserOnline(singleReceiver.getUserId());
+                log.info("[채팅푸시트레이스] 단일 사용자({}) 온라인 상태 체크 결과: {}", singleReceiver.getUserId(), isTargetGroupOnline);
             }
-            // 2. 단일 발송 (구매자)
+
+            if (isTargetGroupOnline) {
+                log.info("[채팅푸시트레이스] 타겟 그룹/사용자가 온라인 상태이므로 푸시를 발송하지 않습니다.");
+            } else {
+                // 4. 전송 (토픽 또는 개인)
+                if (targetTopic != null) {
+                    log.info("[채팅푸시트레이스] 토픽 전송 시작: {}", targetTopic);
+                    OpUserVO sender = opUserService.fetchFcmToken(senderId);
             else if (singleReceiver != null) {
                 String rcvUserId = singleReceiver.getUserId();
                 if (!userTracker.isUserOnline(rcvUserId)) {
