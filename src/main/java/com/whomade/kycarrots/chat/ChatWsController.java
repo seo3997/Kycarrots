@@ -185,6 +185,12 @@ public class ChatWsController {
                 OpUserVO sender = opUserService.fetchFcmToken(senderId);
                 Long actorNo = (sender != null && sender.getUserNo() != null) ? Long.parseLong(sender.getUserNo()) : 0L;
 
+                // 본인에게 푸시가 가지 않도록 방어 로직 추가
+                if (singleReceiver != null && singleReceiver.getUserId().equals(senderId)) {
+                    log.info("[채팅푸시트레이스] 타겟이 발신자 본인이므로 푸시를 취소합니다.");
+                    return;
+                }
+
                 if (targetTopic != null) {
                     log.info("[채팅푸시트레이스] 토픽({}) 푸시 발송", targetTopic);
                     fcmService.sendPushToTopicAndLog(actorNo, targetTopic, messageTitle, message.getMessage(), data, "chat");
