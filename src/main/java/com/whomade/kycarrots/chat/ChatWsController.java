@@ -183,8 +183,8 @@ public class ChatWsController {
                 List<OpUserVO> staffList;
 
                 if (Const.ROLE_PROJ.equals(targetTopic)) {
-                    // 본사 담당자 리스트 (BRANCH_ID가 '2'인 ROLE_PROJ)
-                    staffList = opUserService.selectUsersByBranchAndRole(Const.CENTER_BRANCH_ID, Const.ROLE_PROJ);
+                    // 본사 담당자 리스트 (ROLE_PROJ 권한만으로 본사 판정)
+                    staffList = opUserService.selectUsersByRole(Const.ROLE_PROJ);
                 } else {
                     // 지점 담당자 리스트 (BRANCH_ID_ROLE_SELL 형식에서 ID 추출)
                     String[] parts = targetTopic.split("_");
