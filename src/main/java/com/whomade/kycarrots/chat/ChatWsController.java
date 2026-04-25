@@ -59,6 +59,7 @@ public class ChatWsController {
             // 발신자의 권한(Group) 정보 가져오기
             OpUserVO senderInfo = opUserService.fetchFcmToken(message.getSenderId());
             String senderGroup = (senderInfo != null) ? senderInfo.getMemberCode() : "ROLE_PUB";
+            log.info("발신자 정보 조회 - ID: {}, Group: {}", message.getSenderId(), senderGroup);
             
             // 클라이언트로 보낼 메시지에도 세팅
             message.setSenderGroup(senderGroup);

@@ -107,13 +107,13 @@
     </update>
 
     <select id="fetchFcmToken" resultType="com.whomade.kycarrots.entity.member.OpUserVO" parameterType="string">
-        SELECT USER_ID,PUSH_TOKEN, DEVICE_TYPE
+        SELECT USER_ID, MEMBER_CODE, PUSH_TOKEN, DEVICE_TYPE
         FROM op_user
         WHERE USER_ID = #{userId}
     </select>
 
     <select id="fetchFcmTokenByUserNo" resultType="com.whomade.kycarrots.entity.member.OpUserVO" parameterType="long">
-        SELECT USER_ID, PUSH_TOKEN, DEVICE_TYPE, USER_NO
+        SELECT USER_ID, MEMBER_CODE, PUSH_TOKEN, DEVICE_TYPE, USER_NO
         FROM op_user
         WHERE USER_NO = #{userNo}
     </select>
