@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
