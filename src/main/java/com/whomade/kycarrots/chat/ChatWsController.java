@@ -15,6 +15,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import com.whomade.kycarrots.framework.common.constant.Const;
 
 import java.util.List;
 import java.util.HashMap;
@@ -54,17 +55,17 @@ public class ChatWsController {
             String role = senderInfo.getMemberCode();
             String branchId = senderInfo.getBranchId();
             
-            // ROLE_PROJ (본사/센터관리)인 경우: 본사 지점 전체 인원 오프라인 처리
-            if (com.whomade.kycarrots.framework.common.constant.Const.ROLE_PROJ.equals(role)) {
-                List<OpUserVO> hqStaff = opUserService.selectUsersByBranchAndRole(branchId, com.whomade.kycarrots.framework.common.constant.Const.ROLE_PROJ);
+            // ROLE_PROJ (본사/센터관리)인 경우: 본사 지점 전체 관련자 오프라인 처리
+            if (Const.ROLE_PROJ.equals(role)) {
+                List<OpUserVO> hqStaff = opUserService.selectUsersByBranchAndRole(branchId, Const.ROLE_PROJ);
                 for (OpUserVO staff : hqStaff) {
                     userTracker.removeChatter(staff.getUserId());
                 }
                 log.info("퇴장으로 인해 본사(ROLE_PROJ) 그룹의 모든 관련자 채팅 상태를 해제했습니다. (Branch: {})", branchId);
             } 
-            // ROLE_SELL (판매지점 직원)인 경우: 해당 지점 전체 인원 오프라인 처리
-            else if (com.whomade.kycarrots.framework.common.constant.Const.ROLE_SELL.equals(role)) {
-                List<OpUserVO> branchStaff = opUserService.selectUsersByBranchAndRole(branchId, com.whomade.kycarrots.framework.common.constant.Const.ROLE_SELL);
+            // ROLE_SELL (판매지점 직원)인 경우: 해당 지점 전체 관련자 오프라인 처리
+            else if (Const.ROLE_SELL.equals(role)) {
+                List<OpUserVO> branchStaff = opUserService.selectUsersByBranchAndRole(branchId, Const.ROLE_SELL);
                 for (OpUserVO staff : branchStaff) {
                     userTracker.removeChatter(staff.getUserId());
                 }

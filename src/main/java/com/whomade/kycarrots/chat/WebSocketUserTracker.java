@@ -18,19 +18,17 @@ public class WebSocketUserTracker {
     }
 
     public void removeChatter(String userId) {
-        activeChatters.remove(userId);
-    }
-
-    // 특정 지점의 특정 권한 유저들을 모두 제거 (ROLE_SELL 용)
-    public void removeChattersByBranchAndRole(String branchId, String role) {
-        // 실제 구현 시에는 유저의 지점/권한 정보를 알아야 하므로 
-        // activeChatters에 저장된 정보를 순회하며 제거하거나, 
-        // 컨트롤러에서 대상 유저 리스트를 받아와서 지울 수 있습니다.
-        // 여기서는 안전하게 userId 기반으로 순회하며 처리하는 방식을 제안합니다.
+        if (userId != null) {
+            activeChatters.remove(userId);
+        }
     }
 
     public void removeChatters(List<String> userIds) {
-        userIds.forEach(activeChatters::remove);
+        if (userIds != null) {
+            for (String id : userIds) {
+                activeChatters.remove(id);
+            }
+        }
     }
 
     public boolean isUserOnline(String userId) {
