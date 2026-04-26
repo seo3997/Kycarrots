@@ -114,17 +114,22 @@ public class OrderMgtController {
     public ResponseEntity<?> confirmDeposit(@RequestParam("token") String token,
             @RequestParam("orderId") String orderId,
             @RequestParam(value = "carrier", required = false) String carrier,
-            @RequestParam(value = "trackingNo", required = false) String trackingNo) {
+            @RequestParam(value = "deliveryCompanyCode", required = false) String deliveryCompanyCode,
+            @RequestParam(value = "trackingNo", required = false) String trackingNo,
+            @RequestParam(value = "tracking", required = false) String tracking) {
         try {
             OpUserVO user = tokenizer.getMember(token);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
+            String finalCarrier = (carrier != null && !carrier.isEmpty()) ? carrier : deliveryCompanyCode;
+            String finalTrackingNo = (trackingNo != null && !trackingNo.isEmpty()) ? trackingNo : tracking;
+
             DataMap param = new DataMap();
             param.put("orderId", orderId);
-            param.put("deliveryCompanyCode", carrier);
-            param.put("trackingNo", trackingNo);
+            param.put("deliveryCompanyCode", finalCarrier);
+            param.put("trackingNo", finalTrackingNo);
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.confirmBranchDeposit(param);
@@ -179,18 +184,28 @@ public class OrderMgtController {
     @PostMapping("/updateShipping")
     public ResponseEntity<?> updateShipping(@RequestParam("token") String token,
             @RequestParam("orderId") String orderId,
-            @RequestParam("carrier") String carrier,
-            @RequestParam("trackingNo") String trackingNo) {
+            @RequestParam(value = "carrier", required = false) String carrier,
+            @RequestParam(value = "deliveryCompanyCode", required = false) String deliveryCompanyCode,
+            @RequestParam(value = "trackingNo", required = false) String trackingNo,
+            @RequestParam(value = "tracking", required = false) String tracking) {
         try {
             OpUserVO user = tokenizer.getMember(token);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
+            String finalCarrier = (carrier != null && !carrier.isEmpty()) ? carrier : deliveryCompanyCode;
+            String finalTrackingNo = (trackingNo != null && !trackingNo.isEmpty()) ? trackingNo : tracking;
+
+            // 필수 파라미터 체크 (iOS 400 에러 방지 및 원인 파악을 위해 명시적 반환)
+            if (finalCarrier == null || finalCarrier.isEmpty() || finalTrackingNo == null || finalTrackingNo.isEmpty()) {
+                return ResponseEntity.badRequest().body(SimpleResultResponse.fail("송장 정보(carrier, trackingNo)가 누락되었습니다."));
+            }
+
             DataMap param = new DataMap();
             param.put("orderId", orderId);
-            param.put("deliveryCompanyCode", carrier);
-            param.put("trackingNo", trackingNo);
+            param.put("deliveryCompanyCode", finalCarrier);
+            param.put("trackingNo", finalTrackingNo);
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.updateOrderShippingInfo(param);
@@ -206,16 +221,22 @@ public class OrderMgtController {
     @PostMapping("/status")
     public ResponseEntity<?> updateStatus(@RequestParam("token") String token,
             @RequestParam("orderId") String orderId,
-            @RequestParam("status") String status) {
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "orderStatus", required = false) String orderStatus) {
         try {
             OpUserVO user = tokenizer.getMember(token);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
+            String finalStatus = (status != null && !status.isEmpty()) ? status : orderStatus;
+            if (finalStatus == null || finalStatus.isEmpty()) {
+                return ResponseEntity.badRequest().body(SimpleResultResponse.fail("상태값(status)이 누락되었습니다."));
+            }
+
             DataMap param = new DataMap();
             param.put("orderId", orderId);
-            param.put("orderStatus", status);
+            param.put("orderStatus", finalStatus);
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.updateOrderShippingInfo(param);
