@@ -315,8 +315,8 @@
                             <span class="stat-value danger">₩<fmt:formatNumber value="${dashboardStats.branchPendingAmount}" /></span>
                         </div>
                         <div class="stat-card secondary">
-                            <span class="stat-label">출고 대기 (입금확인완료)</span>
-                            <span class="stat-value secondary"><fmt:formatNumber value="${dashboardStats.shipmentPending}" />건</span>
+                            <span class="stat-label">오늘의 수금액</span>
+                            <span class="stat-value secondary">₩<fmt:formatNumber value="${dashboardStats.todayCollectionAmount}" /></span>
                         </div>
                         <div class="stat-card info">
                             <span class="stat-label">배송 중인 주문</span>
