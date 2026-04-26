@@ -8,6 +8,7 @@ import com.whomade.kycarrots.framework.common.util.encrypt.EncodedTokenizer;
 import com.whomade.kycarrots.mgt.order.service.MgtOrderService;
 import com.whomade.kycarrots.service.order.OrderService;
 import com.whomade.kycarrots.common.service.CommonCodeService;
+import com.whomade.kycarrots.dto.SimpleResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -127,7 +128,7 @@ public class OrderMgtController {
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.confirmBranchDeposit(param);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(SimpleResultResponse.ok("SUCCESS"));
         } catch (Exception e) {
             log.error("입금 확인 처리 중 오류 발생", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -167,7 +168,7 @@ public class OrderMgtController {
 
             mgtOrderService.requestBranchDeposit(param);
 
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(SimpleResultResponse.ok("SUCCESS"));
         } catch (Exception e) {
             log.error("지점 입금 확인 요청 중 오류 발생", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -194,7 +195,7 @@ public class OrderMgtController {
 
             mgtOrderService.updateOrderShippingInfo(param);
 
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(SimpleResultResponse.ok("SUCCESS"));
         } catch (Exception e) {
             log.error("배송 정보 업데이트 중 오류 발생", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -218,7 +219,7 @@ public class OrderMgtController {
             param.put("updusrNo", user.getUserNo());
 
             mgtOrderService.updateOrderShippingInfo(param);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(SimpleResultResponse.ok("SUCCESS"));
         } catch (Exception e) {
             log.error("주문 상태 변경 중 오류 발생", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
