@@ -6,11 +6,11 @@
         SELECT COUNT(*)
         FROM tb_app_version
         WHERE 1=1
-        <if test="osType != null and osType != ''">
-            AND OS_TYPE = #{osType}
+        <if test="OS_TYPE != null and OS_TYPE != ''">
+            AND OS_TYPE = #{OS_TYPE}
         </if>
-        <if test="useYn != null and useYn != ''">
-            AND USE_YN = #{useYn}
+        <if test="USE_YN != null and USE_YN != ''">
+            AND USE_YN = #{USE_YN}
         </if>
     </select>
 
@@ -30,11 +30,11 @@
                 DATE_FORMAT(UPDT_DT, '%Y-%m-%d %H:%i:%s') AS UPDT_DT
             FROM tb_app_version
             WHERE 1=1
-            <if test="osType != null and osType != ''">
-                AND OS_TYPE = #{osType}
+            <if test="OS_TYPE != null and OS_TYPE != ''">
+                AND OS_TYPE = #{OS_TYPE}
             </if>
-            <if test="useYn != null and useYn != ''">
-                AND USE_YN = #{useYn}
+            <if test="USE_YN != null and USE_YN != ''">
+                AND USE_YN = #{USE_YN}
             </if>
             ORDER BY REGIST_DT DESC
         ) A
@@ -54,8 +54,8 @@
             UPDFUSR_NO,
             DATE_FORMAT(UPDT_DT, '%Y-%m-%d %H:%i:%s') AS UPDT_DT
         FROM tb_app_version
-        WHERE OS_TYPE = #{osType}
-          AND LATEST_VERSION = #{latestVersion}
+        WHERE OS_TYPE = #{OS_TYPE}
+          AND LATEST_VERSION = #{LATEST_VERSION}
     </select>
 
     <insert id="insertAppVersion" parameterType="com.whomade.kycarrots.entity.appversion.TbAppVersionVo">
@@ -92,14 +92,14 @@
             USE_YN = #{useYn},
             UPDFUSR_NO = #{updfusrNo},
             UPDT_DT = NOW()
-        WHERE OS_TYPE = #{osType}
-          AND LATEST_VERSION = #{latestVersion}
+        WHERE OS_TYPE = #{OS_TYPE}
+          AND LATEST_VERSION = #{LATEST_VERSION}
     </update>
 
     <delete id="deleteAppVersion" parameterType="dataMap">
         DELETE FROM tb_app_version
-        WHERE OS_TYPE = #{osType}
-          AND LATEST_VERSION = #{latestVersion}
+        WHERE OS_TYPE = #{OS_TYPE}
+          AND LATEST_VERSION = #{LATEST_VERSION}
     </delete>
 
     <select id="selectLatestAppVersion" parameterType="dataMap" resultType="dataMap">
@@ -110,7 +110,7 @@
             UPDATE_MSG,
             STORE_URL
         FROM tb_app_version
-        WHERE OS_TYPE = #{osType}
+        WHERE OS_TYPE = #{OS_TYPE}
           AND USE_YN = 'Y'
         ORDER BY REGIST_DT DESC
         LIMIT 1

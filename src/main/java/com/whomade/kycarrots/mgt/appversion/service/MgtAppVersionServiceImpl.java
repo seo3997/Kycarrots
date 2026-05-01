@@ -36,12 +36,12 @@ public class MgtAppVersionServiceImpl implements MgtAppVersionService {
     @Override
     public void insertAppVersion(DataMap param) throws Exception {
         TbAppVersionVo vo = new TbAppVersionVo();
-        vo.setOsType(param.getString("osType"));
-        vo.setLatestVersion(param.getString("latestVersion"));
-        vo.setMinVersion(param.getString("minVersion"));
-        vo.setUpdateMsg(param.getString("updateMsg"));
-        vo.setStoreUrl(param.getString("storeUrl"));
-        vo.setUseYn(param.getString("useYn", "Y"));
+        vo.setOsType(param.getString("OS_TYPE"));
+        vo.setLatestVersion(param.getString("LATEST_VERSION"));
+        vo.setMinVersion(param.getString("MIN_VERSION"));
+        vo.setUpdateMsg(param.getString("UPDATE_MSG"));
+        vo.setStoreUrl(param.getString("STORE_URL"));
+        vo.setUseYn(param.getString("USE_YN", "Y"));
         vo.setRegusrNo(param.getString("ss_user_no"));
         vo.setUpdfusrNo(param.getString("ss_user_no"));
 
@@ -51,12 +51,12 @@ public class MgtAppVersionServiceImpl implements MgtAppVersionService {
     @Override
     public void updateAppVersion(DataMap param) throws Exception {
         TbAppVersionVo vo = new TbAppVersionVo();
-        vo.setOsType(param.getString("osType"));
-        vo.setLatestVersion(param.getString("latestVersion"));
-        vo.setMinVersion(param.getString("minVersion"));
-        vo.setUpdateMsg(param.getString("updateMsg"));
-        vo.setStoreUrl(param.getString("storeUrl"));
-        vo.setUseYn(param.getString("useYn"));
+        vo.setOsType(param.getString("OS_TYPE"));
+        vo.setLatestVersion(param.getString("LATEST_VERSION"));
+        vo.setMinVersion(param.getString("MIN_VERSION"));
+        vo.setUpdateMsg(param.getString("UPDATE_MSG"));
+        vo.setStoreUrl(param.getString("STORE_URL"));
+        vo.setUseYn(param.getString("USE_YN"));
         vo.setUpdfusrNo(param.getString("ss_user_no"));
 
         commonMybatisDao.update("mgt.appversion.updateAppVersion", vo);

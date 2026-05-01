@@ -33,7 +33,7 @@ public class RestAppVersionController {
         
         try {
             DataMap param = new DataMap();
-            param.put("osType", osType.toUpperCase());
+            param.put("OS_TYPE", osType.toUpperCase());
             
             DataMap latestInfo = mgtAppVersionService.checkVersion(param);
             

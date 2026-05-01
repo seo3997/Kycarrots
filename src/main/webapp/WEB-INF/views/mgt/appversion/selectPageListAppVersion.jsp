@@ -59,8 +59,6 @@
 		   		<div class="col-12">
 					<form role="form" id="aform" method="get" action="/mgt/appversion/selectPageListAppVersion.do">
 						<input type="hidden" name="latestVersion" value="" />
-						<input type="hidden" name="osType" value="" />
-						<input type="hidden" name="latestVersion" value="" />
 						<input type="hidden" id="currentPage" name="curPage" value="${param.curPage}">
 					
 					<!-- top search box // -->
