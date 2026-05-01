@@ -85,15 +85,16 @@
     </insert>
 
     <update id="updateAppVersion" parameterType="com.whomade.kycarrots.entity.appversion.TbAppVersionVo">
-        UPDATE tb_app_version SET
+        UPDATE tb_app_version
+        SET
             MIN_VERSION = #{minVersion},
             UPDATE_MSG = #{updateMsg},
             STORE_URL = #{storeUrl},
             USE_YN = #{useYn},
             UPDFUSR_NO = #{updfusrNo},
             UPDT_DT = NOW()
-        WHERE OS_TYPE = #{OS_TYPE}
-          AND LATEST_VERSION = #{LATEST_VERSION}
+        WHERE OS_TYPE = #{osType}
+          AND LATEST_VERSION = #{latestVersion}
     </update>
 
     <delete id="deleteAppVersion" parameterType="dataMap">
