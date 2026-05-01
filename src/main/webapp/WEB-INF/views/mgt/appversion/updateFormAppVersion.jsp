@@ -61,6 +61,7 @@
 		   		<div class="col-12">
 					<div class="box box-primary">
 						<form role="form" id="aform" method="post">
+							<input type="hidden" name="APP_VER_NO" value="${resultMap.APP_VER_NO}" />
 							
 							<div class="box-body">
 								<table class="table table-bordered">
@@ -72,13 +73,16 @@
 										<tr>
 											<th>플랫폼 <span class="text-danger">*</span></th>
 											<td>
-												<input type="text" name="OS_TYPE" class="form-control w-25" value="${resultMap.OS_TYPE}" readonly style="background-color:#eee;" />
+												<select name="OS_TYPE" id="osType" class="form-control w-25">
+													<option value="ANDROID" <c:if test="${resultMap.OS_TYPE == 'ANDROID'}">selected</c:if>>ANDROID</option>
+													<option value="IOS" <c:if test="${resultMap.OS_TYPE == 'IOS'}">selected</c:if>>IOS</option>
+												</select>
 											</td>
 										</tr>
 										<tr>
 											<th>최신 버전 <span class="text-danger">*</span></th>
 											<td>
-												<input type="text" name="LATEST_VERSION" id="latestVersion" class="form-control w-50" value="${resultMap.LATEST_VERSION}" readonly style="background-color:#eee;" />
+												<input type="text" name="LATEST_VERSION" id="latestVersion" class="form-control w-50" value="${resultMap.LATEST_VERSION}" />
 											</td>
 										</tr>
 										<tr>

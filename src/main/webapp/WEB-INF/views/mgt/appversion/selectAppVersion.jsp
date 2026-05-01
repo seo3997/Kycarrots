@@ -21,9 +21,8 @@
 			$('#aform').attr({ action : '/mgt/appversion/updateFormAppVersion.do', method : 'get' }).submit();
 		}
 
-		function fnSelect(OS_TYPE, LATEST_VERSION){
-			$('[name=OS_TYPE]').val(OS_TYPE);
-			$('[name=LATEST_VERSION]').val(LATEST_VERSION);
+		function fnSelect(APP_VER_NO){
+			$('[name=APP_VER_NO]').val(APP_VER_NO);
 			$('#aform').attr({ action : '/mgt/appversion/selectAppVersion.do', method : 'get' }).submit();
 		}
 
@@ -55,8 +54,7 @@
 		   		<div class="col-12">
 					<div class="box box-primary">
 						<form role="form" id="aform" method="get">
-							<input type="hidden" name="OS_TYPE" value="${resultMap.OS_TYPE}" />
-							<input type="hidden" name="LATEST_VERSION" value="${resultMap.LATEST_VERSION}" />
+							<input type="hidden" name="APP_VER_NO" value="${resultMap.APP_VER_NO}" />
 							
 							<div class="box-body">
 								<table class="table table-bordered">

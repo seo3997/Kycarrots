@@ -31,9 +31,8 @@
 			$('#aform').attr({ action : '/mgt/appversion/insertFormAppVersion.do', method : 'get' }).submit();
 		}
 
-		function fnSelect(OS_TYPE, LATEST_VERSION){
-			$('[name=OS_TYPE]').val(OS_TYPE);
-			$('[name=LATEST_VERSION]').val(LATEST_VERSION);
+		function fnSelect(APP_VER_NO){
+			$('[name=APP_VER_NO]').val(APP_VER_NO);
 			$('#aform').attr({ action : '/mgt/appversion/selectAppVersion.do', method : 'get' }).submit();
 		}
 	</script>
@@ -58,7 +57,7 @@
 			<div class="row">
 		   		<div class="col-12">
 					<form role="form" id="aform" method="get" action="/mgt/appversion/selectPageListAppVersion.do">
-						<input type="hidden" name="LATEST_VERSION" value="" />
+						<input type="hidden" name="APP_VER_NO" value="" />
 						<input type="hidden" id="currentPage" name="curPage" value="${param.curPage}">
 					
 					<!-- top search box // -->
@@ -99,7 +98,7 @@
 						    <tbody>
                             <c:set var="dataNo" value="${pageNavigationVo.currDataNo}"/>							
 						    <c:forEach var="item" items="${resultList}" varStatus="status">
-							    <tr class="text-center" style="cursor: pointer;" onclick="fnSelect('${item.OS_TYPE}', '${item.LATEST_VERSION}');">
+							    <tr class="text-center" style="cursor: pointer;" onclick="fnSelect('${item.APP_VER_NO}');">
                                     <td>${dataNo - status.index}</td>
 								    <td>${item.OS_TYPE}</td>
     								<td>${item.LATEST_VERSION}</td>

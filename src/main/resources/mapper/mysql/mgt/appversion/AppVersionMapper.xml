@@ -18,6 +18,7 @@
         SELECT *
         FROM (
             SELECT
+                APP_VER_NO,
                 OS_TYPE,
                 LATEST_VERSION,
                 MIN_VERSION,
@@ -43,6 +44,7 @@
 
     <select id="selectAppVersion" parameterType="dataMap" resultType="dataMap">
         SELECT
+            APP_VER_NO,
             OS_TYPE,
             LATEST_VERSION,
             MIN_VERSION,
@@ -54,8 +56,7 @@
             UPDFUSR_NO,
             DATE_FORMAT(UPDT_DT, '%Y-%m-%d %H:%i:%s') AS UPDT_DT
         FROM tb_app_version
-        WHERE OS_TYPE = #{OS_TYPE}
-          AND LATEST_VERSION = #{LATEST_VERSION}
+        WHERE APP_VER_NO = #{APP_VER_NO}
     </select>
 
     <insert id="insertAppVersion" parameterType="com.whomade.kycarrots.entity.appversion.TbAppVersionVo">
@@ -87,20 +88,20 @@
     <update id="updateAppVersion" parameterType="com.whomade.kycarrots.entity.appversion.TbAppVersionVo">
         UPDATE tb_app_version
         SET
+            OS_TYPE = #{osType},
+            LATEST_VERSION = #{latestVersion},
             MIN_VERSION = #{minVersion},
             UPDATE_MSG = #{updateMsg},
             STORE_URL = #{storeUrl},
             USE_YN = #{useYn},
             UPDFUSR_NO = #{updfusrNo},
             UPDT_DT = NOW()
-        WHERE OS_TYPE = #{osType}
-          AND LATEST_VERSION = #{latestVersion}
+        WHERE APP_VER_NO = #{appVerNo}
     </update>
 
     <delete id="deleteAppVersion" parameterType="dataMap">
         DELETE FROM tb_app_version
-        WHERE OS_TYPE = #{OS_TYPE}
-          AND LATEST_VERSION = #{LATEST_VERSION}
+        WHERE APP_VER_NO = #{APP_VER_NO}
     </delete>
 
     <select id="selectLatestAppVersion" parameterType="dataMap" resultType="dataMap">
