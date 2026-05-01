@@ -51,7 +51,6 @@ public class MgtAppVersionServiceImpl implements MgtAppVersionService {
     @Override
     public void updateAppVersion(DataMap param) throws Exception {
         TbAppVersionVo vo = new TbAppVersionVo();
-        vo.setVersionId(param.getInt("versionId"));
         vo.setOsType(param.getString("osType"));
         vo.setLatestVersion(param.getString("latestVersion"));
         vo.setMinVersion(param.getString("minVersion"));

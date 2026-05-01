@@ -83,7 +83,7 @@ public class MgtAppVersionController {
         param.put("ss_user_no", userInfoVo.getUserNo());
 
         mgtAppVersionService.updateAppVersion(param);
-        return "redirect:/mgt/appversion/selectAppVersion.do?versionId=" + param.getString("versionId");
+        return "redirect:/mgt/appversion/selectAppVersion.do?osType=" + param.getString("osType") + "&latestVersion=" + param.getString("latestVersion");
     }
 
     @RequestMapping(value = "/mgt/appversion/deleteAppVersion.do")

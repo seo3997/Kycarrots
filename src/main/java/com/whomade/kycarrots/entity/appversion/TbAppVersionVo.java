@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 @Data
 public class TbAppVersionVo {
-    private Integer versionId;
+
     private String osType;
     private String latestVersion;
     private String minVersion;

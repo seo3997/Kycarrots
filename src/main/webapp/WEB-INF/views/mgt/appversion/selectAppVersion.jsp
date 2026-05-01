@@ -49,7 +49,8 @@
 		   		<div class="col-12">
 					<div class="box box-primary">
 						<form role="form" id="aform" method="get">
-							<input type="hidden" name="versionId" value="${resultMap.VERSION_ID}" />
+							<input type="hidden" name="osType" value="${resultMap.OS_TYPE}" />
+							<input type="hidden" name="latestVersion" value="${resultMap.LATEST_VERSION}" />
 							
 							<div class="box-body">
 								<table class="table table-bordered">
