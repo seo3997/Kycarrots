@@ -106,7 +106,7 @@
 										<tr>
 											<th>사용여부</th>
 											<td>
-												<select name="useYn" id="useYn" class="form-control w-25">
+												<select name="USE_YN" id="useYn" class="form-control w-25">
 													<option value="Y">사용</option>
 													<option value="N">미사용</option>
 												</select>

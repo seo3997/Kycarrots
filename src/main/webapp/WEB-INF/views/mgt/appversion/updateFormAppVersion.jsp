@@ -61,8 +61,6 @@
 		   		<div class="col-12">
 					<div class="box box-primary">
 						<form role="form" id="aform" method="post">
-							<input type="hidden" name="OS_TYPE" value="${resultMap.OS_TYPE}" />
-							<input type="hidden" name="LATEST_VERSION" value="${resultMap.LATEST_VERSION}" />
 							
 							<div class="box-body">
 								<table class="table table-bordered">
@@ -74,16 +72,13 @@
 										<tr>
 											<th>플랫폼 <span class="text-danger">*</span></th>
 											<td>
-												<select name="OS_TYPE" id="osType" class="form-control w-25">
-													<option value="ANDROID" <c:if test="${resultMap.OS_TYPE == 'ANDROID'}">selected</c:if>>ANDROID</option>
-													<option value="IOS" <c:if test="${resultMap.OS_TYPE == 'IOS'}">selected</c:if>>IOS</option>
-												</select>
+												<input type="text" name="OS_TYPE" class="form-control w-25" value="${resultMap.OS_TYPE}" readonly style="background-color:#eee;" />
 											</td>
 										</tr>
 										<tr>
 											<th>최신 버전 <span class="text-danger">*</span></th>
 											<td>
-												<input type="text" name="LATEST_VERSION" id="latestVersion" class="form-control w-50" value="${resultMap.LATEST_VERSION}" />
+												<input type="text" name="LATEST_VERSION" id="latestVersion" class="form-control w-50" value="${resultMap.LATEST_VERSION}" readonly style="background-color:#eee;" />
 											</td>
 										</tr>
 										<tr>
@@ -107,7 +102,7 @@
 										<tr>
 											<th>사용여부</th>
 											<td>
-												<select name="useYn" id="useYn" class="form-control w-25">
+												<select name="USE_YN" id="useYn" class="form-control w-25">
 													<option value="Y" <c:if test="${resultMap.USE_YN == 'Y'}">selected</c:if>>사용</option>
 													<option value="N" <c:if test="${resultMap.USE_YN == 'N'}">selected</c:if>>미사용</option>
 												</select>
