@@ -61,7 +61,8 @@
 		   		<div class="col-12">
 					<div class="box box-primary">
 						<form role="form" id="aform" method="post">
-							<input type="hidden" name="versionId" value="${resultMap.VERSION_ID}" />
+							<input type="hidden" name="OS_TYPE" value="${resultMap.OS_TYPE}" />
+							<input type="hidden" name="LATEST_VERSION" value="${resultMap.LATEST_VERSION}" />
 							
 							<div class="box-body">
 								<table class="table table-bordered">
@@ -73,7 +74,7 @@
 										<tr>
 											<th>플랫폼 <span class="text-danger">*</span></th>
 											<td>
-												<select name="osType" id="osType" class="form-control w-25">
+												<select name="OS_TYPE" id="osType" class="form-control w-25">
 													<option value="ANDROID" <c:if test="${resultMap.OS_TYPE == 'ANDROID'}">selected</c:if>>ANDROID</option>
 													<option value="IOS" <c:if test="${resultMap.OS_TYPE == 'IOS'}">selected</c:if>>IOS</option>
 												</select>
@@ -82,25 +83,25 @@
 										<tr>
 											<th>최신 버전 <span class="text-danger">*</span></th>
 											<td>
-												<input type="text" name="latestVersion" id="latestVersion" class="form-control w-50" value="${resultMap.LATEST_VERSION}" />
+												<input type="text" name="LATEST_VERSION" id="latestVersion" class="form-control w-50" value="${resultMap.LATEST_VERSION}" />
 											</td>
 										</tr>
 										<tr>
 											<th>최소 지원 버전 <span class="text-danger">*</span></th>
 											<td>
-												<input type="text" name="minVersion" id="minVersion" class="form-control w-50" value="${resultMap.MIN_VERSION}" />
+												<input type="text" name="MIN_VERSION" id="minVersion" class="form-control w-50" value="${resultMap.MIN_VERSION}" />
 											</td>
 										</tr>
 										<tr>
 											<th>업데이트 메시지</th>
 											<td>
-												<textarea name="updateMsg" id="updateMsg" class="form-control" rows="3">${resultMap.UPDATE_MSG}</textarea>
+												<textarea name="UPDATE_MSG" id="updateMsg" class="form-control" rows="3">${resultMap.UPDATE_MSG}</textarea>
 											</td>
 										</tr>
 										<tr>
 											<th>스토어 URL</th>
 											<td>
-												<input type="text" name="storeUrl" id="storeUrl" class="form-control" value="${resultMap.STORE_URL}" />
+												<input type="text" name="STORE_URL" id="storeUrl" class="form-control" value="${resultMap.STORE_URL}" />
 											</td>
 										</tr>
 										<tr>

@@ -71,7 +71,7 @@
 										<tr>
 											<th>플랫폼 <span class="text-danger">*</span></th>
 											<td>
-												<select name="osType" id="osType" class="form-control w-25">
+												<select name="OS_TYPE" id="osType" class="form-control w-25">
 													<option value="">선택</option>
 													<option value="ANDROID">ANDROID</option>
 													<option value="IOS">IOS</option>
@@ -81,20 +81,20 @@
 										<tr>
 											<th>최신 버전 <span class="text-danger">*</span></th>
 											<td>
-												<input type="text" name="latestVersion" id="latestVersion" class="form-control w-50" placeholder="ex: 1.1.0" />
+												<input type="text" name="LATEST_VERSION" id="latestVersion" class="form-control w-50" placeholder="ex: 1.1.0" />
 											</td>
 										</tr>
 										<tr>
 											<th>최소 지원 버전 <span class="text-danger">*</span></th>
 											<td>
-												<input type="text" name="minVersion" id="minVersion" class="form-control w-50" placeholder="ex: 1.0.0" />
+												<input type="text" name="MIN_VERSION" id="minVersion" class="form-control w-50" placeholder="ex: 1.0.0" />
 												<p class="help-block">이 버전 미만의 사용자는 강제 업데이트 팝업이 노출됩니다.</p>
 											</td>
 										</tr>
 										<tr>
 											<th>업데이트 메시지</th>
 											<td>
-												<textarea name="updateMsg" id="updateMsg" class="form-control" rows="3">새로운 버전이 출시되었습니다. 최신 버전으로 업데이트 해주세요.</textarea>
+												<textarea name="UPDATE_MSG" id="updateMsg" class="form-control" rows="3">새로운 버전이 출시되었습니다. 최신 버전으로 업데이트 해주세요.</textarea>
 											</td>
 										</tr>
 										<tr>

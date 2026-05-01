@@ -31,9 +31,9 @@
 			$('#aform').attr({ action : '/mgt/appversion/insertFormAppVersion.do', method : 'get' }).submit();
 		}
 
-		function fnSelect(osType, latestVersion){
-			$('[name=osType]').val(osType);
-			$('[name=latestVersion]').val(latestVersion);
+		function fnSelect(OS_TYPE, LATEST_VERSION){
+			$('[name=OS_TYPE]').val(OS_TYPE);
+			$('[name=LATEST_VERSION]').val(LATEST_VERSION);
 			$('#aform').attr({ action : '/mgt/appversion/selectAppVersion.do', method : 'get' }).submit();
 		}
 	</script>
@@ -58,15 +58,15 @@
 			<div class="row">
 		   		<div class="col-12">
 					<form role="form" id="aform" method="get" action="/mgt/appversion/selectPageListAppVersion.do">
-						<input type="hidden" name="latestVersion" value="" />
+						<input type="hidden" name="LATEST_VERSION" value="" />
 						<input type="hidden" id="currentPage" name="curPage" value="${param.curPage}">
 					
 					<!-- top search box // -->
 					<div class="box-header form-inline">
-                        <select name="osType" class="form-control mr-2">
+                        <select name="OS_TYPE" class="form-control mr-2">
                             <option value="">전체 플랫폼</option>
-                            <option value="ANDROID" <c:if test="${param.osType == 'ANDROID'}">selected</c:if>>ANDROID</option>
-                            <option value="IOS" <c:if test="${param.osType == 'IOS'}">selected</c:if>>IOS</option>
+                            <option value="ANDROID" <c:if test="${param.OS_TYPE == 'ANDROID'}">selected</c:if>>ANDROID</option>
+                            <option value="IOS" <c:if test="${param.OS_TYPE == 'IOS'}">selected</c:if>>IOS</option>
                         </select>
 						<button type="button" class="btn btn-top-search" onclick="fnSearch(); return false;"><i class="fa fa-search"></i></button>
 					</div>

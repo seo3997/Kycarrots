@@ -21,6 +21,12 @@
 			$('#aform').attr({ action : '/mgt/appversion/updateFormAppVersion.do', method : 'get' }).submit();
 		}
 
+		function fnSelect(OS_TYPE, LATEST_VERSION){
+			$('[name=OS_TYPE]').val(OS_TYPE);
+			$('[name=LATEST_VERSION]').val(LATEST_VERSION);
+			$('#aform').attr({ action : '/mgt/appversion/selectAppVersion.do', method : 'get' }).submit();
+		}
+
 		function fnDelete(){
 			if(confirm('삭제하시겠습니까?')){
 				$('#aform').attr({ action : '/mgt/appversion/deleteAppVersion.do', method : 'post' }).submit();
@@ -49,8 +55,8 @@
 		   		<div class="col-12">
 					<div class="box box-primary">
 						<form role="form" id="aform" method="get">
-							<input type="hidden" name="osType" value="${resultMap.OS_TYPE}" />
-							<input type="hidden" name="latestVersion" value="${resultMap.LATEST_VERSION}" />
+							<input type="hidden" name="OS_TYPE" value="${resultMap.OS_TYPE}" />
+							<input type="hidden" name="LATEST_VERSION" value="${resultMap.LATEST_VERSION}" />
 							
 							<div class="box-body">
 								<table class="table table-bordered">
