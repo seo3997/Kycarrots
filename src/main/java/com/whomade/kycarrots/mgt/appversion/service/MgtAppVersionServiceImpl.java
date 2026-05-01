@@ -22,6 +22,7 @@ public class MgtAppVersionServiceImpl implements MgtAppVersionService {
         int totalCount = commonMybatisDao.selectOne("mgt.appversion.selectAppVersionCount", param);
         param.put("totalCount", totalCount);
 
+        param.put("pageInputName", "curPage");
         com.whomade.kycarrots.framework.common.page.util.pageNavigationUtil.createNavigationInfo(model, param);
 
         return commonMybatisDao.selectList("mgt.appversion.selectPageListAppVersion", param);

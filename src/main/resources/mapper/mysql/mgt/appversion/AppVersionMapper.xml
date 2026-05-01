@@ -39,7 +39,7 @@
             </if>
             ORDER BY VERSION_ID DESC
         ) A
-        LIMIT #{limitStart}, #{numPerPage}
+        LIMIT #{limitStart}, #{limitEnd}
     </select>
 
     <select id="selectAppVersion" parameterType="dataMap" resultType="dataMap">
