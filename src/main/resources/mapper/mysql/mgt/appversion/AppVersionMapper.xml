@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mgt.appversion">
+
+    <select id="selectAppVersionCount" parameterType="dataMap" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_app_version
+        WHERE 1=1
+        <if test="osType != null and osType != ''">
+            AND OS_TYPE = #{osType}
+        </if>
+        <if test="useYn != null and useYn != ''">
+            AND USE_YN = #{useYn}
+        </if>
+    </select>
+
+    <select id="selectPageListAppVersion" parameterType="dataMap" resultType="dataMap">
+        SELECT *
+        FROM (
+            SELECT
+                VERSION_ID,
+                OS_TYPE,
+                LATEST_VERSION,
+                MIN_VERSION,
+                UPDATE_MSG,
+                STORE_URL,
+                USE_YN,
+                REGUSR_NO,
+                DATE_FORMAT(REGIST_DT, '%Y-%m-%d %H:%i:%s') AS REGIST_DT,
+                UPDFUSR_NO,
+                DATE_FORMAT(UPDT_DT, '%Y-%m-%d %H:%i:%s') AS UPDT_DT
+            FROM tb_app_version
+            WHERE 1=1
+            <if test="osType != null and osType != ''">
+                AND OS_TYPE = #{osType}
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND USE_YN = #{useYn}
+            </if>
+            ORDER BY VERSION_ID DESC
+        ) A
+        LIMIT #{limitStart}, #{numPerPage}
+    </select>
+
+    <select id="selectAppVersion" parameterType="dataMap" resultType="dataMap">
+        SELECT
+            VERSION_ID,
+            OS_TYPE,
+            LATEST_VERSION,
+            MIN_VERSION,
+            UPDATE_MSG,
+            STORE_URL,
+            USE_YN,
+            REGUSR_NO,
+            DATE_FORMAT(REGIST_DT, '%Y-%m-%d %H:%i:%s') AS REGIST_DT,
+            UPDFUSR_NO,
+            DATE_FORMAT(UPDT_DT, '%Y-%m-%d %H:%i:%s') AS UPDT_DT
+        FROM tb_app_version
+        WHERE VERSION_ID = #{versionId}
+    </select>
+
+    <insert id="insertAppVersion" parameterType="com.whomade.kycarrots.entity.appversion.TbAppVersionVo">
+        INSERT INTO tb_app_version (
+            OS_TYPE,
+            LATEST_VERSION,
+            MIN_VERSION,
+            UPDATE_MSG,
+            STORE_URL,
+            USE_YN,
+            REGUSR_NO,
+            REGIST_DT,
+            UPDFUSR_NO,
+            UPDT_DT
+        ) VALUES (
+            #{osType},
+            #{latestVersion},
+            #{minVersion},
+            #{updateMsg},
+            #{storeUrl},
+            #{useYn},
+            #{regusrNo},
+            NOW(),
+            #{updfusrNo},
+            NOW()
+        )
+    </insert>
+
+    <update id="updateAppVersion" parameterType="com.whomade.kycarrots.entity.appversion.TbAppVersionVo">
+        UPDATE tb_app_version SET
+            OS_TYPE = #{osType},
+            LATEST_VERSION = #{latestVersion},
+            MIN_VERSION = #{minVersion},
+            UPDATE_MSG = #{updateMsg},
+            STORE_URL = #{storeUrl},
+            USE_YN = #{useYn},
+            UPDFUSR_NO = #{updfusrNo},
+            UPDT_DT = NOW()
+        WHERE VERSION_ID = #{versionId}
+    </update>
+
+    <delete id="deleteAppVersion" parameterType="dataMap">
+        DELETE FROM tb_app_version
+        WHERE VERSION_ID = #{versionId}
+    </delete>
+
+    <select id="selectLatestAppVersion" parameterType="dataMap" resultType="dataMap">
+        SELECT
+            OS_TYPE,
+            LATEST_VERSION,
+            MIN_VERSION,
+            UPDATE_MSG,
+            STORE_URL
+        FROM tb_app_version
+        WHERE OS_TYPE = #{osType}
+          AND USE_YN = 'Y'
+        ORDER BY VERSION_ID DESC
+        LIMIT 1
+    </select>
+
+</mapper>
