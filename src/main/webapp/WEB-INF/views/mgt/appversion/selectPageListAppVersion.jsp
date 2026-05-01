@@ -99,10 +99,10 @@
 						    <tbody>
                             <c:set var="dataNo" value="${pageNavigationVo.currDataNo}"/>							
 						    <c:forEach var="item" items="${resultList}" varStatus="status">
-							    <tr class="text-center">
+							    <tr class="text-center" style="cursor: pointer;" onclick="fnSelect('${item.OS_TYPE}', '${item.LATEST_VERSION}');">
                                     <td>${dataNo - status.index}</td>
 								    <td>${item.OS_TYPE}</td>
-    								<td><a href="#" onclick="fnSelect('${item.OS_TYPE}', '${item.LATEST_VERSION}'); return false;">${item.LATEST_VERSION}</a></td>
+    								<td>${item.LATEST_VERSION}</td>
 	    							<td>${item.MIN_VERSION}</td>
                                     <td>
                                         <c:choose>
