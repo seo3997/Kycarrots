@@ -3,19 +3,19 @@
 tb_app_version 테이블을 생성하고 초기 데이터를 구축한다. 테이블과 데이타는 이미 있음
 DROP TABLE IF EXISTS `tb_app_version`;
 CREATE TABLE `tb_app_version` (
-`OS_TYPE` varchar(10) NOT NULL COMMENT '플랫폼 (ANDROID / IOS)',
-`LATEST_VERSION` varchar(20) NOT NULL COMMENT '최신 버전 (ex: 1.1.0)',
-`MIN_VERSION` varchar(20) NOT NULL COMMENT '최소 지원 버전 (이하 버전은 강제 업데이트)',
-`UPDATE_MSG` text COMMENT '업데이트 공지 메시지',
-`STORE_URL` varchar(255) COMMENT '스토어 연결 URL',
-`USE_YN` char(1) DEFAULT 'Y' COMMENT '사용 여부 (Y/N)',
-`REGUSR_NO` varchar(50) DEFAULT NULL COMMENT '등록자 번호',
-`REGIST_DT` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록 일시',
-`UPDFUSR_NO` varchar(50) DEFAULT NULL COMMENT '수정자 번호',
-`UPDT_DT` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정 일시',
-PRIMARY KEY (`OS_TYPE`, `LATEST_VERSION`)
+    `APP_VER_NO`     int          NOT NULL AUTO_INCREMENT COMMENT '버전 일련번호(PK)',
+    `OS_TYPE`        varchar(10)  NOT NULL COMMENT '플랫폼 (ANDROID / IOS)',
+    `LATEST_VERSION` varchar(20)  NOT NULL COMMENT '최신 버전 (ex: 1.1.0)',
+    `MIN_VERSION`    varchar(20)  NOT NULL COMMENT '최소 지원 버전 (이하 버전은 강제 업데이트)',
+    `UPDATE_MSG`     text                  COMMENT '업데이트 공지 메시지',
+    `STORE_URL`      varchar(255)          COMMENT '스토어 연결 URL',
+    `USE_YN`         char(1)      DEFAULT 'Y' COMMENT '사용 여부 (Y/N)',
+    `REGUSR_NO`      varchar(50)  DEFAULT NULL COMMENT '등록자 번호',
+    `REGIST_DT`      timestamp    NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록 일시',
+    `UPDFUSR_NO`     varchar(50)  DEFAULT NULL COMMENT '수정자 번호',
+    `UPDT_DT`        timestamp    NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정 일시',
+    PRIMARY KEY (`APP_VER_NO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='앱 버전 관리 테이블';
-
 1.2 샘플 데이터
 1.2.1 안드로이드 초기 데이터
 INSERT INTO tb_app_version (OS_TYPE, LATEST_VERSION, MIN_VERSION, UPDATE_MSG, STORE_URL, USE_YN)
