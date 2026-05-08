@@ -7,32 +7,26 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 15px; text-align: center; margin-bottom: 40px; }
-        h2 { color: #2980b9; margin-top: 50px; border-left: 5px solid #3498db; padding-left: 15px; }
+        h2 { color: #2980b9; margin-top: 50px; border-left: 5px solid #3498db; padding-left: 15px; margin-bottom: 25px; }
         .back-link { display: inline-block; margin-bottom: 30px; color: #3498db; text-decoration: none; font-weight: bold; font-size: 1.1em; transition: 0.2s; }
         .back-link:hover { color: #2980b9; transform: translateX(-5px); }
         
-        /* Flowchart Styles */
-        .flowchart { display: flex; justify-content: space-between; align-items: flex-start; margin: 50px 0; position: relative; gap: 20px; }
-        .flow-step { flex: 1; text-align: center; position: relative; z-index: 1; }
-        .flow-icon { width: 100px; height: 100px; margin: 0 auto 15px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 2px solid #eee; overflow: hidden; transition: 0.3s; }
-        .flow-icon img { width: 80%; height: auto; }
-        .flow-step:hover .flow-icon { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); border-color: #3498db; }
-        .flow-label { font-weight: bold; color: #2c3e50; font-size: 1.1em; margin-bottom: 5px; display: block; }
-        .flow-desc { font-size: 0.85em; color: #7f8c8d; line-height: 1.4; }
-        
-        /* Connecting Arrows */
-        .flowchart::after { content: ""; position: absolute; top: 50px; left: 10%; right: 10%; height: 2px; background: #e0e0e0; z-index: 0; }
-        .arrow { position: absolute; top: 42px; right: -15px; font-size: 20px; color: #3498db; z-index: 2; }
+        /* Process Section Styles */
+        .process-box { background: #fdfdfd; border: 1px solid #eee; border-radius: 12px; padding: 25px; margin-bottom: 30px; display: flex; align-items: center; gap: 30px; transition: 0.3s; }
+        .process-box:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-color: #3498db; }
+        .process-visual { flex-shrink: 0; width: 120px; height: 120px; background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; overflow: hidden; }
+        .process-visual img { width: 80%; height: auto; }
+        .process-content { flex-grow: 1; }
+        .process-content p { margin-bottom: 0; }
+
+        .step-badge { display: inline-block; background: #3498db; color: white; padding: 2px 12px; border-radius: 20px; font-size: 0.85em; font-weight: bold; margin-bottom: 10px; }
 
         ul { padding-left: 25px; background: #fdfdfd; padding: 20px 20px 20px 40px; border-radius: 8px; border: 1px solid #f0f0f0; }
         li { margin-bottom: 15px; }
         li strong { color: #2c3e50; }
         
-        @media (max-width: 768px) {
-            .flowchart { flex-direction: column; align-items: center; }
-            .flowchart::after { display: none; }
-            .arrow { display: none; }
-            .flow-step { margin-bottom: 30px; width: 100%; }
+        @media (max-width: 600px) {
+            .process-box { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
@@ -41,32 +35,6 @@
         <a href="menual_index.html" class="back-link">← 목차로 돌아가기</a>
         <h1>비즈니스 프로세스 요약</h1>
         
-        <div class="flowchart">
-            <div class="flow-step">
-                <div class="flow-icon"><img src="image/step1.png" alt="본사운영"></div>
-                <span class="flow-label">본사운영</span>
-                <span class="flow-desc">지점 및 관리자 등록<br>시스템 인프라 관리</span>
-                <div class="arrow">➜</div>
-            </div>
-            <div class="flow-step">
-                <div class="flow-icon"><img src="image/step2.png" alt="상품관리"></div>
-                <span class="flow-label">상품관리</span>
-                <span class="flow-desc">상품 마스터 등록<br>카테고리 및 재고 관리</span>
-                <div class="arrow">➜</div>
-            </div>
-            <div class="flow-step">
-                <div class="flow-icon"><img src="image/step3.png" alt="판매지점"></div>
-                <span class="flow-label">판매지점</span>
-                <span class="flow-desc">지점 마케팅 활동<br>개별 결제창 운영</span>
-                <div class="arrow">➜</div>
-            </div>
-            <div class="flow-step">
-                <div class="flow-icon"><img src="image/step4.png" alt="일반사용자"></div>
-                <span class="flow-label">일반사용자</span>
-                <span class="flow-desc">상품 조회 및 주문<br>편리한 모바일 구매</span>
-            </div>
-        </div>
-
         <h2>1. 사용자 권한 및 회원 구분</h2>
         <ul>
             <li><strong>본사운영</strong>: 시스템 전체 인프라 및 마스터 데이터를 관리하는 시스템 어드민 및 입금 확인, 배송 처리, 물류 담당</li>
@@ -75,13 +43,45 @@
         </ul>
         
         <h2>2. 지점 및 지점 관리자 등록 프로세스</h2>
-        <p>본사 관리자가 지점 관리 메뉴에서 지점 정보(지점명, 토스 키 등)와 해당 지점을 운영할 관리자 계정 정보를 입력하여 지점을 생성합니다.</p>
+        <div class="process-box">
+            <div class="process-visual"><img src="image/step1.png" alt="본사운영"></div>
+            <div class="process-content">
+                <span class="step-badge">본사 주도</span>
+                <p>본사 관리자가 지점 관리 메뉴에서 지점 정보(지점명, 토스 키 등)와 해당 지점을 운영할 관리자 계정 정보를 입력하여 지점을 생성합니다. 생성된 지점 관리자는 해당 지점의 전용 관리 페이지 권한을 가집니다.</p>
+            </div>
+        </div>
         
         <h2>3. 지점별 상품 주문 및 결제</h2>
-        <p>구매자는 특정 지점의 상점 도메인이나 앱으로 접속하여 상품을 조회하고 주문합니다. 주문과 결제 시 해당 지점의 고유 식별자(BRANCH_ID)와 결제 키(TOSS_CLIENT_KEY)가 사용되어 지점별로 독립적인 결제가 이루어집니다.</p>
+        <div class="process-box">
+            <div class="process-visual"><img src="image/step2.png" alt="상품관리"></div>
+            <div class="process-content">
+                <span class="step-badge">상품 마스터</span>
+                <p>본사에서 등록한 상품 마스터 정보를 기반으로 각 지점별로 판매 설정이 이루어집니다.</p>
+            </div>
+        </div>
+        <div class="process-box" style="margin-top: -15px; margin-left: 40px; border-left: 3px dashed #3498db; border-radius: 0 12px 12px 0;">
+            <div class="process-visual"><img src="image/step4.png" alt="일반사용자"></div>
+            <div class="process-content">
+                <span class="step-badge">구매자 구매</span>
+                <p>구매자는 특정 지점의 상점 도메인이나 앱으로 접속하여 상품을 주문합니다. 이때 해당 지점의 고유 결제 키가 사용되어 독립적인 정산 구조를 가집니다.</p>
+            </div>
+        </div>
         
         <h2>4. 정산 및 배송 관리</h2>
-        <p>지점 판매자는 대시보드를 통해 본사에 입금해야 할 총 원가를 확인합니다. 본사 관리자가 입금 확인 및 배송 처리를 진행하면, 구매자에게 "결제 완료! 배송 시작" 알림이 발송됩니다.</p>
+        <div class="process-box">
+            <div class="process-visual"><img src="image/step3.png" alt="판매지점"></div>
+            <div class="process-content">
+                <span class="step-badge">지점 정산</span>
+                <p>지점 판매자는 대시보드를 통해 본사에 송금할 원가를 확인하고 정산을 요청합니다.</p>
+            </div>
+        </div>
+        <div class="process-box" style="margin-top: -15px; margin-left: 40px; border-left: 3px dashed #3498db; border-radius: 0 12px 12px 0;">
+            <div class="process-visual" style="background: #eef2f7;"><img src="image/step1.png" alt="배송처리" style="opacity: 0.7;"></div>
+            <div class="process-content">
+                <span class="step-badge">본사 배송</span>
+                <p>본사 관리자가 최종 입금을 확인한 후 물류 센터를 통해 상품 배송을 시작하며, 구매자에게 배송 시작 알림이 발송됩니다.</p>
+            </div>
+        </div>
     </div>
 </body>
 </html>
