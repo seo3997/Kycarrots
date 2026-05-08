@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>본사 (ROLE_SELL) 메뉴얼</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; line-height: 1.6; }
+        .sidebar { width: 250px; position: fixed; height: 100%; background: #343a40; color: white; padding-top: 20px; }
+        .sidebar a { padding: 10px 20px; text-decoration: none; color: #adb5bd; display: block; transition: 0.3s; }
+        .sidebar a:hover { color: white; background: #495057; }
+        .sidebar .active { color: white; background: #007bff; }
+        .content { margin-left: 250px; padding: 40px; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        h2 { color: #007bff; margin-top: 40px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        h3 { color: #555; margin-top: 25px; background: #e9ecef; padding: 10px; border-radius: 4px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-weight: bold; }
+        .screenshot-group { margin: 20px 0; border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+        .screenshot { max-width: 100%; height: auto; border: 1px solid #ddd; margin: 10px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 4px; }
+        .label { display: inline-block; background: #6c757d; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; margin-bottom: 10px; }
+        .info-box { background-color: #e7f3ff; padding: 15px; border-left: 4px solid #007bff; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="menual_index.html">← 메뉴얼 홈</a>
+        <a href="#intro">개요</a>
+        <a href="#branch">지점 관리</a>
+        <a href="#user">사용자 관리</a>
+        <a href="#product">상품 관리</a>
+        <a href="#order">주문 관리</a>
+        <a href="#other">기타 관리</a>
+    </div>
+    <div class="content">
+        <div class="container">
+            <h1 id="intro">본사 (ROLE_SELL) 운영 관리자 메뉴얼</h1>
+            <p>본사 관리자는 시스템의 핵심 데이터를 관리하며 지점 생성, 상품 관리, 주문 처리를 담당합니다.</p>
+
+            <div class="info-box">
+                <strong>로그인 정보</strong><br>
+                - 접속 URL: <a href="http://asagong.com/admin/login.do" target="_blank">http://asagong.com/admin/login.do</a><br>
+                - 아이디: sel1@gmail.com / 패스워드: 1234
+            </div>
+
+            <h2>1. 메인 화면</h2>
+            <p>로그인 후 첫 화면으로 전체 주문 현황 및 지점별 요약을 확인합니다.</p>
+            <img src="image/web/ROLE_SELL/dashboard.png" class="screenshot" alt="대시보드">
+
+            <h2 id="branch">2. 지점 관리</h2>
+            <p>지점을 등록하고 지점별 도메인 및 상세 정보를 관리합니다.</p>
+            
+            <div class="screenshot-group">
+                <span class="label">리스트 화면</span>
+                <p>전체 지점 목록을 조회합니다. 지점명을 클릭하면 상세 화면으로 이동합니다.</p>
+                <img src="image/web/ROLE_SELL/branch_list.png" class="screenshot">
+                
+                <span class="label">등록 화면</span>
+                <p>'등록' 버튼을 클릭하여 새로운 지점을 생성합니다. 지점명, 도메인, 결제 키 등을 입력합니다.</p>
+                <img src="image/web/ROLE_SELL/branch_insert.png" class="screenshot">
+                
+                <span class="label">상세 화면</span>
+                <p>특정 지점의 상세 설정을 확인합니다.</p>
+                <img src="image/web/ROLE_SELL/branch_detail.png" class="screenshot">
+                
+                <span class="label">수정 화면</span>
+                <p>지점 정보를 변경하고 '저장' 버튼을 누릅니다.</p>
+                <img src="image/web/ROLE_SELL/branch_update.png" class="screenshot">
+            </div>
+
+            <h2 id="user">3. 사용자 관리</h2>
+            <p>본사 및 지점 사용자의 계정을 관리합니다.</p>
+            
+            <div class="screenshot-group">
+                <span class="label">리스트 화면</span>
+                <img src="image/web/ROLE_SELL/user_list.png" class="screenshot">
+                
+                <span class="label">등록 화면</span>
+                <img src="image/web/ROLE_SELL/user_insert.png" class="screenshot">
+                
+                <span class="label">상세 화면</span>
+                <img src="image/web/ROLE_SELL/user_detail.png" class="screenshot">
+                
+                <span class="label">수정 화면</span>
+                <img src="image/web/ROLE_SELL/user_update.png" class="screenshot">
+            </div>
+
+            <h2 id="product">4. 상품 관리</h2>
+            <p>판매할 상품의 이미지, 가격, 재고 등을 관리합니다.</p>
+            
+            <div class="screenshot-group">
+                <span class="label">리스트 화면</span>
+                <img src="image/web/ROLE_SELL/product_list.png" class="screenshot">
+                
+                <span class="label">등록 화면</span>
+                <img src="image/web/ROLE_SELL/product_insert.png" class="screenshot">
+                
+                <span class="label">상세 화면</span>
+                <img src="image/web/ROLE_SELL/product_detail.png" class="screenshot">
+                
+                <span class="label">수정 화면</span>
+                <img src="image/web/ROLE_SELL/product_update.png" class="screenshot">
+            </div>
+
+            <h2 id="order">5. 주문 관리</h2>
+            <p>구매자의 주문 내역을 확인하고 입금 처리 및 배송 상태를 변경합니다.</p>
+            <div class="screenshot-group">
+                <span class="label">주문 리스트</span>
+                <img src="image/web/ROLE_SELL/order_list.png" class="screenshot">
+                <span class="label">주문 상세</span>
+                <img src="image/web/ROLE_SELL/order_detail.png" class="screenshot">
+            </div>
+
+            <h2 id="other">6. 기타 관리</h2>
+            <p>리뷰, 문의, 게시판 등 커뮤니티 기능을 관리합니다.</p>
+            <h3>리뷰 관리</h3>
+            <img src="image/web/ROLE_SELL/review_list.png" class="screenshot">
+            <h3>문의 관리 (Q&A)</h3>
+            <img src="image/web/ROLE_SELL/qna_list.png" class="screenshot">
+            <h3>게시판 관리</h3>
+            <img src="image/web/ROLE_SELL/mboard_list.png" class="screenshot">
+        </div>
+    </div>
+</body>
+</html>

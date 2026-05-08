@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>전체 프로세스 메뉴얼</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 10px; }
+        h2 { color: #0066cc; margin-top: 30px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #0066cc; text-decoration: none; font-weight: bold; }
+        .back-link:hover { text-decoration: underline; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="menual_index.html" class="back-link">← 목차로 돌아가기</a>
+        <h1>전체 프로세스 요약</h1>
+        
+        <h2>1. 사용자 권한 및 회원 구분</h2>
+        <ul>
+            <li><strong>ROLE_ADMIN</strong>: 시스템 전체 인프라 및 마스터 데이터를 관리하는 시스템 어드민</li>
+            <li><strong>ROLE_SELL</strong>: 입금 확인, 배송 처리, 물류를 담당하는 본사 운영 관리자</li>
+            <li><strong>ROLE_PROJ</strong>: 독립 결제창을 운영하며 본사에 원가를 송금하는 지점 판매자</li>
+            <li><strong>ROLE_PUB</strong>: 지점 앱/웹을 통해 물건을 구매하는 일반 사용자</li>
+        </ul>
+        
+        <h2>2. 지점 및 지점 판매자 등록 프로세스</h2>
+        <p>본사 관리자(ROLE_SELL)가 지점 관리 메뉴에서 지점 정보(지점명, 토스 키 등)와 해당 지점을 운영할 판매자 계정 정보를 입력하여 지점을 생성합니다. 이때 지점 판매자는 ROLE_PROJ 권한을 부여받습니다.</p>
+        
+        <h2>3. 지점별 상품 주문 및 결제</h2>
+        <p>구매자(ROLE_PUB)는 특정 지점의 상점 도메인이나 앱으로 접속하여 상품을 조회하고 주문합니다. 주문과 결제 시 해당 지점의 고유 식별자(BRANCH_ID)와 결제 키(TOSS_CLIENT_KEY)가 사용되어 지점별로 독립적인 결제가 이루어집니다.</p>
+        
+        <h2>4. 정산 및 배송 관리</h2>
+        <p>지점 판매자(ROLE_PROJ)는 대시보드를 통해 본사에 입금해야 할 총 원가를 확인합니다. 본사 관리자(ROLE_SELL)가 입금 확인 및 배송 처리를 진행하면, 구매자에게 "결제 완료! 배송 시작" 알림이 발송됩니다.</p>
+    </div>
+</body>
+</html>
