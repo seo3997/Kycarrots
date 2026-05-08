@@ -77,7 +77,18 @@
         <p>본사 관리자가 지점 관리 메뉴에서 지점 정보(지점명, 토스 키 등)와 해당 지점을 운영할 관리자 계정 정보를 입력하여 지점을 생성합니다.</p>
         
         <h2>3. 지점별 상품 주문 및 결제</h2>
-        <p>구매자는 특정 지점의 상점 도메인이나 앱으로 접속하여 상품을 조회하고 주문합니다. 주문과 결제 시 해당 지점의 고유 식별자(BRANCH_ID)와 결제 키(TOSS_CLIENT_KEY)가 사용되어 지점별로 독립적인 결제가 이루어집니다.</p>
+        <div class="process-box" style="background: #fff; border-left: 5px solid #f1c40f;">
+            <div class="process-visual" style="border-color: #f1c40f;"><img src="image/payment_icon.png" alt="지점별 독립 결제"></div>
+            <div class="process-content">
+                <span class="step-badge" style="background: #f1c40f;">독립 정산 시스템</span>
+                <p>구매자는 특정 지점의 고유 도메인이나 앱을 통해 접속합니다. 각 지점은 자신만의 <strong>BRANCH_ID</strong>와 <strong>TOSS_CLIENT_KEY</strong>를 가지고 있어, 결제 시 해당 지점의 계좌로 직접 정산이 이루어지는 독립적인 상점 구조를 가집니다.</p>
+            </div>
+        </div>
+        <ul>
+            <li><strong>지점별 전용 상점</strong>: 각 지점 판매자는 자신만의 마케팅 URL을 통해 고객을 유입시킵니다.</li>
+            <li><strong>안전한 직접 결제</strong>: 본사를 거치지 않고 지점별 토스 결제 키를 통해 즉시 결제가 처리됩니다.</li>
+            <li><strong>실시간 주문 연동</strong>: 모든 주문 내역은 본사 관리자 페이지와 해당 지점 관리자 페이지에 실시간으로 공유됩니다.</li>
+        </ul>
         
         <h2>4. 정산 및 배송 관리</h2>
         <p>지점 판매자는 대시보드를 통해 본사에 입금해야 할 총 원가를 확인합니다. 본사 관리자가 입금 확인 및 배송 처리를 진행하면, 구매자에게 "결제 완료! 배송 시작" 알림이 발송됩니다.</p>
