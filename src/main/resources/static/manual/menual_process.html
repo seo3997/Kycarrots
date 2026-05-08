@@ -74,7 +74,7 @@
                 <span class="flow-desc">상품 조회 및 주문<br>편리한 모바일 구매</span>
             </div>
         </div>
-        <p>본사 관리자가 지점 관리 메뉴에서 지점 정보(지점명, 토스 키 등)와 해당 지점을 운영할 관리자 계정 정보를 입력하여 지점을 생성합니다.</p>
+        <p>본사 관리자가 지점 관리 메뉴에서 지점 정보(지점명, 독립 결제 인증 키 등)와 해당 지점을 운영할 관리자 계정 정보를 입력하여 지점을 생성합니다.</p>
         
         <h2>3. 지점별 상품 주문 및 결제</h2>
         <div class="process-image-container" style="display: flex; justify-content: space-around; margin: 30px 0; background: #fdfdfd; padding: 25px; border-radius: 12px; border: 1px solid #eee; text-align: center; gap: 15px;">
@@ -87,7 +87,7 @@
             <div style="flex: 1;">
                 <img src="image/icon_payment.png" style="width: 60px; height: auto; margin-bottom: 10px;" alt="결제">
                 <div style="font-weight: bold; font-size: 0.95em; color: #2c3e50;">안전한 직접 결제</div>
-                <div style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;">지점별 토스 키로<br>계좌 즉시 정산</div>
+                <div style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;">지점별 독립 결제 인증으로<br>계좌 즉시 정산</div>
             </div>
             <div style="font-size: 20px; align-self: center; color: #bdc3c7;">➜</div>
             <div style="flex: 1;">
@@ -96,10 +96,10 @@
                 <div style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;">본사-지점 간<br>주문 내역 실시간 공유</div>
             </div>
         </div>
-        <p>구매자는 특정 지점의 고유 도메인이나 앱을 통해 접속합니다. 각 지점은 자신만의 <strong>BRANCH_ID</strong>와 <strong>TOSS_CLIENT_KEY</strong>를 가지고 있어, 결제 시 해당 지점의 계좌로 직접 정산이 이루어지는 독립적인 상점 구조를 가집니다.</p>
+        <p>구매자는 특정 지점의 고유 도메인이나 앱을 통해 접속합니다. 각 지점은 자신만의 <strong>지점 고유 식별 코드</strong>와 <strong>독립적인 결제 승인 시스템(PG)</strong>을 가지고 있어, 결제 시 해당 지점의 계좌로 직접 정산이 이루어지는 독립적인 상점 구조를 가집니다.</p>
         <ul>
             <li><strong>지점별 전용 상점</strong>: 각 지점 판매자는 자신만의 마케팅 URL을 통해 고객을 유입시킵니다.</li>
-            <li><strong>안전한 직접 결제</strong>: 본사를 거치지 않고 지점별 토스 결제 키를 통해 즉시 결제가 처리됩니다.</li>
+            <li><strong>안전한 직접 결제</strong>: 본사를 거치지 않고 지점별 독립 결제 게이트웨이 인증 체계를 통해 즉시 결제가 처리됩니다.</li>
             <li><strong>실시간 주문 연동</strong>: 모든 주문 내역은 본사 관리자 페이지와 해당 지점 관리자 페이지에 실시간으로 공유됩니다.</li>
         </ul>
         
