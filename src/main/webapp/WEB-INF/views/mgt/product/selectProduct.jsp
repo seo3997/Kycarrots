@@ -298,11 +298,11 @@
 				<div class="box-footer">
 					<div class="text-center">
 						<button type="button" class="btn btn-list" onclick="fnGoList(); return false;"><i class="fa fa-reply"></i> 목록</button>
-		        
-						<button type="button" class="btn btn-modify" onclick="fnGoUpdateForm(); return false;"><i class="fa fa-eraser"></i> 수정</button>
-
+                        <% if( (Const.ROLE_ADMIN.equals(ssAuthorId) || Const.ROLE_SELL.equals(ssAuthorId)) ){ %>
+      					<button type="button" class="btn btn-modify" onclick="fnGoUpdateForm(); return false;"><i class="fa fa-eraser"></i> 수정</button>
                         <button type="button" class="btn btn-delete" onclick="fnGoDelete(); return false;"><i class="fa fa-trash"></i> 삭제</button>
-						<% if( (Const.ROLE_ADMIN.equals(ssAuthorId) || Const.ROLE_SELL.equals(ssAuthorId)|| Const.ROLE_PROJ.equals(ssAuthorId)) ){ %>
+						<% } %>
+					    <% if( (Const.ROLE_ADMIN.equals(ssAuthorId) || Const.ROLE_SELL.equals(ssAuthorId)|| Const.ROLE_PROJ.equals(ssAuthorId)) ){ %>
 						<button type="button" class="btn btn-write" id="btnStatusChange" onclick="fnUpdateStatus(); return false;"><i class="fa fa-sync"></i> 상태변경</button>
 						<% } %>
 
