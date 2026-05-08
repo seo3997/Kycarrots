@@ -4,24 +4,67 @@
     <meta charset="utf-8">
     <title>전체 프로세스 메뉴얼</title>
     <style>
-        body { font-family: sans-serif; margin: 40px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 10px; }
-        h2 { color: #0066cc; margin-top: 30px; }
-        .back-link { display: inline-block; margin-bottom: 20px; color: #0066cc; text-decoration: none; font-weight: bold; }
-        .back-link:hover { text-decoration: underline; }
-        ul { padding-left: 20px; }
-        li { margin-bottom: 10px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 15px; text-align: center; margin-bottom: 40px; }
+        h2 { color: #2980b9; margin-top: 50px; border-left: 5px solid #3498db; padding-left: 15px; }
+        .back-link { display: inline-block; margin-bottom: 30px; color: #3498db; text-decoration: none; font-weight: bold; font-size: 1.1em; transition: 0.2s; }
+        .back-link:hover { color: #2980b9; transform: translateX(-5px); }
+        
+        /* Flowchart Styles */
+        .flowchart { display: flex; justify-content: space-between; align-items: flex-start; margin: 50px 0; position: relative; gap: 20px; }
+        .flow-step { flex: 1; text-align: center; position: relative; z-index: 1; }
+        .flow-icon { width: 100px; height: 100px; margin: 0 auto 15px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 2px solid #eee; overflow: hidden; transition: 0.3s; }
+        .flow-icon img { width: 80%; height: auto; }
+        .flow-step:hover .flow-icon { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); border-color: #3498db; }
+        .flow-label { font-weight: bold; color: #2c3e50; font-size: 1.1em; margin-bottom: 5px; display: block; }
+        .flow-desc { font-size: 0.85em; color: #7f8c8d; line-height: 1.4; }
+        
+        /* Connecting Arrows */
+        .flowchart::after { content: ""; position: absolute; top: 50px; left: 10%; right: 10%; height: 2px; background: #e0e0e0; z-index: 0; }
+        .arrow { position: absolute; top: 42px; right: -15px; font-size: 20px; color: #3498db; z-index: 2; }
+
+        ul { padding-left: 25px; background: #fdfdfd; padding: 20px 20px 20px 40px; border-radius: 8px; border: 1px solid #f0f0f0; }
+        li { margin-bottom: 15px; }
+        li strong { color: #2c3e50; }
+        
+        @media (max-width: 768px) {
+            .flowchart { flex-direction: column; align-items: center; }
+            .flowchart::after { display: none; }
+            .arrow { display: none; }
+            .flow-step { margin-bottom: 30px; width: 100%; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <a href="menual_index.html" class="back-link">← 목차로 돌아가기</a>
-        <h1>전체 프로세스 요약</h1>
-
-        <div class="process-image-container" style="text-align: center; margin: 30px 0;">
-            <img src="image/process_flow.png" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);" alt="전체 비즈니스 프로세스">
-            <p style="font-size: 0.9em; color: #666; margin-top: 10px;">[본사 - 지점 - 구매자로 이어지는 전체 비즈니스 흐름도]</p>
+        <h1>비즈니스 프로세스 요약</h1>
+        
+        <div class="flowchart">
+            <div class="flow-step">
+                <div class="flow-icon"><img src="image/step1.png" alt="본사운영"></div>
+                <span class="flow-label">본사운영</span>
+                <span class="flow-desc">지점 및 관리자 등록<br>시스템 인프라 관리</span>
+                <div class="arrow">➜</div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-icon"><img src="image/step2.png" alt="상품관리"></div>
+                <span class="flow-label">상품관리</span>
+                <span class="flow-desc">상품 마스터 등록<br>카테고리 및 재고 관리</span>
+                <div class="arrow">➜</div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-icon"><img src="image/step3.png" alt="판매지점"></div>
+                <span class="flow-label">판매지점</span>
+                <span class="flow-desc">지점 마케팅 활동<br>개별 결제창 운영</span>
+                <div class="arrow">➜</div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-icon"><img src="image/step4.png" alt="일반사용자"></div>
+                <span class="flow-label">일반사용자</span>
+                <span class="flow-desc">상품 조회 및 주문<br>편리한 모바일 구매</span>
+            </div>
         </div>
 
         <h2>1. 사용자 권한 및 회원 구분</h2>
