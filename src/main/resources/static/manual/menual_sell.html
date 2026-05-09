@@ -179,7 +179,12 @@
                     <h3>3-2. [신규 등록] 계정 생성</h3>
                     <ul>
                         <li><strong>접속 정보</strong>: 로그인용 이메일 및 초기 비밀번호 설정</li>
-                        <li><strong>권한 부여</strong>: ROLE_SELL(본사), ROLE_PROJ(지점) 선택</li>
+                        <li><strong>권한 및 소속 설정</strong>:
+                            <ul>
+                                <li><strong>지점판매(ROLE_PROJ) 권한</strong>: 해당 계정이 관리할 <strong>지점 코드</strong>를 반드시 선택해야 합니다.</li>
+                                <li><strong>본사(ROLE_SELL) 권한</strong>: 소속을 <strong>본사</strong>로 선택하여 시스템 전체 관리 권한을 부여합니다.</li>
+                            </ul>
+                        </li>
                         <li><span class="btn-tag btn-primary">확인</span> 버튼으로 최종 생성</li>
                     </ul>
                     <img src="image/web/ROLE_SELL/user_insert.png" class="screenshot">
