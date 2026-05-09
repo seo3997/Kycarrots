@@ -18,6 +18,10 @@
         .tab-content.active { display: block; }
         .home-btn { position: fixed; bottom: 30px; left: 30px; background: #2c3e50; color: white; padding: 12px 20px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.3s; z-index: 1001; }
         .home-btn:hover { background: #27ae60; transform: scale(1.05); }
+        .step-number { background: #27ae60; color: white; width: 25px; height: 25px; display: inline-block; text-align: center; border-radius: 50%; margin-right: 10px; font-weight: bold; line-height: 25px; }
+        .warning-box { background-color: #fdf2f2; border-left: 4px solid #e74c3c; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .warning-box h3 { color: #e74c3c; margin-top: 0; }
+        .warning-box ul { padding-left: 20px; }
     </style>
     <script>
         function openTab(tabId) {
@@ -64,6 +68,31 @@
                 <div class="info-box">
                     <strong><span class="step-number">2</span> 설치 진행</strong><br>
                     "이 애플리케이션을 설치하시겠습니까?" 팝업에서 <strong>[설치]</strong>를 클릭합니다.
+                </div>
+
+                <div class="warning-box">
+                    <h3>⚠️ '무시하고 설치'가 보이지 않는 경우 (Play 프로텍트)</h3>
+                    <p>구글의 보안 정책에 따라 설치가 차단될 수 있습니다. 버튼이 보이지 않는다면 아래 절차에 따라 설정을 조정해야 합니다.</p>
+                    
+                    <strong>1. Play 프로텍트란?</strong>
+                    <p>구글 플레이 스토어에서 제공하는 안드로이드용 내장 백신으로, 기기에 설치된 모든 앱을 실시간으로 스캔합니다.</p>
+
+                    <strong>2. 왜 차단되나요?</strong>
+                    <ul>
+                        <li><strong>앱 서명 미등록</strong>: 직접 빌드한 테스트용 앱은 구글에 등록되지 않아 "정체불명의 위험한 앱"으로 판단될 수 있습니다.</li>
+                        <li><strong>클라우드 기반 분석</strong>: 데이터베이스에 없는 새로운 앱은 일단 '잠재적 위험'으로 분류됩니다.</li>
+                    </ul>
+
+                    <strong>3. 해결 방법 (설정 끄기)</strong>
+                    <p>보안 설정 때문에 버튼이 가려진 것이므로, 아래 순서대로 실시간 검사를 잠시 종료해야 합니다.</p>
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                        <span class="step-number">1</span> Play 스토어 앱 실행<br>
+                        <span class="step-number">2</span> 우측 상단 프로필 아이콘 클릭<br>
+                        <span class="step-number">3</span> <strong>Play 프로텍트</strong> 메뉴 진입<br>
+                        <span class="step-number">4</span> 우측 상단 설정(톱니바퀴 아이콘) 클릭<br>
+                        <span class="step-number">5</span> <strong>'Play 프로텍트로 앱 검사'</strong> 항목을 OFF로 비활성화
+                    </div>
+                    <p style="margin-top: 15px; font-weight: bold; color: #e74c3c;">※ 설치 완료 후에는 보안을 위해 다시 활성화하는 것을 권장합니다.</p>
                 </div>
             </div>
 
