@@ -1,271 +1,151 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>지점 관리자 매뉴얼 - asagong</title>
+    <meta charset="utf-8">
+    <title>지점 판매자 메뉴얼</title>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
-            --text-color: #333;
-            --bg-color: #f4f7f6;
-            --border-color: #ddd;
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; line-height: 1.6; }
+        
+        /* Tab Navigation */
+        .tab-nav { 
+            position: fixed; top: 0; left: 0; right: 0; 
+            background: #2c3e50; display: flex; justify-content: center; 
+            z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 0 20px;
         }
-        body {
-            font-family: 'Malgun Gothic', sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: var(--bg-color);
+        .tab-btn { 
+            padding: 15px 25px; border: none; background: none; color: #bdc3c7; 
+            font-size: 1.05em; font-weight: 600; cursor: pointer; transition: 0.3s;
+            border-bottom: 3px solid transparent;
         }
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            border-radius: 8px 8px 0 0;
-            margin-bottom: 30px;
-        }
-        nav {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            position: sticky;
-            top: 10px;
-            z-index: 100;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        nav li { margin: 5px 15px; }
-        nav a {
-            text-decoration: none;
-            color: var(--secondary-color);
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-        nav a:hover { color: var(--accent-color); }
-        section {
-            background: white;
-            padding: 40px;
-            margin-bottom: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        h1 { margin: 0; font-size: 2.5em; }
-        h2 {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 10px;
-            margin-top: 0;
-        }
-        h3 { color: var(--secondary-color); margin-top: 30px; }
-        .img-container {
-            text-align: center;
-            margin: 20px 0;
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            border-radius: 4px;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .desc {
-            background: #eef7fd;
-            padding: 15px;
-            border-left: 5px solid var(--accent-color);
-            margin: 20px 0;
-        }
-        .permission-notice {
-            background: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #777;
-            font-size: 0.9em;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 0.85em;
-            font-weight: bold;
-        }
-        .status-request { background: #e3f2fd; color: #1976d2; }
-        .status-confirm { background: #e8f5e9; color: #2e7d32; }
-        .info-box {
-            background-color: #ffffff;
-            border: 1px solid var(--border-color);
-            border-left: 5px solid #16a085;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        .info-box strong {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-            color: var(--primary-color);
-        }
-        .label {
-            display: inline-block;
-            background: var(--primary-color);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 0.85em;
-            margin-bottom: 8px;
-        }
-        .status-list {
-            display: flex;
-            gap: 40px;
-            margin-top: 10px;
-        }
-        .status-list ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            font-size: 0.9em;
-        }
-        .status-list li {
-            margin-bottom: 5px;
-        }
+        .tab-btn:hover { color: white; background: #34495e; }
+        .tab-btn.active { color: white; border-bottom: 3px solid #16a085; background: #34495e; }
+        
+        .content-area { margin-top: 60px; padding: 40px 20px; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        /* Tab Content */
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { color: #2c3e50; border-bottom: 3px solid #16a085; padding-bottom: 15px; margin-bottom: 30px; }
+        h2 { color: #16a085; margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+        h3 { color: #34495e; margin-top: 25px; font-size: 1.2em; border-left: 4px solid #16a085; padding-left: 10px; }
+        
+        .screenshot-group { margin: 25px 0; border: 1px solid #eef0f2; padding: 25px; border-radius: 10px; background: #fafbfc; }
+        .screenshot { max-width: 100%; height: auto; border: 1px solid #ddd; margin: 20px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border-radius: 8px; display: block; }
+        
+        .label { display: inline-block; background: #2c3e50; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: bold; margin-bottom: 10px; }
+        .btn-tag { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 0.85em; font-weight: bold; margin: 0 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-primary { background: #21457f; color: white; border: 1px solid #1a3765; }
+        .btn-info { background: #17a2b8; color: white; border: 1px solid #138496; }
+        .btn-success { background: #28a745; color: white; border: 1px solid #1e7e34; }
+        .btn-modify { background: #29beb1; color: white; border: 1px solid #1f9e94; }
+        
+        .info-box { background-color: #f8f9fa; padding: 20px; border-left: 5px solid #16a085; margin: 25px 0; border-radius: 0 8px 8px 0; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+        
+        .home-btn { position: fixed; bottom: 30px; left: 30px; background: #2c3e50; color: white; padding: 12px 20px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.3s; z-index: 1001; }
+        .home-btn:hover { background: #16a085; transform: scale(1.05); }
     </style>
+    <script>
+        function openTab(tabId) {
+            var contents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active");
+            }
+            var buttons = document.getElementsByClassName("tab-btn");
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+            document.getElementById(tabId).classList.add("active");
+            event.currentTarget.classList.add("active");
+            window.scrollTo(0, 0);
+        }
+    </script>
 </head>
 <body>
-    <header>
-        <h1>지점 관리자(ROLE_PROJ) 운영 매뉴얼</h1>
-        <p>asagong 지점 관리 시스템의 주요 기능 및 운영 가이드</p>
-    </header>
+    <a href="menual_index.html" class="home-btn">← 메뉴얼 홈</a>
 
-    <nav>
-        <ul>
-            <li><a href="#tab-intro">개요</a></li>
-            <li><a href="#tab-dashboard">대시보드</a></li>
-            <li><a href="#tab-product">상품 관리</a></li>
-            <li><a href="#tab-order">주문 관리</a></li>
-            <li><a href="#tab-board">게시판</a></li>
-        </ul>
+    <nav class="tab-nav">
+        <button class="tab-btn active" onclick="openTab('tab-dashboard')">1. 대시보드</button>
+        <button class="tab-btn" onclick="openTab('tab-product')">2. 상품/리뷰 관리</button>
+        <button class="tab-btn" onclick="openTab('tab-order')">3. 주문 관리</button>
+        <button class="tab-btn" onclick="openTab('tab-push')">4. Push 알림</button>
     </nav>
 
-    <section id="tab-intro">
-        <h2>1. 개요</h2>
-        <div class="desc">
-            본 매뉴얼은 지점 관리자(ROLE_PROJ) 권한을 가진 사용자를 위한 시스템 운영 가이드입니다.<br>
-            지점 관리자는 본사에서 등록한 상품을 확인하고, 해당 지점에서 발생하는 주문에 대한 입금 확인 요청 및 주문 확정 처리를 수행합니다.
-        </div>
-    </section>
+    <div class="content-area">
+        <div class="container">
+            <!-- 1. 대시보드 -->
+            <div id="tab-dashboard" class="tab-content active">
+                <h1>지점 관리 대시보드</h1>
+                
+                <div class="info-box" style="background-color: #e8f6f3; border-left-color: #16a085;">
+                    <strong>지점 관리자 접속 정보</strong><br>
+                    - 접속 URL: <a href="http://asagong.com/admin/login.do" target="_blank">http://asagong.com/admin/login.do</a><br>
+                    - 접속 아이디: amsa@gmail.com
+                </div>
 
-    <section id="tab-dashboard">
-        <h2>2. 대시보드</h2>
-        <div class="desc">
-            로그인 시 첫 화면으로 지점의 실시간 매출 현황과 정산 상태를 한눈에 파악할 수 있습니다.
-        </div>
-        <div class="img-container">
-            <img src="/Users/soo/.gemini/antigravity/brain/aaffd527-d48d-47d4-9a07-5a8535224c03/branch_dashboard_clean_1778306731729.png" alt="지점 대시보드">
-        </div>
-        <h3>주요 항목</h3>
-        <ul>
-            <li><strong>매출 현황</strong>: 오늘의 총 매출 및 월간 완료 주문 건수를 확인합니다.</li>
-            <li><strong>정산 현황</strong>: 본사 송금 대기 건수와 예상 수익을 실시간으로 집계합니다.</li>
-            <li><strong>주문 내역</strong>: 최근 주문 리스트와 현재 진행 상태를 바로 확인할 수 있습니다.</li>
-        </ul>
-
-        <div class="info-box">
-            <strong>시스템 상태 코드 안내</strong>
-            <div class="status-list">
-                <div>
-                    <span class="label">주문 상태</span>
+                <p>실시간 판매 현황과 본사 정산액을 한눈에 모니터링합니다.</p>
+                <img src="image/web/ROLE_PROJ/dashboard.png" class="screenshot" alt="대시보드">
+                
+                <div class="info-box">
+                    <strong>지점 핵심 업무</strong>
                     <ul>
-                        <li>10 결제대기 / 30 결제완료</li>
-                        <li>60 배송중 / 70 배송완료</li>
-                        <li>99 주문확정</li>
+                        <li><strong>정산 금액 확인</strong>: 이번 달 본사에 입금해야 할 총 원가(Cost) 실시간 조회</li>
+                        <li><span class="btn-tag btn-info">입금확인요청</span> 본사 송금 완료 후 승인 요청 (정산 프로세스 시작)</li>
+                        <li><span class="btn-tag btn-success">주문확정</span> 배송 완료 건에 대해 최종 정산 데이터 확정</li>
                     </ul>
                 </div>
-                <div>
-                    <span class="label">입금 상태</span>
+            </div>
+
+            <!-- 2. 상품/리뷰 관리 -->
+            <div id="tab-product" class="tab-content">
+                <h1>상품 정보 및 고객 피드백</h1>
+                <p>본사 공급 상품을 조회하고 지점 고객의 문의에 대응합니다.</p>
+                
+                <div class="screenshot-group">
+                    <h3>2-1. 상품 정보 조회</h3>
+                    <p>판매 중인 상품의 상세 스펙과 가격 정보를 확인합니다.</p>
+                    <img src="image/web/ROLE_PROJ/product_list.png" class="screenshot">
+
+                    <h3>2-2. 고객 리뷰 및 문의 관리</h3>
+                    <p>고객이 남긴 문의에 대해 <span class="btn-tag btn-primary">답변</span>을 작성하고 리뷰를 모니터링합니다.</p>
+                    <img src="image/web/ROLE_PROJ/review_list.png" class="screenshot">
+                    <img src="image/web/ROLE_PROJ/qna_list.png" class="screenshot">
+                </div>
+            </div>
+
+            <!-- 3. 주문 관리 -->
+            <div id="tab-order" class="tab-content">
+                <h1>주문 및 고객 상세 관리</h1>
+                <p>내 지점에서 발생한 모든 주문 내역을 추적하고 관리합니다.</p>
+                
+                <div class="screenshot-group">
+                    <h3>3-1. 주문 목록 및 상세 정보</h3>
+                    <p>주문번호를 클릭하여 배송지 정보 및 처리 이력을 상세히 확인합니다.</p>
+                    <img src="image/web/ROLE_PROJ/order_list.png" class="screenshot">
+                    <img src="image/web/ROLE_PROJ/order_detail.png" class="screenshot">
+                </div>
+            </div>
+
+            <!-- 4. Push 알림 -->
+            <div id="tab-push" class="tab-content">
+                <h1>실시간 Push 알림 시스템</h1>
+                <p>모바일 앱을 통해 업무 상태 변화를 즉시 수신합니다.</p>
+                
+                <div class="info-box">
+                    <strong>알림 수신 주요 항목</strong>
                     <ul>
-                        <li>10 입금대기</li>
-                        <li>20 입금확인요청</li>
-                        <li>30 입금완료</li>
+                        <li><strong>신규 주문</strong>: 고객 결제 완료 시 즉시 알림</li>
+                        <li><strong>배송 완료</strong>: 본사의 배송 처리가 끝났을 때 결과 공유</li>
+                        <li><strong>문의 등록</strong>: 새로운 Q&A 등록 시 빠른 답변을 위한 알림</li>
                     </ul>
                 </div>
             </div>
         </div>
-    </section>
-
-    <section id="tab-product">
-        <h2>3. 상품 관리</h2>
-        <div class="permission-notice">
-            <strong>[주의]</strong> 지점 관리자는 상품의 <strong>조회권한</strong>만 가지며, 상품 등록 및 수정을 할 수 없습니다.
-        </div>
-        
-        <h3>3.1 상품 리스트</h3>
-        <div class="desc">본사에서 등록되어 판매 중인 상품 목록을 확인합니다.</div>
-        <div class="img-container">
-            <img src="/Users/soo/.gemini/antigravity/brain/aaffd527-d48d-47d4-9a07-5a8535224c03/branch_product_list_clean_v3_1778306801906.png" alt="상품 리스트">
-        </div>
-
-        <h3>3.2 상품 상세</h3>
-        <div class="desc">상품의 상세 정보 및 공급가, 판매가 등을 확인합니다.</div>
-        <div class="img-container">
-            <img src="/Users/soo/.gemini/antigravity/brain/aaffd527-d48d-47d4-9a07-5a8535224c03/branch_product_detail_clean_1778306624261.png" alt="상품 상세">
-        </div>
-    </section>
-
-    <section id="tab-order">
-        <h2>4. 주문 관리</h2>
-        <div class="desc">
-            지점에서 발생한 주문을 관리하고, 결제 및 배송 프로세스를 진행합니다.
-        </div>
-
-        <h3>4.1 주문 리스트</h3>
-        <div class="desc">모든 주문 내역을 조회하고 상태별로 필터링할 수 있습니다.</div>
-        <div class="img-container">
-            <img src="/Users/soo/.gemini/antigravity/brain/aaffd527-d48d-47d4-9a07-5a8535224c03/branch_order_list_clean_1778306812082.png" alt="주문 리스트">
-        </div>
-
-        <h3>4.2 주문 상세 및 처리</h3>
-        <div class="desc">주문 상세 화면에서는 주문의 현재 상태에 따라 버튼이 노출됩니다.</div>
-        <div class="img-container">
-            <img src="/Users/soo/.gemini/antigravity/brain/aaffd527-d48d-47d4-9a07-5a8535224c03/branch_order_detail_clean_1778306647438.png" alt="주문 상세">
-        </div>
-        
-        <h3>주문 처리 프로세스</h3>
-        <ul>
-            <li><span class="status-badge status-request">입금확인요청</span>: 고객이 입금 후 지점에서 확인이 필요한 경우 클릭하여 본사에 요청합니다.</li>
-            <li><span class="status-badge status-confirm">주문확정</span>: 결제가 완료된 주문에 대해 최종 확정 처리를 진행합니다.</li>
-        </ul>
-    </section>
-
-    <section id="tab-board">
-        <h2>5. 게시판</h2>
-        <div class="desc">본사 공지사항 및 지점 간 공지 내용을 확인합니다.</div>
-        <div class="img-container">
-            <img src="/Users/soo/.gemini/antigravity/brain/aaffd527-d48d-47d4-9a07-5a8535224c03/branch_board_list_png_1778306349905.png" alt="게시판 리스트">
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2026 asagong. All rights reserved.</p>
-    </footer>
+    </div>
 </body>
 </html>
