@@ -5,59 +5,81 @@
     <title>일반사용자(구매자) 앱 메뉴얼</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f8f9fa; color: #333; line-height: 1.6; }
-        .sidebar { width: 250px; position: fixed; height: 100%; background: #e67e22; color: white; padding-top: 20px; }
-        .sidebar a { padding: 10px 20px; text-decoration: none; color: white; display: block; transition: 0.3s; opacity: 0.8; }
-        .sidebar a:hover { opacity: 1; background: #d35400; }
-        .content { margin-left: 250px; padding: 40px; }
+        .content { padding: 40px 20px; }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h1 { color: #333; border-bottom: 2px solid #e67e22; padding-bottom: 10px; }
         h2 { color: #e67e22; margin-top: 40px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         .screenshot { max-width: 320px; width: 100%; height: auto; border: 1px solid #ddd; margin: 15px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 20px; display: block; }
         .info-box { background-color: #fff5e6; padding: 15px; border-left: 4px solid #e67e22; margin: 20px 0; }
+        .tab-nav { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .tab-btn { padding: 8px 20px; border: none; background: #eee; cursor: pointer; border-radius: 5px; }
+        .tab-btn.active { background: #e67e22; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .home-btn { position: fixed; bottom: 30px; left: 30px; background: #e67e22; color: white; padding: 12px 20px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.3s; z-index: 1001; }
+        .home-btn:hover { background: #d35400; transform: scale(1.05); }
     </style>
+    <script>
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
 </head>
 <body>
-    <div class="sidebar">
-        <a href="../menual_index.html">← 메뉴얼 홈</a>
-        <a href="#intro">개요</a>
-        <a href="#shop">쇼핑하기</a>
-        <a href="#order">주문/결제</a>
-    </div>
+    <a href="../menual_index.html" class="home-btn">← 메뉴얼 홈</a>
     <div class="content">
         <div class="container">
             <h1 id="intro">일반 사용자(구매자) 모바일 앱 가이드</h1>
             <p>asagong 앱을 통해 상품을 구매하고 관리하는 방법을 안내합니다.</p>
 
-            <h2 id="shop">1. 회원가입 및 로그인</h2>
-            <p>처음 방문하시는 분은 간편 회원가입을 통해 서비스를 이용하실 수 있습니다.</p>
-            <div class="text-center">
-                <img src="../image/app/ROLE_PUB/member_regits1.jpg" class="screenshot" alt="회원가입 1">
-                
-                <div class="info-box" style="background-color: #fff5f5; border-left-color: #e74c3c; text-align: left; margin: 20px auto; max-width: 600px;">
-                    <strong>⚠️ 필독: 지점 선택 필수</strong><br>
-                    본 서비스는 <strong>지점별로 독립적인 회원 체계가 운영</strong>됩니다. 반드시 이용을 원하시는 지점(쇼핑몰)을 선택하여 가입을 진행해 주세요.
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="openTab('tab-member')">1. 회원가입</button>
+                <button class="tab-btn" onclick="openTab('tab-shop')">2. 쇼핑/채팅</button>
+                <button class="tab-btn" onclick="openTab('tab-order')">3. 주문/결제</button>
+            </div>
+
+            <!-- 회원가입 -->
+            <div id="tab-member" class="tab-content active">
+                <h2 id="member">1. 회원가입 및 로그인</h2>
+                <p>처음 방문하시는 분은 간편 회원가입을 통해 서비스를 이용하실 수 있습니다.</p>
+                <div class="text-center">
+                    <img src="../image/app/ROLE_PUB/member_regits1.jpg" class="screenshot" alt="회원가입 1">
+                    
+                    <div class="info-box" style="background-color: #fff5f5; border-left-color: #e74c3c; text-align: left; margin: 20px auto; max-width: 600px;">
+                        <strong>⚠️ 필독: 지점 선택 필수</strong><br>
+                        본 서비스는 <strong>지점별로 독립적인 회원 체계가 운영</strong>됩니다. 반드시 이용을 원하시는 지점(쇼핑몰)을 선택하여 가입을 진행해 주세요.
+                    </div>
+
+                    <img src="../image/app/ROLE_PUB/member_regits2.jpg" class="screenshot" alt="회원가입 2">
                 </div>
-
-                <img src="../image/app/ROLE_PUB/member_regits2.jpg" class="screenshot" alt="회원가입 2">
             </div>
 
-            <h2 id="shop">2. 상품 탐색 및 채팅 문의</h2>
-            <p>카테고리별 상품 리스트를 확인하고, 궁금한 점은 실시간 채팅을 통해 문의할 수 있습니다.</p>
-            <div class="text-center">
-                <img src="../image/app/ROLE_PUB/product_list.jpg" class="screenshot" alt="상품 리스트">
-                <img src="../image/app/ROLE_PUB/product_detail.jpg" class="screenshot" alt="상품 상세">
-                <img src="../image/app/ROLE_PUB/product_chat.jpg" class="screenshot" alt="실시간 채팅">
+            <!-- 상품탐색 -->
+            <div id="tab-shop" class="tab-content">
+                <h2 id="product">2. 상품 탐색 및 채팅 문의</h2>
+                <p>카테고리별 상품 리스트를 확인하고, 궁금한 점은 실시간 채팅을 통해 문의할 수 있습니다.</p>
+                <div class="text-center">
+                    <img src="../image/app/ROLE_PUB/product_list.jpg" class="screenshot" alt="상품 리스트">
+                    <img src="../image/app/ROLE_PUB/product_detail.jpg" class="screenshot" alt="상품 상세">
+                    <img src="../image/app/ROLE_PUB/product_chat.jpg" class="screenshot" alt="실시간 채팅">
+                </div>
             </div>
 
-            <h2 id="order">3. 주문 및 결제</h2>
-            <p>원하는 상품을 선택하고 배송 정보를 입력하여 안전하게 결제합니다. 주문 상태는 Push 알림으로 실시간 전송됩니다.</p>
-            <img src="../image/app/ROLE_PUB/product_order.jpg" class="screenshot" alt="주문 결제 화면">
-            
-            <div class="info-box">
-                <strong>앱 전용 핵심 기능</strong><br>
-                - <strong>실시간 알림</strong>: 내 주문의 배송 상태 변화를 즉시 확인<br>
-                - <strong>1:1 채팅</strong>: 판매자와의 빠른 소통 채널 제공<br>
-                - <strong>간편 로그인</strong>: 한 번의 로그인으로 편리한 쇼핑 환경 제공
+            <!-- 주문결제 -->
+            <div id="tab-order" class="tab-content">
+                <h2 id="order">3. 주문 및 결제</h2>
+                <p>원하는 상품을 선택하고 배송 정보를 입력하여 안전하게 결제합니다. 주문 상태는 Push 알림으로 실시간 전송됩니다.</p>
+                <img src="../image/app/ROLE_PUB/product_order.jpg" class="screenshot" alt="주문 결제 화면">
+                
+                <div class="info-box">
+                    <strong>앱 전용 핵심 기능</strong><br>
+                    - <strong>실시간 알림</strong>: 내 주문의 배송 상태 변화를 즉시 확인<br>
+                    - <strong>1:1 채팅</strong>: 판매자와의 빠른 소통 채널 제공<br>
+                    - <strong>간편 로그인</strong>: 한 번의 로그인으로 편리한 쇼핑 환경 제공
+                </div>
             </div>
         </div>
     </div>
