@@ -17,7 +17,9 @@
         .screenshot { max-width: 100%; height: auto; border: 1px solid #ddd; margin: 15px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 4px; }
         .label { display: inline-block; background: #6c757d; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; margin-bottom: 10px; }
         .btn-tag { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 0.85em; font-weight: bold; margin: 0 2px; }
-        .btn-save { background: #4f83d2; color: white; border: 1px solid #3d6ab1; }    /* 입금확인요청, 주문확정 등 */
+        .btn-primary { background: #21457f; color: white; border: 1px solid #1a3765; } /* 검색 등 */
+        .btn-info { background: #17a2b8; color: white; border: 1px solid #138496; }    /* 입금확인요청 등 */
+        .btn-success { background: #28a745; color: white; border: 1px solid #1e7e34; } /* 주문확정 등 */
         .btn-modify { background: #29beb1; color: white; border: 1px solid #1f9e94; }  /* 수정 등 */
         .info-box { background-color: #e8f8f5; padding: 15px; border-left: 4px solid #16a085; margin: 20px 0; }
     </style>
@@ -50,8 +52,8 @@
                 <strong>지점 관리자 핵심 업무</strong>
                 <ul>
                     <li><strong>정산 금액 확인</strong>: 이번 달 본사에 입금해야 할 총 원가(Cost) 실시간 집계</li>
-                    <li><span class="btn-tag btn-save">입금확인요청</span> 버튼: 본사에 원가 송금 완료 후 클릭하여 본사 관리자에게 입금 확인을 요청합니다.</li>
-                    <li><span class="btn-tag btn-save">주문확정</span> 버튼: 배송 완료된 건에 대해 최종적으로 클릭하여 해당 주문의 정산 데이터를 확정합니다.</li>
+                    <li><span class="btn-tag btn-info">입금확인요청</span> 버튼: 본사에 원가 송금 완료 후 클릭하여 본사 관리자에게 입금 확인을 요청합니다.</li>
+                    <li><span class="btn-tag btn-success">주문확정</span> 버튼: 배송 완료된 건에 대해 최종적으로 클릭하여 해당 주문의 정산 데이터를 확정합니다.</li>
                     <li><strong>실시간 주문 모니터링</strong>: 내 지점에서 발생한 신규 주문 내역 즉시 확인</li>
                 </ul>
             </div>
