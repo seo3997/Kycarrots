@@ -5,191 +5,239 @@
     <title>본사 관리자 메뉴얼</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; line-height: 1.6; }
-        .sidebar { width: 250px; position: fixed; height: 100%; background: #343a40; color: white; padding-top: 20px; }
-        .sidebar a { padding: 10px 20px; text-decoration: none; color: #adb5bd; display: block; transition: 0.3s; }
-        .sidebar a:hover { color: white; background: #495057; }
-        .sidebar .active { color: white; background: #007bff; }
-        .content { margin-left: 250px; padding: 40px; }
-        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-        h2 { color: #007bff; margin-top: 40px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        h3 { color: #555; margin-top: 25px; background: #e9ecef; padding: 10px; border-radius: 4px; }
-        .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-weight: bold; }
-        .screenshot-group { margin: 20px 0; border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
-        .screenshot { max-width: 100%; height: auto; border: 1px solid #ddd; margin: 10px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 4px; }
-        .label { display: inline-block; background: #6c757d; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; margin-bottom: 10px; }
-        .btn-tag { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 0.85em; font-weight: bold; margin: 0 2px; }
-        .btn-primary { background: #21457f; color: white; border: 1px solid #1a3765; } /* 입금확인, 배송완료, 검색 등 */
-        .btn-info { background: #17a2b8; color: white; border: 1px solid #138496; }    /* 입금확인요청 등 */
-        .btn-success { background: #28a745; color: white; border: 1px solid #1e7e34; } /* 주문확정 등 */
-        .btn-modify { background: #29beb1; color: white; border: 1px solid #1f9e94; }  /* 수정, 초기화 등 */
-        .info-box { background-color: #e7f3ff; padding: 15px; border-left: 4px solid #007bff; margin: 20px 0; }
+        
+        /* Tab Navigation */
+        .tab-nav { 
+            position: fixed; top: 0; left: 0; right: 0; 
+            background: #2c3e50; display: flex; justify-content: center; 
+            z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 0 20px;
+        }
+        .tab-btn { 
+            padding: 15px 25px; border: none; background: none; color: #bdc3c7; 
+            font-size: 1.05em; font-weight: 600; cursor: pointer; transition: 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn:hover { color: white; background: #34495e; }
+        .tab-btn.active { color: white; border-bottom: 3px solid #16a085; background: #34495e; }
+        
+        .content-area { margin-top: 60px; padding: 40px 20px; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        /* Tab Content */
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { color: #2c3e50; border-bottom: 3px solid #16a085; padding-bottom: 15px; margin-bottom: 30px; }
+        h2 { color: #16a085; margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+        h3 { color: #34495e; margin-top: 25px; font-size: 1.2em; border-left: 4px solid #16a085; padding-left: 10px; }
+        
+        .screenshot-group { margin: 25px 0; border: 1px solid #eef0f2; padding: 25px; border-radius: 10px; background: #fafbfc; }
+        .screenshot { max-width: 100%; height: auto; border: 1px solid #ddd; margin: 20px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border-radius: 8px; display: block; }
+        
+        .label { display: inline-block; background: #2c3e50; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: bold; margin-bottom: 10px; }
+        .btn-tag { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 0.85em; font-weight: bold; margin: 0 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-primary { background: #21457f; color: white; border: 1px solid #1a3765; }
+        .btn-info { background: #17a2b8; color: white; border: 1px solid #138496; }
+        .btn-success { background: #28a745; color: white; border: 1px solid #1e7e34; }
+        .btn-modify { background: #29beb1; color: white; border: 1px solid #1f9e94; }
+        .btn-danger { background: #dc3545; color: white; border: 1px solid #bd2130; }
+        
+        .info-box { background-color: #f8f9fa; padding: 20px; border-left: 5px solid #2c3e50; margin: 25px 0; border-radius: 0 8px 8px 0; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+        
+        .home-btn { position: fixed; bottom: 30px; left: 30px; background: #2c3e50; color: white; padding: 12px 20px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.3s; z-index: 1001; }
+        .home-btn:hover { background: #16a085; transform: scale(1.05); }
     </style>
+    <script>
+        function openTab(tabId) {
+            // Hide all contents
+            var contents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active");
+            }
+            
+            // Deactivate all buttons
+            var buttons = document.getElementsByClassName("tab-btn");
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+            
+            // Show selected content and activate button
+            document.getElementById(tabId).classList.add("active");
+            event.currentTarget.classList.add("active");
+            
+            // Scroll to top of content
+            window.scrollTo(0, 0);
+        }
+    </script>
 </head>
 <body>
-    <div class="sidebar">
-        <a href="menual_index.html">← 메뉴얼 홈</a>
-        <a href="#intro">개요</a>
-        <a href="#dashboard">메인 화면 (대시보드)</a>
-        <a href="#branch">지점 관리</a>
-        <a href="#user">사용자 관리</a>
-        <a href="#product">상품 관리</a>
-        <a href="#order">주문 관리</a>
-        <a href="#other">기타 관리</a>
-    </div>
-    <div class="content">
+    <a href="menual_index.html" class="home-btn">← 메뉴얼 홈</a>
+
+    <nav class="tab-nav">
+        <button class="tab-btn active" onclick="openTab('tab-dashboard')">1. 대시보드</button>
+        <button class="tab-btn" onclick="openTab('tab-branch')">2. 지점 관리</button>
+        <button class="tab-btn" onclick="openTab('tab-user')">3. 사용자 관리</button>
+        <button class="tab-btn" onclick="openTab('tab-product')">4. 상품 관리</button>
+        <button class="tab-btn" onclick="openTab('tab-order')">5. 주문 관리</button>
+        <button class="tab-btn" onclick="openTab('tab-system')">6. 시스템 설정</button>
+    </nav>
+
+    <div class="content-area">
         <div class="container">
-            <h1 id="intro">본사 운영 관리자 메뉴얼</h1>
-            <p>본사 관리자는 시스템의 핵심 데이터를 관리하며 지점 생성, 상품 관리, 주문 처리를 담당합니다.</p>
+            <!-- 1. 대시보드 -->
+            <div id="tab-dashboard" class="tab-content active">
+                <h1>본사 관리 대시보드</h1>
+                <p>본사 운영의 핵심 지표를 실시간으로 모니터링하고 즉각적인 배송 처리를 수행합니다.</p>
+                <img src="image/web/ROLE_SELL/dashboard.png" class="screenshot" alt="대시보드">
+                
+                <div class="info-box">
+                    <strong>대시보드 주요 지표</strong>
+                    <ul>
+                        <li><strong>미처리주문</strong>: 입금 확인 전 단계의 신규 주문건</li>
+                        <li><strong>지점미금액</strong>: 판매지점별 입금 확인 전 주문 금액의 총 합계</li>
+                        <li><strong>오늘의 수금액</strong>: 금일 입금 처리 완료된 총 주문 금액</li>
+                        <li><strong>배송중인주문</strong>: 현재 배송 프로세스가 진행 중인 주문</li>
+                    </ul>
+                </div>
 
-            <div class="info-box">
-                <strong>로그인 정보</strong><br>
-                - 접속 URL: <a href="http://asagong.com/admin/login.do" target="_blank">http://asagong.com/admin/login.do</a><br>
-                - 아이디: sel1@gmail.com
-            </div>
-
-            <h2 id="dashboard">1. 메인 화면 (대시보드)</h2>
-            <p>로그인 후 첫 화면으로 본사 운영의 핵심 지표를 실시간으로 모니터링합니다.</p>
-            <img src="image/web/ROLE_SELL/dashboard.png" class="screenshot" alt="대시보드">
-            
-            <div class="info-box" style="background-color: #f8f9fa; border-left-color: #6c757d;">
-                <strong>1-1. 대시보드 상세 업무</strong>
+                <h3>실시간 배송 처리 업무</h3>
+                <p>지점 주문 목록에서 즉시 다음 업무를 수행할 수 있습니다.</p>
                 <ul>
-                    <li><strong>미처리주문</strong>: 판매지점에서 발주했으나 아직 입금 확인이 되지 않은 주문건</li>
-                    <li><strong>지점미금액</strong>: 판매지점별 입금 확인 전 주문 금액의 총 합계</li>
-                    <li><strong>오늘의 수금액</strong>: 금일 입금 확인 처리가 완료된 총 주문 금액</li>
-                    <li><strong>배송중인주문</strong>: 배송은 시작되었으나 아직 배송 완료 처리가 되지 않은 주문</li>
-                    <li><strong>지점주문List</strong>: 전 지점에서 발생한 실시간 주문 목록 확인 (주문번호 클릭 시 상세 화면 이동)</li>
-                    <li><span class="btn-tag btn-primary">입금확인</span> 택배사 및 운송장 번호 입력 후 클릭하면 주문 상태가 '배송중'으로 변경됩니다.</li>
-                    <li><span class="btn-tag btn-primary">배송완료</span> 택배사에서 구매자에게 물품 전달이 완료된 후 클릭하여 전체 주문 프로세스를 종결합니다.</li>
-                    <li><span class="btn-tag btn-modify">정보수정</span> 이미 배송 중인 주문의 택배사 정보를 변경하거나 오입력된 운송장 번호를 수정할 때 사용합니다.</li>
+                    <li><span class="btn-tag btn-primary">입금확인</span> 송장 입력 후 클릭하여 배송 프로세스를 시작합니다.</li>
+                    <li><span class="btn-tag btn-primary">배송완료</span> 최종 배송이 확인된 건을 종결 처리합니다.</li>
+                    <li><span class="btn-tag btn-modify">정보수정</span> 이미 입력된 배송 정보를 갱신합니다.</li>
                 </ul>
-            </div>
 
-            <div class="info-box" style="background-color: #ffffff; border: 1px solid #ddd; border-left: 4px solid #3668af;">
-                <strong>1-2. 시스템 상태 코드 정의</strong>
-                <div style="display: flex; gap: 20px;">
-                    <div style="flex: 1;">
-                        <h3>주문 상태 코드</h3>
-                        <ul style="font-size: 0.9em; list-style: none; padding-left: 10px;">
-                            <li><span class="label">10</span> 결제대기</li>
-                            <li><span class="label">20</span> 결제실패</li>
-                            <li><span class="label">30</span> 결제완료</li>
-                            <li><span class="label">40</span> 주문취소</li>
-                            <li><span class="label">50</span> 배송준비중</li>
-                            <li><span class="label">60</span> 배송중</li>
-                            <li><span class="label">70</span> 배송완료</li>
-                            <li><span class="label">99</span> 주문확정</li>
-                        </ul>
-                    </div>
-                    <div style="flex: 1;">
-                        <h3>결제 상태 코드</h3>
-                        <ul style="font-size: 0.9em; list-style: none; padding-left: 10px;">
-                            <li><span class="label">10</span> 결제대기</li>
-                            <li><span class="label">20</span> 결제실패</li>
-                            <li><span class="label">30</span> 결제완료</li>
-                            <li><span class="label">40</span> 결제취소</li>
-                        </ul>
-                    </div>
-                    <div style="flex: 1;">
-                        <h3>지점 입금 상태 코드</h3>
-                        <ul style="font-size: 0.9em; list-style: none; padding-left: 10px;">
-                            <li><span class="label">10</span> 입금대기 (미처리)</li>
-                            <li><span class="label">20</span> 입금확인요청</li>
-                            <li><span class="label">30</span> 입금완료</li>
-                        </ul>
+                <div class="info-box" style="background-color: #ffffff; border: 1px solid #ddd; border-left: 5px solid #16a085;">
+                    <strong>시스템 상태 코드 안내</strong>
+                    <div style="display: flex; gap: 30px; margin-top: 15px;">
+                        <div>
+                            <span class="label">주문 상태</span>
+                            <ul style="font-size: 0.9em; list-style: none; padding: 0;">
+                                <li>10 결제대기 / 30 결제완료</li>
+                                <li>60 배송중 / 70 배송완료</li>
+                                <li>99 주문확정</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <span class="label">입금 상태</span>
+                            <ul style="font-size: 0.9em; list-style: none; padding: 0;">
+                                <li>10 입금대기</li>
+                                <li>20 입금확인요청</li>
+                                <li>30 입금완료</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <h2 id="branch">2. 지점 관리</h2>
-            <p>신규 지점을 생성하고 지점별 고유 설정 및 정산 정보를 관리합니다.</p>
-            <div class="screenshot-group">
-                <h3>2-1. 지점 리스트 및 조회</h3>
-                <p>전체 지점의 운영 상태를 확인합니다. <span class="btn-tag btn-info">지점 등록</span> 버튼으로 등록 화면으로 진입합니다.</p>
-                <img src="image/web/ROLE_SELL/branch_list.png" class="screenshot">
+            <!-- 2. 지점 관리 -->
+            <div id="tab-branch" class="tab-content">
+                <h1>지점 관리 시스템</h1>
+                <p>신규 지점을 생성하고 지점별 고유 설정 및 정산 정보를 관리합니다.</p>
                 
-                <h3>2-2. [신규 등록] 지점 등록</h3>
-                <p>시스템에 새로운 판매 지점을 생성합니다.</p>
-                <ul>
-                    <li><strong>지점 정보</strong>: 지점명, 지점코드(고유 식별값), 도메인 주소를 입력합니다.</li>
-                    <li><strong>결제 설정</strong>: 해당 지점에서 사용할 Toss Payments 등의 PG API 키를 등록합니다.</li>
-                    <li><span class="btn-tag btn-primary">등록</span> 버튼을 클릭하여 생성을 완료합니다.</li>
-                </ul>
-                <img src="image/web/ROLE_SELL/branch_insert.png" class="screenshot">
+                <div class="screenshot-group">
+                    <h3>2-1. 지점 리스트 및 조회</h3>
+                    <p>전체 지점의 운영 상태를 확인하며 <span class="btn-tag btn-info">지점 등록</span> 버튼으로 진입합니다.</p>
+                    <img src="image/web/ROLE_SELL/branch_list.png" class="screenshot">
+                    
+                    <h3>2-2. [신규 등록] 지점 등록</h3>
+                    <ul>
+                        <li><strong>지점 정보</strong>: 지점명, 지점코드(고유 식별값), 도메인 주소 입력</li>
+                        <li><strong>결제 설정</strong>: 해당 지점의 PG(Toss Payments 등) API 키 등록</li>
+                        <li><span class="btn-tag btn-primary">등록</span> 버튼으로 생성 완료</li>
+                    </ul>
+                    <img src="image/web/ROLE_SELL/branch_insert.png" class="screenshot">
 
-                <h3>2-3. 지점 정보 수정 및 상세</h3>
-                <p>지점명을 클릭하여 상세 정보를 확인하고, <span class="btn-tag btn-modify">수정</span> 버튼을 통해 기존 설정을 변경하거나 <span class="btn-tag btn-danger">삭제</span>할 수 있습니다.</p>
-                <img src="image/web/ROLE_SELL/branch_detail.png" class="screenshot">
+                    <h3>2-3. 정보 수정 및 상세</h3>
+                    <p><span class="btn-tag btn-modify">수정</span> 버튼을 통해 기존 설정을 변경하거나 <span class="btn-tag btn-danger">삭제</span>할 수 있습니다.</p>
+                    <img src="image/web/ROLE_SELL/branch_detail.png" class="screenshot">
+                </div>
             </div>
 
-            <h2 id="user">3. 사용자 관리</h2>
-            <p>운영진 및 지점 판매자 계정을 관리합니다.</p>
-            <div class="screenshot-group">
-                <h3>3-1. 관리자 계정 목록</h3>
-                <img src="image/web/ROLE_SELL/user_list.png" class="screenshot">
+            <!-- 3. 사용자 관리 -->
+            <div id="tab-user" class="tab-content">
+                <h1>사용자 권한 관리</h1>
+                <p>본사 운영진 및 각 지점 판매자 계정을 관리합니다.</p>
                 
-                <h3>3-2. [신규 등록] 계정 생성</h3>
-                <p><span class="btn-tag btn-primary">등록</span> 버튼을 통해 신규 운영자를 추가합니다.</p>
-                <ul>
-                    <li><strong>로그인 정보</strong>: 접속 계정(이메일)과 초기 비밀번호를 설정합니다.</li>
-                    <li><strong>권한 및 소속</strong>: 본사(ROLE_SELL) 또는 특정 지점(ROLE_PROJ) 소속 여부를 지정합니다.</li>
-                    <li><span class="btn-tag btn-primary">확인</span> 버튼으로 계정 생성을 완료합니다.</li>
-                </ul>
-                <img src="image/web/ROLE_SELL/user_insert.png" class="screenshot">
+                <div class="screenshot-group">
+                    <h3>3-1. 관리자 계정 목록</h3>
+                    <img src="image/web/ROLE_SELL/user_list.png" class="screenshot">
+                    
+                    <h3>3-2. [신규 등록] 계정 생성</h3>
+                    <ul>
+                        <li><strong>접속 정보</strong>: 로그인용 이메일 및 초기 비밀번호 설정</li>
+                        <li><strong>권한 부여</strong>: ROLE_SELL(본사), ROLE_PROJ(지점) 선택</li>
+                        <li><span class="btn-tag btn-primary">확인</span> 버튼으로 최종 생성</li>
+                    </ul>
+                    <img src="image/web/ROLE_SELL/user_insert.png" class="screenshot">
+                </div>
             </div>
 
-            <h2 id="product">4. 상품 관리</h2>
-            <p>판매 상품의 전체 라이프사이클을 관리합니다.</p>
-            <div class="screenshot-group">
-                <h3>4-1. 상품 마스터 리스트</h3>
-                <img src="image/web/ROLE_SELL/product_list.png" class="screenshot">
+            <!-- 4. 상품 관리 -->
+            <div id="tab-product" class="tab-content">
+                <h1>상품 마스터 관리</h1>
+                <p>플랫폼 판매 상품의 전체 데이터를 제어합니다.</p>
                 
-                <h3>4-2. [신규 등록] 상품 등록</h3>
-                <p><span class="btn-tag btn-info">상품 등록</span> 버튼을 클릭하여 판매할 상품을 시스템에 등재합니다.</p>
-                <ul>
-                    <li><strong>기본 정보</strong>: 상품명, 카테고리, 판매 가격, 원가 정보를 입력합니다.</li>
-                    <li><strong>이미지 관리</strong>: 대표 이미지 및 상세 이미지를 업로드하고 <span class="btn-tag btn-primary">대표지정</span>을 설정합니다.</li>
-                    <li><strong>판매 옵션</strong>: 사이즈, 색상 등 구매자가 선택할 옵션 항목을 구성합니다.</li>
-                    <li><span class="btn-tag btn-primary">등록</span> 버튼으로 최종 저장합니다.</li>
-                </ul>
-                <img src="image/web/ROLE_SELL/product_insert.png" class="screenshot">
+                <div class="screenshot-group">
+                    <h3>4-1. 상품 목록 및 조회</h3>
+                    <img src="image/web/ROLE_SELL/product_list.png" class="screenshot">
+                    
+                    <h3>4-2. [신규 등록] 상품 등록</h3>
+                    <ul>
+                        <li><strong>가격 정보</strong>: 판매가 및 원가 정보를 정확히 입력</li>
+                        <li><strong>이미지 구성</strong>: 대표 이미지를 지정하여 리스트 노출 이미지 설정</li>
+                        <li><span class="btn-tag btn-primary">등록</span> 버튼으로 저장</li>
+                    </ul>
+                    <img src="image/web/ROLE_SELL/product_insert.png" class="screenshot">
 
-                <h3>4-3. 상품 상세 정보 수정</h3>
-                <p>등록된 상품의 정보를 최신 상태로 유지하거나 판매 정책을 변경합니다.</p>
-                <ul>
-                    <li><strong>정보 업데이트</strong>: 상품명, 가격, 상세 설명 등 기존 정보를 수정하고 <span class="btn-tag btn-modify">수정</span> 또는 <span class="btn-tag btn-primary">확인</span> 버튼으로 저장합니다.</li>
-                    <li><strong>판매 상태 제어</strong>: <span class="btn-tag btn-primary">상태변경</span> 버튼을 통해 즉시 '판매중' 또는 '판매중지(품절)' 상태로 전환할 수 있습니다.</li>
-                    <li><strong>이미지 교체</strong>: 기존 업로드된 이미지를 삭제하거나 새로운 이미지를 추가하여 상품 노출 이미지를 갱신합니다.</li>
-                </ul>
-                <img src="image/web/ROLE_SELL/product_detail.png" class="screenshot">
-                
-                <h3>4-4. 리뷰 및 문의 대응</h3>
-                <img src="image/web/ROLE_SELL/review_list.png" class="screenshot">
-                <img src="image/web/ROLE_SELL/qna_list.png" class="screenshot">
+                    <h3>4-3. 상품 상세 수정 및 상태 변경</h3>
+                    <ul>
+                        <li><span class="btn-tag btn-primary">상태변경</span>: 즉시 품절 처리하거나 판매를 재개합니다.</li>
+                        <li><span class="btn-tag btn-modify">수정</span>: 상세 내역을 업데이트합니다.</li>
+                    </ul>
+                    <img src="image/web/ROLE_SELL/product_detail.png" class="screenshot">
+
+                    <h3>4-4. 리뷰 및 문의 대응</h3>
+                    <p>고객의 소중한 피드백에 대해 <span class="btn-tag btn-primary">답변</span>을 등록하고 관리합니다.</p>
+                    <img src="image/web/ROLE_SELL/review_list.png" class="screenshot">
+                    <img src="image/web/ROLE_SELL/qna_list.png" class="screenshot">
+                </div>
             </div>
 
-            <h2 id="order">5. 주문 및 통합 배송 관리</h2>
-            <p>전 지점의 실시간 주문 내역을 관리합니다.</p>
-            <div class="screenshot-group">
-                <h3>5-1. 통합 주문 목록</h3>
-                <img src="image/web/ROLE_SELL/order_list.png" class="screenshot">
+            <!-- 5. 주문 관리 -->
+            <div id="tab-order" class="tab-content">
+                <h1>주문 및 통합 배송</h1>
+                <p>전체 지점의 주문 내역을 실시간으로 추적하고 통합 배송 관리를 수행합니다.</p>
                 
-                <h3>5-2. 주문 상세 및 배송 처리</h3>
-                <p>주문 상세 화면에서 실질적인 배송 업무를 처리합니다.</p>
-                <ul>
-                    <li><span class="btn-tag btn-primary">입금확인</span>: 배송 정보(택배사, 송장번호) 입력 후 클릭하여 배송을 시작합니다.</li>
-                    <li><span class="btn-tag btn-modify">정보수정</span>: 오입력된 배송 정보를 수정합니다.</li>
-                    <li><span class="btn-tag btn-primary">배송완료</span>: 최종 배송 완료 시 클릭하여 주문을 종결합니다.</li>
-                </ul>
-                <img src="image/web/ROLE_SELL/order_detail.png" class="screenshot">
+                <div class="screenshot-group">
+                    <h3>5-1. 통합 주문 조회</h3>
+                    <img src="image/web/ROLE_SELL/order_list.png" class="screenshot">
+                    
+                    <h3>5-2. 주문 상세 및 배송 처리</h3>
+                    <ul>
+                        <li><span class="btn-tag btn-primary">입금확인</span>: 배송 정보 입력 후 클릭 (상태: 배송중)</li>
+                        <li><span class="btn-tag btn-primary">배송완료</span>: 최종 도착 확인 시 클릭 (상태: 배송완료)</li>
+                        <li><span class="btn-tag btn-modify">정보수정</span>: 오입력된 송장번호를 즉시 수정</li>
+                    </ul>
+                    <img src="image/web/ROLE_SELL/order_detail.png" class="screenshot">
+                </div>
             </div>
 
-            <h2 id="other">6. 게시판 및 시스템 관리</h2>
-            <div class="screenshot-group">
-                <h3>6-1. [신규 등록] 공지사항 및 게시물</h3>
-                <p>본사 및 지점 공지사항을 등록합니다. <span class="btn-tag btn-primary">등록</span> 버튼을 클릭하여 제목, 내용, 첨부파일을 구성합니다.</p>
-                <img src="image/web/ROLE_SELL/mboard_list.png" class="screenshot">
+            <!-- 6. 시스템 설정 -->
+            <div id="tab-system" class="tab-content">
+                <h1>시스템 설정 및 게시판</h1>
+                <p>시스템 공지사항 및 기본 환경을 설정합니다.</p>
+                
+                <div class="screenshot-group">
+                    <h3>6-1. [신규 등록] 공지사항 관리</h3>
+                    <p><span class="btn-tag btn-primary">등록</span> 버튼으로 신규 공지를 게시합니다.</p>
+                    <img src="image/web/ROLE_SELL/mboard_list.png" class="screenshot">
+                </div>
             </div>
         </div>
     </div>
