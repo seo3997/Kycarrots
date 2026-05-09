@@ -31,7 +31,7 @@
     <div class="content">
         <div class="container">
             <h1 id="intro">지점 판매자 메뉴얼</h1>
-            <p>지점 판매자는 자신이 담당하는 지점의 상품 판매 현황을 확인하고 주문을 관리합니다.</p>
+            <p>지점 판매자는 자신이 담당하는 지점의 상품 판매 현황을 확인하고, 본사와의 정산 및 주문 관리를 수행합니다.</p>
 
             <div class="info-box">
                 <strong>로그인 정보</strong><br>
@@ -40,35 +40,48 @@
             </div>
 
             <h2 id="dashboard">1. 메인 화면 (대시보드)</h2>
-            <p>이번 달 본사에 입금해야 할 총 원가와 지점 정산 현황을 실시간으로 확인합니다.</p>
+            <p>지점 운영에 최적화된 대시보드를 통해 실시간 판매 현황과 본사 정산액을 모니터링합니다.</p>
             <img src="image/web/ROLE_PROJ/dashboard.png" class="screenshot" alt="대시보드">
-
-            <h2 id="product">2. 상품 관리</h2>
-            <p>지점에서 판매 중인 상품의 상세 정보와 재고를 조회합니다.</p>
-            <div class="screenshot-group">
-                <span class="label">상품 리스트</span>
-                <img src="image/web/ROLE_PROJ/product_list.png" class="screenshot">
-                <span class="label">상품 상세 정보</span>
-                <img src="image/web/ROLE_PROJ/product_detail.png" class="screenshot">
+            
+            <div class="info-box" style="background-color: #f4f6f6; border-left-color: #7f8c8d;">
+                <strong>지점 관리자 핵심 업무</strong>
+                <ul>
+                    <li><strong>정산 금액 확인</strong>: 이번 달 본사에 입금해야 할 총 원가(Cost) 실시간 집계</li>
+                    <li><strong>입금 확인 요청</strong>: 본사에 원가 송금 후 시스템 상에서 '입금확인요청' 처리</li>
+                    <li><strong>주문 확정 처리</strong>: 배송 완료된 건에 대해 최종 '주문확정'을 진행하여 정산 데이터 확정</li>
+                    <li><strong>실시간 주문 모니터링</strong>: 내 지점에서 발생한 신규 주문 내역 즉시 확인</li>
+                </ul>
             </div>
 
-            <h2 id="order">3. 주문 관리</h2>
-            <p>지점 구매자들의 주문 목록을 확인하고, 상세 내역에서 배송지 정보 및 결제 금액을 검토합니다.</p>
+            <h2 id="product">2. 상품 및 커뮤니티 관리</h2>
+            <p>본사에서 공급하는 상품 정보를 조회하고, 고객의 리뷰 및 문의에 성실히 답변합니다.</p>
             <div class="screenshot-group">
-                <span class="label">주문 리스트</span>
-                <p>전체 주문 목록을 조회하며 주문 상태를 한눈에 파악합니다.</p>
+                <span class="label">상품 정보 조회</span>
+                <img src="image/web/ROLE_PROJ/product_list.png" class="screenshot">
+                <span class="label">고객 피드백 대응 (리뷰/문의)</span>
+                <p>고객이 남긴 상품 리뷰와 Q&A를 주기적으로 확인하여 지점의 신뢰도를 높입니다.</p>
+                <img src="image/web/ROLE_PROJ/review_list.png" class="screenshot">
+                <img src="image/web/ROLE_PROJ/qna_list.png" class="screenshot">
+            </div>
+
+            <h2 id="order">3. 주문 및 고객 관리</h2>
+            <p>지점 구매자들의 주문 내역을 상세히 관리하며, 배송 상태를 추적합니다.</p>
+            <div class="screenshot-group">
+                <span class="label">주문 상세 관리</span>
+                <p>주문 상세 화면에서 고객의 배송지 정보를 확인하고, 입금 및 배송 진행 상황을 본사와 협업하여 관리합니다.</p>
                 <img src="image/web/ROLE_PROJ/order_list.png" class="screenshot">
-                <span class="label">주문 상세 내역</span>
-                <p>주문 상세 화면에서는 구매자 정보, 배송지, 주문 상품 목록을 확인하고 상태를 관리합니다.</p>
                 <img src="image/web/ROLE_PROJ/order_detail.png" class="screenshot">
             </div>
 
-            <h2 id="community">4. 리뷰 및 문의 관리</h2>
-            <p>고객의 소중한 피드백을 관리합니다.</p>
-            <h3>상품 리뷰 목록</h3>
-            <img src="image/web/ROLE_PROJ/review_list.png" class="screenshot" alt="리뷰 리스트">
-            <h3>상품 문의 목록 (Q&A)</h3>
-            <img src="image/web/ROLE_PROJ/qna_list.png" class="screenshot" alt="문의 리스트">
+            <h2 id="push">4. 실시간 Push 알림 수신</h2>
+            <div class="info-box" style="background-color: #e8f8f5;">
+                <strong>알림 수신 항목</strong>
+                <ul>
+                    <li><strong>신규 주문 발생</strong>: 구매자가 결제를 완료하면 즉시 모바일 앱으로 알림이 전송됩니다.</li>
+                    <li><strong>입금/배송 완료</strong>: 본사에서 입금 확인 및 배송 처리를 완료하면 지점에 결과가 공유됩니다.</li>
+                    <li><strong>신규 문의 등록</strong>: 고객이 상품 문의(Q&A)를 남기면 즉시 알림이 발송되어 신속한 답변이 가능합니다.</li>
+                </ul>
+            </div>
         </div>
     </div>
 </body>

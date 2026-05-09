@@ -42,81 +42,84 @@
                 - 아이디: sel1@gmail.com
             </div>
 
-            <h2>1. 메인 화면</h2>
-            <p>로그인 후 첫 화면으로 전체 주문 현황 및 지점별 요약을 확인합니다.</p>
+            <h2>1. 메인 화면 (대시보드)</h2>
+            <p>로그인 후 첫 화면으로 본사 운영의 핵심 지표를 실시간으로 모니터링합니다.</p>
             <img src="image/web/ROLE_SELL/dashboard.png" class="screenshot" alt="대시보드">
+            
+            <div class="info-box" style="background-color: #f8f9fa; border-left-color: #6c757d;">
+                <strong>대시보드 상세 업무</strong>
+                <ul>
+                    <li><strong>미처리주문</strong>: 판매지점에서 발주했으나 아직 입금 확인이 되지 않은 주문건</li>
+                    <li><strong>지점미금액</strong>: 판매지점별 입금 확인 전 주문 금액의 총 합계</li>
+                    <li><strong>오늘의 수금액</strong>: 금일 입금 확인 처리가 완료된 총 주문 금액</li>
+                    <li><strong>배송중인주문</strong>: 배송은 시작되었으나 아직 배송 완료 처리가 되지 않은 주문</li>
+                    <li><strong>지점주문List</strong>: 전 지점에서 발생한 실시간 주문 목록 확인</li>
+                    <li><strong>입금확인 처리</strong>: 택배사 및 운송장 번호 입력 후 '배송시작' 클릭 시 상태 변경</li>
+                </ul>
+            </div>
 
-            <h2 id="branch">2. 지점 관리</h2>
-            <p>지점을 등록하고 지점별 도메인 및 상세 정보를 관리합니다.</p>
+            <h2 id="codes">2. 시스템 코드 관리</h2>
+            <p>운영 프로세스에서 사용되는 주요 상태 코드 정의입니다.</p>
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 1;">
+                    <h3>주문 상태 코드</h3>
+                    <ul style="font-size: 0.9em; list-style: none; padding-left: 10px;">
+                        <li><span class="label">10</span> 결제대기</li>
+                        <li><span class="label">20</span> 결제실패</li>
+                        <li><span class="label">30</span> 결제완료</li>
+                        <li><span class="label">40</span> 주문취소</li>
+                        <li><span class="label">50</span> 배송준비중</li>
+                        <li><span class="label">60</span> 배송중</li>
+                        <li><span class="label">70</span> 배송완료</li>
+                        <li><span class="label">99</span> 주문확정</li>
+                    </ul>
+                </div>
+                <div style="flex: 1;">
+                    <h3>결제 상태 코드</h3>
+                    <ul style="font-size: 0.9em; list-style: none; padding-left: 10px;">
+                        <li><span class="label">10</span> 결제대기</li>
+                        <li><span class="label">20</span> 결제실패</li>
+                        <li><span class="label">30</span> 결제완료</li>
+                        <li><span class="label">40</span> 결제취소</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2 id="branch">3. 지점 관리</h2>
+            <p>지점을 신규 등록하고, 지점별 독립 도메인 및 결제 인증 키(PG)를 관리합니다.</p>
             
             <div class="screenshot-group">
-                <span class="label">리스트 화면</span>
-                <p>전체 지점 목록을 조회합니다. 지점명을 클릭하면 상세 화면으로 이동합니다.</p>
+                <span class="label">지점 리스트 및 상세</span>
+                <p>전체 지점 목록을 조회하고, 특정 지점의 설정(지점명, 도메인, 고유 식별 코드 등)을 수정합니다.</p>
                 <img src="image/web/ROLE_SELL/branch_list.png" class="screenshot">
-                
-                <span class="label">등록 화면</span>
-                <p>'등록' 버튼을 클릭하여 새로운 지점을 생성합니다. 지점명, 도메인, 결제 키 등을 입력합니다.</p>
-                <img src="image/web/ROLE_SELL/branch_insert.png" class="screenshot">
-                
-                <span class="label">상세 화면</span>
-                <p>특정 지점의 상세 설정을 확인합니다.</p>
                 <img src="image/web/ROLE_SELL/branch_detail.png" class="screenshot">
-                
-                <span class="label">수정 화면</span>
-                <p>지점 정보를 변경하고 '저장' 버튼을 누릅니다.</p>
-                <img src="image/web/ROLE_SELL/branch_update.png" class="screenshot">
             </div>
 
-            <h2 id="user">3. 사용자 관리</h2>
-            <p>본사 및 지점 사용자의 계정을 관리합니다.</p>
-            
-            <div class="screenshot-group">
-                <span class="label">리스트 화면</span>
-                <img src="image/web/ROLE_SELL/user_list.png" class="screenshot">
-                
-                <span class="label">등록 화면</span>
-                <img src="image/web/ROLE_SELL/user_insert.png" class="screenshot">
-                
-                <span class="label">상세 화면</span>
-                <img src="image/web/ROLE_SELL/user_detail.png" class="screenshot">
-                
-                <span class="label">수정 화면</span>
-                <img src="image/web/ROLE_SELL/user_update.png" class="screenshot">
-            </div>
+            <h2 id="user">4. 사용자 관리</h2>
+            <p>본사 운영팀 및 각 지점 관리자 계정을 생성하고 권한을 부여합니다.</p>
+            <img src="image/web/ROLE_SELL/user_list.png" class="screenshot">
 
-            <h2 id="product">4. 상품 관리</h2>
-            <p>판매할 상품의 이미지, 가격, 재고 등을 관리합니다.</p>
-            
+            <h2 id="product">5. 상품 및 리뷰 관리</h2>
+            <p>마스터 상품 정보를 등록하고, 지점별 판매 여부를 제어합니다. 고객이 작성한 리뷰와 문의에 답변합니다.</p>
             <div class="screenshot-group">
-                <span class="label">리스트 화면</span>
+                <span class="label">상품 마스터 관리</span>
                 <img src="image/web/ROLE_SELL/product_list.png" class="screenshot">
-                
-                <span class="label">등록 화면</span>
-                <img src="image/web/ROLE_SELL/product_insert.png" class="screenshot">
-                
-                <span class="label">상세 화면</span>
-                <img src="image/web/ROLE_SELL/product_detail.png" class="screenshot">
-                
-                <span class="label">수정 화면</span>
-                <img src="image/web/ROLE_SELL/product_update.png" class="screenshot">
+                <span class="label">리뷰 및 Q&A 대응</span>
+                <img src="image/web/ROLE_SELL/review_list.png" class="screenshot">
+                <img src="image/web/ROLE_SELL/qna_list.png" class="screenshot">
             </div>
 
-            <h2 id="order">5. 주문 관리</h2>
-            <p>구매자의 주문 내역을 확인하고 입금 처리 및 배송 상태를 변경합니다.</p>
+            <h2 id="order">6. 주문 및 물류 관리</h2>
+            <p>전체 주문 내역을 실시간으로 확인하며, 물류 센터와 연동하여 배송 처리를 진행합니다.</p>
             <div class="screenshot-group">
-                <span class="label">주문 리스트</span>
+                <span class="label">주문 상세 및 배송 처리</span>
+                <p>주문 상세 페이지에서 입금 확인 및 운송장 번호를 입력하여 배송 상태를 업데이트합니다.</p>
                 <img src="image/web/ROLE_SELL/order_list.png" class="screenshot">
-                <span class="label">주문 상세</span>
                 <img src="image/web/ROLE_SELL/order_detail.png" class="screenshot">
             </div>
 
-            <h2 id="other">6. 기타 관리</h2>
-            <p>리뷰, 문의, 게시판 등 커뮤니티 기능을 관리합니다.</p>
-            <h3>리뷰 관리</h3>
-            <img src="image/web/ROLE_SELL/review_list.png" class="screenshot">
-            <h3>문의 관리 (Q&A)</h3>
-            <img src="image/web/ROLE_SELL/qna_list.png" class="screenshot">
-            <h3>게시판 관리</h3>
+            <h2 id="other">7. 게시판 및 기타 설정</h2>
+            <p>공지사항 및 시스템 운영에 필요한 게시판을 관리합니다.</p>
             <img src="image/web/ROLE_SELL/mboard_list.png" class="screenshot">
         </div>
     </div>
