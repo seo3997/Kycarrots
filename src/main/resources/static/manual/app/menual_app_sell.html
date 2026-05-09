@@ -5,10 +5,7 @@
     <title>본사운영 앱 메뉴얼</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f8f9fa; color: #333; line-height: 1.6; }
-        .sidebar { width: 250px; position: fixed; height: 100%; background: #34495e; color: white; padding-top: 20px; }
-        .sidebar a { padding: 10px 20px; text-decoration: none; color: white; display: block; transition: 0.3s; opacity: 0.8; }
-        .sidebar a:hover { opacity: 1; background: #2c3e50; }
-        .content { margin-left: 250px; padding: 40px; }
+        .content { padding: 40px 20px; }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h1 { color: #333; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
         h2 { color: #2980b9; margin-top: 40px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
@@ -24,6 +21,8 @@
         .tab-btn.active { background: #3498db; color: white; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        .home-btn { position: fixed; bottom: 30px; left: 30px; background: #34495e; color: white; padding: 12px 20px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.3s; z-index: 1001; }
+        .home-btn:hover { background: #3498db; transform: scale(1.05); }
     </style>
     <script>
         function openTab(tabId) {
@@ -35,12 +34,7 @@
     </script>
 </head>
 <body>
-    <div class="sidebar">
-        <a href="../menual_index.html">← 메뉴얼 홈</a>
-        <a href="#intro">개요</a>
-        <a href="javascript:void(0)" onclick="openTab('tab-dashboard')">대시보드</a>
-        <a href="javascript:void(0)" onclick="openTab('tab-order')">주문관리</a>
-    </div>
+    <a href="../menual_index.html" class="home-btn">← 메뉴얼 홈</a>
     <div class="content">
         <div class="container">
             <h1 id="intro">본사운영 모바일 앱 가이드</h1>
