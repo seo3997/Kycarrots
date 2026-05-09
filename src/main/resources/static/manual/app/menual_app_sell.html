@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>본사운영 앱 메뉴얼</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+        .sidebar { width: 250px; position: fixed; height: 100%; background: #34495e; color: white; padding-top: 20px; }
+        .sidebar a { padding: 10px 20px; text-decoration: none; color: white; display: block; transition: 0.3s; opacity: 0.8; }
+        .sidebar a:hover { opacity: 1; background: #2c3e50; }
+        .content { margin-left: 250px; padding: 40px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 40px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .screenshot { max-width: 320px; width: 100%; height: auto; border: 1px solid #ddd; margin: 15px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 20px; display: block; }
+        .info-box { background-color: #ebf5fb; padding: 15px; border-left: 4px solid #3498db; margin: 20px 0; }
+        .btn-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; font-weight: bold; color: white; }
+        .btn-primary { background-color: #3498db; }
+        .btn-success { background-color: #27ae60; }
+        .btn-danger { background-color: #e74c3c; }
+        .tab-nav { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .tab-btn { padding: 8px 20px; border: none; background: #eee; cursor: pointer; border-radius: 5px; }
+        .tab-btn.active { background: #3498db; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+    <script>
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="../menual_index.html">← 메뉴얼 홈</a>
+        <a href="#intro">개요</a>
+        <a href="javascript:void(0)" onclick="openTab('tab-dashboard')">대시보드</a>
+        <a href="javascript:void(0)" onclick="openTab('tab-order')">주문관리</a>
+    </div>
+    <div class="content">
+        <div class="container">
+            <h1 id="intro">본사운영 모바일 앱 가이드</h1>
+            <p>본사 관리자 권한으로 앱을 사용하는 방법을 안내합니다. (로그인 계정: sel1@gmail.com / 1234)</p>
+
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="openTab('tab-dashboard')">1. 대시보드</button>
+                <button class="tab-btn" onclick="openTab('tab-order')">2. 주문관리</button>
+            </div>
+
+            <!-- 대시보드 -->
+            <div id="tab-dashboard" class="tab-content active">
+                <h2>1. 대시보드 및 현황 확인</h2>
+                <p>앱 접속 시 첫 화면 또는 햄버거 메뉴를 통해 대시보드에 진입합니다. 실시간 판매 현황과 입금 대기 목록을 한눈에 확인합니다.</p>
+                <img src="../image/app/ROLE_SELL/dashboard.jpg" class="screenshot" alt="대시보드 화면">
+                <div class="info-box">
+                    <strong>주요 확인 항목</strong>
+                    <ul>
+                        <li>오늘의 주문 건수 및 총 매출액</li>
+                        <li>지점별 입금 요청 및 정산 현황</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 주문관리 -->
+            <div id="tab-order" class="tab-content">
+                <h2>2. 주문 목록 및 상세 처리</h2>
+                <p>주문 관리 리스트에서 각 항목을 클릭하여 상세 정보를 조회하고 배송 상태를 처리합니다.</p>
+                
+                <h3>2-1. 주문 리스트</h3>
+                <img src="../image/app/ROLE_SELL/order_list.jpg" class="screenshot" alt="주문 리스트">
+                
+                <h3>2-2. 주문 상세 및 버튼 기능</h3>
+                <img src="../image/app/ROLE_SELL/order_detail.jpg" class="screenshot" alt="주문 상세">
+                <div class="info-box">
+                    <ul>
+                        <li><span class="btn-tag btn-success">입금확인</span>: 지점의 입금을 확인하고 주문을 확정합니다.</li>
+                        <li><span class="btn-tag btn-primary">배송처리</span>: 상품 발송 후 배송 상태를 변경합니다.</li>
+                        <li><span class="btn-tag btn-danger">주문취소</span>: 주문을 취소하고 환불 절차를 진행합니다.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
