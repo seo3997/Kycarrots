@@ -43,6 +43,7 @@
             <div class="tab-nav">
                 <button class="tab-btn active" onclick="openTab('tab-dashboard')">1. 대시보드</button>
                 <button class="tab-btn" onclick="openTab('tab-order')">2. 주문관리</button>
+                <button class="tab-btn" onclick="openTab('tab-chat')">3. 상품/채팅</button>
             </div>
 
             <!-- 대시보드 -->
@@ -109,6 +110,26 @@
                         <li><span class="btn-tag btn-primary">배송완료</span>: 최종 도착 확인 시 클릭하면 **배송완료** 상태로 변경됩니다.</li>
                         <li><span class="btn-tag btn-modify">배송정보 업데이트</span>: 오입력된 송장번호나 택배사 정보를 수정하여 반영합니다.</li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- 상품/채팅 -->
+            <div id="tab-chat" class="tab-content">
+                <h2>3. 상품 및 1:1 채팅 관리</h2>
+                <p>본사 관리자는 판매지점과 상품 관련 문의를 1:1 채팅으로 주고받을 수 있습니다.</p>
+                
+                <h3>3-1. 상품 상세 및 문의 진입</h3>
+                <img src="../image/app/ROLE_PUB/product_detail.jpg" class="screenshot" alt="상품 상세">
+                <div class="info-box">
+                    <strong>채팅 문의하기</strong><br>
+                    상품 상세 화면 하단의 <strong>[상품문의]</strong> 버튼을 클릭하면 해당 상품을 담당하는 판매지점과의 채팅 화면으로 이동합니다.
+                </div>
+
+                <h3>3-2. 1:1 채팅 상담</h3>
+                <img src="../image/app/ROLE_PUB/product_chat.jpg" class="screenshot" alt="1:1 채팅">
+                <div class="info-box" style="background-color: #fff5f5; border-left-color: #e74c3c;">
+                    <strong>⚠️ 상담 안내</strong><br>
+                    본사 관리자는 <strong>판매지점(Branch) 관리자</strong>와만 직접 채팅 상담이 가능합니다. 일반 구매자와의 직접 상담이 필요한 경우 해당 지점을 통해 확인하시기 바랍니다.
                 </div>
             </div>
         </div>
