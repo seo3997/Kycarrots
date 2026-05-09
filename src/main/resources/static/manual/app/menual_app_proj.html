@@ -13,6 +13,7 @@
         .info-box { background-color: #eafaf1; padding: 15px; border-left: 4px solid #27ae60; margin: 20px 0; }
         .btn-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; font-weight: bold; color: white; }
         .btn-primary { background-color: #3498db; }
+        .btn-info { background-color: #17a2b8; }
         .btn-success { background-color: #27ae60; }
         .btn-danger { background-color: #e74c3c; }
         .btn-modify { background-color: #29beb1; }
@@ -86,12 +87,23 @@
                 <h3>2-1. 주문 목록</h3>
                 <img src="../image/app/ROLE_PROJ/order_list.jpg" class="screenshot" alt="지점 주문 리스트">
                 
-                <h3>2-2. 주문 상세 및 버튼 기능</h3>
+                <h3>2-2. 주문 상세 및 처리 가이드</h3>
                 <img src="../image/app/ROLE_PROJ/order_detail.jpg" class="screenshot" alt="지점 주문 상세">
+                
+                <div class="info-box" style="border-left-color: #e67e22;">
+                    <strong>상태별 업무 가이드</strong><br>
+                    주문의 현재 상태에 따라 지점 관리자가 수행해야 할 핵심 액션입니다.
+                    <ul style="margin-top: 10px;">
+                        <li><strong>입금대기</strong> 상태: <span class="btn-tag btn-info">입금확인요청</span> 및 <span class="btn-tag btn-danger">주문취소</span> 버튼이 노출됩니다.</li>
+                        <li><strong>배송완료</strong> 상태: <span class="btn-tag btn-success">주문확정</span> 버튼이 노출되어 업무를 최종 마무리합니다.</li>
+                    </ul>
+                </div>
+
                 <div class="info-box">
                     <ul>
-                        <li><span class="btn-tag btn-success">입금확인</span>: 입금이 완료된 주문을 확정 처리합니다.</li>
-                        <li><span class="btn-tag btn-danger">주문취소</span>: 미입금 또는 고객 요청에 의한 주문 취소를 처리합니다.</li>
+                        <li><span class="btn-tag btn-info">입금확인요청</span>: 고객의 입금이 확인된 경우 본사에 승인을 요청하여 배송 준비 단계로 전환합니다.</li>
+                        <li><span class="btn-tag btn-success">주문확정</span>: 배송 완료된 주문에 대해 최종적으로 데이터를 확정하여 정산에 반영합니다.</li>
+                        <li><span class="btn-tag btn-danger">주문취소</span>: 부득이한 사유로 주문을 취소해야 할 경우 사용합니다.</li>
                     </ul>
                 </div>
             </div>
