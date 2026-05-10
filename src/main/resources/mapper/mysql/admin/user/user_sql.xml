@@ -81,6 +81,9 @@
 		<if test="sch_user_author != null and sch_user_author != ''">
 			AND A.MEMBER_CODE =#{sch_user_author}
 		</if>
+		<if test="sch_branch_id != null and sch_branch_id != ''">
+			AND A.BRANCH_ID = #{sch_branch_id}
+		</if>
 	</sql>
 
 

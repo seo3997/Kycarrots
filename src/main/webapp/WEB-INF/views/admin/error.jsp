@@ -134,7 +134,7 @@
     </div>
 
     <footer class="main-footer text-center">
-        <strong>Copyright 2021. <a href="#">asagong</a>.</strong> All rights reserved.
+        <strong>Copyright 2026. <a href="#">asagong</a>.</strong> All rights reserved.
     </footer>
 </div>
 

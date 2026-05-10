@@ -22,7 +22,7 @@
 	<script type="text/javascript">
 	//<![CDATA[
 		$(function(){
-			$('[name=sch_user_se_code], [name=sch_user_sttus_code]').change(function(e){
+			$('[name=sch_user_se_code], [name=sch_user_sttus_code], [name=sch_branch_id]').change(function(e){
 				fnSearch();
 			});
 
@@ -236,6 +236,19 @@
 								<div class="col-md-9 px-0">
 									<select id="sch_user_sttus_code" name="sch_user_sttus_code" class="form-control w-100">
 										<%=CommboUtil.getComboStr(userSttusComboStr, "CODE", "CODE_NM", param.getString("sch_user_sttus_code") , "사용자상태")%>
+									</select>
+								</div>
+							</div>
+
+							<!-- 3. 지점 선택 검색  -->
+							<div class="row col-md-6 mb-1 form-group form-inline">
+								<label for="sch_branch_id" class="control-label col-md-2 px-0">지점선택</label>
+								<div class="col-md-9 px-0">
+									<select id="sch_branch_id" name="sch_branch_id" class="form-control w-100">
+										<option value="">전체</option>
+										<c:forEach var="branch" items="${branchList}">
+											<option value="${branch.BRANCH_ID}" <c:if test="${param.sch_branch_id == branch.BRANCH_ID}">selected="selected"</c:if>>${branch.BRANCH_NAME}</option>
+										</c:forEach>
 									</select>
 								</div>
 							</div>

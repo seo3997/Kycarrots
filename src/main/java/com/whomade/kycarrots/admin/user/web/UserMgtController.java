@@ -106,6 +106,10 @@ public class UserMgtController {
 		model.addAttribute("resultList", resultList);
 		model.addAttribute("param", param);
 		model.addAttribute("authList", authList);
+		
+		// 지점 리스트 조회
+		List branchList = mgtBranchService.selectListBranch(new DataMap());
+		model.addAttribute("branchList", branchList);
 
 		return "admin/user/selectPageListUserMgt";
 	}
