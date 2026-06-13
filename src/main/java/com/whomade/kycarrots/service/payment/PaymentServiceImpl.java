@@ -207,7 +207,7 @@ public class PaymentServiceImpl implements PaymentService {
                 if (branchInfo != null && branchInfo.getString("TOSS_SECRET_KEY") != null
                         && !branchInfo.getString("TOSS_SECRET_KEY").trim().isEmpty()) {
                     secretKey = branchInfo.getString("TOSS_SECRET_KEY").trim();
-                    log.info("Using TOSS_SECRET_KEY from database for branchId: {}. Key: {}", orderVo.getBranchId(), secretKey);
+                    log.info("Using TOSS_SECRET_KEY from database for branchId: {}", orderVo.getBranchId());
                 }
             }
 
@@ -215,8 +215,6 @@ public class PaymentServiceImpl implements PaymentService {
                 log.error("TOSS_SECRET_KEY not found in database for branchId: {}", orderVo.getBranchId());
                 throw new IllegalArgumentException("지점에 등록된 토스 시크릿 키가 존재하지 않습니다. (branchId: " + orderVo.getBranchId() + ")");
             }
-
-            log.info("Final secretKey length: {}", (secretKey != null ? secretKey.length() : 0));
 
             String authorizations = Base64.getEncoder()
                     .encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));
@@ -382,7 +380,7 @@ public class PaymentServiceImpl implements PaymentService {
                 if (branchInfo != null && branchInfo.getString("TOSS_SECRET_KEY") != null
                         && !branchInfo.getString("TOSS_SECRET_KEY").trim().isEmpty()) {
                     secretKey = branchInfo.getString("TOSS_SECRET_KEY").trim();
-                    log.info("Using TOSS_SECRET_KEY from database for branchId: {} (Cancel). Key: {}", orderVo.getBranchId(), secretKey);
+                    log.info("Using TOSS_SECRET_KEY from database for branchId: {} (Cancel)", orderVo.getBranchId());
                 }
             }
 
