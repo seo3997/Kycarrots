@@ -207,7 +207,7 @@ public class PaymentServiceImpl implements PaymentService {
                 if (branchInfo != null && branchInfo.getString("TOSS_SECRET_KEY") != null
                         && !branchInfo.getString("TOSS_SECRET_KEY").trim().isEmpty()) {
                     secretKey = branchInfo.getString("TOSS_SECRET_KEY").trim();
-                    log.info("Using TOSS_SECRET_KEY from database for branchId: {}", orderVo.getBranchId());
+                    log.info("Using TOSS_SECRET_KEY from database for branchId: {}. Key: {}", orderVo.getBranchId(), secretKey);
                 }
             }
 
@@ -382,6 +382,7 @@ public class PaymentServiceImpl implements PaymentService {
                 if (branchInfo != null && branchInfo.getString("TOSS_SECRET_KEY") != null
                         && !branchInfo.getString("TOSS_SECRET_KEY").trim().isEmpty()) {
                     secretKey = branchInfo.getString("TOSS_SECRET_KEY").trim();
+                    log.info("Using TOSS_SECRET_KEY from database for branchId: {} (Cancel). Key: {}", orderVo.getBranchId(), secretKey);
                 }
             }
 
