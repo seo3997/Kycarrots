@@ -9,7 +9,6 @@ import com.whomade.kycarrots.repository.mybatis.payment.PaymentRepository;
 import com.whomade.kycarrots.repository.mybatis.product.TnProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,9 +32,6 @@ public class PaymentServiceImpl implements PaymentService {
     private final TnProductRepository tnProductRepository;
     private final com.whomade.kycarrots.push.PushService pushService;
     private final RestTemplate restTemplate = new RestTemplate();
-
-    @Value("${toss.payments.secret-key:test_sk_vZnjEJeQVxawBOMzxKXZrPmOoBN0}")
-    private String defaultSecretKey;
 
     @Resource(name = "mgtBranchService")
     private com.whomade.kycarrots.mgt.branch.service.MgtBranchService mgtBranchService;
@@ -202,22 +198,22 @@ public class PaymentServiceImpl implements PaymentService {
 
         // 2. Toss Payments Confirm API Call
         try {
-            // Fetch Branch Secret Key
-            String secretKey = defaultSecretKey;
+            // Fetch Branch Secret Key strictly from database
+            String secretKey = null;
             if (orderVo.getBranchId() != null) {
                 DataMap branchParam = new DataMap();
                 branchParam.put("branchId", orderVo.getBranchId());
                 DataMap branchInfo = mgtBranchService.selectBranch(branchParam);
                 if (branchInfo != null && branchInfo.getString("TOSS_SECRET_KEY") != null
-                        && !branchInfo.getString("TOSS_SECRET_KEY").isEmpty()) {
+                        && !branchInfo.getString("TOSS_SECRET_KEY").trim().isEmpty()) {
                     secretKey = branchInfo.getString("TOSS_SECRET_KEY").trim();
                     log.info("Using TOSS_SECRET_KEY from database for branchId: {}", orderVo.getBranchId());
-                } else {
-                    log.warn("TOSS_SECRET_KEY not found in database for branchId: {}. Using default fallback.",
-                            orderVo.getBranchId());
                 }
-            } else {
-                log.info("orderVo.getBranchId() is null. Using default TOSS_SECRET_KEY.");
+            }
+
+            if (secretKey == null) {
+                log.error("TOSS_SECRET_KEY not found in database for branchId: {}", orderVo.getBranchId());
+                throw new IllegalArgumentException("지점에 등록된 토스 시크릿 키가 존재하지 않습니다. (branchId: " + orderVo.getBranchId() + ")");
             }
 
             log.info("Final secretKey length: {}", (secretKey != null ? secretKey.length() : 0));

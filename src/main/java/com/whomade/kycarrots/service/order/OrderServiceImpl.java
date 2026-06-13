@@ -6,7 +6,6 @@ import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.repository.mybatis.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -20,9 +19,6 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-
-    @Value("${toss.payments.secret-key:test_sk_vZnjEJeQVxawBOMzxKXZrPmOoBN0}")
-    private String secretKey;
 
     @Override
     public Page<DataMap> selectPageListOrder(DataMap param, Pageable pageable) {
