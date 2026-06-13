@@ -373,16 +373,21 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         try {
-            // Fetch Branch Secret Key
-            String secretKey = defaultSecretKey;
+            // Fetch Branch Secret Key strictly from database
+            String secretKey = null;
             if (orderVo.getBranchId() != null) {
                 DataMap branchParam = new DataMap();
                 branchParam.put("branchId", orderVo.getBranchId());
                 DataMap branchInfo = mgtBranchService.selectBranch(branchParam);
                 if (branchInfo != null && branchInfo.getString("TOSS_SECRET_KEY") != null
-                        && !branchInfo.getString("TOSS_SECRET_KEY").isEmpty()) {
-                    secretKey = branchInfo.getString("TOSS_SECRET_KEY");
+                        && !branchInfo.getString("TOSS_SECRET_KEY").trim().isEmpty()) {
+                    secretKey = branchInfo.getString("TOSS_SECRET_KEY").trim();
                 }
+            }
+
+            if (secretKey == null) {
+                log.error("TOSS_SECRET_KEY not found in database for branchId: {}", orderVo.getBranchId());
+                throw new IllegalArgumentException("지점에 등록된 토스 시크릿 키가 존재하지 않습니다. (branchId: " + orderVo.getBranchId() + ")");
             }
 
             String authorizations = Base64.getEncoder()
