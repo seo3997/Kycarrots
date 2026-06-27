@@ -70,7 +70,7 @@ public class PasswordResetService {
 
         String subject = "[asagong] Password reset";
         String html = """
-            <p>안녕핫요 %s,</p>
+            <p>안녕하세요 %s,</p>
             <p>아래 링크를 클릭하여 비밀번호를 재설정하세요( %d분 동안 유효):</p>
             <p><a href="%s">%s</a></p>
             <p>요청하지 않으셨다면 이 이메일을 무시하셔도 됩니다.</p>
