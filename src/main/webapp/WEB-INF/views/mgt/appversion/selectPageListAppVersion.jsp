@@ -50,7 +50,7 @@
             </div>
     	    <div id="pagetitle">
                 <h1>앱 버전 관리</h1>
-    	    </div>
+            </div>
 		</section>
 
 		<section class="content container-fluid">
@@ -66,6 +66,8 @@
                             <option value="">전체 플랫폼</option>
                             <option value="ANDROID" <c:if test="${param.OS_TYPE == 'ANDROID'}">selected</c:if>>ANDROID</option>
                             <option value="IOS" <c:if test="${param.OS_TYPE == 'IOS'}">selected</c:if>>IOS</option>
+                            <option value="FLUTTER_ANDROID" <c:if test="${param.OS_TYPE == 'FLUTTER_ANDROID'}">selected</c:if>>FLUTTER_ANDROID</option>
+                            <option value="FLUTTER_IOS" <c:if test="${param.OS_TYPE == 'FLUTTER_IOS'}">selected</c:if>>FLUTTER_IOS</option>
                         </select>
 						<button type="button" class="btn btn-top-search" onclick="fnSearch(); return false;"><i class="fa fa-search"></i></button>
 					</div>

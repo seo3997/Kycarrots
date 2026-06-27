@@ -53,7 +53,7 @@
             </div>
     	    <div id="pagetitle">
                 <h1>앱 버전 등록</h1>
-    	    </div>
+            </div>
 		</section>
 
 		<section class="content container-fluid">
@@ -75,6 +75,8 @@
 													<option value="">선택</option>
 													<option value="ANDROID">ANDROID</option>
 													<option value="IOS">IOS</option>
+													<option value="FLUTTER_ANDROID">FLUTTER_ANDROID</option>
+													<option value="FLUTTER_IOS">FLUTTER_IOS</option>
 												</select>
 											</td>
 										</tr>

@@ -53,7 +53,7 @@
             </div>
     	    <div id="pagetitle">
                 <h1>앱 버전 수정</h1>
-    	    </div>
+            </div>
 		</section>
 
 		<section class="content container-fluid">
@@ -76,6 +76,8 @@
 												<select name="OS_TYPE" id="osType" class="form-control w-25">
 													<option value="ANDROID" <c:if test="${resultMap.OS_TYPE == 'ANDROID'}">selected</c:if>>ANDROID</option>
 													<option value="IOS" <c:if test="${resultMap.OS_TYPE == 'IOS'}">selected</c:if>>IOS</option>
+													<option value="FLUTTER_ANDROID" <c:if test="${resultMap.OS_TYPE == 'FLUTTER_ANDROID'}">selected</c:if>>FLUTTER_ANDROID</option>
+													<option value="FLUTTER_IOS" <c:if test="${resultMap.OS_TYPE == 'FLUTTER_IOS'}">selected</c:if>>FLUTTER_IOS</option>
 												</select>
 											</td>
 										</tr>
