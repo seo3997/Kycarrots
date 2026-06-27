@@ -9,6 +9,7 @@ import com.whomade.kycarrots.framework.common.object.DataMap;
 import com.whomade.kycarrots.framework.common.util.EgovFileScrty;
 import com.whomade.kycarrots.repository.mybatis.member.OpUserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -24,6 +25,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OpUserService {
     private final OpUserRepository opUserRepository;
 
@@ -34,7 +36,10 @@ public class OpUserService {
     public int insertUser(OpUserVO user) {
         int iReturn = 0;
         iReturn = opUserRepository.insertUser(user);
+        log.info("insertUser - userNo: {}, provider: {}", user.getUserNo(), user.getProvider());
         if (!"PWD".equals(user.getProvider())) {
+            log.info("insertUser - inserting tb_social_account for userNo: {}, provider: {}, providerUserId: {}", 
+                     user.getUserNo(), user.getProvider(), user.getProviderUserId());
             opUserRepository.insertTbSocialAccount(user);
             iReturn++;
         }

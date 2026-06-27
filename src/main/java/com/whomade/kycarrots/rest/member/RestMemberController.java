@@ -195,6 +195,8 @@ public class RestMemberController {
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public LoginResponse registerUser(@RequestBody OpUserVO user) {
+        log.info("registerUser API called - userId: {}, provider: {}, providerUserId: {}", 
+                 user.getUserId(), user.getProvider(), user.getProviderUserId());
         try {
             // 비밀번호 암호화
             String encryptedPassword = EgovFileScrty.encryptSHA512(user.getPassword());
