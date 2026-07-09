@@ -27,4 +27,5 @@ public class BranchInfoVo {
     private String tongsinNumber;
     private String csPhone;
     private String address;
+    private String sdkTossClientKey;
 }

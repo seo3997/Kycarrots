@@ -107,6 +107,12 @@
 						<div class="col-sm-4 py-2">${resultMap.TOSS_SECRET_KEY}</div>
 					</div>
                     <div class="form-group row">
+						<label class="control-label col-sm-2">SDK 토스 클라이언트 키</label>
+						<div class="col-sm-4 py-2">${resultMap.SDK_TOSS_CLIENT_KEY}</div>
+						<label class="control-label col-sm-2">SDK 토스 시크릿 키</label>
+						<div class="col-sm-4 py-2">${resultMap.SDK_TOSS_SECRET_KEY}</div>
+					</div>
+                    <div class="form-group row">
 						<label class="control-label col-sm-2">판매가 수정 가능</label>
 						<div class="col-sm-4 py-2">${resultMap.IS_USE_CUSTOM_PRICE == '1' ? '가능' : '불가'}</div>
 						<label class="control-label col-sm-2">사이트 활성화</label>

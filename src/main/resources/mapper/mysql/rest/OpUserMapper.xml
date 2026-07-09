@@ -161,7 +161,6 @@
     <update id="markUsed">
         UPDATE tb_password_reset
         SET USED_YN = 'Y'
-        WHERE USER_ID = #{userId}
     </update>
 
     <update id="updatePw" parameterType="dataMap">
@@ -221,7 +220,7 @@
             A.JOIN_APP_PACKAGE
         FROM op_user A
                  JOIN tb_social_account S
-                      ON S.USER_NO = A.USER_NO
+                       ON S.USER_NO = A.USER_NO
                  LEFT JOIN op_code C
                            ON C.GROUP_ID='R010070' AND C.CODE=A.AREA_CODE
                  LEFT JOIN op_sclas_code D
@@ -257,6 +256,7 @@
             CS_PHONE,
             ADDRESS,
             TOSS_CLIENT_KEY,
+            SDK_TOSS_CLIENT_KEY,
             BANK_CD,
             ACCOUNT_NO,
             ACCOUNT_HOLDER,

@@ -45,4 +45,5 @@ public class OrderVo {
     private String deliveredAt;
     private Integer updusrNo;
     private String updtDt;
+    private String sdkYn;
 }

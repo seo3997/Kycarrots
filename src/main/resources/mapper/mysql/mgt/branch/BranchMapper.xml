@@ -10,7 +10,7 @@
             TOSS_SECRET_KEY, TOSS_MID, BILLING_CYCLE, IS_USE_CUSTOM_PRICE,
             SHIPPING_FEE_POLICY, IS_ACTIVE, BANK_CD, ACCOUNT_NO, ACCOUNT_HOLDER,
             BASE_SHIPPING_FEE, FREE_SHIPPING_THRESHOLD, EXTRA_SHIPPING_FEE,
-            REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT
+            REGISTER_NO, REGIST_DT, UPDUSR_NO, UPDT_DT, SDK_TOSS_CLIENT_KEY, SDK_TOSS_SECRET_KEY
         ) VALUES (
             #{branchCode}, #{branchName}, #{domainUrl}, #{logoImageUrl},
             #{branchStatus}, #{companyName}, #{representativeName}, #{businessNumber},
@@ -18,7 +18,7 @@
             #{tossSecretKey}, #{tossMid}, #{billingCycle}, #{isUseCustomPrice},
             #{shippingFeePolicy}, #{isActive}, #{bankCd}, #{accountNo}, #{accountHolder},
             #{baseShippingFee}, #{freeShippingThreshold}, #{extraShippingFee},
-            #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP
+            #{registerNo}, CURRENT_TIMESTAMP, #{updusrNo}, CURRENT_TIMESTAMP, #{sdkTossClientKey}, #{sdkTossSecretKey}
         )
     </insert>
 
@@ -97,6 +97,8 @@
             BASE_SHIPPING_FEE = #{baseShippingFee},
             FREE_SHIPPING_THRESHOLD = #{freeShippingThreshold},
             EXTRA_SHIPPING_FEE = #{extraShippingFee},
+            SDK_TOSS_CLIENT_KEY = #{sdkTossClientKey},
+            SDK_TOSS_SECRET_KEY = #{sdkTossSecretKey},
             UPDUSR_NO = #{updusrNo},
             UPDT_DT = CURRENT_TIMESTAMP
         WHERE BRANCH_ID = #{branchId}

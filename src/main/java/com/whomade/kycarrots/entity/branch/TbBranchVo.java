@@ -37,4 +37,6 @@ public class TbBranchVo {
     private String registDt;
     private Integer updusrNo;
     private String updtDt;
+    private String sdkTossClientKey;
+    private String sdkTossSecretKey;
 }

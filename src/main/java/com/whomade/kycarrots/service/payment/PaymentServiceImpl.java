@@ -101,6 +101,7 @@ public class PaymentServiceImpl implements PaymentService {
         orderVo.setUpdusrNo(Integer.parseInt(userNo));
         orderVo.setDiscountAmount(param.get("discountAmount") == null ? 0 : param.getInt("discountAmount"));
         orderVo.setBranchId(branchId);
+        orderVo.setSdkYn("Y".equals(param.getString("sdkYn")) ? "Y" : "N");
 
         paymentRepository.insertOrder(orderVo);
         Long orderId = orderVo.getOrderId();
@@ -198,16 +199,17 @@ public class PaymentServiceImpl implements PaymentService {
 
         // 2. Toss Payments Confirm API Call
         try {
-            // Fetch Branch Secret Key strictly from database
             String secretKey = null;
             if (orderVo.getBranchId() != null) {
                 DataMap branchParam = new DataMap();
                 branchParam.put("branchId", orderVo.getBranchId());
                 DataMap branchInfo = mgtBranchService.selectBranch(branchParam);
-                if (branchInfo != null && branchInfo.getString("TOSS_SECRET_KEY") != null
-                        && !branchInfo.getString("TOSS_SECRET_KEY").trim().isEmpty()) {
-                    secretKey = branchInfo.getString("TOSS_SECRET_KEY").trim();
-                    log.info("Using TOSS_SECRET_KEY from database for branchId: {}", orderVo.getBranchId());
+                if (branchInfo != null) {
+                    String keyField = "Y".equals(orderVo.getSdkYn()) ? "SDK_TOSS_SECRET_KEY" : "TOSS_SECRET_KEY";
+                    if (branchInfo.getString(keyField) != null && !branchInfo.getString(keyField).trim().isEmpty()) {
+                        secretKey = branchInfo.getString(keyField).trim();
+                        log.info("Using {} from database for branchId: {}", keyField, orderVo.getBranchId());
+                    }
                 }
             }
 
@@ -370,17 +372,17 @@ public class PaymentServiceImpl implements PaymentService {
             return result;
         }
 
-        try {
-            // Fetch Branch Secret Key strictly from database
             String secretKey = null;
             if (orderVo.getBranchId() != null) {
                 DataMap branchParam = new DataMap();
                 branchParam.put("branchId", orderVo.getBranchId());
                 DataMap branchInfo = mgtBranchService.selectBranch(branchParam);
-                if (branchInfo != null && branchInfo.getString("TOSS_SECRET_KEY") != null
-                        && !branchInfo.getString("TOSS_SECRET_KEY").trim().isEmpty()) {
-                    secretKey = branchInfo.getString("TOSS_SECRET_KEY").trim();
-                    log.info("Using TOSS_SECRET_KEY from database for branchId: {} (Cancel)", orderVo.getBranchId());
+                if (branchInfo != null) {
+                    String keyField = "Y".equals(orderVo.getSdkYn()) ? "SDK_TOSS_SECRET_KEY" : "TOSS_SECRET_KEY";
+                    if (branchInfo.getString(keyField) != null && !branchInfo.getString(keyField).trim().isEmpty()) {
+                        secretKey = branchInfo.getString(keyField).trim();
+                        log.info("Using {} from database for branchId: {} (Cancel)", keyField, orderVo.getBranchId());
+                    }
                 }
             }
 

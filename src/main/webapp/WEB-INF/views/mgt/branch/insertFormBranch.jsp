@@ -136,6 +136,16 @@
 						</div>
 					</div>
                     <div class="form-group row">
+						<label class="control-label col-sm-2" for="sdkTossClientKey">SDK 토스 클라이언트 키</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="sdkTossClientKey" id="sdkTossClientKey" />
+						</div>
+						<label class="control-label col-sm-2" for="sdkTossSecretKey">SDK 토스 시크릿 키</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control" name="sdkTossSecretKey" id="sdkTossSecretKey" />
+						</div>
+					</div>
+                    <div class="form-group row">
 						<label class="control-label col-sm-2" for="isUseCustomPrice">판매가 수정 가능</label>
 						<div class="col-sm-4">
 							<select class="form-control" name="isUseCustomPrice" id="isUseCustomPrice">
