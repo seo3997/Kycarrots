@@ -372,6 +372,7 @@ public class PaymentServiceImpl implements PaymentService {
             return result;
         }
 
+        try {
             String secretKey = null;
             if (orderVo.getBranchId() != null) {
                 DataMap branchParam = new DataMap();
