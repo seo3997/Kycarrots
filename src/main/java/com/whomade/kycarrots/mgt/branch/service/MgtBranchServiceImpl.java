@@ -68,6 +68,8 @@ public class MgtBranchServiceImpl implements MgtBranchService {
             branchVo.setAddress(param.getString("address"));
             branchVo.setTossClientKey(param.getString("tossClientKey"));
             branchVo.setTossSecretKey(param.getString("tossSecretKey"));
+            branchVo.setSdkTossClientKey(param.getString("sdkTossClientKey"));
+            branchVo.setSdkTossSecretKey(param.getString("sdkTossSecretKey"));
             branchVo.setTossMid(param.getString("tossMid"));
             branchVo.setBillingCycle(param.getString("billingCycle"));
             branchVo.setIsUseCustomPrice("Y".equals(param.getString("isUseCustomPrice")));
@@ -123,6 +125,8 @@ public class MgtBranchServiceImpl implements MgtBranchService {
         branchVo.setAddress(param.getString("address"));
         branchVo.setTossClientKey(param.getString("tossClientKey"));
         branchVo.setTossSecretKey(param.getString("tossSecretKey"));
+        branchVo.setSdkTossClientKey(param.getString("sdkTossClientKey"));
+        branchVo.setSdkTossSecretKey(param.getString("sdkTossSecretKey"));
         branchVo.setTossMid(param.getString("tossMid"));
         branchVo.setBillingCycle(param.getString("billingCycle"));
         branchVo.setIsUseCustomPrice("Y".equals(param.getString("isUseCustomPrice")));
