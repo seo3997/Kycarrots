@@ -32,6 +32,9 @@ public class AddressBookServiceImpl implements AddressBookService {
     @Override
     @Transactional
     public void insertAddress(TbAddressBookVo vo) throws Exception {
+        if (vo.getAddressName() == null || vo.getAddressName().trim().isEmpty()) {
+            vo.setAddressName("기본배송지");
+        }
         DataMap param = new DataMap();
         param.put("userNo", vo.getUserNo());
         int count = addressBookRepository.selectAddressCount(param);
@@ -53,6 +56,9 @@ public class AddressBookServiceImpl implements AddressBookService {
     @Override
     @Transactional
     public void updateAddress(TbAddressBookVo vo) throws Exception {
+        if (vo.getAddressName() == null || vo.getAddressName().trim().isEmpty()) {
+            vo.setAddressName("기본배송지");
+        }
         addressBookRepository.updateAddress(vo);
 
         // 기본 배송지로 설정된 경우 다른 주소들 초기화
