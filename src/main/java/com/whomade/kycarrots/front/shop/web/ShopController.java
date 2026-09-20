@@ -149,10 +149,7 @@ public class ShopController {
         }
         param.put("currentPage", param.getString("curPage"));
 
-        List<DataMap> resultList = mgtOrderService.selectPageListOrder(model, param);
-
-        // Add pagination info for the view
-        pageNavigationUtil.createNavigationInfo(model, param);
+        List<DataMap> resultList = orderService.selectShopOrderList(model, param);
 
         model.addAttribute("resultList", resultList);
         model.addAttribute("param", param);

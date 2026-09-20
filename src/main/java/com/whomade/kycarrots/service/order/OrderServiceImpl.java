@@ -9,7 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+import com.whomade.kycarrots.framework.common.page.util.pageNavigationUtil;
+import org.springframework.ui.ModelMap;
 
 import java.util.List;
 
@@ -29,6 +30,22 @@ public class OrderServiceImpl implements OrderService {
         int total = orderRepository.selectOrderCount(param);
 
         return new PageImpl<>(list, pageable, total);
+    }
+
+    @Override
+    public List<DataMap> selectShopOrderList(ModelMap model, DataMap param) {
+        int totalCount = orderRepository.selectOrderCount(param);
+        param.put("totalCount", totalCount);
+
+        pageNavigationUtil.createNavigationInfo(model, param);
+
+        param.put("offset", param.get("limitStart"));
+        param.put("limit", param.get("limitEnd"));
+
+        List<DataMap> resultList = orderRepository.selectPageListOrder(param);
+        model.addAttribute("totalCount", totalCount);
+
+        return resultList;
     }
 
     @Override
